@@ -2424,6 +2424,43 @@ function save(){
     );
   }
 }
+ function deleteExpiredAuctions(){
+
+  if(!Array.isArray(state.auctions)) return;
+
+  const now = new Date();
+
+  const expiredAuctionIds = state.auctions
+    .filter(function(auction){
+      if(!auction.deletionDate) return false;
+
+      const deletionDate = new Date(auction.deletionDate);
+
+      return !isNaN(deletionDate.getTime()) &&
+             now >= deletionDate;
+    })
+    .map(function(auction){
+      return auction.id;
+    });
+
+  if(expiredAuctionIds.length === 0) return;
+
+  state.auctions = state.auctions.filter(function(auction){
+    return !expiredAuctionIds.includes(auction.id);
+  });
+state.lots = (state.lots || []).filter(function(lot){
+  return !expiredAuctionIds.includes(lot.auctionId);
+});
+   state.invoices = (state.invoices || []).filter(function(invoice){
+  return !expiredAuctionIds.includes(invoice.auctionId);
+});    
+  save();
+
+  console.log(
+    "Expired auctions deleted:",
+    expiredAuctionIds
+  );
+}
 
 function load(){
   const raw=localStorage.getItem(STORAGE_KEY);
@@ -2432,7 +2469,8 @@ function load(){
     try{
       state=JSON.parse(raw);
     }catch(e){}
-  }
+  } 
+ deleteExpiredAuctions();     
  const savedAccounts=localStorage.getItem(ACCOUNT_STORAGE_KEY);
 
 if(savedAccounts){
@@ -7995,9 +8033,10 @@ function createAuction(){
     return;
   }
 
-  /* AUTOMATIC DELETION DATE — 3 MONTHS AFTER AUCTION */
-  const deletionDate = new Date(date + "T00:00:00");
-  deletionDate.setMonth(deletionDate.getMonth() + 3);
+ /* AUTOMATIC DELETION DATE — 3 MONTHS AFTER AUCTION CLOSES */
+const auctionCloseDateTime = new Date(date + "T" + closeTime);
+const deletionDate = new Date(auctionCloseDateTime);
+deletionDate.setMonth(deletionDate.getMonth() + 3);
 
   const auction = {
     id: "AUC-" + Date.now(),
