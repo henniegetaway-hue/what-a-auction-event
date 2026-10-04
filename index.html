@@ -7373,15 +7373,37 @@ const minimumStartingBidByCurrency = {
 const minimumStartingBid =
   minimumStartingBidByCurrency[eventCurrency] || 20;
 
-let invalidStartingBid = false;      
+const minimumIncrementByCurrency = {
+  ZAR: 50,
+  EUR: 3,
+  USD: 3,
+  GBP: 2,
+  AUD: 5,
+  NZD: 5,
+  CAD: 5
+};      
+let invalidStartingBid = false; 
+ let invalidIncrement = false;     
 
 document.querySelectorAll("#previewLotsGrid .previewSampleLot").forEach(function(lot, index){
+
+const lotName =
+  lot.querySelector(".ownLotName")?.value.trim() || "";
 
 const startingBid =
   Number(lot.querySelector(".ownLotStartingBid")?.value || 0);
 
-if(startingBid > 0 && startingBid < minimumStartingBid){
+if(lotName && startingBid < minimumStartingBid){
   invalidStartingBid = true;
+}  
+const minimumIncrement =
+  minimumIncrementByCurrency[eventCurrency] || 3;
+
+const enteredIncrement =
+  Number(lot.querySelector(".ownLotMinimumIncrement")?.value || 0);
+
+if(lotName && enteredIncrement < minimumIncrement){
+  invalidIncrement = true;
 }      
   lots.push({
     lotNumber: index + 1,
@@ -7413,6 +7435,29 @@ const minimumText =
     "STARTING BID TOO LOW\n\n" +
     "The minimum starting bid for this auction is " +
     minimumText + "."
+  );
+
+  return;
+}    
+if(invalidIncrement){
+
+  const minimumIncrementTextByCurrency = {
+    ZAR: "R50",
+    EUR: "€3",
+    USD: "$3",
+    GBP: "£2",
+    AUD: "A$5",
+    NZD: "NZ$5",
+    CAD: "C$5"
+  };
+
+  const minimumIncrementText =
+    minimumIncrementTextByCurrency[eventCurrency] || "$3";
+
+  alert(
+    "MINIMUM INCREMENT TOO LOW\n\n" +
+    "The minimum bid increment for this auction is " +
+    minimumIncrementText + "."
   );
 
   return;
