@@ -2658,9 +2658,10 @@ localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
 }
 
   
-  function showOwnEventPage(){
-      setOwnEventSEO();
- document.body.classList.add("ownEventMode");       
+ function showOwnEventPage(){
+  setOwnEventSEO();
+  document.body.classList.add("ownEventMode");
+
   document.querySelectorAll(".page").forEach(x=>x.classList.add("hidden"));
   document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
 
@@ -2669,6 +2670,21 @@ localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
 
   if(page) page.classList.remove("hidden");
   if(btn) btn.classList.add("active");
+
+  // CHANGE TOP HEADER FOR CREATE YOUR OWN EVENT
+  const brandName=document.getElementById("siteBrandName");
+  const brandTagline=document.getElementById("siteBrandTagline");
+  const titleTop=document.getElementById("auctionTitleTop");
+  const nextTop=document.getElementById("nextAuctionTop");
+  const status=document.getElementById("auctionStatus");
+
+  if(brandName) brandName.textContent="WHAT A AUCTION EVENT";
+  if(brandTagline) brandTagline.textContent="Create • Build • Run Your Own Auction";
+
+  if(titleTop) titleTop.textContent="Create Your Own Online Auction";
+  if(nextTop) nextTop.textContent="Build and test your event before going live";
+
+  if(status) status.textContent="CREATE";
 }
 function showOwnAuctionPage(){
 
