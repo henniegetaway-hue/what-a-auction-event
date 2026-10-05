@@ -2821,6 +2821,9 @@ function renderOwnEventAuction(){
 
   const firstPhoto =
     photos[0] || "mix%20auction%20lot%20.png";
+   const photo1 = photos[0] || firstPhoto;
+const photo2 = photos[1] || photo1;
+const photo3 = photos[2] || photo1;     
 
   const card = document.createElement("div");
 
@@ -2828,11 +2831,18 @@ function renderOwnEventAuction(){
 
   card.innerHTML = `
     <div style="
-      height:180px;
-      background:url('${firstPhoto}') center/cover no-repeat;
-      border-radius:8px;
-      margin-bottom:8px;
-    "></div>
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  height:180px;
+  gap:2px;
+  margin-bottom:8px;
+  overflow:hidden;
+  border-radius:8px;
+">
+  <div style="background:url('${photo1}') center/cover no-repeat;"></div>
+  <div style="background:url('${photo2}') center/cover no-repeat;"></div>
+  <div style="background:url('${photo3}') center/cover no-repeat;"></div>
+</div>
 
     <strong>LOT ${lotNumber}</strong>
 
