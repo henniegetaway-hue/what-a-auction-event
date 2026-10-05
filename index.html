@@ -7891,7 +7891,9 @@ function updateOwnEventPreview(){
   const tagline = document.getElementById("ownEventTagline")?.value.trim();
     const description = document.getElementById("ownEventDescription")?.value.trim();  
       
-    localStorage.setItem("ownEventName", name || "");
+    if(name){
+  localStorage.setItem("ownEventName", name);
+}
 localStorage.setItem("ownEventTagline", tagline || "");
 localStorage.setItem("ownEventDescription", description || "");  
 
