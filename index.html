@@ -2747,21 +2747,23 @@ function showOwnAuctionPage(){
  setOwnEventHeader();  
   const auctionTitle=document.getElementById("ownAuctionPageTitle");
 const eventName=document.getElementById("ownEventName");
+ const savedEventName = localStorage.getItem("ownEventName");     
 
 if(auctionTitle){
   auctionTitle.textContent =
-    eventName && eventName.value.trim()
-      ? eventName.value.trim()
-      : "YOUR AUCTION";
-}    
+    savedEventName ||
+    (eventName && eventName.value.trim()) ||
+    "YOUR AUCTION";
+}
 const auctionTagline=document.getElementById("ownAuctionPageTagline");
 const eventTagline=document.getElementById("ownEventTagline");
+const savedEventTagline = localStorage.getItem("ownEventTagline");      
 
 if(auctionTagline){
   auctionTagline.textContent =
-    eventTagline && eventTagline.value.trim()
-      ? eventTagline.value.trim()
-      : "Your created auction will appear here when it is ready to go live.";
+    savedEventTagline ||
+    (eventTagline && eventTagline.value.trim()) ||
+    "Your created auction will appear here when it is ready to go live.";
 }
   document.querySelectorAll(".page").forEach(x=>x.classList.add("hidden"));
   document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
@@ -7888,6 +7890,10 @@ function updateOwnEventPreview(){
   const name = document.getElementById("ownEventName")?.value.trim();
   const tagline = document.getElementById("ownEventTagline")?.value.trim();
     const description = document.getElementById("ownEventDescription")?.value.trim();  
+      
+    localStorage.setItem("ownEventName", name || "");
+localStorage.setItem("ownEventTagline", tagline || "");
+localStorage.setItem("ownEventDescription", description || "");  
 
   const previewName = document.getElementById("previewEventName");
   const previewTagline = document.getElementById("previewEventTagline");
