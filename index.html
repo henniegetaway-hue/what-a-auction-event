@@ -696,6 +696,22 @@ th,td{
       <div id="ownEventCurrencyDisplay" class="small" style="margin:5px 0 10px 0;">
   Auction Currency: <strong>ZAR (R)</strong>
 </div>
+   <label>Auction Date *</label>
+<input id="ownEventDate"
+       type="date">
+
+<label>Auction Start Time *</label>
+<input id="ownEventStartTime"
+       type="time">
+
+<label>Auction Closing Time *</label>
+<input id="ownEventCloseTime"
+       type="time">
+
+<div class="small" style="margin-top:5px;margin-bottom:10px;">
+  Auction date may be scheduled up to 4 months in advance.
+  Auction records will be retained for 3 months after the auction closes.
+</div>   
       <label>Auction Country *</label>
 <select id="ownEventCountry" onchange="updateOwnEventCountryCurrency()">
   <option value="">-- Select Auction Country --</option>
@@ -2445,15 +2461,18 @@ function save(){
 
   if(expiredAuctionIds.length === 0) return;
 
-  state.auctions = state.auctions.filter(function(auction){
-    return !expiredAuctionIds.includes(auction.id);
+ expiredAuctionIds.forEach(function(auctionId){
+
+  const auction = state.auctions.find(function(a){
+    return a.id === auctionId;
   });
-state.lots = (state.lots || []).filter(function(lot){
-  return !expiredAuctionIds.includes(lot.auctionId);
+
+  if(auction){
+    auction.retentionExpired = true;
+    auction.retentionExpiredAt = new Date().toISOString();
+  }
+
 });
-   state.invoices = (state.invoices || []).filter(function(invoice){
-  return !expiredAuctionIds.includes(invoice.auctionId);
-});    
   save();
 
   console.log(
@@ -7327,7 +7346,39 @@ try {
 } catch(e) {
   window.createdOwnEvents = [];
 }
-      
+function markExpiredOwnEvents(){
+
+  if(!Array.isArray(window.createdOwnEvents)) return;
+
+  const now = new Date();
+  let changed = false;
+
+  window.createdOwnEvents.forEach(function(event){
+
+    if(!event.deletionDate) return;
+
+    const deletionDate = new Date(event.deletionDate);
+
+    if(
+      !isNaN(deletionDate.getTime()) &&
+      now >= deletionDate &&
+      event.retentionExpired !== true
+    ){
+      event.retentionExpired = true;
+      event.retentionExpiredAt = now.toISOString();
+      changed = true;
+    }
+
+  });
+
+  if(changed){
+    localStorage.setItem(
+      "createdOwnEvents",
+      JSON.stringify(window.createdOwnEvents)
+    );
+  }
+}      
+ markExpiredOwnEvents();     
 function startOwnEventCreation(){
 
   const eventName =
@@ -7342,6 +7393,15 @@ function startOwnEventCreation(){
   const eventType =
   document.getElementById("ownEventType")?.value.trim();
 
+   const eventDate =
+  document.getElementById("ownEventDate")?.value;
+
+const eventStartTime =
+  document.getElementById("ownEventStartTime")?.value;
+
+const eventCloseTime =
+  document.getElementById("ownEventCloseTime")?.value;   
+      
 const country =
   document.getElementById("ownEventCountry")?.value;
 
@@ -7361,12 +7421,41 @@ if(!eventType){
   alert("Please enter your Auction / Event Type.");
   return;
 }
+if(!eventDate){
+  alert("Please select the Auction Date.");
+  return;
+}
 
+if(!eventStartTime){
+  alert("Please select the Auction Start Time.");
+  return;
+}
+
+if(!eventCloseTime){
+  alert("Please select the Auction Closing Time.");
+  return;
+}
 if(!country){
   alert("Please select the Auction Country.");
   return;
 }
+const selectedEventDate = new Date(eventDate + "T00:00:00");
 
+const todayEvent = new Date();
+todayEvent.setHours(0,0,0,0);
+
+const maxEventDate = new Date(todayEvent);
+maxEventDate.setMonth(maxEventDate.getMonth() + 4);
+
+if(selectedEventDate < todayEvent){
+  alert("Auction date cannot be in the past.");
+  return;
+}
+
+if(selectedEventDate > maxEventDate){
+  alert("Auction date may not be more than 4 months in advance.");
+  return;
+}
 if(!rows){
   alert("Please select the Number of Auction Rows.");
   return;
@@ -7499,8 +7588,23 @@ if(invalidIncrement){
   );
 
   return;
-}    
+}  
+ const eventCloseDateTime =
+  new Date(eventDate + "T" + eventCloseTime);
+
+const eventDeletionDate =
+  new Date(eventCloseDateTime);
+
+eventDeletionDate.setMonth(
+  eventDeletionDate.getMonth() + 3
+);     
  const newEvent = {
+  id: "EVENT-" + Date.now(),  
+  auctionDate: eventDate,
+startTime: eventStartTime,
+closeTime: eventCloseTime,
+deletionDate: eventDeletionDate.toISOString(),
+retentionExpired: false,     
   name: eventName,
   tagline: tagline,
   description: description,
