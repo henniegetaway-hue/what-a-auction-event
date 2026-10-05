@@ -2768,9 +2768,7 @@ if(auctionTagline){
   document.querySelectorAll(".page").forEach(x=>x.classList.add("hidden"));
   document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
       
-setTimeout(()=>{
-  renderOwnEventAuction();
-},300);
+renderOwnEventAuction();
       
   const page = document.getElementById("pageOwnAuction");
   const btn = document.getElementById("navOwnAuction");
@@ -8384,22 +8382,31 @@ window.creatorLotPhotos[lotNumber] = Array.from(input.files).slice(0, 3);
 window.creatorLotPhotoData = window.creatorLotPhotoData || {};
 window.creatorLotPhotoData[lotNumber] = [];     
 
- Array.from(input.files).slice(0,3).forEach(file=>{
+const selectedFiles = Array.from(input.files).slice(0,3);
 
-  const photoReader = new FileReader();
+Promise.all(
+  selectedFiles.map(file => {
+    return new Promise(resolve => {
 
-photoReader.onload = function(e){
+      const photoReader = new FileReader();
 
-  window.creatorLotPhotoData[lotNumber].push(e.target.result);
+      photoReader.onload = function(e){
+        resolve(e.target.result);
+      };
+
+      photoReader.readAsDataURL(file);
+    });
+  })
+).then(photoData => {
+
+  window.creatorLotPhotoData[lotNumber] = photoData;
 
   sessionStorage.setItem(
     "creatorLotPhotoData",
     JSON.stringify(window.creatorLotPhotoData)
   );
-};
 
-  photoReader.readAsDataURL(file);
-});      
+});
 const reader = new FileReader();
 
   reader.onload = function(e){
