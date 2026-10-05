@@ -8367,10 +8367,10 @@ multiple
 
  function previewCreatorLotPhoto(input, lotNumber){
 
- window.creatorLotPhotos = window.creatorLotPhotos || {};      
+  window.creatorLotPhotos = window.creatorLotPhotos || {};
+  window.creatorLotPhotoData = window.creatorLotPhotoData || {};
 
- if(!input.files || !input.files.length) return;
-
+  if(!input.files || !input.files.length) return;
 if(input.files.length > 3){
   alert("Maximum 3 photos per lot.");
   input.value = "";
