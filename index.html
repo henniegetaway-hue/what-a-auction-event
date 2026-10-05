@@ -206,13 +206,36 @@ button{
 }
 
 .hidden{display:none!important}  
-.ownEventBtn{
+/* CREATE YOUR OWN EVENT — CONNECTED FILE TABS */
+.ownEventTabGroup{
+  display:flex;
+  align-items:stretch;
+  gap:0;
+  white-space:nowrap;
+}
+
+.ownEventTab{
   background:#123f2a !important;
   color:#ffffff !important;
   border:1px solid #2f6b45 !important;
- white-space:nowrap;
-padding-left:16px !important;
-padding-right:16px !important;     
+  border-radius:0 !important;
+  padding:12px 16px !important;
+  font-weight:bold;
+  cursor:pointer;
+  white-space:nowrap;
+  margin:0 !important;
+}
+
+.ownEventTab:first-child{
+  border-radius:11px 0 0 11px !important;
+}
+
+.ownEventTab:not(:first-child){
+  border-left:0 !important;
+}
+
+.ownEventTab:last-child{
+  border-radius:0 11px 11px 0 !important;
 }
 
 .grid2{
@@ -645,7 +668,19 @@ th,td{
   <button id="navAdmin" onclick="showPage('admin')">Admin</button>
   <button id="navInvoices" onclick="showPage('invoices')">Invoices</button>
  <button id="navRules" onclick="showPage('rules')">Rules & Terms</button>
-<button id="navOwnEvent" class="ownEventBtn" onclick="showOwnEventPage()">CREATE YOUR OWN EVENT</button>
+<div class="ownEventTabGroup">
+  <button id="navOwnEvent" class="ownEventTab" onclick="showOwnEventPage()">
+    CREATE YOUR OWN EVENT
+  </button>
+
+  <button id="navOwnAuction" class="ownEventTab" onclick="showOwnAuctionPage()">
+    AUCTION
+  </button>
+
+  <button id="navOwnBest10" class="ownEventTab" onclick="showOwnBest10Page()">
+    BEST 10
+  </button>
+</div>
 </nav>
   <section id="pageOwnEvent" class="page hidden">
 <div class="grid2" style="grid-template-columns:minmax(280px,0.75fr) minmax(0,1.5fr);align-items:start;">
@@ -1042,7 +1077,37 @@ color:#fff;
 
     
 </section>
+<!-- CREATE YOUR OWN EVENT — LIVE AUCTION PAGE -->
+<section id="pageOwnAuction" class="page hidden ownEventWorld">
 
+  <div class="panel">
+    <h2>YOUR AUCTION</h2>
+
+    <p class="small">
+      Your created auction will appear here when it is ready to go live.
+    </p>
+
+    <div id="ownAuctionDisplay"></div>
+  </div>
+
+</section>
+
+
+<!-- CREATE YOUR OWN EVENT — PERMANENT BEST 10 -->
+<section id="pageOwnBest10" class="page hidden ownEventWorld">
+
+  <div class="panel">
+    <h2>BEST 10</h2>
+
+    <p class="small">
+      The 10 highest-selling items from your completed auctions will be
+      preserved here as part of your auction history.
+    </p>
+
+    <div id="ownBest10Display"></div>
+  </div>
+
+</section>
 <section id="pageRegister" class="page">
 <div id="registerPageGrid"
      style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start;">
@@ -2592,7 +2657,30 @@ localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
   if(page) page.classList.remove("hidden");
   if(btn) btn.classList.add("active");
 }
+function showOwnAuctionPage(){
 
+  document.querySelectorAll(".page").forEach(x=>x.classList.add("hidden"));
+  document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
+
+  const page = document.getElementById("pageOwnAuction");
+  const btn = document.getElementById("navOwnAuction");
+
+  if(page) page.classList.remove("hidden");
+  if(btn) btn.classList.add("active");
+}
+
+
+function showOwnBest10Page(){
+
+  document.querySelectorAll(".page").forEach(x=>x.classList.add("hidden"));
+  document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
+
+  const page = document.getElementById("pageOwnBest10");
+  const btn = document.getElementById("navOwnBest10");
+
+  if(page) page.classList.remove("hidden");
+  if(btn) btn.classList.add("active");
+}
 function setCliviaSEO(){
   document.title = "Clivia Dreamers Auction";
 
@@ -7538,8 +7626,18 @@ if(lotName && enteredIncrement < minimumIncrement){
     startingBid: startingBid,
     increment: Number(lot.querySelector(".ownLotMinimumIncrement")?.value || 0),
     description: lot.querySelector(".ownLotDescription")?.value.trim() || "",
-    link: lot.querySelector(".ownLotLink")?.value.trim() || "",
-photoCount: window.creatorLotPhotos?.[index + 1]?.length || 0
+link: lot.querySelector(".ownLotLink")?.value.trim() || "",
+photoCount: window.creatorLotPhotos?.[index + 1]?.length || 0,
+
+bids: [],
+highestBid: 0,
+highestBidderId: "",
+highestBidderName: "",
+winnerId: "",
+winnerName: "",
+finalSalePrice: 0,
+sold: false,
+paymentStatus: "NOT_SOLD"
   });
 
 });     
@@ -7612,7 +7710,16 @@ eventDeletionDate.setMonth(
 startTime: eventStartTime,
 closeTime: eventCloseTime,
 deletionDate: eventDeletionDate.toISOString(),
-retentionExpired: false,     
+retentionExpired: false, 
+  permanentHistory: {
+  completed: false,
+  totalLotsSold: 0,
+  totalSalesValue: 0,
+  top10BestSellingItems: [],
+  winners: [],
+  paymentRecords: [],
+  unpaidRecords: []
+},     
   name: eventName,
   tagline: tagline,
   description: description,
