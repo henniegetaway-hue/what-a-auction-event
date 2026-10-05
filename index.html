@@ -61,6 +61,42 @@ body.ownEventMode{
   background-repeat: no-repeat !important;
   background-attachment: fixed !important;
 }   
+     /* SAMPLE LOGO FOR CREATE YOUR OWN EVENT */
+.siteLogoWrap{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+
+body.ownEventMode #siteLogo{
+  opacity:0.45;
+  filter:grayscale(20%);
+}
+
+.ownEventLogoSample{
+  display:none;
+}
+
+body.ownEventMode .ownEventLogoSample{
+  display:block;
+  position:absolute;
+  left:50%;
+  top:45%;
+  transform:translate(-50%,-50%) rotate(-12deg);
+  font-size:14px;
+  font-weight:900;
+  letter-spacing:2px;
+  color:#fff;
+  background:rgba(0,0,0,.65);
+  border:1px solid rgba(255,255,255,.6);
+  padding:3px 6px;
+  border-radius:4px;
+  opacity:.9;
+  pointer-events:none;
+  z-index:5;
+}   
 .top{
   display:flex;
   align-items:center;
