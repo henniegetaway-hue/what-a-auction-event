@@ -1153,11 +1153,16 @@ color:#fff;
 <section id="pageOwnAuction" class="page hidden ownEventWorld">
 
   <div class="panel">
-    <h2>YOUR AUCTION</h2>
+        <div id="ownAuctionLogoBox" style="display:none;text-align:center;margin-bottom:12px;">
+  <img id="ownAuctionLogo"
+       alt="Auction Logo"
+       style="max-width:180px;max-height:100px;object-fit:contain;">
+</div>
+    <h2 id="ownAuctionPageTitle">YOUR AUCTION</h2>
 
-    <p class="small">
-      Your created auction will appear here when it is ready to go live.
-    </p>
+    <p class="small" id="ownAuctionPageTagline">
+  Your created auction will appear here when it is ready to go live.
+</p>
 
     <div id="ownAuctionDisplay"></div>
   </div>
@@ -2748,8 +2753,25 @@ localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
 }
 function showOwnAuctionPage(){
  document.body.classList.add("ownEventMode");
- setOwnEventHeader();     
+ setOwnEventHeader();  
+  const auctionTitle=document.getElementById("ownAuctionPageTitle");
+const eventName=document.getElementById("ownEventName");
 
+if(auctionTitle){
+  auctionTitle.textContent =
+    eventName && eventName.value.trim()
+      ? eventName.value.trim()
+      : "YOUR AUCTION";
+}    
+const auctionTagline=document.getElementById("ownAuctionPageTagline");
+const eventTagline=document.getElementById("ownEventTagline");
+
+if(auctionTagline){
+  auctionTagline.textContent =
+    eventTagline && eventTagline.value.trim()
+      ? eventTagline.value.trim()
+      : "Your created auction will appear here when it is ready to go live.";
+}
   document.querySelectorAll(".page").forEach(x=>x.classList.add("hidden"));
   document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
 
@@ -8256,31 +8278,48 @@ if(photoCount){
 }     
 function previewOwnEventLogo(input){
 
-  const logo = document.getElementById("previewEventLogo");
+  const previewLogo = document.getElementById("previewEventLogo");
+  const auctionLogo = document.getElementById("ownAuctionLogo");
+  const auctionLogoBox = document.getElementById("ownAuctionLogoBox");
 
-  if(!logo) return;
-
-  /* If no personal logo is selected,
-     show the faded horse auction sample */
+  /* No creator logo selected — keep faded SAMPLE logo in preview */
   if(!input.files || !input.files[0]){
-    logo.src = "HORSE%20AUCTION%20LOGO.png";
-    logo.style.display = "block";
-    logo.style.opacity = ".35";
+
+    if(previewLogo){
+      previewLogo.src = "HORSE%20AUCTION%20LOGO.png";
+      previewLogo.style.display = "block";
+      previewLogo.style.opacity = ".35";
+    }
+
+    if(auctionLogoBox){
+      auctionLogoBox.style.display = "none";
+    }
+
     return;
   }
 
-  /* Show creator's own logo clearly */
+  /* Creator uploaded their own logo */
   const reader = new FileReader();
 
   reader.onload = function(e){
-    logo.src = e.target.result;
-    logo.style.display = "block";
-    logo.style.opacity = "1";
+
+    if(previewLogo){
+      previewLogo.src = e.target.result;
+      previewLogo.style.display = "block";
+      previewLogo.style.opacity = "1";
+    }
+
+    if(auctionLogo){
+      auctionLogo.src = e.target.result;
+    }
+
+    if(auctionLogoBox){
+      auctionLogoBox.style.display = "block";
+    }
   };
 
   reader.readAsDataURL(input.files[0]);
 }
-
 function openAdmin(){
   const passwordInput = document.getElementById("adminPassword");
   const adminLogin = document.getElementById("adminLogin");
