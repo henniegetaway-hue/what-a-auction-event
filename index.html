@@ -7589,8 +7589,16 @@ if(invalidIncrement){
 
   return;
 }  
- const eventCloseDateTime =
+const eventStartDateTime =
+  new Date(eventDate + "T" + eventStartTime);
+
+const eventCloseDateTime =
   new Date(eventDate + "T" + eventCloseTime);
+
+if(eventCloseDateTime <= eventStartDateTime){
+  alert("Auction closing time must be later than the auction start time.");
+  return;
+}
 
 const eventDeletionDate =
   new Date(eventCloseDateTime);
@@ -8178,10 +8186,8 @@ deletionDate.setMonth(deletionDate.getMonth() + 3);
 /* MAXIMUM AUCTION DATE — 4 MONTHS */
 function setAuctionDateLimit(){
 
-  const dateInput = document.getElementById("newAuctionDate");
-  if(!dateInput) return;
-
   const today = new Date();
+  today.setHours(0,0,0,0);
 
   const maxDate = new Date(today);
   maxDate.setMonth(maxDate.getMonth() + 4);
@@ -8193,8 +8199,24 @@ function setAuctionDateLimit(){
     return `${year}-${month}-${day}`;
   };
 
-  dateInput.min = formatDate(today);
-  dateInput.max = formatDate(maxDate);
+  const minValue = formatDate(today);
+  const maxValue = formatDate(maxDate);
+
+  const cliviaDate =
+    document.getElementById("newAuctionDate");
+
+  const ownEventDate =
+    document.getElementById("ownEventDate");
+
+  if(cliviaDate){
+    cliviaDate.min = minValue;
+    cliviaDate.max = maxValue;
+  }
+
+  if(ownEventDate){
+    ownEventDate.min = minValue;
+    ownEventDate.max = maxValue;
+  }
 }
 
 document.addEventListener("DOMContentLoaded", setAuctionDateLimit);
@@ -8204,30 +8226,72 @@ function downloadAuctionBidItems(){
 
   try{
 
-    const auctionData = {
-      exportedAt: new Date().toISOString(),
-      auction: state?.auction || null,
-      auctions: state?.auctions || [],
-      lots: state?.lots || [],
-      bids: state?.bids || []
-    };
+    const allLots = Array.isArray(state?.lots)
+      ? state.lots
+      : [];
 
-    const json = JSON.stringify(auctionData, null, 2);
+    const allBids = [];
 
-    const blob = new Blob([json], {
-      type: "application/json"
+    allLots.forEach(function(lot){
+
+      if(Array.isArray(lot.bids)){
+
+        lot.bids.forEach(function(bid){
+
+          allBids.push({
+            auctionId: lot.auctionId || "",
+            lotId: lot.id || "",
+            lotNumber: lot.lotNumber || "",
+            lotName: lot.name || "",
+            ...bid
+          });
+
+        });
+
+      }
+
     });
 
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
+    const auctionData = {
+      exportedAt: new Date().toISOString(),
+      auctions: state?.auctions || [],
+      lots: allLots,
+      bids: allBids
+    };
 
-    const today = new Date().toISOString().slice(0,10);
+    const json = JSON.stringify(
+      auctionData,
+      null,
+      2
+    );
+
+    const blob = new Blob(
+      [json],
+      {
+        type: "application/json"
+      }
+    );
+
+    const url =
+      URL.createObjectURL(blob);
+
+    const link =
+      document.createElement("a");
+
+    const today =
+      new Date().toISOString().slice(0,10);
 
     link.href = url;
-    link.download = "auction-bid-items-" + today + ".json";
+
+    link.download =
+      "auction-bid-items-" +
+      today +
+      ".json";
 
     document.body.appendChild(link);
+
     link.click();
+
     document.body.removeChild(link);
 
     URL.revokeObjectURL(url);
@@ -8235,7 +8299,10 @@ function downloadAuctionBidItems(){
   } catch(error){
 
     console.error(error);
-    alert("The auction records could not be downloaded.");
+
+    alert(
+      "The auction records could not be downloaded."
+    );
 
   }
 }
@@ -8245,10 +8312,16 @@ function downloadEventDatabase(){
   try{
 
     const databaseBackup = {
-      exportedAt: new Date().toISOString(),
-      version: "1.0",
-      database: state || {}
-    };
+  exportedAt: new Date().toISOString(),
+  version: "1.1",
+
+  cliviaDreamersDatabase: state || {},
+
+  createYourOwnEvents:
+    Array.isArray(window.createdOwnEvents)
+      ? window.createdOwnEvents
+      : []
+};
 
     const json = JSON.stringify(databaseBackup, null, 2);
 
