@@ -2703,6 +2703,14 @@ localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
 }
 
   function setOwnEventHeader(){
+   const siteLogo=document.getElementById("siteLogo");
+
+if(siteLogo){
+  siteLogo.src="WHAT-A-AUCTION-LOGO.png";
+  siteLogo.alt="What A Auction Event";
+  siteLogo.style.opacity="1";
+  siteLogo.style.filter="none";
+}     
 
   const brandName=document.getElementById("siteBrandName");
   const brandTagline=document.getElementById("siteBrandTagline");
