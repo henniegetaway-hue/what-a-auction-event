@@ -2781,6 +2781,15 @@ function renderOwnEventAuction(){
 
   const display = document.getElementById("ownAuctionDisplay");
   if(!display) return;
+  try{
+  const savedPhotos = sessionStorage.getItem("creatorLotPhotoData");
+
+  if(savedPhotos){
+    window.creatorLotPhotoData = JSON.parse(savedPhotos);
+  }
+}catch(e){
+  window.creatorLotPhotoData = window.creatorLotPhotoData || {};
+}    
 
   saveOwnEventLots();
 
@@ -8377,8 +8386,14 @@ window.creatorLotPhotoData[lotNumber] = [];
 
   const photoReader = new FileReader();
 
- photoReader.onload = function(e){
+photoReader.onload = function(e){
+
   window.creatorLotPhotoData[lotNumber].push(e.target.result);
+
+  sessionStorage.setItem(
+    "creatorLotPhotoData",
+    JSON.stringify(window.creatorLotPhotoData)
+  );
 
   if(typeof renderOwnEventAuction === "function"){
     renderOwnEventAuction();
