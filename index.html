@@ -2768,7 +2768,9 @@ if(auctionTagline){
   document.querySelectorAll(".page").forEach(x=>x.classList.add("hidden"));
   document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
       
-renderOwnEventAuction();
+setTimeout(()=>{
+  renderOwnEventAuction();
+},300);
       
   const page = document.getElementById("pageOwnAuction");
   const btn = document.getElementById("navOwnAuction");
@@ -8394,10 +8396,6 @@ photoReader.onload = function(e){
     "creatorLotPhotoData",
     JSON.stringify(window.creatorLotPhotoData)
   );
-
-  if(typeof renderOwnEventAuction === "function"){
-    renderOwnEventAuction();
-  }
 };
 
   photoReader.readAsDataURL(file);
