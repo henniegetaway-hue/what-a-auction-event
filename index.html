@@ -2838,7 +2838,14 @@ function setCliviaSEO(){
   });
 }   
 function showPage(page){
-      
+      const siteLogo=document.getElementById("siteLogo");
+
+if(siteLogo){
+  siteLogo.src="new logo.png";
+  siteLogo.alt="Clivia Dreamers logo";
+  siteLogo.style.opacity="1";
+  siteLogo.style.filter="none";
+}
       document.body.classList.remove("ownEventMode");  
       
       // RESTORE NORMAL CLIVIA DREAMERS HEADER
