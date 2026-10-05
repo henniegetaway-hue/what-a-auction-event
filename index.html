@@ -50,6 +50,13 @@ body{
   color:var(--text);
 }
 
+ /* BRIGHT BACKGROUND FOR CREATE YOUR OWN EVENT AREA */
+body.ownEventMode{
+  background:
+    linear-gradient(rgba(255,255,255,.08),rgba(255,255,255,.08)),
+    url("YOUR-OWN-EVENT-BACKGROUND.png") center center / cover fixed !important;
+}       
+
 .app{
   max-width:1400px;
   margin:auto;
@@ -2648,6 +2655,7 @@ localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
   
   function showOwnEventPage(){
       setOwnEventSEO();
+ document.body.classList.add("ownEventMode");       
   document.querySelectorAll(".page").forEach(x=>x.classList.add("hidden"));
   document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
 
@@ -2739,6 +2747,9 @@ function setCliviaSEO(){
   });
 }   
 function showPage(page){
+      
+      document.body.classList.remove("ownEventMode");  
+      
     // Lock account sections whenever another page is opened
   if(page!=="register"){
     const bidderAccount=document.getElementById("registeredBidderSection");
