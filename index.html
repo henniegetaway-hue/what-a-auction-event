@@ -61,7 +61,26 @@ body.ownEventMode{
   background-repeat: no-repeat !important;
   background-attachment: fixed !important;
 }   
+body.ownEventMode{
+  background-image:
+    linear-gradient(rgba(0,0,0,.15), rgba(0,0,0,.15)),
+    url("YOUR-OWN-EVENT-BACKGROUND.png") !important;
 
+  background-size: cover !important;
+  background-position: center top !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+}
+
+/* FADED SAMPLE LOGO ON CREATE YOUR OWN EVENT */
+body.ownEventMode #siteLogo{
+  opacity:0.45;
+  filter:grayscale(20%);
+}
+
+.app{
+  max-width:1400px;
+  margin:auto;
 .app{
   max-width:1400px;
   margin:auto;
@@ -2770,6 +2789,21 @@ function setCliviaSEO(){
 function showPage(page){
       
       document.body.classList.remove("ownEventMode");  
+      
+      // RESTORE NORMAL CLIVIA DREAMERS HEADER
+const brandName=document.getElementById("siteBrandName");
+const brandTagline=document.getElementById("siteBrandTagline");
+const titleTop=document.getElementById("auctionTitleTop");
+const nextTop=document.getElementById("nextAuctionTop");
+const status=document.getElementById("auctionStatus");
+const logo=document.getElementById("siteLogo");
+
+if(brandName) brandName.textContent="Clivia Dreamers Auction";
+if(brandTagline) brandTagline.textContent="Rare • Exquisite • Timeless";
+if(titleTop) titleTop.textContent="Clivia Dreamers Live Auction";
+if(nextTop) nextTop.textContent="Next Auction: date to be announced";
+if(status) status.textContent="OPEN";
+if(logo) logo.src="new logo.png";
       
     // Lock account sections whenever another page is opened
   if(page!=="register"){
