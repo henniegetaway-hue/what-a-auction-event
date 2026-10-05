@@ -2821,9 +2821,11 @@ function renderOwnEventAuction(){
 
   const firstPhoto =
     photos[0] || "mix%20auction%20lot%20.png";
-   const photo1 = photos[0] || firstPhoto;
-const photo2 = photos[1] || photo1;
-const photo3 = photos[2] || photo1;     
+   const photosToShow = photos.length
+  ? photos.slice(0,3)
+  : [firstPhoto];
+
+const photoColumns = photosToShow.length;    
 
   const card = document.createElement("div");
 
@@ -2832,16 +2834,14 @@ const photo3 = photos[2] || photo1;
   card.innerHTML = `
     <div style="
   display:grid;
-  grid-template-columns:repeat(3,1fr);
+ grid-template-columns:repeat(${photoColumns},1fr);
   height:180px;
   gap:2px;
   margin-bottom:8px;
   overflow:hidden;
   border-radius:8px;
 ">
-  <div style="background:url('${photo1}') center/cover no-repeat;"></div>
-  <div style="background:url('${photo2}') center/cover no-repeat;"></div>
-  <div style="background:url('${photo3}') center/cover no-repeat;"></div>
+ ${photosToShow.map(photo => `<div style="background:url('${photo}') center/cover no-repeat;"></div>`).join("")}
 </div>
 
     <strong>LOT ${lotNumber}</strong>
@@ -8377,9 +8377,13 @@ window.creatorLotPhotoData[lotNumber] = [];
 
   const photoReader = new FileReader();
 
-  photoReader.onload = function(e){
-    window.creatorLotPhotoData[lotNumber].push(e.target.result);
-  };
+ photoReader.onload = function(e){
+  window.creatorLotPhotoData[lotNumber].push(e.target.result);
+
+  if(typeof renderOwnEventAuction === "function"){
+    renderOwnEventAuction();
+  }
+};
 
   photoReader.readAsDataURL(file);
 });      
