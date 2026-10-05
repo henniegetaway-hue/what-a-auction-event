@@ -2826,7 +2826,8 @@ function renderOwnEventAuction(){
   const lotNumber = lot.lotNumber || index + 1;
 
   const photos =
-    window.creatorLotPhotoData?.[lotNumber] || [];
+   const photos =
+  (window.creatorLotPhotoData?.[lotNumber] || []).filter(Boolean);
 
   const firstPhoto =
     photos[0] || "mix%20auction%20lot%20.png";
@@ -8264,7 +8265,7 @@ lot.style.boxSizing = "border-box";
 lot.style.borderRadius = "7px";     
 
     lot.innerHTML = `
-      <div onclick="document.getElementById('lotPhoto${i}').click()"
+     <div onclick="document.getElementById('lotPhoto${i}_1').click()"
      style="
        height:140px;
        border-radius:6px;
@@ -8284,12 +8285,46 @@ font-size:10px;
   + LOAD UP TO 3 PHOTOS HERE
 </div>
 
-<input id="lotPhoto${i}"
+<input id="lotPhoto${i}_1"
        type="file"
        accept="image/*"
-multiple
        style="display:none;"
-       onchange="previewCreatorLotPhoto(this, ${i})">
+       onchange="previewCreatorLotPhoto(this, ${i}, 1)">
+
+<input id="lotPhoto${i}_2"
+       type="file"
+       accept="image/*"
+       style="display:none;"
+       onchange="previewCreatorLotPhoto(this, ${i}, 2)">
+
+<input id="lotPhoto${i}_3"
+       type="file"
+       accept="image/*"
+       style="display:none;"
+       onchange="previewCreatorLotPhoto(this, ${i}, 3)">
+       <div style="
+  display:flex;
+  gap:4px;
+  margin-top:4px;
+">
+  <button type="button"
+          onclick="document.getElementById('lotPhoto${i}_1').click()"
+          style="flex:1;font-size:9px;padding:4px;">
+    PHOTO 1
+  </button>
+
+  <button type="button"
+          onclick="document.getElementById('lotPhoto${i}_2').click()"
+          style="flex:1;font-size:9px;padding:4px;">
+    PHOTO 2
+  </button>
+
+  <button type="button"
+          onclick="document.getElementById('lotPhoto${i}_3').click()"
+          style="flex:1;font-size:9px;padding:4px;">
+    PHOTO 3
+  </button>
+</div>
        <div id="lotPhotoCount${i}"
      style="font-size:10px;text-align:center;opacity:.75;margin-top:2px;">
   Up to 3 photos
@@ -8365,7 +8400,7 @@ multiple
 }   
   updateOwnEventRowsPreview();    
 
- function previewCreatorLotPhoto(input, lotNumber){
+ function previewCreatorLotPhoto(input, lotNumber, photoNumber){
 
   window.creatorLotPhotos = window.creatorLotPhotos || {};
   window.creatorLotPhotoData = window.creatorLotPhotoData || {};
@@ -8380,9 +8415,10 @@ if(input.files.length > 3){
 window.creatorLotPhotos[lotNumber] = Array.from(input.files).slice(0, 3);   
        
 window.creatorLotPhotoData = window.creatorLotPhotoData || {};
-window.creatorLotPhotoData[lotNumber] = [];     
+window.creatorLotPhotoData[lotNumber] =
+  window.creatorLotPhotoData[lotNumber] || [];     
 
-const selectedFiles = Array.from(input.files).slice(0,3);
+const selectedFiles = [input.files[0]];
 
 Promise.all(
   selectedFiles.map(file => {
@@ -8399,7 +8435,7 @@ Promise.all(
   })
 ).then(photoData => {
 
-  window.creatorLotPhotoData[lotNumber] = photoData;
+ window.creatorLotPhotoData[lotNumber][photoNumber - 1] = photoData[0];
 
   sessionStorage.setItem(
     "creatorLotPhotoData",
@@ -8411,7 +8447,8 @@ const reader = new FileReader();
 
   reader.onload = function(e){
 
-    const uploadBox = input.previousElementSibling;
+    const uploadBox =
+  document.getElementById(`lotPhoto${lotNumber}_1`)?.previousElementSibling;
 
     if(!uploadBox) return;
 
@@ -8427,9 +8464,12 @@ const reader = new FileReader();
    const photoCount = document.getElementById("lotPhotoCount" + lotNumber);
 
 if(photoCount){
+  const totalPhotos =
+    (window.creatorLotPhotoData[lotNumber] || []).filter(Boolean).length;
+
   photoCount.textContent =
-    input.files.length + (input.files.length === 1 ? " photo selected" : " photos selected");
-}    
+    totalPhotos + (totalPhotos === 1 ? " photo selected" : " photos selected");
+}
        
   reader.readAsDataURL(input.files[0]);
 }     
