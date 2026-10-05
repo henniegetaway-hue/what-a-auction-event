@@ -52,10 +52,15 @@ body{
 
  /* BRIGHT BACKGROUND FOR CREATE YOUR OWN EVENT AREA */
 body.ownEventMode{
-  background:
-    linear-gradient(rgba(255,255,255,.08),rgba(255,255,255,.08)),
-    url("YOUR-OWN-EVENT-BACKGROUND.png") center center / cover fixed !important;
-}       
+  background-image:
+    linear-gradient(rgba(0,0,0,.15), rgba(0,0,0,.15)),
+    url("YOUR-OWN-EVENT-BACKGROUND.png") !important;
+
+  background-size: cover !important;
+  background-position: center top !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+}   
 
 .app{
   max-width:1400px;
