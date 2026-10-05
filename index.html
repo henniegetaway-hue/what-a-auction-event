@@ -2767,7 +2767,9 @@ if(auctionTagline){
 }
   document.querySelectorAll(".page").forEach(x=>x.classList.add("hidden"));
   document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
-
+      
+renderOwnEventAuction();
+      
   const page = document.getElementById("pageOwnAuction");
   const btn = document.getElementById("navOwnAuction");
 
@@ -2775,7 +2777,84 @@ if(auctionTagline){
   if(btn) btn.classList.add("active");
 }
 
+function renderOwnEventAuction(){
 
+  const display = document.getElementById("ownAuctionDisplay");
+  if(!display) return;
+
+  saveOwnEventLots();
+
+  let lots = [];
+
+  try{
+    lots = JSON.parse(localStorage.getItem("ownEventLots") || "[]");
+  }catch(e){
+    lots = [];
+  }
+
+  const currency =
+    document.getElementById("ownEventCurrency")?.value || "ZAR";
+
+  const symbols = {
+    ZAR:"R",
+    EUR:"€",
+    USD:"$",
+    GBP:"£",
+    AUD:"A$",
+    NZD:"NZ$",
+    CAD:"C$"
+  };
+
+  const symbol = symbols[currency] || currency;
+
+  display.innerHTML = "";
+
+  display.style.display = "grid";
+  display.style.gridTemplateColumns = "repeat(4, minmax(0, 1fr))";
+  display.style.gap = "12px";
+  lots.forEach((lot, index)=>{
+
+  const lotNumber = lot.lotNumber || index + 1;
+
+  const photos =
+    window.creatorLotPhotoData?.[lotNumber] || [];
+
+  const firstPhoto =
+    photos[0] || "mix%20auction%20lot%20.png";
+
+  const card = document.createElement("div");
+
+  card.className = "ownAuctionLotCard";
+
+  card.innerHTML = `
+    <div style="
+      height:180px;
+      background:url('${firstPhoto}') center/cover no-repeat;
+      border-radius:8px;
+      margin-bottom:8px;
+    "></div>
+
+    <strong>LOT ${lotNumber}</strong>
+
+    <h3>${lot.name || "Lot / Item Name"}</h3>
+
+    <div>
+      Starting Bid:
+      <strong>${symbol}${lot.startingBid || "0"}</strong>
+    </div>
+
+    <div>
+      Minimum Increment:
+      <strong>${symbol}${lot.increment || "0"}</strong>
+    </div>
+
+    <p>${lot.description || ""}</p>
+  `;
+
+  display.appendChild(card);
+
+});    
+}
 function showOwnBest10Page(){
  document.body.classList.add("ownEventMode"); 
   setOwnEventHeader();    
@@ -8236,10 +8315,35 @@ multiple
     `;
 
    grid.appendChild(lot);
+     lot.querySelectorAll("input, textarea").forEach(field=>{
+  field.addEventListener("input", saveOwnEventLots);
+});   
   }
 
   updateOwnEventCurrency();
 }
+   function saveOwnEventLots(){
+
+  const grid = document.getElementById("previewLotsGrid");
+  if(!grid) return;
+
+  const lots = [];
+
+  grid.querySelectorAll(".previewSampleLot").forEach((lot, index)=>{
+
+    lots.push({
+      lotNumber: index + 1,
+      name: lot.querySelector(".ownLotName")?.value.trim() || "",
+      startingBid: lot.querySelector(".ownLotStartingBid")?.value || "",
+      increment: lot.querySelector(".ownLotMinimumIncrement")?.value || "",
+      description: lot.querySelector(".ownLotDescription")?.value.trim() || "",
+      link: lot.querySelector(".ownLotLink")?.value.trim() || ""
+    });
+
+  });
+
+  localStorage.setItem("ownEventLots", JSON.stringify(lots));
+}   
   updateOwnEventRowsPreview();    
 
  function previewCreatorLotPhoto(input, lotNumber){
@@ -8256,6 +8360,19 @@ if(input.files.length > 3){
 
 window.creatorLotPhotos[lotNumber] = Array.from(input.files).slice(0, 3);   
        
+window.creatorLotPhotoData = window.creatorLotPhotoData || {};
+window.creatorLotPhotoData[lotNumber] = [];     
+
+ Array.from(input.files).slice(0,3).forEach(file=>{
+
+  const photoReader = new FileReader();
+
+  photoReader.onload = function(e){
+    window.creatorLotPhotoData[lotNumber].push(e.target.result);
+  };
+
+  photoReader.readAsDataURL(file);
+});      
 const reader = new FileReader();
 
   reader.onload = function(e){
