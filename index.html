@@ -77,7 +77,28 @@ body.ownEventMode #siteLogo{
   opacity:0.45;
   filter:grayscale(20%);
 }
+.siteLogoWrap{
+  position:relative;
+  display:inline-block;
+}
 
+.ownEventLogoSample{
+  display:none;
+}
+
+body.ownEventMode .ownEventLogoSample{
+  display:block;
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%) rotate(-12deg);
+  font-size:13px;
+  font-weight:bold;
+  letter-spacing:2px;
+  color:#fff;
+  opacity:.75;
+  pointer-events:none;
+}
 .app{
   max-width:1400px;
   margin:auto;
@@ -679,7 +700,10 @@ th,td{
 <div class="app">
 
 <div class="top">
-  <img id="siteLogo" class="logo" src="new logo.png" alt="Clivia Dreamers logo">
+  <div class="siteLogoWrap">
+  <img id="siteLogo" class="logo" src="new logo.png" alt="Auction logo">
+  <span class="ownEventLogoSample">SAMPLE</span>
+</div>
 
 <div class="brand">
   <h1 id="siteBrandName">Clivia Dreamers Auction</h1>
