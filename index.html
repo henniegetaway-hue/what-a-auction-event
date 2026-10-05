@@ -141,15 +141,6 @@ body.ownEventMode .ownEventLogoSample{
   border-radius:20px;
   font-weight:bold;
 }
-/* ORANGE FRAME AROUND OWN EVENT TABS */
-.ownEventTabGroup{
-  display:flex;
-  gap:4px;
-  border:2px solid #b85c00;
-  border-radius:9px;
-  padding:3px;
-  background:rgba(70,30,0,.22);
-}
 nav{
   display:flex;
   gap:8px;
@@ -265,7 +256,7 @@ button{
   padding:3px;
   background:rgba(90,35,0,.30);
 }
-
+        
 .ownEventTab{
   background:#123f2a !important;
   color:#ffffff !important;
@@ -277,7 +268,13 @@ button{
   white-space:nowrap;
   margin:0 !important;
 }
-
+.ownEventTab.active{
+  background:#7a3600 !important;
+  border-color:#ff8c1a !important;
+  color:#ffffff !important;
+  box-shadow:0 0 8px rgba(255,140,26,.55);
+}
+        
 .ownEventTab:first-child{
   border-radius:11px 0 0 11px !important;
 }
