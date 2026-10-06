@@ -2961,9 +2961,15 @@ try{
   lots = [];
 }
 
-const best10 = lots.slice(0, 10); 
- const leftBest = best10.slice(0, 5);
-const rightBest = best10.slice(5, 10); 
+const best10 = lots
+  .filter(lot =>
+    lot.name ||
+    lot.startingBid ||
+    lot.description
+  )
+  .slice(0, 10); 
+ const leftBest = best10.filter((lot, index) => index % 2 === 0);
+const rightBest = best10.filter((lot, index) => index % 2 === 1);
 function makeBestCard(lot, position){
 
   const lotNumber = lot.lotNumber || position;
@@ -2975,10 +2981,10 @@ function makeBestCard(lot, position){
     photos[0] || "mix%20auction%20lot%20.png";
 
   return `
-    <div class="ownBest10Card">
+    <div class="ownBest10Card" style="
       <div style="
         width:100%;
-        height:140px;
+        height:90px;
         background:url('${photo}') center/cover no-repeat;
         border-radius:8px;
         margin-bottom:6px;
@@ -2990,12 +2996,12 @@ function makeBestCard(lot, position){
   `;
 }  
  left.innerHTML = leftBest
-  .map((lot, index) => makeBestCard(lot, index + 1))
+  .map((lot, index) => makeBestCard(lot, (index * 2) + 1))
   .join("");
 
 right.innerHTML = rightBest
-  .map((lot, index) => makeBestCard(lot, index + 6))
-  .join("");      
+  .map((lot, index) => makeBestCard(lot, (index * 2) + 2))
+  .join("");    
 
 }     
 function setCliviaSEO(){
