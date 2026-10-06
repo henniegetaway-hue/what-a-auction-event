@@ -2797,40 +2797,31 @@ function nextAuctionLotPhoto(viewer){
 
   viewer.style.background =
     `url('${photos[current]}') center/cover no-repeat`;
-}      
-function scrollAuctionLotPhoto(event, viewer){
-
-  event.preventDefault();
-event.stopPropagation();
-
-  const lotNumber = viewer.dataset.lot;
+}   
+function moveAuctionLotPhoto(event, viewer){
 
   const photos =
-    (window.creatorLotPhotoData?.[lotNumber] || []).filter(Boolean);
+    (window.creatorLotPhotoData?.[viewer.dataset.lot] || []).filter(Boolean);
 
   if(photos.length <= 1) return;
 
-  let current = Number(viewer.dataset.photo || 0);
+  const rect = viewer.getBoundingClientRect();
+  const mouseX = event.clientX - rect.left;
 
-  if(event.deltaY > 0){
-    current++;
-  }else{
-    current--;
-  }
+  const sectionWidth = rect.width / photos.length;
 
-  if(current >= photos.length){
-    current = 0;
-  }
+  let photoNumber = Math.floor(mouseX / sectionWidth);
 
-  if(current < 0){
-    current = photos.length - 1;
-  }
+  if(photoNumber < 0) photoNumber = 0;
+  if(photoNumber >= photos.length) photoNumber = photos.length - 1;
 
-  viewer.dataset.photo = current;
+  if(Number(viewer.dataset.photo) === photoNumber) return;
+
+  viewer.dataset.photo = photoNumber;
 
   viewer.style.background =
-    `url('${photos[current]}') center/cover no-repeat`;
-}
+    `url('${photos[photoNumber]}') center/cover no-repeat`;
+}      
 function renderOwnEventAuction(){
 
   const display = document.getElementById("ownAuctionDisplay");
@@ -2890,6 +2881,7 @@ card.style.minWidth = "0";
      data-lot="${lotNumber}"
      data-photo="0"
      onclick="nextAuctionLotPhoto(this)"
+     onmousemove="moveAuctionLotPhoto(event, this)"
      style="
        height:180px;
        width:100%;
@@ -2919,13 +2911,6 @@ box-sizing:border-box;
 
     <p>${lot.description || ""}</p>
   `;
-const photoViewer = card.querySelector(".auctionPhotoViewer");
-
-if(photoViewer){
-  photoViewer.addEventListener("wheel", function(event){
-    scrollAuctionLotPhoto(event, photoViewer);
-  }, { passive:false });
-}
   display.appendChild(card);
 
 });    
