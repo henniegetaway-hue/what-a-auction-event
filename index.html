@@ -695,6 +695,15 @@ th,td{
 }
 </style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
+ <script>
+  const SUPABASE_URL = "https://ruxczyuohyegyubvtttr.supabase.co";
+  const SUPABASE_PUBLISHABLE_KEY = "YOUR_FULL_PUBLISHABLE_KEY_HERE";
+
+  const auctionSupabase = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
+</script>     
       
 </head>
 
@@ -8026,7 +8035,7 @@ function markExpiredOwnEvents(){
   }
 }      
  markExpiredOwnEvents();     
-function startOwnEventCreation(){
+async function startOwnEventCreation(){
    const creatorWhatsApp =
     document.getElementById("ownEventCreatorWhatsApp")?.value.trim();
 
@@ -8093,7 +8102,70 @@ if(creatorPassword.length < 6){
 if(creatorPassword !== creatorPasswordConfirm){
   alert("The passwords do not match. Please check them.");
   return;
-}     
+}  
+ let creatorAuth;
+
+const { data: existingSessionData } =
+  await auctionSupabase.auth.getSession();
+
+if(existingSessionData.session){
+
+  creatorAuth = {
+    user: existingSessionData.session.user,
+    session: existingSessionData.session
+  };
+
+} else {
+
+  const { data: signInData, error: signInError } =
+    await auctionSupabase.auth.signInWithPassword({
+      email: creatorEmail,
+      password: creatorPassword
+    });
+
+  if(!signInError && signInData.session){
+
+    creatorAuth = signInData;
+
+  } else {
+
+    const { data: signUpData, error: signUpError } =
+      await auctionSupabase.auth.signUp({
+        email: creatorEmail,
+        password: creatorPassword,
+        options: {
+          data: {
+            whatsapp: creatorWhatsApp,
+            account_type: "AUCTION_CREATOR"
+          }
+        }
+      });
+
+    if(signUpError){
+      alert(
+        "CREATOR ACCOUNT ERROR\n\n" +
+        signUpError.message
+      );
+      return;
+    }
+
+    if(!signUpData.user){
+      alert("Creator account could not be created.");
+      return;
+    }
+
+    if(!signUpData.session){
+      alert(
+        "CREATOR ACCOUNT CREATED\n\n" +
+        "Please check your email and confirm your email address.\n\n" +
+        "After confirming your email, return here and use the same email and password."
+      );
+      return;
+    }
+
+    creatorAuth = signUpData;
+  }
+}
  if(!eventName){
   alert("Please enter your Event / Auction Name.");
   return;
@@ -8301,7 +8373,8 @@ eventDeletionDate.setMonth(
 const newEvent = {
   id: "EVENT-" + Date.now(),
 
-  creator: {
+   creator: {
+    userId: creatorAuth.user.id,
     whatsapp: creatorWhatsApp,
     email: creatorEmail
   },
@@ -8329,13 +8402,28 @@ retentionExpired: false,
    backgroundColor: document.getElementById("ownEventBgColor")?.value || "#000000",
 textColor: document.getElementById("ownEventTextColor")?.value || "#ffffff",
 accentColor: document.getElementById("ownEventAccentColor")?.value || "#9acd32", 
- logo: document.getElementById("previewOwnEventLogo")?.src || "",      
+ logo: document.getElementById("previewEventLogo")?.src || "",      
   rows: Number(rows),
   lots: lots,     
   aiDescription: aiDescription ? aiDescription.value : "",
   aiKeywords: aiKeywords ? aiKeywords.value : ""
 };
+const { error: eventSaveError } =
+  await auctionSupabase
+    .from("auction_events")
+    .insert({
+      creator_id: creatorAuth.user.id,
+      platform: "WHAT_A_AUCTION_EVENT",
+      event_data: newEvent
+    });
 
+if(eventSaveError){
+  alert(
+    "AUCTION SAVE ERROR\n\n" +
+    eventSaveError.message
+  );
+  return;
+}
 window.createdOwnEvents.push(newEvent); 
       
   localStorage.setItem(
