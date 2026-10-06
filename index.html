@@ -694,6 +694,8 @@ th,td{
   font-size:10px;
 }
 </style>
+ <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
+      
 </head>
 
 <body id="siteBody">
@@ -758,6 +760,45 @@ th,td{
     with your own event name, logo and text.
   </p>
 
+  <div style="
+  border:1px solid #9acd32;
+  border-radius:8px;
+  padding:12px;
+  margin-bottom:15px;
+">
+
+  <h3 style="margin-top:0;">CREATOR ACCESS</h3>
+
+  <label>WhatsApp Number *</label>
+  <input id="ownEventCreatorWhatsApp"
+         placeholder="e.g. +27 82 123 4567">
+
+  <label>Email Address *</label>
+  <input id="ownEventCreatorEmail"
+         type="email"
+         placeholder="Used for creator access and recovery">
+
+  <label>Password *</label>
+  <input id="ownEventCreatorPassword"
+         type="password"
+         autocomplete="new-password">
+
+ <label>Confirm Password *</label>
+<input id="ownEventCreatorPasswordConfirm"
+       type="password"
+       autocomplete="new-password">
+
+<label style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+  <input type="checkbox"
+         style="width:auto;"
+         onchange="
+           document.getElementById('ownEventCreatorPassword').type=this.checked?'text':'password';
+           document.getElementById('ownEventCreatorPasswordConfirm').type=this.checked?'text':'password';
+         ">
+  Show password
+</label>
+
+</div>
   <label>Event / Auction Name *</label>
 <input id="ownEventName"
        placeholder="e.g. Collectors Dreams Auction"
@@ -7986,6 +8027,17 @@ function markExpiredOwnEvents(){
 }      
  markExpiredOwnEvents();     
 function startOwnEventCreation(){
+   const creatorWhatsApp =
+    document.getElementById("ownEventCreatorWhatsApp")?.value.trim();
+
+  const creatorEmail =
+    document.getElementById("ownEventCreatorEmail")?.value.trim();
+
+  const creatorPassword =
+    document.getElementById("ownEventCreatorPassword")?.value;
+
+  const creatorPasswordConfirm =
+    document.getElementById("ownEventCreatorPasswordConfirm")?.value;     
 
   const eventName =
     document.getElementById("ownEventName")?.value.trim();
@@ -8018,6 +8070,30 @@ const rows =
 
 const aiKeywords =
   document.getElementById("ownEventAIKeywords");    
+ if(!creatorWhatsApp){
+  alert("Please enter your WhatsApp Number.");
+  return;
+}
+
+if(!creatorEmail){
+  alert("Please enter your Email Address.");
+  return;
+}
+
+if(!creatorPassword){
+  alert("Please create a Password.");
+  return;
+}
+
+if(creatorPassword.length < 6){
+  alert("Your password must be at least 6 characters.");
+  return;
+}
+
+if(creatorPassword !== creatorPasswordConfirm){
+  alert("The passwords do not match. Please check them.");
+  return;
+}     
  if(!eventName){
   alert("Please enter your Event / Auction Name.");
   return;
@@ -8222,8 +8298,14 @@ const eventDeletionDate =
 eventDeletionDate.setMonth(
   eventDeletionDate.getMonth() + 3
 );     
- const newEvent = {
-  id: "EVENT-" + Date.now(),  
+const newEvent = {
+  id: "EVENT-" + Date.now(),
+
+  creator: {
+    whatsapp: creatorWhatsApp,
+    email: creatorEmail
+  },
+
   auctionDate: eventDate,
 startTime: eventStartTime,
 closeTime: eventCloseTime,
