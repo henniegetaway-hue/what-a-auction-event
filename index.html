@@ -2776,7 +2776,60 @@ renderOwnEventAuction();
   if(page) page.classList.remove("hidden");
   if(btn) btn.classList.add("active");
 }
+function nextAuctionLotPhoto(viewer){
 
+  const lotNumber = viewer.dataset.lot;
+
+  const photos =
+    (window.creatorLotPhotoData?.[lotNumber] || []).filter(Boolean);
+
+  if(photos.length <= 1) return;
+
+  let current = Number(viewer.dataset.photo || 0);
+
+  current++;
+
+  if(current >= photos.length){
+    current = 0;
+  }
+
+  viewer.dataset.photo = current;
+
+  viewer.style.background =
+    `url('${photos[current]}') center/cover no-repeat`;
+}      
+function scrollAuctionLotPhoto(event, viewer){
+
+  event.preventDefault();
+
+  const lotNumber = viewer.dataset.lot;
+
+  const photos =
+    (window.creatorLotPhotoData?.[lotNumber] || []).filter(Boolean);
+
+  if(photos.length <= 1) return;
+
+  let current = Number(viewer.dataset.photo || 0);
+
+  if(event.deltaY > 0){
+    current++;
+  }else{
+    current--;
+  }
+
+  if(current >= photos.length){
+    current = 0;
+  }
+
+  if(current < 0){
+    current = photos.length - 1;
+  }
+
+  viewer.dataset.photo = current;
+
+  viewer.style.background =
+    `url('${photos[current]}') center/cover no-repeat`;
+}
 function renderOwnEventAuction(){
 
   const display = document.getElementById("ownAuctionDisplay");
@@ -2841,7 +2894,20 @@ const photoColumns = photosToShow.length;
   overflow:hidden;
   border-radius:8px;
 ">
- ${photosToShow.map(photo => `<div style="background:url('${photo}') center/cover no-repeat;"></div>`).join("")}
+ <div class="auctionPhotoViewer"
+     data-lot="${lotNumber}"
+     data-photo="0"
+     onclick="nextAuctionLotPhoto(this)"
+     onwheel="scrollAuctionLotPhoto(event, this)"
+     style="
+       height:180px;
+       margin-bottom:8px;
+       overflow:hidden;
+       border-radius:8px;
+       cursor:pointer;
+       background:url('${photosToShow[0]}') center/cover no-repeat;
+     ">
+</div>
 </div>
 
     <strong>LOT ${lotNumber}</strong>
