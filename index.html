@@ -2984,48 +2984,7 @@ const best10 = lots
     }
   );
 }     
- const leftBest = best10.filter((lot, index) => index % 2 === 0);
-const rightBest = best10.filter((lot, index) => index % 2 === 1);
-function makeBestCard(lot, position){
-
-  const lotNumber = lot.lotNumber || position;
-
-  const photos =
-    (window.creatorLotPhotoData?.[lotNumber] || []).filter(Boolean);
-
-  const photo =
-    photos[0] || "mix%20auction%20lot%20.png";
-
-  const finalPrice =
-    lot.finalPrice ||
-    lot.currentBid ||
-    lot.startingBid ||
-    "0";
-
-  const currency =
-    document.getElementById("ownEventCurrency")?.value || "ZAR";
-
-  const symbols = {
-    ZAR:"R",
-    EUR:"€",
-    USD:"$",
-    GBP:"£",
-    AUD:"A$",
-    NZD:"NZ$",
-    CAD:"C$"
-  };
-
-  const symbol = symbols[currency] || "";
-
-  return `
-    <div class="ownBest10Card"
-         id="bestCard${position}"
-         style="
-           background:#07130c;
-           border:2px solid #9acd32;
-           border-radius:12px;
-           overflow:hidden;
-           margin-bottom:15px;
+photos[0] || "BEST-AUCTION-SAMPLE.jpg";
          ">
 
       <div style="
