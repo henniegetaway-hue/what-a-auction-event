@@ -2890,7 +2890,6 @@ card.style.minWidth = "0";
      data-lot="${lotNumber}"
      data-photo="0"
      onclick="nextAuctionLotPhoto(this)"
-     onwheel="scrollAuctionLotPhoto(event, this)"
      style="
        height:180px;
        width:100%;
@@ -2920,7 +2919,13 @@ box-sizing:border-box;
 
     <p>${lot.description || ""}</p>
   `;
+const photoViewer = card.querySelector(".auctionPhotoViewer");
 
+if(photoViewer){
+  photoViewer.addEventListener("wheel", function(event){
+    scrollAuctionLotPhoto(event, photoViewer);
+  }, { passive:false });
+}
   display.appendChild(card);
 
 });    
