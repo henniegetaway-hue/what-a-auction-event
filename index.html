@@ -1180,6 +1180,7 @@ justify-content:center;
   padding:15px;
   text-align:center;
 ">
+   <div id="ownBest10SEO" style="   
 </div>
   </div>
 
@@ -2950,7 +2951,45 @@ function showOwnBest10Page(){
 
   const left = document.getElementById("ownBest10Left");
   const right = document.getElementById("ownBest10Right");
+   const seoBox = document.getElementById("ownBest10SEO");
 
+const eventName =
+  localStorage.getItem("ownEventName") ||
+  "What A Auction Event";
+
+const eventType =
+  document.getElementById("ownEventType")?.value.trim() ||
+  localStorage.getItem("ownEventType") ||
+  "online auction";   
+  if(seoBox){
+  seoBox.innerHTML = `
+    <h3>${eventName} — Every Auction Leaves a Story Behind</h3>
+
+    <p>
+      Discover the standout results from ${eventName}.
+      This ${eventType} showcase preserves the lots that attracted
+      attention, inspired competitive bidding and achieved memorable results.
+    </p>
+
+    <p>
+      As the auction develops, qualifying completed lots can earn their
+      place among the BEST 10 and become part of the event's lasting history.
+    </p>
+  `;
+}     
+const seoDescription = document.getElementById("seoDescription");
+const seoKeywords = document.getElementById("seoKeywords");
+
+if(seoDescription){
+  seoDescription.content =
+    `${eventName} BEST 10 — standout completed results from this ${eventType} auction, presented through What A Auction Event.`;
+}
+
+if(seoKeywords){
+  seoKeywords.content =
+    `${eventName}, ${eventType}, ${eventType} auction, online ${eventType}, auction results, best auction lots, completed auction results, highest selling auction items, create your own auction, online auction event, What A Auction Event`;
+}
+       
   if(!left || !right) return;
 
   left.innerHTML = "";
@@ -3064,11 +3103,6 @@ background-color:#020a05;
             font-size:22px;
 opacity:.65;
 transform:rotate(-18deg);
-border:3px solid #fff;
-padding:6px 18px;
-border-radius:6px;
-width:max-content;
-height:auto;
             font-weight:bold;
             letter-spacing:5px;
             color:#fff;
@@ -8240,11 +8274,16 @@ window.createdOwnEvents.push(newEvent);
 function updateOwnEventPreview(){
 
   const name = document.getElementById("ownEventName")?.value.trim();
+  const eventType =
+  document.getElementById("ownEventType")?.value.trim();    
   const tagline = document.getElementById("ownEventTagline")?.value.trim();
     const description = document.getElementById("ownEventDescription")?.value.trim();  
       
     if(name){
   localStorage.setItem("ownEventName", name);
+    if(eventType){
+  localStorage.setItem("ownEventType", eventType);
+}      
 }
 localStorage.setItem("ownEventTagline", tagline || "");
 localStorage.setItem("ownEventDescription", description || "");  
