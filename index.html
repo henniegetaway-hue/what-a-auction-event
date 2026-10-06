@@ -8429,7 +8429,15 @@ Promise.all(
     "creatorLotPhotoData",
     JSON.stringify(window.creatorLotPhotoData)
   );
+const photoCount = document.getElementById("lotPhotoCount" + lotNumber);
 
+if(photoCount){
+  const totalPhotos =
+    (window.creatorLotPhotoData[lotNumber] || []).filter(Boolean).length;
+
+  photoCount.textContent =
+    totalPhotos + (totalPhotos === 1 ? " photo selected" : " photos selected");
+}
 });
 const reader = new FileReader();
 
@@ -8450,14 +8458,6 @@ const reader = new FileReader();
 
   input.dataset.photoCount = input.files.length;   
    const photoCount = document.getElementById("lotPhotoCount" + lotNumber);
-
-if(photoCount){
-  const totalPhotos =
-    (window.creatorLotPhotoData[lotNumber] || []).filter(Boolean).length;
-
-  photoCount.textContent =
-    totalPhotos + (totalPhotos === 1 ? " photo selected" : " photos selected");
-}
        
   reader.readAsDataURL(input.files[0]);
 }     
