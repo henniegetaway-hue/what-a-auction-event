@@ -777,6 +777,16 @@ th,td{
 ">
 
   <h3 style="margin-top:0;">CREATOR ACCESS</h3>
+        <button type="button"
+        onclick="signOutAuctionCreator()"
+        style="
+          float:right;
+          margin-top:-42px;
+          padding:6px 12px;
+          cursor:pointer;
+        ">
+  SIGN OUT
+</button>
 
   <label>WhatsApp Number *</label>
   <input id="ownEventCreatorWhatsApp"
@@ -2793,10 +2803,25 @@ if(siteLogo){
   if(nextTop) nextTop.textContent="Build and test your event before going live";
   if(status) status.textContent="CREATE";
 }
- function showOwnEventPage(){
+async function showOwnEventPage(){
   setOwnEventSEO();
   document.body.classList.add("ownEventMode");
-   setOwnEventHeader();    
+   setOwnEventHeader();
+   const { data: sessionData } =
+  await auctionSupabase.auth.getSession();
+
+if(sessionData.session?.user){
+
+  const emailInput =
+    document.getElementById("ownEventCreatorEmail");
+
+  if(emailInput){
+    emailInput.value =
+      sessionData.session.user.email || "";
+
+    emailInput.readOnly = true;
+  }
+}   
 
   document.querySelectorAll(".page").forEach(x=>x.classList.add("hidden"));
   document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
@@ -8035,6 +8060,36 @@ function markExpiredOwnEvents(){
   }
 }      
  markExpiredOwnEvents();     
+ async function signOutAuctionCreator(){
+
+  const { error } = await auctionSupabase.auth.signOut();
+
+  if(error){
+    alert(
+      "SIGN OUT ERROR\n\n" +
+      error.message
+    );
+    return;
+  }
+
+  const email =
+    document.getElementById("ownEventCreatorEmail");
+
+  const password =
+    document.getElementById("ownEventCreatorPassword");
+
+  const confirmPassword =
+    document.getElementById("ownEventCreatorPasswordConfirm");
+
+  if(email){
+  email.value = "";
+  email.readOnly = false;
+}
+  if(password) password.value = "";
+  if(confirmPassword) confirmPassword.value = "";
+
+  alert("Creator account signed out successfully.");
+}     
 async function startOwnEventCreation(){
    const creatorWhatsApp =
     document.getElementById("ownEventCreatorWhatsApp")?.value.trim();
@@ -8109,6 +8164,18 @@ const { data: existingSessionData } =
   await auctionSupabase.auth.getSession();
 
 if(existingSessionData.session){
+   if(
+    existingSessionData.session.user.email &&
+    existingSessionData.session.user.email.toLowerCase() !== creatorEmail.toLowerCase()
+  ){
+    alert(
+      "CREATOR ACCOUNT MISMATCH\n\n" +
+      "This browser is already signed in as:\n" +
+      existingSessionData.session.user.email +
+      "\n\nPlease use that email address or sign out first."
+    );
+    return;
+  }     
 
   creatorAuth = {
     user: existingSessionData.session.user,
