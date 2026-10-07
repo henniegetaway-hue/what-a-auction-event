@@ -9082,7 +9082,65 @@ async function openOwner(){
   if(ownerLoginMsg){
     ownerLoginMsg.textContent = "";
   }
-}      
+}    
+ async function openAdmin(){
+
+  const adminLogin =
+    document.getElementById("adminLogin");
+
+  const adminArea =
+    document.getElementById("adminArea");
+
+  const adminLoginMsg =
+    document.getElementById("adminLoginMsg");
+
+  const { data: sessionData, error: sessionError } =
+    await auctionSupabase.auth.getSession();
+
+  if(sessionError || !sessionData.session){
+    if(adminLoginMsg){
+      adminLoginMsg.textContent =
+        "Please sign in with your authorised Owner account first.";
+    }
+    return;
+  }
+
+  const user = sessionData.session.user;
+
+  const { data: roleData, error: roleError } =
+    await auctionSupabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+  if(roleError){
+    if(adminLoginMsg){
+      adminLoginMsg.textContent =
+        "Admin access could not be verified.";
+    }
+    return;
+  }
+
+  if(!roleData || roleData.role !== "OWNER"){
+    if(adminLoginMsg){
+      adminLoginMsg.textContent =
+        "ACCESS DENIED — Owner authorisation required.";
+    }
+    return;
+  }
+
+  adminLogin.classList.add("hidden");
+  adminArea.classList.remove("hidden");
+
+  if(typeof renderAdminLots === "function"){
+    renderAdminLots();
+  }
+
+  if(typeof renderSiteErrorLog === "function"){
+    renderSiteErrorLog();
+  }
+}     
 function createAuction(){
 
   const date = document.getElementById("newAuctionDate")?.value || "";
