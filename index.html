@@ -1790,17 +1790,6 @@ justify-content:center;
   <div id="ownerLogin" class="panel" style="max-width:430px;margin:12px auto;">
   <h2>Owner Access</h2>
   <p>Clivia Dreamers Owner Only</p>
-
-  <input id="ownerPassword" type="password" placeholder="Owner Password">
-
-  <label style="display:flex;align-items:center;gap:8px;margin-top:8px;">
-    <input type="checkbox"
-      onchange="document.getElementById('ownerPassword').type=this.checked?'text':'password';"
-      style="width:auto;">
-    Show password
-  </label>
-
-  <br>
   <button class="goldBtn" onclick="openOwner()">OPEN OWNER</button>
 
   <div id="ownerLoginMsg" class="small" style="margin-top:8px"></div>
@@ -9042,6 +9031,60 @@ function previewOwnEventLogo(input){
 
   reader.readAsDataURL(input.files[0]);
 }
+async function openOwner(){
+
+  const ownerLoginMsg =
+    document.getElementById("ownerLoginMsg");
+
+  const { data: sessionData, error: sessionError } =
+    await auctionSupabase.auth.getSession();
+
+  if(sessionError || !sessionData.session){
+    if(ownerLoginMsg){
+      ownerLoginMsg.textContent =
+        "Please sign in with your authorised Owner account first.";
+    }
+    return;
+  }
+
+  const user = sessionData.session.user;
+
+  const { data: roleData, error: roleError } =
+    await auctionSupabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+  if(roleError){
+    if(ownerLoginMsg){
+      ownerLoginMsg.textContent =
+        "Owner access could not be verified.";
+    }
+    return;
+  }
+
+  if(!roleData || roleData.role !== "OWNER"){
+    if(ownerLoginMsg){
+      ownerLoginMsg.textContent =
+        "ACCESS DENIED — This account is not authorised as Owner.";
+    }
+    return;
+  }
+
+  const ownerLogin =
+    document.getElementById("ownerLogin");
+
+  const ownerArea =
+    document.getElementById("ownerArea");
+
+  if(ownerLogin) ownerLogin.classList.add("hidden");
+  if(ownerArea) ownerArea.classList.remove("hidden");
+
+  if(ownerLoginMsg){
+    ownerLoginMsg.textContent = "";
+  }
+}      
 function openAdmin(){
   const passwordInput = document.getElementById("adminPassword");
   const adminLogin = document.getElementById("adminLogin");
