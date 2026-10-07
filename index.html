@@ -6552,23 +6552,39 @@ function scrollAuctionRow(button,direction){
     behavior:"smooth"
   });
 }
-      function shareLotWhatsApp(id){
+    function shareLotWhatsApp(id){
   const lot=(state.lots||[]).find(l=>l.id===id);
   if(!lot) return;
 
   const auction=(state.auctions||[]).find(a=>a.id===lot.auctionId);
   const symbol=auction && auction.currency==="EUR" ? "€" : "R";
   const price=currentBid(lot);
-const seller=(state.sellers||[]).find(s=>s.id===lot.sellerId);
-  const text="🌸 Clivia Dreamers Auction 🌸"+
-  "\n"+lot.name+
- "\nCurrent bid: "+symbol+price+
-    (seller ? "\n🏆 "+Number(seller.completedSales||0)+" Completed Sales | 💰 R"+Number(seller.totalSalesValue||0).toLocaleString()+" Total Sales | 🙂 "+Math.min(Number(seller.happyBuyers||0),Number(seller.completedSales||0))+" Happy Buyers" : "")+
-  (seller && Number(seller.completedSales||0)>=5 ? "\n✅ Trusted Seller" : "")+
-    "\nView this plant and place your bid here:"+
-  "\n"+window.location.origin+window.location.pathname+"#lot-"+encodeURIComponent(id);
 
-  window.open("https://wa.me/?text="+encodeURIComponent(text),"_blank");
+  const lotUrl =
+    window.location.origin +
+    window.location.pathname +
+    "#lot-" +
+    encodeURIComponent(id);
+
+  const shareUrl =
+    "https://ruxczyuohyegyubvtttr.supabase.co/functions/v1/lot-share" +
+    "?title=" + encodeURIComponent(lot.name || "Auction Lot") +
+    "&image=" + encodeURIComponent(lot.flower || "") +
+    "&description=" + encodeURIComponent(
+      "Current bid: " + symbol + price
+    ) +
+    "&url=" + encodeURIComponent(lotUrl);
+
+  const text =
+    "🌸 " + (lot.name || "Auction Lot") +
+    "\nCurrent bid: " + symbol + price +
+    "\nView this lot and place your bid:" +
+    "\n" + shareUrl;
+
+  window.open(
+    "https://wa.me/?text=" + encodeURIComponent(text),
+    "_blank"
+  );
 }
  function shareLotFacebook(id){
   const lot=(state.lots||[]).find(l=>l.id===id);
