@@ -732,8 +732,7 @@ th,td{
 <nav>
   <button id="navRegister" onclick="showPage('register')">Register</button>
   <button id="navLive" onclick="showPage('live')">Live Auction</button>
-  <button id="navAdmin" onclick="showPage('admin')">Admin</button>
-   <button id="navOwner" onclick="showPage('owner')">Owner</button>   
+  <button id="navAdmin" onclick="showPage('admin')">Admin</button> 
   <button id="navInvoices" onclick="showPage('invoices')">Invoices</button>
  <button id="navRules" onclick="showPage('rules')">Rules & Terms</button>
 <div class="ownEventTabGroup">
@@ -1775,20 +1774,15 @@ justify-content:center;
 </section>
 
 <section id="pageAdmin" class="page hidden">
-  <div id="adminLogin" class="panel" style="max-width:430px;margin:0 auto 16px;">
-    <h2>Admin Access</h2>
-    <input id="adminPassword" type="password" placeholder="Password">
-    <label style="display:flex;align-items:center;gap:8px;margin-top:8px;">
-  <input type="checkbox"
-    onchange="document.getElementById('adminPassword').type=this.checked?'text':'password';"
-    style="width:auto;">
-  Show password
-</label>
-    <br><br>
-    <button class="goldBtn" onclick="openAdmin()">OPEN ADMIN</button>
-    <div id="adminLoginMsg" class="small" style="margin-top:8px"></div>
-    </div>
-    <section id="pageOwner" class="page hidden">  
+ <div id="adminLogin" class="panel" style="max-width:430px;margin:0 auto 16px;">
+  <h2>Admin Access</h2>
+  <p>Authorised Owner Account Only</p>
+
+  <button class="goldBtn" onclick="openAdmin()">OPEN ADMIN</button>
+
+  <div id="adminLoginMsg" class="small" style="margin-top:8px"></div>
+</div>
+    <section id="pageOwner"> 
   <div id="ownerLogin" class="panel" style="max-width:430px;margin:12px auto;">
   <h2>Owner Access</h2>
   <p>Clivia Dreamers Owner Only</p>
@@ -9087,39 +9081,6 @@ async function openOwner(){
 
   if(ownerLoginMsg){
     ownerLoginMsg.textContent = "";
-  }
-}      
-function openAdmin(){
-  const passwordInput = document.getElementById("adminPassword");
-  const adminLogin = document.getElementById("adminLogin");
-  const adminArea = document.getElementById("adminArea");
-
-  if(!passwordInput || !adminLogin || !adminArea){
-    alert("Admin section could not be opened.");
-    return;
-  }
-
-  const password = passwordInput.value.trim();
-
-  if(!password){
-    alert("Please enter the Admin password.");
-    return;
-  }
-
-  /*
-    Existing admin password verification
-    will be connected here.
-    For now this restores access to the
-    Admin control panel.
-  */
-
-  adminLogin.classList.add("hidden");
-  adminArea.classList.remove("hidden");
-
-  renderAdminLots();
-
-  if(typeof renderSiteErrorLog === "function"){
-    renderSiteErrorLog();
   }
 }      
 function createAuction(){
