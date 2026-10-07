@@ -22,6 +22,9 @@
       content="Create your own online auction event or join live auctions for plants, livestock, vehicles, machinery, collectables and more.">
 
 <meta property="og:type" content="website">
+ <meta id="seoOgImage"
+      property="og:image"
+      content="https://henniegetaway-hue.github.io/what-a-auction-event/new%20logo.png">     
 
 <meta property="og:url"
       content="https://henniegetaway-hue.github.io/what-a-auction-event/">
@@ -4445,6 +4448,16 @@ if(!seller){
   if(msg) msg.innerHTML = "<b>Please open your registered seller account first.</b>";
   return;
 }
+ const { data: sellerSessionData } =
+  await auctionSupabase.auth.getSession();
+
+if(!sellerSessionData.session){
+  if(msg){
+    msg.innerHTML =
+      "<b>Please sign in before publishing a plant.</b>";
+  }
+  return;
+}      
 
 if(!selectedAuction){
   if(msg) msg.innerHTML = "<b>Please select a valid auction.</b>";
@@ -4558,7 +4571,25 @@ if(typeof getStartRowSpacesLeft === "function"){
     if(msg) msg.innerHTML = "<b>Please accept the Rules & Terms.</b>";
     return;
   }
-   const flower = await fileToDataURL(photo1);
+   const photoPath = "lots/" + Date.now() + "-" + photo1.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+
+const { error: photoUploadError } =
+  await auctionSupabase.storage
+    .from("lot-photos")
+    .upload(photoPath, photo1);
+
+if(photoUploadError){
+  if(msg) msg.innerHTML =
+    "<b>Main Photo could not be uploaded:</b> " + photoUploadError.message;
+  return;
+}
+
+const { data: photoPublicData } =
+  auctionSupabase.storage
+    .from("lot-photos")
+    .getPublicUrl(photoPath);
+
+const flower = photoPublicData.publicUrl;
 const plant = photo2 ? await fileToDataURL(photo2) : "";    
 
  const exportEligible = seller.exporterApproved === true;
