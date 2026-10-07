@@ -703,12 +703,58 @@ th,td{
     SUPABASE_URL,
     SUPABASE_PUBLISHABLE_KEY
   );
+   auctionSupabase.auth.onAuthStateChange((event, session) => {
+
+  if(event === "PASSWORD_RECOVERY"){
+
+    setTimeout(() => {
+      const box =
+        document.getElementById("passwordRecoveryBox");
+
+      if(box){
+        box.classList.remove("hidden");
+        box.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+      }
+    }, 100);
+  }
+
+});    
 </script>     
       
 </head>
 
 <body id="siteBody">
 <div class="app">
+ <div id="passwordRecoveryBox"
+     class="panel hidden"
+     style="max-width:430px;margin:20px auto;">
+
+  <h2>Set New Password</h2>
+
+  <input id="newRecoveryPassword"
+         type="password"
+         placeholder="Enter New Password">
+
+  <input id="confirmRecoveryPassword"
+         type="password"
+         placeholder="Confirm New Password"
+         style="margin-top:10px;">
+
+  <br><br>
+
+  <button class="goldBtn"
+          onclick="saveNewRecoveryPassword()">
+    SAVE NEW PASSWORD
+  </button>
+
+  <div id="passwordRecoveryMsg"
+       class="small"
+       style="margin-top:10px;"></div>
+
+</div>     
 
 <div class="top">
 <div class="siteLogoWrap">
@@ -9052,6 +9098,54 @@ function previewOwnEventLogo(input){
 
   reader.readAsDataURL(input.files[0]);
 }
+ async function saveNewRecoveryPassword(){
+
+  const password =
+    document.getElementById("newRecoveryPassword")?.value || "";
+
+  const confirmPassword =
+    document.getElementById("confirmRecoveryPassword")?.value || "";
+
+  const msg =
+    document.getElementById("passwordRecoveryMsg");
+
+  if(password.length < 6){
+    if(msg){
+      msg.textContent =
+        "Password must contain at least 6 characters.";
+    }
+    return;
+  }
+
+  if(password !== confirmPassword){
+    if(msg){
+      msg.textContent =
+        "Passwords do not match.";
+    }
+    return;
+  }
+
+  const { error } =
+    await auctionSupabase.auth.updateUser({
+      password: password
+    });
+
+  if(error){
+    if(msg){
+      msg.textContent =
+        "Password could not be changed: " + error.message;
+    }
+    return;
+  }
+
+  document.getElementById("newRecoveryPassword").value = "";
+  document.getElementById("confirmRecoveryPassword").value = "";
+
+  if(msg){
+    msg.textContent =
+      "Password changed successfully.";
+  }
+}     
 async function openOwner(){
    const passwordInput =
     document.getElementById("ownerAccessPassword");
