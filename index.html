@@ -4489,13 +4489,6 @@ if(unpaidSellerInvoice){
   }
   return;
 } 
-  if(!seller.bankConfirmed){
-  if(msg){
-    msg.innerHTML =
-      "<b>Your bank account must be confirmed before you can publish a plant.</b>";
-  }
-  return;
-}     
 
   if(!auction){
     if(msg) msg.innerHTML = "<b>Please select an auction.</b>";
@@ -9510,34 +9503,20 @@ function createAuction(){
     document.getElementById("newAuctionFirstBid")?.value || 0
   );
 
-  if(!date){
-    alert("Please select an auction date.");
-    return;
-  }
-
-  if(!startTime){
-    alert("Please select an auction start time.");
-    return;
-  }
-
-  if(!closeTime){
-    alert("Please select an auction closing time.");
-    return;
-  }
-
   if(!name){
     alert("Please enter an auction name.");
     return;
   }
 
-  /* CHECK MAXIMUM 4 MONTH DATE */
+ /* DATE IS SET LATER WHEN AUCTION REACHES 80% FULL */
+if(date){
   const selectedDate = new Date(date + "T00:00:00");
 
   const today = new Date();
   today.setHours(0,0,0,0);
 
   const maxDate = new Date(today);
-  maxDate.setMonth(maxDate.getMonth() + 4);
+  maxDate.setDate(maxDate.getDate() + 7);
 
   if(selectedDate < today){
     alert("Auction date cannot be in the past.");
@@ -9545,15 +9524,19 @@ function createAuction(){
   }
 
   if(selectedDate > maxDate){
-    alert("Auction date may not be more than 4 months in advance.");
+    alert("Once an auction date is set, it must be within the next 7 days.");
     return;
   }
+}
 
- /* AUTOMATIC DELETION DATE — 3 MONTHS AFTER AUCTION CLOSES */
-const auctionCloseDateTime = new Date(date + "T" + closeTime);
-const deletionDate = new Date(auctionCloseDateTime);
-deletionDate.setMonth(deletionDate.getMonth() + 3);
+/* AUTOMATIC DELETION DATE — SET ONCE AUCTION DATE IS CONFIRMED */
+let deletionDate = null;
 
+if(date && closeTime){
+  const auctionCloseDateTime = new Date(date + "T" + closeTime);
+  deletionDate = new Date(auctionCloseDateTime);
+  deletionDate.setMonth(deletionDate.getMonth() + 3);
+}
   const auction = {
     id: "AUC-" + Date.now(),
     name: name,
@@ -9561,9 +9544,9 @@ deletionDate.setMonth(deletionDate.getMonth() + 3);
     auctionTime: startTime,
     closeTime: closeTime,
     firstBid: firstBid,
-    status: "UPCOMING",
+    status: date ? "UPCOMING" : "LOADING",
     createdAt: new Date().toISOString(),
-    deletionDate: deletionDate.toISOString(),
+   deletionDate: deletionDate ? deletionDate.toISOString() : "",
     type: document.getElementById("newAuctionType")?.value || "CLIVIA"
   };
 
@@ -9574,10 +9557,11 @@ deletionDate.setMonth(deletionDate.getMonth() + 3);
 
   save();
 
-  alert(
-    "Auction created successfully.\n\n" +
-    "Auction records will be retained for 3 months after the auction date."
-  );
+ alert(
+  date
+    ? "Auction created successfully."
+    : "Auction created successfully and is now OPEN FOR LOT LOADING.\n\nThe auction date will be set when the auction reaches 80% capacity."
+);
 
   if(typeof refreshAuctionSelects === "function"){
     refreshAuctionSelects();
