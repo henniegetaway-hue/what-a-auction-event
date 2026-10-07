@@ -4436,9 +4436,20 @@ const terms =
   document.getElementById("sellerLotTerms")?.checked;
 
   const msg = document.getElementById("sellerLotMsg");
- const seller = (state.sellers || []).find(
-  s => s.id === state.selectedSellerId
+ const sellerSelectId =
+  document.getElementById("sellerSelect")?.value || "";
+
+const activeSellerId =
+  state.selectedSellerId || sellerSelectId;
+
+const seller = (state.sellers || []).find(
+  s => s.id === activeSellerId
 );
+
+if(seller && !state.selectedSellerId){
+  state.selectedSellerId = seller.id;
+  save();
+}
 
 const selectedAuction = (state.auctions || []).find(
   a => a.id === auction
