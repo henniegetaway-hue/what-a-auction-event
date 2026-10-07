@@ -9078,6 +9078,28 @@ async function openOwner(){
 
   if(ownerLogin) ownerLogin.classList.add("hidden");
   if(ownerArea) ownerArea.classList.remove("hidden");
+  const { data: bankData, error: bankError } =
+  await auctionSupabase
+    .from("owner_bank_details")
+    .select("bank_name, account_name, account_number")
+    .eq("owner_id", user.id)
+    .maybeSingle();
+
+if(!bankError && bankData){
+
+  const bank =
+    document.getElementById("ownerBank");
+
+  const accountName =
+    document.getElementById("ownerAccountName");
+
+  const accountNumber =
+    document.getElementById("ownerAccountNumber");
+
+  if(bank) bank.value = bankData.bank_name || "";
+  if(accountName) accountName.value = bankData.account_name || "";
+  if(accountNumber) accountNumber.value = bankData.account_number || "";
+}    
 
   if(ownerLoginMsg){
     ownerLoginMsg.textContent = "";
