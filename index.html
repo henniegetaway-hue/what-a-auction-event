@@ -9381,7 +9381,7 @@ async function openAdmin(){
   if(!password){
     if(adminLoginMsg){
       adminLoginMsg.textContent =
-        "Please enter your Owner password.";
+        "Please enter your Admin password.";
     }
     return;
   }
@@ -9389,7 +9389,7 @@ async function openAdmin(){
   const { data: sessionData, error: sessionError } =
     await auctionSupabase.auth.getSession();
 
-  if(sessionError || !sessionData.session?.user?.email){
+  if(sessionError || !sessionData.session){
     if(adminLoginMsg){
       adminLoginMsg.textContent =
         "Owner account is not signed in.";
@@ -9397,44 +9397,25 @@ async function openAdmin(){
     return;
   }
 
-  const email = sessionData.session.user.email;
+  const { data: isCorrect, error: verifyError } =
+    await auctionSupabase.rpc(
+      "verify_admin_password",
+      {
+        check_password: password
+      }
+    );
 
-  const { data: signInData, error: signInError } =
-    await auctionSupabase.auth.signInWithPassword({
-      email: email,
-      password: password
-    });
+  if(verifyError || isCorrect !== true){
 
-  if(signInError || !signInData.user){
     if(adminLoginMsg){
       adminLoginMsg.textContent =
-        "Incorrect Owner password.";
+        "Incorrect Admin password.";
     }
 
     if(passwordInput){
       passwordInput.value = "";
     }
-    return;
-  }
 
-  const user = signInData.user;
-
-  const { data: roleData, error: roleError } =
-    await auctionSupabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", user.id)
-      .maybeSingle();
-
-  if(roleError || roleData?.role !== "OWNER"){
-    if(adminLoginMsg){
-      adminLoginMsg.textContent =
-        "ACCESS DENIED — Owner authorisation required.";
-    }
-
-    if(passwordInput){
-      passwordInput.value = "";
-    }
     return;
   }
 
@@ -9456,7 +9437,7 @@ async function openAdmin(){
   if(typeof renderSiteErrorLog === "function"){
     renderSiteErrorLog();
   }
-}    
+}
 function createAuction(){
 
   const date = document.getElementById("newAuctionDate")?.value || "";
