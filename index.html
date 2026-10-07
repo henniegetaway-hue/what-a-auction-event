@@ -1798,6 +1798,18 @@ justify-content:center;
   <div id="ownerLogin" class="panel" style="max-width:430px;margin:12px auto;">
   <h2>Owner Access</h2>
   <p>Clivia Dreamers Owner Only</p>
+  <input id="ownerAccessPassword"
+       type="password"
+       placeholder="Enter Owner Password">
+
+<label style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+  <input type="checkbox"
+         onchange="document.getElementById('ownerAccessPassword').type=this.checked?'text':'password';"
+         style="width:auto;">
+  Show password
+</label>
+
+<br>      
   <button class="goldBtn" onclick="openOwner()">OPEN OWNER</button>
 
   <div id="ownerLoginMsg" class="small" style="margin-top:8px"></div>
@@ -9041,6 +9053,19 @@ function previewOwnEventLogo(input){
   reader.readAsDataURL(input.files[0]);
 }
 async function openOwner(){
+   const passwordInput =
+    document.getElementById("ownerAccessPassword");
+
+  const password =
+    passwordInput?.value || "";
+
+  if(!password){
+    const msg = document.getElementById("ownerLoginMsg");
+    if(msg){
+      msg.textContent = "Please enter your Owner password.";
+    }
+    return;
+  }     
 
   const ownerLoginMsg =
     document.getElementById("ownerLoginMsg");
@@ -9057,6 +9082,27 @@ async function openOwner(){
   }
 
   const user = sessionData.session.user;
+    const { data: signInData, error: signInError } =
+    await auctionSupabase.auth.signInWithPassword({
+      email: user.email,
+      password: password
+    });
+
+  if(signInError || !signInData.user){
+    if(ownerLoginMsg){
+      ownerLoginMsg.textContent =
+        "Incorrect Owner password.";
+    }
+
+    if(passwordInput){
+      passwordInput.value = "";
+    }
+    return;
+  }
+
+  if(passwordInput){
+    passwordInput.value = "";
+  }    
 
   const { data: roleData, error: roleError } =
     await auctionSupabase
