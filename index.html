@@ -9083,6 +9083,22 @@ async function openOwner(){
     ownerLoginMsg.textContent = "";
   }
 }    
+ function closeOwner(){
+
+  const ownerLogin =
+    document.getElementById("ownerLogin");
+
+  const ownerArea =
+    document.getElementById("ownerArea");
+
+  if(ownerArea){
+    ownerArea.classList.add("hidden");
+  }
+
+  if(ownerLogin){
+    ownerLogin.classList.remove("hidden");
+  }
+}     
  async function openAdmin(){
 
   const adminLogin =
