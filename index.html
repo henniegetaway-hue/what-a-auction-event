@@ -1777,6 +1777,18 @@ justify-content:center;
  <div id="adminLogin" class="panel" style="max-width:430px;margin:0 auto 16px;">
   <h2>Admin Access</h2>
   <p>Authorised Owner Account Only</p>
+   <input id="adminOwnerPassword"
+       type="password"
+       placeholder="Enter Owner Password">
+
+<label style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+  <input type="checkbox"
+         onchange="document.getElementById('adminOwnerPassword').type=this.checked?'text':'password';"
+         style="width:auto;">
+  Show password
+</label>
+
+<br>    
 
   <button class="goldBtn" onclick="openAdmin()">OPEN ADMIN</button>
 
@@ -9210,7 +9222,7 @@ if(!bankError && bankData){
     msg.textContent = "Bank details saved securely.";
   }
 }     
- async function openAdmin(){
+async function openAdmin(){
 
   const adminLogin =
     document.getElementById("adminLogin");
@@ -9221,18 +9233,52 @@ if(!bankError && bankData){
   const adminLoginMsg =
     document.getElementById("adminLoginMsg");
 
-  const { data: sessionData, error: sessionError } =
-    await auctionSupabase.auth.getSession();
+  const passwordInput =
+    document.getElementById("adminOwnerPassword");
 
-  if(sessionError || !sessionData.session){
+  const password =
+    passwordInput?.value || "";
+
+  if(!password){
     if(adminLoginMsg){
       adminLoginMsg.textContent =
-        "Please sign in with your authorised Owner account first.";
+        "Please enter your Owner password.";
     }
     return;
   }
 
-  const user = sessionData.session.user;
+  const { data: sessionData, error: sessionError } =
+    await auctionSupabase.auth.getSession();
+
+  if(sessionError || !sessionData.session?.user?.email){
+    if(adminLoginMsg){
+      adminLoginMsg.textContent =
+        "Owner account is not signed in.";
+    }
+    return;
+  }
+
+  const email = sessionData.session.user.email;
+
+  const { data: signInData, error: signInError } =
+    await auctionSupabase.auth.signInWithPassword({
+      email: email,
+      password: password
+    });
+
+  if(signInError || !signInData.user){
+    if(adminLoginMsg){
+      adminLoginMsg.textContent =
+        "Incorrect Owner password.";
+    }
+
+    if(passwordInput){
+      passwordInput.value = "";
+    }
+    return;
+  }
+
+  const user = signInData.user;
 
   const { data: roleData, error: roleError } =
     await auctionSupabase
@@ -9241,20 +9287,24 @@ if(!bankError && bankData){
       .eq("user_id", user.id)
       .maybeSingle();
 
-  if(roleError){
-    if(adminLoginMsg){
-      adminLoginMsg.textContent =
-        "Admin access could not be verified.";
-    }
-    return;
-  }
-
-  if(!roleData || roleData.role !== "OWNER"){
+  if(roleError || roleData?.role !== "OWNER"){
     if(adminLoginMsg){
       adminLoginMsg.textContent =
         "ACCESS DENIED — Owner authorisation required.";
     }
+
+    if(passwordInput){
+      passwordInput.value = "";
+    }
     return;
+  }
+
+  if(passwordInput){
+    passwordInput.value = "";
+  }
+
+  if(adminLoginMsg){
+    adminLoginMsg.textContent = "";
   }
 
   adminLogin.classList.add("hidden");
@@ -9267,7 +9317,7 @@ if(!bankError && bankData){
   if(typeof renderSiteErrorLog === "function"){
     renderSiteErrorLog();
   }
-}     
+}    
 function createAuction(){
 
   const date = document.getElementById("newAuctionDate")?.value || "";
