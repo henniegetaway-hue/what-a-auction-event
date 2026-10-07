@@ -8069,6 +8069,13 @@ load();
 updateHeader();
 refreshBidderSelect();
 refreshSellerSelect();
+      
+if(state.selectedSellerId){
+  const sellerSelect = document.getElementById("sellerSelect");
+  if(sellerSelect){
+    sellerSelect.value = state.selectedSellerId;
+  }
+}      
 
 if(state.selectedBidderId){
   showPage("live");
