@@ -4878,16 +4878,13 @@ function approveSelectedExporter(){
   const seller=(state.sellers||[]).find(s=>s.id===sellerId);
   const notice=document.getElementById("selectedSellerNotice");
 
-  if(!seller){
-    state.selectedSellerId="";
-    save();
-
-    if(notice){
-      notice.textContent="No seller selected yet.";
-    }
-
-    return;
+ if(!seller){
+  if(notice){
+    notice.textContent="No seller selected yet.";
   }
+
+  return;
+}
 
   state.selectedSellerId=seller.id;
   save();
