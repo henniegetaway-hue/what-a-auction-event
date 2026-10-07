@@ -4785,6 +4785,10 @@ function showRegisteredSeller(){
       option.textContent=seller.name;
       select.appendChild(option);
     });
+
+      if(state.selectedSellerId){
+  select.value = state.selectedSellerId;
+}  
   }
 
   // Admin exporter approval now uses registered accounts
