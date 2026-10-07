@@ -9099,6 +9099,95 @@ async function openOwner(){
     ownerLogin.classList.remove("hidden");
   }
 }     
+ async function saveOwnerBankDetails(){
+
+  const bankName =
+    document.getElementById("ownerBank")?.value.trim();
+
+  const accountName =
+    document.getElementById("ownerAccountName")?.value.trim();
+
+  const accountNumber =
+    document.getElementById("ownerAccountNumber")?.value.trim();
+
+  const msg =
+    document.getElementById("ownerBankMsg");
+
+  if(!bankName || !accountName || !accountNumber){
+    if(msg){
+      msg.textContent = "Please complete all bank details.";
+    }
+    return;
+  }
+
+  const { data: sessionData } =
+    await auctionSupabase.auth.getSession();
+
+  if(!sessionData.session){
+    if(msg){
+      msg.textContent = "Owner account is not signed in.";
+    }
+    return;
+  }
+
+  const ownerId = sessionData.session.user.id;
+
+  const { data: existing, error: readError } =
+    await auctionSupabase
+      .from("owner_bank_details")
+      .select("id")
+      .eq("owner_id", ownerId)
+      .maybeSingle();
+
+  if(readError){
+    if(msg){
+      msg.textContent = "Could not verify existing bank details.";
+    }
+    return;
+  }
+
+  let saveError;
+
+  if(existing){
+
+    const { error } =
+      await auctionSupabase
+        .from("owner_bank_details")
+        .update({
+          bank_name: bankName,
+          account_name: accountName,
+          account_number: accountNumber
+        })
+        .eq("id", existing.id);
+
+    saveError = error;
+
+  } else {
+
+    const { error } =
+      await auctionSupabase
+        .from("owner_bank_details")
+        .insert({
+          owner_id: ownerId,
+          bank_name: bankName,
+          account_name: accountName,
+          account_number: accountNumber
+        });
+
+    saveError = error;
+  }
+
+  if(saveError){
+    if(msg){
+      msg.textContent = "Bank details could not be saved.";
+    }
+    return;
+  }
+
+  if(msg){
+    msg.textContent = "Bank details saved securely.";
+  }
+}     
  async function openAdmin(){
 
   const adminLogin =
