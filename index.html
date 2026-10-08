@@ -3529,6 +3529,9 @@ function saveSellerBankPhoneChange(){
 
   save();
   refreshSellerSelect();
+  if(typeof showSellerLotForm === "function"){
+  showSellerLotForm();
+}    
 
   document.getElementById("sellerBankPhoneChangeBox").style.display="none";
 
