@@ -2796,7 +2796,6 @@ if(bidder && keepOwnerUnlocked){
   if(seller.happyBuyers===undefined) seller.happyBuyers=0;
 });
 }
-localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
    const OWN_EVENTS_STORAGE_KEY = "cliviaDreamersOwnEvents";   
   function toggleGeneralEventFields(){
   const type = document.getElementById("newAuctionType")?.value;
@@ -6144,13 +6143,13 @@ if(totalLots>=48) return true;
   }
 }
 function isAuctionHalfFull(auction){
-  if(!auction || !auction.categories || auction.categories.length===0) return false;
+  if(!auction) return false;
 
   const currentLots=(state.lots||[])
     .filter(lot=>lot.auctionId===auction.id).length;
 
   return currentLots>=39;
-}  
+}
   function getNextAuctionSlot(preferredTime){
   const normalSlots=["15:00","17:00","19:00"];
 const slots=preferredTime && normalSlots.includes(preferredTime)
