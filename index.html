@@ -6913,6 +6913,11 @@ ${lot.exportEligible ? `
             📷 VIEW ACTUAL PLANT / MORE PHOTOS
           </button>
         `:""}
+        <button class="photoBtn"
+  onclick="shareLotWhatsApp('${lot.id}')"
+  style="background:#25D366;color:#fff;margin-top:8px;">
+  📲 SHARE ON WHATSAPP
+</button>
 
        <div class="bidRow">
   <input id="bid_${lot.id}" type="number" value="${next}" min="${next}">
