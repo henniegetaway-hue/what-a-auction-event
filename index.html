@@ -2449,11 +2449,7 @@ justify-content:center;
        placeholder="e.g. Green Throat × White Stripe"
        oninput="updateSellerAIKeywords(); document.getElementById('sellerPreviewName').textContent = this.value || 'YOUR PLANT NAME';">
 
-<label>Category *</label>
-<select id="sellerLotCategory"
-        onchange="updateSellerAIKeywords()">
-  <option value="">-- Select Category --</option>
-</select>
+<input type="hidden" id="sellerLotCategory" value="Clivia">
 
 <label>Breeding</label>
 <input id="sellerLotBreeding"
@@ -4566,10 +4562,6 @@ if(unpaidSellerInvoice){
     return;
   }
 
-  if(!category){
-    if(msg) msg.innerHTML = "<b>Please select a category.</b>";
-    return;
-  }
  if(!description){
   if(msg){
     msg.innerHTML =
