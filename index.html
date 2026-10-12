@@ -1906,9 +1906,60 @@ justify-content:center;
 <button class="goldBtn" onclick="saveOwnerBankDetails()">SAVE BANK DETAILS</button>
 
 <div id="ownerBankMsg" class="small" style="margin-top:8px;"></div>
+        <hr style="margin:25px 0;border-color:#9acd32;">
 
-<br><br>
-    <button class="goldBtn" onclick="closeOwner()">CLOSE OWNER</button>
+<h2>MONTHLY BANK RECONCILIATION</h2>
+
+<p>
+  Check website invoices against payments received.
+</p>
+
+<label>Upload Monthly Bank Statement</label>
+<input
+  id="monthlyBankStatement"
+  type="file"
+  accept=".pdf,.csv,.xlsx,.xls"
+>
+
+<p class="small">
+  Bank statement processing is not connected yet.
+  Do not upload real bank statements until secure
+  processing has been implemented.
+</p>
+
+<div id="monthlyBankResults" class="panel">
+  <b>STATUS: NOT YET CONNECTED</b>
+  <p>No payments have been checked.</p>
+</div>
+
+<hr style="margin:25px 0;border-color:#9acd32;">
+
+<h2>MONTHLY BANK RECONCILIATION</h2>
+
+<p>
+  Upload your monthly bank statement to compare
+  payments received against website invoices.
+</p>
+
+<label>Upload Bank Statement</label>
+<input
+  id="monthlyBankStatement"
+  type="file"
+  accept=".pdf,.csv,.xlsx,.xls"
+>
+
+<p class="small">
+  Payment matching and AI verification will be
+  connected later.
+</p>
+
+<div id="monthlyBankResults" class="panel">
+  <b>STATUS: NOT YET CONNECTED</b>
+  <p>No bank statement has been processed.</p>
+</div>
+
+<br>
+<button class="goldBtn" onclick="closeOwner()">CLOSE OWNER</button>
   </div>
 </div>
 
