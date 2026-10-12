@@ -729,7 +729,30 @@ th,td{
     SUPABASE_URL,
     SUPABASE_PUBLISHABLE_KEY
   );
-   auctionSupabase.auth.onAuthStateChange((event, session) => {
+  
+let validPasswordRecovery = false;
+
+auctionSupabase.auth.onAuthStateChange((event, session) => {
+
+  if(event === "PASSWORD_RECOVERY" && session){
+    validPasswordRecovery = true;
+
+    setTimeout(() => {
+      const box =
+        document.getElementById("passwordRecoveryBox");
+
+      if(box){
+        box.classList.remove("hidden");
+        box.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+      }
+    }, 100);
+  }
+
+});
+
 
   if(event === "PASSWORD_RECOVERY"){
 
@@ -886,11 +909,45 @@ th,td{
            document.getElementById('ownEventCreatorPassword').type=this.checked?'text':'password';
            document.getElementById('ownEventCreatorPasswordConfirm').type=this.checked?'text':'password';
          ">
+
   Show password
 </label>
 
+<button type="button"
+        class="goldBtn"
+        style="margin-top:12px;"
+        onclick="requestCreatorPasswordReset()">
+  FORGOT PASSWORD?
+</button>
+
+<p class="small">
+  Password recovery is available through
+  your registered email address only.
+  WhatsApp cannot be used to reset passwords.
+</p>
+
 </div>
-  <label>Event / Auction Name *</label>
+
+
+<!-- CREATOR AUCTION MANAGEMENT -->
+<div class="panel" id="ownEventManagement">
+
+  <h3>MY AUCTIONS</h3>
+
+  <p class="small">
+    Create and test your auction for FREE.
+    An activation fee is payable only when
+    you request to GO LIVE.
+  </p>
+
+  <div id="ownEventManagementList">
+    Sign in to view your auctions.
+  </div>
+
+</div>
+
+<label>Event / Auction Name *</label>
+
 <input id="ownEventName"
        placeholder="e.g. Collectors Dreams Auction"
        oninput="updateOwnEventPreview()">
@@ -9583,6 +9640,49 @@ function previewOwnEventLogo(input){
 
   reader.readAsDataURL(input.files[0]);
 }
+
+ 
+async function requestCreatorPasswordReset(){
+
+  const email = document
+    .getElementById("ownEventCreatorEmail")
+    ?.value.trim();
+
+  if(!email){
+    alert("Please enter your registered email address first.");
+    return;
+  }
+
+  const { error } =
+    await auctionSupabase.auth.resetPasswordForEmail(
+      email,
+      {
+        redirectTo: window.location.origin +
+          window.location.pathname
+      }
+    );
+
+  if(error){
+    alert("Password recovery request failed. Please try again.");
+    return;
+  }
+  alert(
+    "PASSWORD RECOVERY\n\n" +
+    "If this email address belongs to a registered account, " +
+    "a password recovery link will be sent.\n\n" +
+    "Please check your email."
+  );
+}
+  
+  if(!validPasswordRecovery){
+    alert(
+      "ACCESS DENIED\n\n" +
+      "Please use the password recovery link " +
+      "sent to your registered email address."
+    );
+    return;
+  }
+     
  async function saveNewRecoveryPassword(){
 
   const password =
@@ -9625,6 +9725,16 @@ function previewOwnEventLogo(input){
 
   document.getElementById("newRecoveryPassword").value = "";
   document.getElementById("confirmRecoveryPassword").value = "";
+   
+  validPasswordRecovery = false;
+
+  const recoveryBox =
+    document.getElementById("passwordRecoveryBox");
+
+  if(recoveryBox){
+    recoveryBox.classList.add("hidden");
+  }
+    
 
   if(msg){
     msg.textContent =
