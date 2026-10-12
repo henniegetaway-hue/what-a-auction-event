@@ -9315,23 +9315,57 @@ if(activationFeeDisplay && selectedActivationFee){
  
   updateOwnEventCurrency();
 
-  // Update retail payment information for selected country
+   // Show retail payment logos for the selected auction country
   const retailPaymentDisplay =
     document.getElementById("retailPaymentCountryDisplay");
 
   if(retailPaymentDisplay){
 
-    const providers =
-      retailPaymentsByCountry[country] || [];
+    const logosByCountry = {
+      ZA: [
+        ["checkers.jpg", "Checkers"],
+        ["spar.jpg", "SPAR"],
+        ["shoprite.jpg", "Shoprite"],
+        ["pick and pay.jpg", "Pick n Pay"],
+        ["pep.jpg", "PEP"],
+        ["boxer.jpg", "Boxer"]
+      ],
+      US: [
+        ["walmart.jpg", "Walmart Bill Pay"]
+      ],
+      GB: [
+        ["paypoint.png", "PayPoint"]
+      ],
+      AU: [
+        ["auspost.png", "Australia Post Billpay"]
+      ]
+    };
 
-    retailPaymentDisplay.textContent =
-      "Possible retail payment services for " +
-      country + ": " +
-      (providers.length
-        ? providers.join(" | ")
-        : "No retail payment services listed");
+    const logos = logosByCountry[country] || [];
+
+    if(logos.length){
+
+      retailPaymentDisplay.innerHTML =
+        '<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:center;">' +
+        logos.map(([file, name]) =>
+          '<img src="logos/' +
+          encodeURIComponent(file) +
+          '" alt="' + name +
+          '" class="retailLogo">'
+        ).join("") +
+        '</div>' +
+        '<p style="color:#aaa;font-size:12px;">' +
+        'These payment services are subject to provider eligibility and seller acceptance. ' +
+        'Payments are made directly to sellers, not through this website.' +
+        '</p>';
+
+    } else {
+
+      retailPaymentDisplay.textContent =
+        "No specific retail payment providers are listed for this auction country.";
+
+    }
   }
-
 }
 
 function updateOwnEventRowsPreview(){
