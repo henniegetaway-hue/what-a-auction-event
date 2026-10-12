@@ -8225,7 +8225,7 @@ checkCommissionReminders();
    ${inv.type==="PLATFORM_FEE" ? "" : (inv.lots||[]).map(x=>{
   const seller=(state.sellers||[]).find(s=>s.id===x.sellerId);
    const auction=(state.auctions||[]).find(a=>a.id===inv.auctionId);
-const paymentCountry=auction?.country || "";      
+const paymentCountry=inv.auctionCountry || auction?.country || "";    
 
   return `
     <div>
