@@ -9662,9 +9662,11 @@ async function requestCreatorPasswordReset(){
     "If this email address belongs to a registered account, " +
     "a password recovery link will be sent.\n\n" +
     "Please check your email."
-  );
+   );
 }
-  
+
+async function saveNewRecoveryPassword(){
+
   if(!validPasswordRecovery){
     alert(
       "ACCESS DENIED\n\n" +
@@ -9673,8 +9675,6 @@ async function requestCreatorPasswordReset(){
     );
     return;
   }
-     
- async function saveNewRecoveryPassword(){
 
   const password =
     document.getElementById("newRecoveryPassword")?.value || "";
