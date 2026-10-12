@@ -745,26 +745,6 @@ let validPasswordRecovery = false;
 
 auctionSupabase.auth.onAuthStateChange((event, session) => {
 
-  if(event === "PASSWORD_RECOVERY" && session){
-    validPasswordRecovery = true;
-
-    setTimeout(() => {
-      const box =
-        document.getElementById("passwordRecoveryBox");
-
-      if(box){
-        box.classList.remove("hidden");
-        box.scrollIntoView({
-          behavior: "smooth",
-          block: "center"
-        });
-      }
-    }, 100);
-  }
-
-});
-
-
   if(event === "PASSWORD_RECOVERY"){
 
     setTimeout(() => {
