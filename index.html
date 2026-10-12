@@ -7944,7 +7944,8 @@ if(alreadyCreated) return;
       winners[winningBid.bidderId]={
         bidderId:winningBid.bidderId,
         auctionId:state.selectedAuctionId,
-        currency:(state.auctions.find(a=>a.id===state.selectedAuctionId)||{}).currency||"ZAR",
+auctionCountry:(state.auctions.find(a=>a.id===state.selectedAuctionId)||{}).country||"",
+currency:(state.auctions.find(a=>a.id===state.selectedAuctionId)||{}).currency||"ZAR",
         bidderName:winningBid.bidderName,
         bidderFullName:(state.bidders.find(b=>b.id===winningBid.bidderId)||{}).name||winningBid.bidderName,
         bidderPhone:(state.bidders.find(b=>b.id===winningBid.bidderId)||{}).phone||"",
@@ -8223,6 +8224,8 @@ checkCommissionReminders();
 }
    ${inv.type==="PLATFORM_FEE" ? "" : (inv.lots||[]).map(x=>{
   const seller=(state.sellers||[]).find(s=>s.id===x.sellerId);
+   const auction=(state.auctions||[]).find(a=>a.id===inv.auctionId);
+const paymentCountry=auction?.country || "";      
 
   return `
     <div>
@@ -8271,6 +8274,16 @@ ${seller.acceptRetailPayments &&
       border-radius:8px;
     ">
       <b>OPTIONAL RETAIL PAYMENT SERVICES</b><br>
+     ${paymentCountry.toUpperCase()==="GB"
+  ? '<a href="https://www.paypoint.com/" target="_blank" rel="noopener noreferrer" style="color:#9acd32;">UK — PayPoint information</a><br>'
+  : ''
+}
+      <a href="https://www.paypoint.com/"
+   target="_blank"
+   rel="noopener noreferrer"
+   style="color:#9acd32;text-decoration:underline;">
+  UK — PayPoint payment information
+</a><br>
       ${escapeHtml(seller.retailPaymentServices)}<br>
       <span>
         Contact the seller to confirm availability,
@@ -10416,7 +10429,6 @@ Website content, design and original material may not be copied or reproduced wi
   <img src="logos/pick%20and%20pay.jpg" alt="Pick n Pay" class="retailLogo">
   <img src="logos/pep.jpg" alt="PEP" class="retailLogo">
   <img src="logos/boxer.jpg" alt="Boxer" class="retailLogo">
-  <img src="logos/walmart.jpg" alt="Walmart" class="retailLogo">
 
 </div>
     
@@ -10430,18 +10442,6 @@ Website content, design and original material may not be copied or reproduced wi
   <p>
     🇿🇦 SOUTH AFRICA:
     Checkers | SPAR | Shoprite | Pick n Pay | PEP | Boxer
-  </p>
-
-  <p>
-    🇺🇸 USA: Walmart Bill Pay
-  </p>
-
-  <p>
-    🇬🇧 UNITED KINGDOM: PayPoint
-  </p>
-
-  <p>
-    🇦🇺 AUSTRALIA: Australia Post Billpay
   </p>
 
   <p style="font-size:12px;color:#bbb;">
