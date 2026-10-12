@@ -450,9 +450,31 @@ justify-content:center;
   gap:7px;
 }
 
+.bidRow{
+  display:flex;
+  gap:7px;
+  width:100%;
+  max-width:100%;
+  box-sizing:border-box;
+}
+
 .bidRow input{
-  flex:1;
+  flex:1 1 0;
   min-width:0;
+  width:100%;
+  max-width:100%;
+  box-sizing:border-box;
+}
+
+.bidRow button{
+  flex:0 0 auto;
+  max-width:100%;
+  box-sizing:border-box;
+}
+
+.lotCard input,
+.lotCard button{
+  box-sizing:border-box;
 }
 
 .bidRow button{
