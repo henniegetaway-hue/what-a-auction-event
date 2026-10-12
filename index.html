@@ -947,6 +947,32 @@ th,td{
   <option value="CA">Canada</option>
   <option value="OTHER">Other Country</option>
 </select>
+  
+<div id="retailPaymentCountryDisplay" style="
+  background:#000;
+  color:#9acd32;
+  border:1px solid #9acd32;
+  border-radius:8px;
+  padding:12px;
+  margin-top:12px;
+  margin-bottom:10px;
+  font-size:13px;
+  line-height:1.6;
+">
+  Select your auction country to view
+  possible retail payment services.
+</div>
+
+<p style="color:#aaa;font-size:12px;">
+  Retail payment services are optional.
+  Sellers must confirm that their selected
+  provider can accept payments for their
+  auction invoices.
+
+  What a Auction Event does not collect
+  payments made directly to sellers.
+</p>
+    
 
 <div class="small" style="margin-top:5px;margin-bottom:10px;">
   Currency is automatically set by auction country:<br>
@@ -2445,6 +2471,77 @@ justify-content:center;
     
    <label>Bank Account / IBAN Number</label>
     <input id="sellerAccountNumber">
+       
+<div style="
+  margin-top:15px;
+  padding:14px;
+  background:#000;
+  color:#fff;
+  border:1px solid #9acd32;
+  border-radius:10px;
+">
+
+  <h3 style="color:#9acd32;">
+    OPTIONAL RETAIL PAYMENT METHODS
+  </h3>
+
+  <p class="small">
+    Sellers may offer additional payment methods
+    to winning bidders where supported by their
+    payment provider.
+  </p>
+
+  <label>
+    <input type="checkbox"
+           id="sellerAcceptRetailPayments"
+           style="width:auto;margin-right:8px;">
+    I wish to offer retail bill-payment options.
+  </label>
+
+  <label style="margin-top:12px;">
+    Accepted Retail Payment Services
+  </label>
+
+  <input
+    id="sellerRetailPaymentServices"
+    placeholder="e.g. Checkers, SPAR, Walmart Bill Pay">
+
+  <label style="margin-top:12px;">
+    Payment Reference / Instructions
+  </label>
+
+  <textarea
+    id="sellerRetailPaymentInstructions"
+    rows="3"
+    placeholder="Enter your approved biller reference or payment instructions">
+  </textarea>
+
+  <label style="
+    display:flex;
+    align-items:flex-start;
+    gap:8px;
+    margin-top:12px;
+  ">
+    <input
+      type="checkbox"
+      id="sellerRetailPaymentConfirmed"
+      style="width:auto;margin-top:4px;">
+    <span>
+      I confirm that I am authorised to receive
+      payments through the services listed above,
+      and that my payment instructions are correct.
+    </span>
+  </label>
+
+  <p class="small" style="color:#aaa;">
+    Retail payment services are optional.
+    What a Auction Event does not process
+    these payments. Sellers must verify
+    receipt of funds before confirming payment.
+  </p>
+
+</div>
+
    <div class="notice">
   Your bank account number is used only for payment matching and verification. After the auction, the relevant sale and contact details will be provided to the winning bidder and seller so that they can contact each other directly to arrange payment and delivery. The seller and winning bidder must confirm through the Clivia Dreamers system when payment has been made and received.
 <div class="small">
@@ -2700,11 +2797,47 @@ justify-content:center;
 <section id="pageInvoices" class="page hidden">
   <div class="panel">
 
-    <h2>Invoices</h2>
+   <h2>Invoices &amp; Payments</h2>
 
-    <div id="invoiceList">
-      Invoices will be created when the auction is closed.
-    </div>
+<p class="small">
+  Auction invoices are generated after the
+  auction closes. Winning bidders pay sellers
+  directly. Website fees are paid separately
+  to the platform.
+</p>
+
+<div style="
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:15px 0;
+">
+
+  <button class="goldBtn"
+          onclick="showAuctionInvoices()">
+    BUYER INVOICES
+  </button>
+
+  <button class="goldBtn"
+          onclick="showSellerPayments()">
+    SELLER PAYMENTS
+  </button>
+
+  <button class="goldBtn"
+          onclick="showWebsiteInvoices()">
+    WEBSITE INVOICES
+  </button>
+
+  <button class="goldBtn"
+          onclick="showBankReconciliation()">
+    BANK RECONCILIATION
+  </button>
+
+</div>
+
+<div id="invoiceList">
+  Invoices will be created when the auction is closed.
+</div>
 
     <hr style="margin:25px 0;">
 
@@ -3822,6 +3955,31 @@ const postal=document.getElementById("sellerPostal").value.trim();
 }
   const country=document.getElementById("sellerCountry").value.trim();
   const accountNumber=document.getElementById("sellerAccountNumber").value.trim();
+  
+const acceptRetailPayments =
+  document.getElementById("sellerAcceptRetailPayments")?.checked || false;
+
+const retailPaymentServices =
+  document.getElementById("sellerRetailPaymentServices")?.value.trim() || "";
+
+const retailPaymentInstructions =
+  document.getElementById("sellerRetailPaymentInstructions")?.value.trim() || "";
+
+const retailPaymentConfirmed =
+  document.getElementById("sellerRetailPaymentConfirmed")?.checked || false;
+
+if(acceptRetailPayments &&
+   (!retailPaymentServices ||
+    !retailPaymentInstructions ||
+    !retailPaymentConfirmed)){
+
+  alert(
+    "To offer retail payments, please enter your accepted services, payment instructions and confirm that you are authorised to receive these payments."
+  );
+
+  return;
+}
+    
 const rulesAccepted=document.getElementById("sellerRulesAccepted").checked;
   const isExporter=document.getElementById("sellerIsExporter").checked;
 const exporterDocs=document.getElementById("sellerExporterDocs").files;
@@ -3886,9 +4044,24 @@ postal,
 exporterDocsSubmitted:isExporter && exporterDocs.length>0,
 exporterRulesAccepted:isExporter ? exporterRulesAccepted : false,
 exporterApproved:false,
+    
     accountNumber,
-bankConfirmed:false,
+    bankConfirmed:false,
+
+    // Optional retail payment methods
+    acceptRetailPayments: acceptRetailPayments,
+    retailPaymentServices: acceptRetailPayments
+      ? retailPaymentServices
+      : "",
+    retailPaymentInstructions: acceptRetailPayments
+      ? retailPaymentInstructions
+      : "",
+    retailPaymentConfirmed: acceptRetailPayments
+      ? retailPaymentConfirmed
+      : false,
+
     completedSales:0,
+
 totalSalesValue:0,
 happyBuyers:0,
     bankChangePending:false,
@@ -7950,8 +8123,27 @@ checkCommissionReminders();
     return;
   }
 
-  box.innerHTML=state.invoices.map(inv=>`
+  
+  const adminVisible =
+    document.getElementById("adminArea") &&
+    !document.getElementById("adminArea").classList.contains("hidden");
+
+  const visibleInvoices = state.invoices.filter(inv =>
+    adminVisible ||
+    (
+      state.selectedBidderId &&
+      inv.bidderId === state.selectedBidderId
+    )
+  );
+
+  if(visibleInvoices.length === 0){
+    box.textContent = "No invoices available for the selected bidder.";
+    return;
+  }
+
+  box.innerHTML=visibleInvoices.map(inv=>`
     <div class="panel">
+
     ${inv.type==="PLATFORM_FEE"
   ? '<h3>Clivia Dreamers AUCTION — PLATFORM FEE INVOICE</h3>'+
     '<div class="small"><b>NO VAT CHARGED — Clivia Dreamers Auction is not VAT registered.</b></div>'+
@@ -8016,8 +8208,33 @@ ${x.sellerPaidConfirmed
       ${seller ? `
         <div class="notice">
           Seller: ${escapeHtml(seller.name)}<br>
-          Seller WhatsApp: ${escapeHtml(seller.phone||"")}<br>
-          The seller will send the final payment instructions directly to the winning bidder.<br>
+          
+Seller WhatsApp: ${escapeHtml(seller.phone||"")}<br>
+
+${seller.acceptRetailPayments &&
+  seller.retailPaymentConfirmed &&
+  seller.retailPaymentServices
+  ? `
+    <div class="small" style="
+      margin:10px 0;
+      padding:10px;
+      border:1px solid #9acd32;
+      border-radius:8px;
+    ">
+      <b>OPTIONAL RETAIL PAYMENT SERVICES</b><br>
+      ${escapeHtml(seller.retailPaymentServices)}<br>
+      <span>
+        Contact the seller to confirm availability,
+        the correct payment reference and instructions
+        before making any payment.
+      </span>
+    </div>
+  `
+  : ""
+}
+
+The seller will send the final payment instructions directly to the winning bidder.<br>
+
           Winning buyer: ${escapeHtml(inv.bidderFullName||inv.bidderName||"")}<br>
 Buyer WhatsApp: ${escapeHtml(inv.bidderPhone||"")}<br>
 Buyer email: ${escapeHtml(inv.bidderEmail||"")}<br>
@@ -8990,6 +9207,17 @@ function updateOwnEventCountryCurrency(){
     NZD: "NZ$",
     CAD: "C$"
   };
+  
+const retailPaymentsByCountry = {
+  ZA: ["Checkers", "SPAR", "Shoprite", "Pick n Pay", "PEP", "Boxer"],
+  EU: ["Participating local bill-payment providers"],
+  US: ["Walmart Bill Pay"],
+  GB: ["PayPoint"],
+  AU: ["Australia Post Billpay"],
+  NZ: ["Participating local bill-payment providers"],
+  CA: ["Participating local bill-payment providers"]
+};
+    
 
   const selectedCurrency = currencyByCountry[country] || "USD";
 
@@ -9024,10 +9252,30 @@ if(activationFeeDisplay && selectedActivationFee){
       ")</strong>";
   }
 
+ 
   updateOwnEventCurrency();
+
+  // Update retail payment information for selected country
+  const retailPaymentDisplay =
+    document.getElementById("retailPaymentCountryDisplay");
+
+  if(retailPaymentDisplay){
+
+    const providers =
+      retailPaymentsByCountry[country] || [];
+
+    retailPaymentDisplay.textContent =
+      "Possible retail payment services for " +
+      country + ": " +
+      (providers.length
+        ? providers.join(" | ")
+        : "No retail payment services listed");
+  }
+
 }
 
 function updateOwnEventRowsPreview(){
+
 
   const select = document.getElementById("ownEventRows");
   const grid = document.getElementById("previewLotsGrid");
@@ -9908,6 +10156,41 @@ function downloadEventDatabase(){
 
   }
 }  
+ function showAuctionInvoices() {
+  const box = document.getElementById("invoiceList");
+  if (!box) return;
+
+  box.innerHTML =
+    "<h3>Buyer Invoices</h3>" +
+    "<p>Winning bidder invoices will appear here after the auction closes.</p>";
+}
+
+function showSellerPayments() {
+  const box = document.getElementById("invoiceList");
+  if (!box) return;
+
+  box.innerHTML =
+    "<h3>Seller Payments</h3>" +
+    "<p>Seller payment confirmations will appear here.</p>";
+}
+
+function showWebsiteInvoices() {
+  const box = document.getElementById("invoiceList");
+  if (!box) return;
+
+  box.innerHTML =
+    "<h3>Website Invoices</h3>" +
+    "<p>Activation fees and bidding capacity invoices will appear here.</p>";
+}
+
+function showBankReconciliation() {
+  const box = document.getElementById("invoiceList");
+  if (!box) return;
+
+  box.innerHTML =
+    "<h3>Bank Reconciliation</h3>" +
+    "<p>Monthly website payment reconciliation will appear here.</p>";
+}     
 </script>
 
 <footer style="
@@ -9920,7 +10203,103 @@ function downloadEventDatabase(){
 © 2026 What a Auction Event. All Rights Reserved.<br>
 Website content, design and original material may not be copied or reproduced without permission.<br><br>
 
-<span style="color:#9acd32;font-weight:bold;">
+
+<div style="
+  background:#000;
+  color:#fff;
+  border:1px solid #9acd32;
+  border-radius:8px;
+  padding:15px;
+  margin:20px auto;
+  max-width:1100px;
+  text-align:center;
+">
+
+  <h3 style="color:#9acd32;">
+    RETAIL PAYMENT OPTIONS FOR WINNING BIDDERS
+  </h3>
+  
+<div style="
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:10px;
+  margin:15px 0;
+">
+
+  <span style="background:#e31e24;color:white;padding:12px;border-radius:8px;font-weight:bold;">
+    🛒 Checkers
+  </span>
+
+  <span style="background:#087a37;color:white;padding:12px;border-radius:8px;font-weight:bold;">
+    🛒 SPAR
+  </span>
+
+  <span style="background:#d71920;color:white;padding:12px;border-radius:8px;font-weight:bold;">
+    🛒 Shoprite
+  </span>
+
+  <span style="background:#006c45;color:white;padding:12px;border-radius:8px;font-weight:bold;">
+    🛒 Pick n Pay
+  </span>
+
+  <span style="background:#e31e24;color:white;padding:12px;border-radius:8px;font-weight:bold;">
+    🛍️ PEP
+  </span>
+
+  <span style="background:#ed1c24;color:white;padding:12px;border-radius:8px;font-weight:bold;">
+    🛒 Boxer
+  </span>
+
+  <span style="background:#0071ce;color:white;padding:12px;border-radius:8px;font-weight:bold;">
+    🇺🇸 Walmart
+  </span>
+
+  <span style="background:#7b2384;color:white;padding:12px;border-radius:8px;font-weight:bold;">
+    🇬🇧 PayPoint
+  </span>
+
+  <span style="background:#dc1928;color:white;padding:12px;border-radius:8px;font-weight:bold;">
+    🇦🇺 Australia Post
+  </span>
+
+</div>
+    
+
+  <p>
+    Winning bidders may pay sellers using supported
+    retail bill-payment services, where available
+    and accepted by the seller.
+  </p>
+
+  <p>
+    🇿🇦 SOUTH AFRICA:
+    Checkers | SPAR | Shoprite | Pick n Pay | PEP | Boxer
+  </p>
+
+  <p>
+    🇺🇸 USA: Walmart Bill Pay
+  </p>
+
+  <p>
+    🇬🇧 UNITED KINGDOM: PayPoint
+  </p>
+
+  <p>
+    🇦🇺 AUSTRALIA: Australia Post Billpay
+  </p>
+
+  <p style="font-size:12px;color:#bbb;">
+    Retail payments require an eligible biller or
+    payment reference. Availability is subject to
+    seller acceptance and provider requirements.
+    These services are not directly integrated
+    with this website.
+  </p>
+
+</div>
+
+      <span style="color:#9acd32;font-weight:bold;">
 🔒 Secure authentication &amp; data storage powered by Supabase
 </span>
 </footer>
