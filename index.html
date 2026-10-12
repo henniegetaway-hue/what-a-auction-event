@@ -2447,7 +2447,7 @@ justify-content:center;
 <input id="sellerLotName"
        type="text"
        placeholder="e.g. Green Throat × White Stripe"
-       oninput="updateSellerAIKeywords()">
+       oninput="updateSellerAIKeywords(); document.getElementById('sellerPreviewName').textContent = this.value || 'YOUR PLANT NAME';">
 
 <label>Category *</label>
 <select id="sellerLotCategory"
@@ -2459,13 +2459,13 @@ justify-content:center;
 <input id="sellerLotBreeding"
        type="text"
        placeholder="e.g. Mother Plant × Father Plant"
-       oninput="updateSellerAIKeywords()">
+             oninput="updateSellerAIKeywords(); document.getElementById('sellerPreviewBreeding').textContent = 'Breeding: ' + (this.value || '—');">
 
 <label>Breeder</label>
 <input id="sellerLotBreeder"
        type="text"
        placeholder="Breeder name"
-       oninput="updateSellerAIKeywords()">
+             oninput="updateSellerAIKeywords(); document.getElementById('sellerPreviewBreeder').textContent = 'Breeder: ' + (this.value || '—');">
 
 <label>Description *</label>
 <textarea id="sellerLotDescription"
@@ -2488,9 +2488,26 @@ justify-content:center;
 
   <div>
     <label>Main Photo *</label>
-    <input id="sellerLotPhoto1"
-           type="file"
-           accept="image/*">
+   <input id="sellerLotPhoto1"
+       type="file"
+       accept="image/*"
+       onchange="
+         const file = this.files[0];
+         const preview = document.getElementById('sellerPreviewPhoto');
+
+         if(file && preview){
+           const url = URL.createObjectURL(file);
+           preview.innerHTML = '';
+           const img = document.createElement('img');
+           img.src = url;
+           img.alt = 'Plant preview';
+           img.style.width = '100%';
+           img.style.height = '100%';
+           img.style.objectFit = 'contain';
+           img.onload = () => URL.revokeObjectURL(url);
+           preview.appendChild(img);
+         }
+       ">
   </div>
 
   <div>
@@ -2559,6 +2576,45 @@ justify-content:center;
 
 </div>
 
+ <!-- LIVE PLANT CARD PREVIEW -->
+<div id="sellerLivePreviewPanel" class="panel" style="margin-bottom:16px;">
+
+  <h2 style="text-align:center;">🌸 LIVE PLANT PREVIEW</h2>
+
+  <div id="sellerLivePreviewCard" style="
+    background:#111;
+    border:1px solid #9acd32;
+    border-radius:12px;
+    padding:15px;
+    text-align:center;
+    color:white;
+  ">
+
+    <div id="sellerPreviewPhoto" style="
+      height:220px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#222;
+      border-radius:8px;
+      margin-bottom:12px;
+      overflow:hidden;
+    ">
+      Your plant photo will appear here
+    </div>
+
+    <h3 id="sellerPreviewName">YOUR PLANT NAME</h3>
+
+    <p id="sellerPreviewBreeding">Breeding: —</p>
+
+    <p id="sellerPreviewBreeder">Breeder: —</p>
+
+    <h3 id="sellerPreviewBid" style="color:orange;">
+      Starting Bid: R0
+    </h3>
+
+  </div>
+</div>     
 <!-- RIGHT SIDE — BEST SELLERS -->
 <div id="bestSellersPanel" class="panel">
   <h2>🏆 Best Sellers</h2>
@@ -4029,12 +4085,20 @@ function showSellerForgotPassword(){
     input.step = "100";
     input.readOnly = false;
   }
-  else{
+    else{
     input.value = "";
     input.removeAttribute("max");
     input.readOnly = false;
   }
-}   
+
+  // UPDATE LIVE PLANT PREVIEW
+  const previewBid = document.getElementById("sellerPreviewBid");
+
+  if(previewBid){
+    previewBid.textContent =
+      "Starting Bid: R" + (input.value || "0");
+  }
+}
      
  function showSellerLotForm(){
   const form = document.getElementById("sellerLotForm");
