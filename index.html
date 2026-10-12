@@ -8967,10 +8967,22 @@ retentionExpired: false,
 textColor: document.getElementById("ownEventTextColor")?.value || "#ffffff",
 accentColor: document.getElementById("ownEventAccentColor")?.value || "#9acd32", 
  logo: document.getElementById("previewEventLogo")?.src || "",      
+  
   rows: Number(rows),
-  lots: lots,     
+  lots: lots,
+
+  // Event is free to create and test
+  eventStatus: "DRAFT",
+  liveEnabled: false,
+
+  // Activation payment and approval
+  activationInvoiceId: null,
+  activationPaymentStatus: "NOT_INVOICED",
+  activationApproved: false,
+  activationApprovedAt: null,
+
   aiDescription: aiDescription ? aiDescription.value : "",
-  aiKeywords: aiKeywords ? aiKeywords.value : ""
+
 };
 const { error: eventSaveError } =
   await auctionSupabase
@@ -10174,14 +10186,48 @@ function showSellerPayments() {
     "<p>Seller payment confirmations will appear here.</p>";
 }
 
+
 function showWebsiteInvoices() {
   const box = document.getElementById("invoiceList");
   if (!box) return;
 
-  box.innerHTML =
-    "<h3>Website Invoices</h3>" +
-    "<p>Activation fees and bidding capacity invoices will appear here.</p>";
+  const websiteInvoices = (state.invoices || [])
+    .filter(inv => inv.type === "PLATFORM_FEE");
+
+  box.innerHTML = "<h3>Website Invoices</h3>";
+
+  if (websiteInvoices.length === 0) {
+    box.innerHTML +=
+      "<p>No website fee invoices recorded yet.</p>";
+    return;
+  }
+
+  websiteInvoices.forEach(inv => {
+    const panel = document.createElement("div");
+    panel.className = "panel";
+
+    const heading = document.createElement("h4");
+    heading.textContent = "Platform Fee Invoice";
+    panel.appendChild(heading);
+
+    const details = [
+      ["Invoice Number", inv.id || ""],
+      ["Seller", inv.sellerName || ""],
+      ["Amount", (inv.currency === "EUR" ? "€" : "R") +
+        Number(inv.amount || 0).toFixed(2)],
+      ["Payment Status", inv.status || "UNPAID"]
+    ];
+
+    details.forEach(([label, value]) => {
+      const line = document.createElement("div");
+      line.textContent = label + ": " + value;
+      panel.appendChild(line);
+    });
+
+    box.appendChild(panel);
+  });
 }
+
 
 function showBankReconciliation() {
   const box = document.getElementById("invoiceList");
