@@ -7037,9 +7037,28 @@ const samplesNeeded=Math.max(0,4-rowLots.length);
 for(let i=0;i<samplesNeeded;i++){
   rowCards.push(`
     <div class="lotCard sampleLot" style="pointer-events:none;">
-      <div class="lotTop">
-        <span>SAMPLE</span>
-      </div>
+     <div class="lotTop" style="
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+">
+  <span>SAMPLE</span>
+
+  <span style="
+    color:#ff8c00;
+    font-size:15px;
+    font-weight:900;
+  ">
+    ${({
+      ROW1:"R200–R300",
+      ROW2:"R400",
+      ROW3:"R600",
+      ROW4:"R800",
+      ROW5:"R1,000+",
+      ROW6:"R1,000+"
+    })[rowKey] || ""}
+  </span>
+</div>
 
       <div class="flowerWrap" style="position:relative;">
         <img src="faded pic.png"
