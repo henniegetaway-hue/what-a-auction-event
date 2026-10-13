@@ -6145,12 +6145,32 @@ if(duplicatePhoneUser){
     "REGISTRATION BLOCKED: This phone / WhatsApp number is already registered to different personal details.";
   return;
 }
+   const { data: signUpData, error: signUpError } =
+  await cliviaSupabase.auth.signUp({
+    email: bidderEmail,
+    password: bidderPassword,
+    options: {
+      emailRedirectTo:
+        "https://henniegetaway-hue.github.io/what-a-auction-event/"
+    }
+  });
+
+if(signUpError){
+  document.getElementById("regMsg").textContent =
+    "Registration failed: " + signUpError.message;
+  return;
+}
+
+if(!signUpData.user){
+  document.getElementById("regMsg").textContent =
+    "Unable to create account. Please try again.";
+  return;
+}     
   const bidder={
     id:"B"+Date.now(),
-    name: bidderName,
-    phone: bidderPhone,
-    password: bidderPassword,    
-    entityType,
+name: bidderName,
+phone: bidderPhone,
+entityType,
     businessName,
     companyName,
 businessPhone,
