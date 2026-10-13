@@ -2036,6 +2036,29 @@ justify-content:center;
  </section>         
 
 <div id="adminArea" class="hidden">
+      <div class="panel" id="paymentVerificationPanel"
+     style="border:1px solid #9acd32;margin-bottom:18px;">
+
+  <h2 style="color:#9acd32;">
+    PAYMENT VERIFICATION & ACCOUNT FLAGS
+  </h2>
+
+  <p class="small">
+    Review bidder and seller payment confirmations,
+    outstanding replies, warnings and account restrictions.
+  </p>
+
+  <div id="paymentVerificationResults">
+    No payment verification records available yet.
+  </div>
+
+  <p class="small">
+    Warning schedule: Day 1, Day 3, Day 5.
+    Account restriction: Day 6 if no response.
+    Disputed payments require Admin review.
+  </p>
+
+</div>
     <div class="grid2">
 
       <div class="panel">
@@ -6574,49 +6597,80 @@ function isAuctionHalfFull(auction){
   return currentLots>=39;
 }
   function getNextAuctionSlot(preferredTime){
-  const normalSlots=["15:00","17:00","19:00"];
-const slots=preferredTime && normalSlots.includes(preferredTime)
-  ? [preferredTime]
-  : normalSlots;
-  const existing=(state.auctions||[]).filter(a=>a.auctionDate && a.auctionTime);
 
-  let date=new Date();
+  const times=["15:00","17:00","19:00"];
+  const now=new Date();
+  const cutoff=now.getTime()+3*24*60*60*1000;
 
-  for(let i=0;i<30;i++){
-    const day=date.getDay();
+  const weekends=[];
 
-    if(day===5 || day===6){
-      const dateKey=
-  date.getFullYear()+"-"+
-  String(date.getMonth()+1).padStart(2,"0")+"-"+
-  String(date.getDate()).padStart(2,"0");
-      
-      for(const time of slots){
-        const [hour,minute]=time.split(":").map(Number);
-const slotDate=new Date(date);
-slotDate.setHours(hour,minute,0,0);
-if(slotDate<=new Date()) continue;
-        const slotStart=new Date(dateKey+"T"+time+":00+02:00").getTime();
-const slotEnd=slotStart+(2*60*60*1000);
+  // Find Friday/Saturday dates over the next 8 weeks
+  for(let i=0;i<56;i++){
 
-const used=(state.auctions||[]).some(a=>{
-  if(a.auctionDate!==dateKey || !a.auctionTime) return false;
+    const date=new Date(now);
+    date.setDate(now.getDate()+i);
 
-  const otherStart=new Date(a.auctionDate+"T"+a.auctionTime+":00+02:00").getTime();
-  const otherEnd=otherStart+(2*60*60*1000);
+    if(date.getDay()!==5 && date.getDay()!==6) continue;
 
-  return slotStart<otherEnd && slotEnd>otherStart;
-});
+    const dateKey=
+      date.getFullYear()+"-"+
+      String(date.getMonth()+1).padStart(2,"0")+"-"+
+      String(date.getDate()).padStart(2,"0");
 
-        if(!used){
-         const close=new Date(slotDate.getTime()+2*60*60*1000);
-const closeTime=String(close.getHours()).padStart(2,"0")+":"+String(close.getMinutes()).padStart(2,"0");
-return {date:dateKey,time:time,closeTime:closeTime};
+    weekends.push(dateKey);
+  }
+
+  // Fill Friday, then Saturday, then later time brackets.
+  // Prefer the earliest weekend before moving further ahead.
+  for(let i=0;i<weekends.length;i+=2){
+
+    const weekendDates=weekends.slice(i,i+2);
+
+    const preferredValid=times.includes(preferredTime);
+
+    const orderedTimes=preferredValid
+      ? [preferredTime,...times.filter(t=>t!==preferredTime)]
+      : times;
+
+    for(const time of orderedTimes){
+
+      for(const dateKey of weekendDates){
+
+        const start=new Date(
+          dateKey+"T"+time+":00+02:00"
+        ).getTime();
+
+        if(start<=cutoff) continue;
+
+        const end=start+2*60*60*1000;
+
+        const occupied=(state.auctions||[]).some(a=>{
+
+          if(!a.auctionDate || !a.auctionTime) return false;
+
+          const otherStart=new Date(
+            a.auctionDate+"T"+a.auctionTime+":00+02:00"
+          ).getTime();
+
+          const otherEnd=otherStart+2*60*60*1000;
+
+          return start<otherEnd && end>otherStart;
+        });
+
+        if(!occupied){
+
+          const closeHour=
+            (Number(time.split(":")[0])+2)%24;
+
+          return {
+            date:dateKey,
+            time:time,
+            closeTime:
+              String(closeHour).padStart(2,"0")+":00"
+          };
         }
       }
     }
-
-    date.setDate(date.getDate()+1);
   }
 
   return null;
@@ -6875,19 +6929,46 @@ if(exportEligible && !seller.exporterApproved){
     (a.auctionTime===preferredAuctionTime || a.preferredAuctionTime===preferredAuctionTime)
   );
         
-  auction=matchingAuction;
-    if(!auction.auctionTime && !auction.preferredAuctionTime){
+  if(!matchingAuction){
+  document.getElementById("lotMsg").textContent =
+    "No auction is available at that preferred time. Please choose Automatic / next available.";
+  return;
+}
+
+auction=matchingAuction;
+
+if(!auction.auctionTime && !auction.preferredAuctionTime){
   auction.preferredAuctionTime=preferredAuctionTime;
 }
     if(isAuctionFull(auction)){
   alert("The "+preferredAuctionTime+" auction is already full. Please choose another time.");
   return;
 }
-  }else{
-  alert("The "+preferredAuctionTime+" auction slot is not available yet. Please choose Automatic / next available.");
-  return;
+}
+// STOP LOADING WHEN AUCTION HAS STARTED
+if(auction.auctionDate && auction.auctionTime){
+
+  const auctionStart=new Date(
+    auction.auctionDate+"T"+auction.auctionTime+":00+02:00"
+  );
+
+  if(Date.now()>=auctionStart.getTime()){
+    document.getElementById("lotMsg").textContent=
+      "This auction has started. No more plants can be added.";
+    return;
+  }
 }
 
+// MAXIMUM 48 PLANTS PER AUCTION
+const auctionLotCount=(state.lots||[]).filter(
+  lot=>lot.auctionId===auction.id
+).length;
+
+if(auctionLotCount>=48){
+  document.getElementById("lotMsg").textContent=
+    "This auction is FULL (48 plants). Please select another auction.";
+  return;
+}
 const listingCurrency=auction && auction.currency==="EUR" ? "EUR" : "ZAR";
 const listingFee=listingCurrency==="EUR" ? 5 : 50;
    
@@ -8125,8 +8206,29 @@ if(bidder && sale.paymentAccountNumber){
 }
 
   sale.sellerPaidConfirmed=true;
-  sale.paymentStatus="PAID";
+sale.paymentStatus="PAID";
 sale.sellerConfirmationDeadline=null;
+
+// Request confirmation from the winning bidder
+const confirmationTime=Date.now();
+
+sale.bidderPaymentConfirmation={
+  requestedAt:new Date(confirmationTime).toISOString(),
+  status:"AWAITING_REPLY",
+  reminderCount:0,
+  firstWarningAt:new Date(
+    confirmationTime+24*60*60*1000
+  ).toISOString(),
+  secondWarningAt:new Date(
+    confirmationTime+3*24*60*60*1000
+  ).toISOString(),
+  finalWarningAt:new Date(
+    confirmationTime+5*24*60*60*1000
+  ).toISOString(),
+  blockAt:new Date(
+    confirmationTime+6*24*60*60*1000
+  ).toISOString()
+};
   seller.completedSales=Number(seller.completedSales||0)+1;
   seller.totalSalesValue=Number(seller.totalSalesValue||0)+Number(sale.amount||0);
  const saleAmount=Number(sale.amount||0);
@@ -8168,6 +8270,61 @@ maxReminders:3
   save();
   renderInvoices();
 }
+     function replyToSellerPayment(invoiceId,lotIndex,reply){
+
+  const invoice=(state.invoices||[]).find(
+    inv=>inv.id===invoiceId
+  );
+
+  if(!invoice || !invoice.lots?.[lotIndex]) return;
+
+  if(!state.selectedBidderId ||
+     invoice.bidderId!==state.selectedBidderId){
+    alert("Only the winning bidder can respond.");
+    return;
+  }
+
+  const sale=invoice.lots[lotIndex];
+  const confirmation=sale.bidderPaymentConfirmation;
+
+  if(!confirmation){
+    alert("No payment confirmation request exists.");
+    return;
+  }
+
+  if(!["AWAITING_REPLY","BLOCK_REVIEW"].includes(
+    confirmation.status
+  )){
+    alert("This payment confirmation has already been answered.");
+    return;
+  }
+
+  if(reply==="CONFIRMED"){
+    confirmation.status="CONFIRMED";
+  }
+  else if(reply==="DISPUTED"){
+    const reason=prompt(
+      "Please explain the payment problem:"
+    );
+
+    if(!reason || !reason.trim()) return;
+
+    confirmation.status="DISPUTED";
+    confirmation.disputeReason=reason.trim();
+    sale.paymentStatus="ADMIN_REVIEW";
+  }
+  else{
+    return;
+  }
+
+  confirmation.respondedAt=new Date().toISOString();
+  confirmation.reminderDue=false;
+
+  save();
+  renderInvoices();
+
+  alert("Your response has been recorded.");
+} 
   function confirmHappyBuyer(invoiceId,lotIndex){
   const invoice=(state.invoices||[]).find(inv=>inv.id===invoiceId);
   if(!invoice || !invoice.lots || !invoice.lots[lotIndex]) return;
@@ -8193,6 +8350,44 @@ if(!state.selectedBidderId || invoice.bidderId!==state.selectedBidderId){
   save();
   renderInvoices();
 }
+    function checkBidderPaymentWarnings(){
+  const now = Date.now();
+  let changed = false;
+
+  (state.invoices || []).forEach(inv => {
+    if(inv.type === "PLATFORM_FEE") return;
+
+    (inv.lots || []).forEach(sale => {
+      const c = sale.bidderPaymentConfirmation;
+
+      if(!c || c.status !== "AWAITING_REPLY") return;
+
+      const dates = [
+        c.firstWarningAt,
+        c.secondWarningAt,
+        c.finalWarningAt
+      ];
+
+      const count = dates.filter(date =>
+        date && now >= new Date(date).getTime()
+      ).length;
+
+      if(count > Number(c.reminderCount || 0)){
+        c.reminderCount = count;
+        c.lastWarningAt = new Date().toISOString();
+        changed = true;
+      }
+
+      if(c.blockAt && now >= new Date(c.blockAt).getTime()){
+        c.status = "BLOCK_REVIEW";
+        c.blockReviewAt = new Date().toISOString();
+        changed = true;
+      }
+    });
+  });
+
+  if(changed) save();
+}  
     function checkCommissionReminders(){
   const now=Date.now();
 
@@ -8244,6 +8439,7 @@ function setWinningDeliveryMethod(invoiceId,method){
   function renderInvoices(){
   const box=document.getElementById("invoiceList");
 checkCommissionReminders();
+   checkBidderPaymentWarnings();     
   if(!state.invoices || state.invoices.length===0){
     box.innerHTML="No invoices created yet.";
     return;
@@ -8326,6 +8522,43 @@ ${x.paymentStatus==="ADMIN_REVIEW"
  : (document.getElementById("sellerSelect")?.value===x.sellerId && x.paymentStatus!=="ADMIN_REVIEW"
     ? '<button onclick="confirmSellerPayment(\''+inv.id+'\','+inv.lots.indexOf(x)+')">SELLER CONFIRM PAYMENT RECEIVED</button>'
     : '')
+}
+${x.sellerPaidConfirmed &&
+  inv.bidderId===state.selectedBidderId &&
+  x.bidderPaymentConfirmation
+  ? `
+    <div class="notice" style="margin:10px 0;">
+      <b>PAYMENT CONFIRMATION REQUIRED</b><br>
+
+      ${x.bidderPaymentConfirmation.status==="AWAITING_REPLY"
+        || x.bidderPaymentConfirmation.status==="BLOCK_REVIEW"
+        ? `
+          <p>
+            The seller has confirmed receiving payment.
+            Please confirm whether you made this payment
+            or report a problem.
+          </p>
+
+          <button onclick="replyToSellerPayment('${inv.id}',${inv.lots.indexOf(x)},'CONFIRMED')">
+            CONFIRM PAYMENT MADE
+          </button>
+
+          <button onclick="replyToSellerPayment('${inv.id}',${inv.lots.indexOf(x)},'DISPUTED')">
+            REPORT PAYMENT PROBLEM
+          </button>
+
+          <p class="small">
+            Warning 1: Day 1 |
+            Warning 2: Day 3 |
+            Final warning: Day 5 |
+            Blocking review: Day 6
+          </p>
+        `
+        : `<p>Status: ${escapeHtml(x.bidderPaymentConfirmation.status)}</p>`
+      }
+    </div>
+  `
+  : ''
 }
 ${x.sellerPaidConfirmed
   ? (x.happyBuyerConfirmed
@@ -10154,6 +10387,9 @@ async function openAdmin(){
   if(typeof renderSiteErrorLog === "function"){
     renderSiteErrorLog();
   }
+  if(typeof renderPaymentVerification === "function"){
+  renderPaymentVerification();
+}    
 }
 function createAuction(){
 
