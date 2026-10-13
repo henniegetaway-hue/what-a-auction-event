@@ -2213,6 +2213,36 @@ justify-content:center;
 </section>  <!-- closes pageAdmin -->
 
 <section id="pageRules" class="page hidden">
+      <h3 style="color:#9acd32;">
+  UNSOLD PLANTS — AUTOMATIC CARRY-FORWARD
+</h3>
+
+<p>
+  Unsold plants will automatically be entered into the next
+  three scheduled Clivia Dreamers auctions in the next 
+  3 scheduled auction days.
+</p>
+
+<p>
+  The original starting price will remain unchanged unless
+  the seller requests a price change.
+</p>
+
+<p>
+  Sellers will be notified when their unsold plants are
+  carried forward without confirmation
+  for automatic relisting.
+</p>
+
+<p>
+  Unsold plants will be allocated additional spaces
+  There is no fixed limit on carry-forward lots.
+</p>
+
+<p>
+  After three additional auction appearances, any plant
+  that remains unsold will no longer be listed.
+</p>
   <div class="panel">
 
     <div id="cliviaRulesContent">
@@ -2343,6 +2373,30 @@ justify-content:center;
   <div id="selectedSellerNotice" class="notice">
     No seller selected yet.
   </div>
+     <!-- UNSOLD PLANT CARRY-FORWARD NOTIFICATIONS -->
+<div id="sellerRolloverPanel"
+     style="display:none;margin-top:12px;
+            padding:14px;background:#111;
+            border:1px solid #9acd32;
+            border-radius:10px;color:white;">
+
+  <h3 style="color:#9acd32;margin-top:0;">
+    🌸 UNSOLD PLANTS — NEXT AUCTION
+  </h3>
+
+  <p>
+    Your unsold plants are automatically carried forward
+    to the next 3 auctions in date and time order.
+  </p>
+
+  <p>
+    Your existing starting price remains unchanged.
+    You only need to respond if you want to change it.
+  </p>
+
+  <div id="sellerRolloverList"></div>
+
+</div>   
 
     <div id="registeredSellerInfo" class="notice" style="margin-top:12px;">
   Registered seller information will appear here.
@@ -2850,8 +2904,12 @@ justify-content:center;
 
 </div>
 
- <!-- LIVE PLANT CARD PREVIEW -->
-<div id="sellerLivePreviewPanel" class="panel" style="margin-bottom:16px;">
+<!-- RIGHT COLUMN — LIVE PREVIEW AND BEST SELLERS -->
+<div id="sellerRightColumn"
+     style="display:flex;flex-direction:column;gap:16px;min-width:0;">
+
+<!-- LIVE PLANT CARD PREVIEW -->
+<div id="sellerLivePreviewPanel" class="panel">
 
   <h2 style="text-align:center;">🌸 LIVE PLANT PREVIEW</h2>
 
@@ -2887,8 +2945,9 @@ justify-content:center;
       Starting Bid: R0
     </h3>
 
-  </div>
-</div>     
+    </div>
+</div>
+
 <!-- RIGHT SIDE — BEST SELLERS -->
 <div id="bestSellersPanel" class="panel">
   <h2>🏆 Best Sellers</h2>
@@ -2899,7 +2958,9 @@ justify-content:center;
   <div id="bestSellersList">
     <!-- Top 4 sold flowers will appear here automatically -->
   </div>
-</div>
+</div> <!-- closes bestSellersPanel -->
+
+</div> <!-- closes sellerRightColumn -->
 
 </div> <!-- closes sellerLoadGrid -->
 
@@ -5348,7 +5409,110 @@ function approveSelectedExporter(){
   if(notice){
     notice.textContent="Selected seller: " + seller.name;
   }
+  if(typeof renderSellerRolloverNotifications==="function"){
+  renderSellerRolloverNotifications();
+}       
 }
+   function renderSellerRolloverNotifications(){
+
+  const panel=document.getElementById("sellerRolloverPanel");
+  const list=document.getElementById("sellerRolloverList");
+  const sellerId=document.getElementById("sellerSelect")?.value;
+
+  if(!panel || !list) return;
+
+  const lots=(state.lots||[]).filter(lot=>
+    lot.sellerId===sellerId &&
+    Number(lot.carryForwardCount||0)>0 &&
+    Number(lot.carryForwardCount||0)<=3
+  );
+
+  if(!sellerId || lots.length===0){
+    panel.style.display="none";
+    list.innerHTML="";
+    return;
+  }
+
+  panel.style.display="block";
+  list.innerHTML="";
+
+  lots.forEach(lot=>{
+
+    const auction=(state.auctions||[]).find(
+      a=>a.id===lot.auctionId
+    );
+
+    const item=document.createElement("div");
+    item.style.cssText=
+      "padding:12px;margin:10px 0;border:1px solid #555;border-radius:8px;";
+
+    const heading=document.createElement("strong");
+    heading.textContent=lot.name||"Unsold plant";
+
+    const details=document.createElement("p");
+    details.textContent=
+      "Next auction: "+
+      (auction?.auctionDate||"To be scheduled")+
+      " "+(auction?.auctionTime||"")+
+      " | Starting price: "+
+      (auction?.currency==="EUR"?"€":"R")+
+      Number(lot.startBid||0)+
+      " | Carry-forward "+lot.carryForwardCount+" of 3";
+
+    const label=document.createElement("label");
+    label.textContent="Change starting price (optional)";
+
+    const input=document.createElement("input");
+    input.type="number";
+    input.min="0";
+    input.step="1";
+    input.value=lot.startBid;
+    input.style.marginTop="6px";
+
+    const button=document.createElement("button");
+    button.type="button";
+    button.className="goldBtn";
+    button.textContent="SAVE NEW PRICE";
+    button.style.marginTop="8px";
+
+    button.onclick=()=>{
+
+      const newPrice=Number(input.value);
+
+      if(!Number.isFinite(newPrice) || newPrice<=0){
+        alert("Please enter a valid starting price.");
+        return;
+      }
+
+      const currentAuction=(state.auctions||[]).find(
+        a=>a.id===lot.auctionId
+      );
+
+      if(currentAuction?.auctionDate && currentAuction?.auctionTime){
+        const start=new Date(
+          currentAuction.auctionDate+"T"+
+          currentAuction.auctionTime+":00+02:00"
+        ).getTime();
+
+        if(Date.now()>=start){
+          alert("The auction has started. The price can no longer be changed.");
+          return;
+        }
+      }
+
+      lot.startBid=newPrice;
+      lot.rolloverNotificationPending=false;
+      save();
+      renderSellerRolloverNotifications();
+
+      alert("New starting price saved.");
+    };
+
+    item.append(heading,details,label,input,button);
+    list.appendChild(item);
+
+  });
+}   
   function confirmSellerBank(){
   const sellerId=document.getElementById("sellerSelect").value;
   const seller=(state.sellers||[]).find(s=>s.id===sellerId);
@@ -6969,6 +7133,17 @@ if(auctionLotCount>=48){
     "This auction is FULL (48 plants). Please select another auction.";
   return;
 }
+   // CHECK 8 SPACES IN THE FINAL SELECTED AUCTION
+const selectedRowCount=(state.lots||[]).filter(lot=>
+  lot.auctionId===auction.id &&
+  lot.startRow===startRow
+).length;
+
+if(selectedRowCount>=8){
+  document.getElementById("lotMsg").textContent=
+    "This starting bid row is FULL (8 plants). Please choose another available row.";
+  return;
+}   
 const listingCurrency=auction && auction.currency==="EUR" ? "EUR" : "ZAR";
 const listingFee=listingCurrency==="EUR" ? 5 : 50;
    
@@ -8004,55 +8179,32 @@ function closePhotoModal(e){
   if(e.target.id==="photoModal") hidePhotoModal();
 }
 function getNextAuction(currentAuction){
-  if(!currentAuction) return null;
+
+  if(!currentAuction ||
+     !currentAuction.auctionDate ||
+     !currentAuction.auctionTime) return null;
+
+  const auctionStart = a =>
+    new Date(
+      a.auctionDate+"T"+a.auctionTime+":00+02:00"
+    ).getTime();
+
+  const currentStart=auctionStart(currentAuction);
 
   return (state.auctions||[])
     .filter(a=>
       a.id!==currentAuction.id &&
       a.type===currentAuction.type &&
-      new Date(a.createdDate).getTime() > new Date(currentAuction.createdDate).getTime()
+      a.auctionDate &&
+      a.auctionTime &&
+      auctionStart(a)>currentStart &&
+      auctionStart(a)>Date.now()
     )
     .sort((a,b)=>
-      new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime()
+      auctionStart(a)-auctionStart(b)
     )[0] || null;
 }
-      function rolloverUnsoldLots(currentAuction){
-  const nextAuction=getNextAuction(currentAuction);
-  if(!nextAuction) return;
-         const unsoldLots=(state.lots||[]).filter(lot=>
-  lot.auctionId===currentAuction.id &&
-  (!lot.bids || lot.bids.length===0)
-);  
-    unsoldLots.forEach(lot=>{
-   const nextRowCount=(state.lots||[]).filter(l=>
-  l.auctionId===nextAuction.id &&
-  l.startRow===lot.startRow
-).length;
-
-if(nextRowCount>=8 && Number(lot.auctionAppearances||1)<3){
-  lot.rolloverPending=true;
-  return;
-}       
-  const currentAppearances=Number(lot.auctionAppearances||1);
-
-if(currentAppearances>=3){
-  lot.rolloverReviewRequired=true;
-  return;
-}
-
-lot.auctionAppearances=currentAppearances+1;
-
-  if(lot.auctionAppearances<=3){
-   lot.rolloverPending=false;   
-  lot.bids=[];
-lot.extendedCloseUntil=null;      
-   currentAuction.lots=(currentAuction.lots||[]).filter(l=>l.id!==lot.id);     
-  lot.auctionId=nextAuction.id;
-   nextAuction.lots=nextAuction.lots||[];
-nextAuction.lots.push(lot);     
-}  
-});          
-}
+      setAuctionOpen(open)
       function setAuctionOpen(open){
   state.settings.open=open;
 
