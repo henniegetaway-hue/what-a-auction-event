@@ -4340,7 +4340,7 @@ if(duplicateBankUser){
   String(u.phone||"").replace(/\s/g,"")===phone.replace(/\s/g,"") &&
   (
     String(u.name||"").trim().toLowerCase()!==name.trim().toLowerCase() ||
-    String(u.accountNumber||"").replace(/\s/g,"")!==String(accountNumber||"").replace(/\s/g,"")
+  String(u.name||"").trim().toLowerCase()!==bidderName.trim().toLowerCase()
   )
 );
 
