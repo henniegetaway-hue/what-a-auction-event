@@ -8202,10 +8202,10 @@ function getNextAuction(currentAuction){
     )
     .sort((a,b)=>
       auctionStart(a)-auctionStart(b)
-    )[0] || null;
+  )[0] || null;
 }
-      setAuctionOpen(open)
-      function setAuctionOpen(open){
+
+function setAuctionOpen(open){
   state.settings.open=open;
 
   if(!open){
