@@ -5775,7 +5775,7 @@ setTimeout(()=>{
   if(accountSection){
     accountSection.scrollIntoView({
 }
-  function showRegisteredBidder(){
+  async function showRegisteredBidder(){
   const bidder=(state.bidders||[]).find(
     b=>b.id===state.selectedBidderId
   );
