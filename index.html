@@ -5737,10 +5737,37 @@ document.getElementById("bidderBusinessFields").style.display="none";
   }
 }
 
-function sendBidderPasswordReset(){
-  const bidder=(state.bidders||[]).find(
-    b=>b.id===state.selectedBidderId
+async function sendBidderPasswordReset(){
+  const email = prompt(
+    "RESET PASSWORD\n\nEnter your registered email address:"
   );
+
+  if(email === null) return;
+
+  const registeredEmail = email.trim().toLowerCase();
+
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(registeredEmail)){
+    alert("Please enter a valid email address.");
+    return;
+  }
+
+  const { error } = await cliviaSupabase.auth.resetPasswordForEmail(
+    registeredEmail,
+    {
+      redirectTo:
+        "https://henniegetaway-hue.github.io/what-a-auction-event/"
+    }
+  );
+
+  if(error){
+    alert("Password reset request failed. Please try again.");
+    return;
+  }
+
+  alert(
+    "If this email address is registered, a password reset link will be sent."
+  );
+}
 
   const msg=document.getElementById("bidderForgotMsg");
 
