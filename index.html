@@ -741,6 +741,25 @@ th,td{
     SUPABASE_URL,
     SUPABASE_PUBLISHABLE_KEY
   );
+// DREAM CLIVIAS AUCTION DATABASE
+const CLIVIA_SUPABASE_URL =
+  "https://mynwscjggvhjrtprogmq.supabase.co";
+
+const CLIVIA_SUPABASE_KEY =
+  "sb_publishable_pzyp2Dj74bYhZYVTpTYKDw_-j-UCcWj";
+
+const cliviaSupabase = supabase.createClient(
+  CLIVIA_SUPABASE_URL,
+  CLIVIA_SUPABASE_KEY,
+  {
+    auth: {
+      storageKey: "dream-clivias-auth",
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: false
+    }
+  }
+);       
   
 let validPasswordRecovery = false;
 
