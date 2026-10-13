@@ -759,7 +759,23 @@ const cliviaSupabase = supabase.createClient(
     }
   }
 );       
-  
+  cliviaSupabase.auth.onAuthStateChange((event, session) => {
+  if(event === "PASSWORD_RECOVERY"){
+    console.log("Clivia bidder password recovery confirmed.");
+
+    setTimeout(() => {
+      const box = document.getElementById("cliviaPasswordRecoveryBox");
+
+      if(box){
+        box.classList.remove("hidden");
+        box.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+      }
+    }, 100);
+  }
+});
 let validPasswordRecovery = false;
 
 auctionSupabase.auth.onAuthStateChange((event, session) => {
