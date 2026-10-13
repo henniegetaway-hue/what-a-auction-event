@@ -5788,7 +5788,56 @@ document.getElementById("bidderBusinessFields").style.display="none";
     msg.textContent="";
   }
 }
+async function saveCliviaNewPassword(){
+  const password =
+    document.getElementById("cliviaNewPassword").value;
 
+  const confirmPassword =
+    document.getElementById("cliviaConfirmPassword").value;
+
+  const msg =
+    document.getElementById("cliviaPasswordRecoveryMsg");
+
+  if(password.length < 8){
+    msg.textContent = "Password must contain at least 8 characters.";
+    return;
+  }
+
+  if(password !== confirmPassword){
+    msg.textContent = "Passwords do not match.";
+    return;
+  }
+
+  const { data: sessionData } =
+    await cliviaSupabase.auth.getSession();
+
+  if(!sessionData.session){
+    msg.textContent =
+      "Recovery session expired. Please request a new reset link.";
+    return;
+  }
+
+  const { error } = await cliviaSupabase.auth.updateUser({
+    password: password
+  });
+
+  if(error){
+    msg.textContent = "Password update failed: " + error.message;
+    return;
+  }
+
+  msg.textContent = "Password updated successfully.";
+
+  document.getElementById("cliviaNewPassword").value = "";
+  document.getElementById("cliviaConfirmPassword").value = "";
+
+  await cliviaSupabase.auth.signOut();
+
+  setTimeout(() => {
+    document.getElementById("cliviaPasswordRecoveryBox")
+      .classList.add("hidden");
+  }, 1500);
+}
 async function sendBidderPasswordReset(){
   const email = prompt(
     "RESET PASSWORD\n\nEnter your registered email address:"
