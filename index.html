@@ -6165,7 +6165,12 @@ if(!signUpData.user){
   document.getElementById("regMsg").textContent =
     "Unable to create account. Please try again.";
   return;
-}     
+}  
+ if(!signUpData.session){
+  console.log(
+    "Clivia registration awaiting email confirmation."
+  );
+}       
   const bidder={
     id:"B"+Date.now(),
 name: bidderName,
@@ -6214,58 +6219,27 @@ securityProofCurrency:"",
     securityProofAmount:0,
 securityProof:"",
   };
-  state.bidders.push(bidder);
-state.selectedBidderId=bidder.id;
- localStorage.setItem(
-  ACCOUNT_STORAGE_KEY,
-  JSON.stringify(state.bidders||[])
-);       
+  // Save registration details temporarily until email verification.
+  // Do not activate bidding or selling yet.
+  const pendingRegistration = {
+    authUserId: signUpData.user.id,
+    bidder
+  };
 
-localStorage.setItem(
-  USER_LOGIN_KEY,
-  JSON.stringify({
-    bidderId: bidder.id
-  })
-);
+  sessionStorage.setItem(
+    "cliviaPendingRegistration",
+    JSON.stringify(pendingRegistration)
+  );
 
-save();
-refreshBidderSelect();
+  document.getElementById("regMsg").textContent =
+    "Please check your email and confirm your registration. " +
+    "Your account will not be active until verification is complete.";
 
-  document.getElementById("regMsg").textContent=
-  "Account registration successful.";
- const whatsappMessage =
-  "NEW CLIVIA DREAMERS ACCOUNT REGISTRATION\n\n" +
-  "Register as: " + (entityType === "COMPANY" ? "Company / CC" : "Private Individual") + "\n" +
-  "Name: " + bidderName + "\n" +
-  "WhatsApp: " + bidderPhone + "\n" +
-  (entityType === "COMPANY"
-  ? "Registered Company / CC: " + companyName + "\n" +
-    "Trading As: " + (businessName || "Not supplied") + "\n" +
-    "Company WhatsApp: " + businessPhone + "\n" +
-    "Company Registration: " + companyReg + "\n" +
-    "VAT Number: " + (vatNumber || "Not supplied") + "\n"
-  : "") +
-  "Address: " + address + "\n" +
-  "Suburb: " + suburb + "\n" +
-  "Postal Code: " + postal + "\n" +
-  "Country: " + country + "\n" +
-  "Auction notifications: " + bidder.notifyNextAuction;
-   window.lastBidderWhatsAppMessage = whatsappMessage; 
-
-document.getElementById("regMsg").textContent=
-  "Account registration successful.";
-    alert("✅ REGISTRATION SUCCESSFUL!\n\nYour Clivia Dreamers account is now registered.\n\nYou can now bid or sell items.\n\nNext time, click MY ACCOUNT.");
- document.getElementById("sendBidderWhatsApp").style.display="block";
-    document.getElementById("newBidderRegistration").style.display="none";
-    refreshBidderSelect();   
-}
-function sendBidderRegistrationWhatsApp(){
-  const message =
-  window.lastBidderWhatsAppMessage ||
-  "Clivia Dreamers Auction account registration.";
-  window.open(
-    "https://api.whatsapp.com/send?phone=27606866781&text=" + encodeURIComponent(message),
-    "_blank"
+  alert(
+    "PLEASE CONFIRM YOUR EMAIL\n\n" +
+    "We have sent a confirmation link to:\n" +
+    bidderEmail +
+    "\n\nOpen your email and click the confirmation link."
   );
 }
  function selectedBidderNotice(){
