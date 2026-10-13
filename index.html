@@ -5774,13 +5774,18 @@ setTimeout(()=>{
   if(accountSection){
     accountSection.scrollIntoView({
 }
-  async function showRegisteredBidder(){
+ async function showRegisteredBidder(){
+  await refreshBidderSelect();
+
   const bidder=(state.bidders||[]).find(
     b=>b.id===state.selectedBidderId
   );
 
   if(!bidder){
-    alert("No registered account is recognised on this device yet.");
+    alert(
+      "No confirmed bidder account is signed in.\n\n" +
+      "Please sign in to your Clivia account first."
+    );
     return;
   }
    const forgotChoiceRow = document.getElementById("bidderForgotChoiceRow");
