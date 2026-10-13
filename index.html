@@ -1,4 +1,3 @@
-<!DOCTYPE html> 
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -5802,10 +5801,32 @@ if(forgotPasswordBox){
     return;
   }
 
-  if(enteredPassword!==bidder.password){
-    alert("Incorrect Account password.");
-    return;
-  }
+  const { data: loginData, error: loginError } =
+  await cliviaSupabase.auth.signInWithPassword({
+    email: (bidder.email || "").trim().toLowerCase(),
+    password: enteredPassword
+  });
+
+if(loginError || !loginData.user){
+  alert(
+    "Login failed.\n\n" +
+    "Please check your email and password, " +
+    "and confirm your email registration."
+  );
+  return;
+}
+
+if(loginData.user.email_confirmed_at === null){
+  alert("Please confirm your email before accessing your account.");
+  await cliviaSupabase.auth.signOut();
+  return;
+}
+
+if(loginData.user.id !== bidder.authUserId){
+  alert("This login does not match the selected bidder account.");
+  await cliviaSupabase.auth.signOut();
+  return;
+}
 
   const newRegistration=document.getElementById("newBidderRegistration");
 const accountSection=document.getElementById("registeredBidderSection");
@@ -6410,7 +6431,7 @@ securityProof:"",
     (isEUR ? "€" : "R")+nextCapacity+"."
   );
 }     
-function refreshBidderSelect(){
+async function refreshBidderSelect(){
   const select=document.getElementById("bidderSelect");
   const recognitionNotice=document.getElementById("bidderRecognitionNotice");
   const liveStatus=document.getElementById("liveBidderStatus");
