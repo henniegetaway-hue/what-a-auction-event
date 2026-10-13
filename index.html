@@ -6433,6 +6433,47 @@ securityProof:"",
 }     
 async function refreshBidderSelect(){
   const select=document.getElementById("bidderSelect");
+     const { data: { user }, error: authError } =
+    await cliviaSupabase.auth.getUser();
+
+  if(authError || !user || !user.email_confirmed_at){
+    state.bidders = [];
+    state.selectedBidderId = "";
+  } else {
+    const { data: account, error: accountError } =
+      await cliviaSupabase
+        .from("bidders")
+        .select("*")
+        .eq("auth_user_id", user.id)
+        .maybeSingle();
+
+    if(accountError){
+      console.error("Unable to load bidder account:", accountError.message);
+      state.bidders = [];
+      state.selectedBidderId = "";
+    } else if(account){
+      const bidder = {
+        id: String(account.id),
+        authUserId: account.auth_user_id,
+        name: account.full_name,
+        phone: account.whatsapp,
+        email: account.email,
+        address: account.address || "",
+        suburb: account.suburb || "",
+        postal: account.postal_code || "",
+        country: account.country || "",
+        companyName: account.company_name || "",
+        businessPhone: account.business_whatsapp || "",
+        bankConfirmed: false
+      };
+
+      state.bidders = [bidder];
+      state.selectedBidderId = bidder.id;
+    } else {
+      state.bidders = [];
+      state.selectedBidderId = "";
+    }
+  }   
   const recognitionNotice=document.getElementById("bidderRecognitionNotice");
   const liveStatus=document.getElementById("liveBidderStatus");
 
