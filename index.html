@@ -5798,7 +5798,18 @@ if(forgotChoiceRow){
 if(forgotPasswordBox){
   forgotPasswordBox.style.display = "none";
 }
-  const enteredPassword=prompt(
+  const enteredEmail = prompt(
+  "MY ACCOUNT\n\nPlease enter your registered email address:"
+);
+
+if(enteredEmail === null) return;
+
+if(!enteredEmail.trim()){
+  alert("Please enter your registered email address.");
+  return;
+}
+
+const enteredPassword = prompt(
   "MY ACCOUNT\n\nPlease enter your account password:"
 );
 
