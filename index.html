@@ -6150,9 +6150,14 @@ if(duplicatePhoneUser){
     email: bidderEmail,
     password: bidderPassword,
     options: {
-      emailRedirectTo:
-        "https://henniegetaway-hue.github.io/what-a-auction-event/"
-    }
+  emailRedirectTo:
+    "https://henniegetaway-hue.github.io/what-a-auction-event/",
+  data: {
+    full_name: bidderName,
+    whatsapp: bidderPhone,
+    account_type: "CLIVIA_BIDDER"
+  }
+}
   });
 
 if(signUpError){
