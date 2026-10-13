@@ -6020,6 +6020,14 @@ if(common) common.style.display="block";
 const companyReg=document.getElementById("regCompanyReg").value.trim();
 const vatNumber=document.getElementById("regVatNumber").value.trim();
  const entityType=document.getElementById("regEntityType").value;
+   const bidderEmail =
+  document.getElementById("regEmail").value.trim().toLowerCase();
+
+if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(bidderEmail)){
+  document.getElementById("regMsg").textContent =
+    "Please enter a valid email address to register your account.";
+  return;
+}     
 const bidderPassword=document.getElementById("bidderPassword").value;
 const bidderPasswordConfirm=document.getElementById("bidderPasswordConfirm").value;
 
