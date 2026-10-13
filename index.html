@@ -4320,6 +4320,7 @@ const duplicateBankUser=[
   ...(state.bidders||[]),
   ...(state.sellers||[])
 ].find(u=>
+  accountNumber.trim() !== "" &&
   String(u.accountNumber||"").replace(/\s/g,"")===String(accountNumber||"").replace(/\s/g,"") &&
   (
     String(u.name||"").trim().toLowerCase()!==name.trim().toLowerCase() ||
