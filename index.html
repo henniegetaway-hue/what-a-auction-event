@@ -819,7 +819,6 @@ auctionSupabase.auth.onAuthStateChange((event, session) => {
 <nav>
   <button id="navRegister" onclick="showPage('register')">Register</button>
   <button id="navLive" onclick="showPage('live')">Live Auction</button>
-<button id="navSeller" onclick="openSellerSpaces()">SELLER LOAD</button>
 <button id="navAdmin" onclick="showPage('admin')">Admin</button>
   <button id="navInvoices" onclick="showPage('invoices')">Invoices</button>
  <button id="navRules" onclick="showPage('rules')">Rules & Terms</button>
@@ -4440,22 +4439,7 @@ function showSellerForgotPassword(){
       "WhatsApp number confirmed. Password reset can now be sent.";
   }
 }     
-  const box=document.getElementById("sellerForgotPasswordBox");
-  const phone=document.getElementById("sellerForgotPhone");
-  const msg=document.getElementById("sellerForgotMsg");
-
-  if(box){
-    box.style.display="block";
-  }
-
-  if(msg){
-    msg.textContent="";
-  }
-
-  if(phone){
-    phone.value="";
-    setTimeout(()=>phone.focus(),100);
-  }   
+      
     function updateSellerAIKeywords(){
   const name =
     document.getElementById("sellerLotName")?.value || "";
@@ -5820,6 +5804,14 @@ if(forgotRow){
 if(bidderSelect){
   bidderSelect.value=bidder.id;
 }
+
+// Show seller option after account password is accepted
+const sellBtn = document.getElementById("bidderWantToSellBtn");
+
+if(sellBtn){
+  sellBtn.style.display = "inline-block";
+}
+
 setTimeout(()=>{
   if(accountSection){
     accountSection.scrollIntoView({
