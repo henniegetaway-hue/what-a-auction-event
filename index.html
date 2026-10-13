@@ -5766,13 +5766,7 @@ function sendBidderPasswordReset(){
       "Password reset will be sent to your registered WhatsApp number.";
   }
 
-  // OTP / WhatsApp reset service will connect here later.
-  sellBtn.style.display = "inline-block";
-}
-
-setTimeout(()=>{
-  if(accountSection){
-    accountSection.scrollIntoView({
+   // Password reset will be connected to Supabase email recovery.
 }
  async function showRegisteredBidder(){
    const forgotChoiceRow = document.getElementById("bidderForgotChoiceRow");
