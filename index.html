@@ -2511,7 +2511,17 @@ justify-content:center;
     <label>Town</label>
     <input id="sellerTown">
     <label>Country</label>
-<input id="sellerCountry" placeholder="e.g. South Africa, United States, United Kingdom, Australia" autocomplete="country-name">
+<select id="sellerCountry" onchange="updateSellerRetailCountries()">
+  <option value="">-- Select Country --</option>
+  <option value="South Africa">South Africa</option>
+  <option value="United States">United States</option>
+  <option value="United Kingdom">United Kingdom</option>
+  <option value="Australia">Australia</option>
+  <option value="New Zealand">New Zealand</option>
+  <option value="Canada">Canada</option>
+  <option value="Eurozone">Eurozone / Europe</option>
+  <option value="Other">Other Country</option>
+</select>
 
     
    
@@ -2550,11 +2560,41 @@ justify-content:center;
   <label style="margin-top:12px;">
     Accepted Retail Payment Services
   </label>
+<style>
+#sellerRetailPaymentChoices label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  width: auto;
+  margin: 0;
+  padding: 5px 8px;
+  font-size: 12px;
+  cursor: pointer;
+}
 
-  <input
-    id="sellerRetailPaymentServices"
-    placeholder="e.g. Checkers, SPAR, Walmart Bill Pay">
+#sellerRetailPaymentChoices input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  flex-shrink: 0;
+}
+</style>
+  <div id="sellerRetailPaymentChoices"
+     style="display:flex;flex-wrap:wrap;gap:10px;margin:10px 0;">
 
+  <label><input type="checkbox" value="Checkers"> Checkers</label>
+  <label><input type="checkbox" value="SPAR"> SPAR</label>
+  <label><input type="checkbox" value="Shoprite"> Shoprite</label>
+  <label><input type="checkbox" value="Pick n Pay"> Pick n Pay</label>
+  <label><input type="checkbox" value="PEP"> PEP</label>
+  <label><input type="checkbox" value="Boxer"> Boxer</label>
+  <label><input type="checkbox" value="Walmart Bill Pay"> Walmart</label>
+  <label><input type="checkbox" value="PayPoint"> PayPoint</label>
+  <label><input type="checkbox" value="Australia Post Billpay"> Australia Post</label>
+
+</div>
+
+<input type="hidden" id="sellerRetailPaymentServices" value="">
   <label style="margin-top:12px;">
     Payment Reference / Instructions
   </label>
@@ -3973,6 +4013,39 @@ function toggleSellerBusinessFields(){
 
   box.style.display=isExporter ? "block" : "none";
 }
+  function updateSellerRetailCountries(){
+
+  const country =
+    document.getElementById("sellerCountry")?.value || "";
+
+  const allowed = {
+    "South Africa": [
+      "Checkers", "SPAR", "Shoprite",
+      "Pick n Pay", "PEP", "Boxer"
+    ],
+    "United States": ["Walmart Bill Pay"],
+    "United Kingdom": ["PayPoint"],
+    "Australia": ["Australia Post Billpay"]
+  };
+
+  const services = allowed[country] || [];
+
+  document.querySelectorAll(
+    '#sellerRetailPaymentChoices input[type="checkbox"]'
+  ).forEach(box => {
+
+    const show = services.includes(box.value);
+
+    box.closest("label").style.display =
+      show ? "inline-flex" : "none";
+
+    if(!show){
+      box.checked = false;
+    }
+
+  });
+
+}    
 function registerSeller(){
   const name=document.getElementById("sellerName").value.trim();
   const phone=document.getElementById("sellerPhone").value.trim();
@@ -4008,8 +4081,11 @@ const postal=document.getElementById("sellerPostal").value.trim();
 const acceptRetailPayments =
   document.getElementById("sellerAcceptRetailPayments")?.checked || false;
 
-const retailPaymentServices =
-  document.getElementById("sellerRetailPaymentServices")?.value.trim() || "";
+const retailPaymentServices = Array.from(
+  document.querySelectorAll(
+    '#sellerRetailPaymentChoices input[type="checkbox"]:checked'
+  )
+).map(box => box.value).join(", ");
 
 const retailPaymentInstructions =
   document.getElementById("sellerRetailPaymentInstructions")?.value.trim() || "";
@@ -8225,7 +8301,9 @@ checkCommissionReminders();
    ${inv.type==="PLATFORM_FEE" ? "" : (inv.lots||[]).map(x=>{
   const seller=(state.sellers||[]).find(s=>s.id===x.sellerId);
    const auction=(state.auctions||[]).find(a=>a.id===inv.auctionId);
-const paymentCountry=inv.auctionCountry || auction?.country || "";    
+const paymentCountry=String(
+  inv.auctionCountry || auction?.country || ""
+).trim().toUpperCase();    
 
   return `
     <div>
@@ -8274,16 +8352,21 @@ ${seller.acceptRetailPayments &&
       border-radius:8px;
     ">
       <b>OPTIONAL RETAIL PAYMENT SERVICES</b><br>
-     ${paymentCountry.toUpperCase()==="GB"
+     ${paymentCountry==="GB" &&
+  /\bpaypoint\b/i.test(seller.retailPaymentServices || "")
   ? '<a href="https://www.paypoint.com/" target="_blank" rel="noopener noreferrer" style="color:#9acd32;">UK — PayPoint information</a><br>'
   : ''
 }
-      <a href="https://www.paypoint.com/"
-   target="_blank"
-   rel="noopener noreferrer"
-   style="color:#9acd32;text-decoration:underline;">
-  UK — PayPoint payment information
-</a><br>
+${paymentCountry==="US" &&
+  /\bwalmart\b/i.test(seller.retailPaymentServices || "")
+  ? '<a href="https://www.walmart.com/" target="_blank" rel="noopener noreferrer" style="color:#9acd32;">USA — Walmart payment information</a><br>'
+  : ''
+}
+${paymentCountry==="AU" &&
+  /australia post billpay/i.test(seller.retailPaymentServices || "")
+  ? '<a href="https://auspost.com.au/" target="_blank" rel="noopener noreferrer" style="color:#9acd32;">Australia — Australia Post Billpay information</a><br>'
+  : ''
+}
       ${escapeHtml(seller.retailPaymentServices)}<br>
       <span>
         Contact the seller to confirm availability,
