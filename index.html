@@ -6728,10 +6728,12 @@ async function refreshBidderSelect(){
     b=>b.id===state.selectedBidderId
   );
 const sellBtn=document.getElementById("bidderWantToSellBtn");
+if(sellBtn){ sellBtn.style.display = "none";}
+     const bankBox=document.getElementById("cliviaBankDetailsBox");
 
-if(sellBtn){
-  sellBtn.style.display = "none";
-}
+if(bankBox){
+  bankBox.style.display="block";
+} 
   if(!bidder){
     select.value="";
 
