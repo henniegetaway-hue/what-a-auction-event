@@ -6758,6 +6758,30 @@ if(bankCheckError){
   if(bankMsg) bankMsg.textContent="Please submit your banking details.";
   if(bankSubmitBtn) bankSubmitBtn.style.display="block";
 }     
+ const {data:existingBank,error:bankCheckError} =
+  await cliviaSupabase
+    .from("bidder_bank_details")
+    .select("bank_confirmed")
+    .eq("auth_user_id",loginData.user.id)
+    .maybeSingle();
+
+const bankMsg=document.getElementById("cliviaBankDetailsMsg");
+const bankSubmitBtn=bankBox?.querySelector("button");
+
+if(bankCheckError){
+  if(bankBox) bankBox.style.display="none";
+  if(bankMsg) bankMsg.textContent="Unable to check banking status.";
+}else if(existingBank){
+  if(bankMsg){
+    bankMsg.textContent=existingBank.bank_confirmed
+      ? "Your banking details have been verified."
+      : "Your banking details were received and are awaiting verification.";
+  }
+  if(bankSubmitBtn) bankSubmitBtn.style.display="none";
+}else{
+  if(bankMsg) bankMsg.textContent="Please submit your banking details.";
+  if(bankSubmitBtn) bankSubmitBtn.style.display="block";
+}     
   if(!bidder){
     select.value="";
 
