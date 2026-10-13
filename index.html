@@ -5775,19 +5775,6 @@ setTimeout(()=>{
     accountSection.scrollIntoView({
 }
  async function showRegisteredBidder(){
-  await refreshBidderSelect();
-
-  const bidder=(state.bidders||[]).find(
-    b=>b.id===state.selectedBidderId
-  );
-
-  if(!bidder){
-    alert(
-      "No confirmed bidder account is signed in.\n\n" +
-      "Please sign in to your Clivia account first."
-    );
-    return;
-  }
    const forgotChoiceRow = document.getElementById("bidderForgotChoiceRow");
 const forgotPasswordBox = document.getElementById("bidderForgotPasswordBox");
 
