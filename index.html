@@ -5878,6 +5878,63 @@ async function saveCliviaNewPassword(){
       .classList.add("hidden");
   }, 1500);
 }
+   async function saveCliviaBankDetails(){
+  const msg = document.getElementById("cliviaBankDetailsMsg");
+  const accountInput = document.getElementById("cliviaBankAccountNumber");
+  const defaultInput = document.getElementById("cliviaBankDefaultNumber");
+
+  const accountNumber = accountInput.value.trim();
+  const defaultNumber = defaultInput.value.trim();
+
+  if(!accountNumber){
+    msg.textContent = "Please enter your bank account or IBAN number.";
+    return;
+  }
+
+  const { data: { user }, error: userError } =
+    await cliviaSupabase.auth.getUser();
+
+  if(userError || !user || !user.email_confirmed_at){
+    msg.textContent =
+      "Please confirm your email and sign in before submitting banking details.";
+    return;
+  }
+
+  const { data: bidder, error: bidderError } =
+    await cliviaSupabase
+      .from("bidders")
+      .select("id")
+      .eq("auth_user_id", user.id)
+      .eq("email_verified", true)
+      .maybeSingle();
+
+  if(bidderError || !bidder){
+    msg.textContent = "Your verified bidder account could not be found.";
+    return;
+  }
+
+  const { error } = await cliviaSupabase
+    .from("bidder_bank_details")
+    .insert({
+      auth_user_id: user.id,
+      account_number: accountNumber,
+      default_number: defaultNumber || null
+    });
+
+  if(error){
+    msg.textContent =
+      error.code === "23505"
+        ? "Banking details have already been submitted. Contact support to request a change."
+        : "Unable to submit banking details. Please try again.";
+    return;
+  }
+
+  accountInput.value = "";
+  defaultInput.value = "";
+
+  msg.textContent =
+    "Banking details submitted successfully. Verification is still required before bidding.";
+}   
 async function sendBidderPasswordReset(){
   const email = prompt(
     "RESET PASSWORD\n\nEnter your registered email address:"
