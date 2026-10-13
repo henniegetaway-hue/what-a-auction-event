@@ -5819,9 +5819,9 @@ const enteredPassword = prompt(
 
   const { data: loginData, error: loginError } =
   await cliviaSupabase.auth.signInWithPassword({
-    email: (bidder.email || "").trim().toLowerCase(),
-    password: enteredPassword
-  });
+  email: enteredEmail.trim().toLowerCase(),
+  password: enteredPassword
+});
 
 if(loginError || !loginData.user){
   alert(
