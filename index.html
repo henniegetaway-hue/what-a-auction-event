@@ -802,6 +802,42 @@ auctionSupabase.auth.onAuthStateChange((event, session) => {
 </head>
 
 <body id="siteBody">
+<div id="cliviaPasswordRecoveryBox"
+     class="panel hidden"
+     style="max-width:430px;margin:20px auto;padding:20px;">
+
+  <h2>CLIVIA DREAMERS — RESET PASSWORD</h2>
+
+  <p>Enter your new account password below.</p>
+
+  <label>New password</label>
+  <input
+    id="cliviaNewPassword"
+    type="password"
+    minlength="8"
+    autocomplete="new-password"
+    placeholder="Minimum 8 characters"
+  >
+
+  <label>Confirm new password</label>
+  <input
+    id="cliviaConfirmPassword"
+    type="password"
+    minlength="8"
+    autocomplete="new-password"
+    placeholder="Repeat your new password"
+  >
+
+  <button class="goldBtn"
+          type="button"
+          onclick="saveCliviaNewPassword()">
+    SAVE NEW PASSWORD
+  </button>
+
+  <div id="cliviaPasswordRecoveryMsg"
+       style="margin-top:12px;"></div>
+
+</div>      
 <div class="app">
  <div id="passwordRecoveryBox"
      class="panel hidden"
