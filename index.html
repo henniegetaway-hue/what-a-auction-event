@@ -5768,6 +5768,12 @@ function sendBidderPasswordReset(){
   }
 
   // OTP / WhatsApp reset service will connect here later.
+  sellBtn.style.display = "inline-block";
+}
+
+setTimeout(()=>{
+  if(accountSection){
+    accountSection.scrollIntoView({
 }
   function showRegisteredBidder(){
   const bidder=(state.bidders||[]).find(
@@ -5832,17 +5838,18 @@ if(bidderSelect){
 const sellBtn = document.getElementById("bidderWantToSellBtn");
 
 if(sellBtn){
-  sellBtn.style.display = "inline-block";
+  sellBtn.style.display = "block";
 }
 
-setTimeout(()=>{
+setTimeout(() => {
   if(accountSection){
     accountSection.scrollIntoView({
-      behavior:"smooth",
-      block:"start"
+      behavior: "smooth",
+      block: "start"
     });
   }
-},150);
+}, 150);
+
 }
   function saveBidderAddressChange(){
   const bidder=(state.bidders||[]).find(
