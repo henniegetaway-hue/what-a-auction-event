@@ -6153,10 +6153,22 @@ if(duplicatePhoneUser){
   emailRedirectTo:
     "https://henniegetaway-hue.github.io/what-a-auction-event/",
   data: {
-    full_name: bidderName,
-    whatsapp: bidderPhone,
-    account_type: "CLIVIA_BIDDER"
-  }
+  full_name: bidderName,
+  whatsapp: bidderPhone,
+  account_type: "CLIVIA_BIDDER",
+  entity_type: entityType,
+  company_name: companyName || "",
+  trading_name: businessName || "",
+  business_whatsapp: businessPhone || "",
+  company_registration_number: companyReg || "",
+  vat_number: vatNumber || "",
+  address: document.getElementById("regAddress").value.trim(),
+  suburb: document.getElementById("regSuburb").value.trim(),
+  postal_code: document.getElementById("regPostal").value.trim(),
+  country: document.getElementById("regCountry").value.trim(),
+  town: document.getElementById("regTown")?.value.trim() || "",
+  province: document.getElementById("regProvince")?.value || ""
+}
 }
   });
 
@@ -6197,12 +6209,10 @@ internationalRegistrationFee:isInternational ? 2000 : 0,
 suburb:document.getElementById("regSuburb").value.trim(),
 postal:document.getElementById("regPostal").value.trim(),
 country:document.getElementById("regCountry").value.trim(),
-accountNumber:document.getElementById("regAccountNumber").value.trim(),    
-defaultNumber:document.getElementById("regDefaultNumber").value.trim(),
+accountNumber:"",
+defaultNumber:"",
     bankConfirmed:false,
-    approvedPaymentAccounts:[
-  document.getElementById("regAccountNumber").value.trim()
-],
+   approvedPaymentAccounts:[],
 paymentHold:false,
 paymentHoldReason:"",
         isExporter:false,
