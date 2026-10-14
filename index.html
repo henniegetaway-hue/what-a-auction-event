@@ -4401,7 +4401,13 @@ save();
 refreshSellerSelect();
   alert("Seller registration successful. You can now list plants for auction.");
   }
-  function becomeSellerFromBidder(){
+ async function becomeSellerFromBidder(){
+  const {data:{user},error} = await cliviaSupabase.auth.getUser();
+
+  if(error || !user || !user.email_confirmed_at){
+    alert("Please sign in to your verified Clivia Dreamers account first.");
+    return;
+  }
   const bidder=(state.bidders||[]).find(
     b=>b.id===state.selectedBidderId
   );
