@@ -10931,6 +10931,41 @@ if(date && closeTime){
     updateHeader();
   }
 }
+/* AUTOMATIC CLIVIA AUCTION CREATION */
+function ensureAutomaticCliviaAuction(){
+
+  state.auctions = state.auctions || [];
+
+  const existingAuction = state.auctions.find(a =>
+    a.type === "CLIVIA" &&
+    ["LOADING", "SCHEDULING"].includes(a.status)
+  );
+
+  if(existingAuction) return;
+
+  const auction = {
+    id: "AUC-" + Date.now(),
+    name: "Clivia Dreamers Auction",
+    type: "CLIVIA",
+    auctionDate: "",
+    auctionTime: "",
+    auctionCloseTime: "",
+    closeTime: "",
+    firstBid: 200,
+    status: "LOADING",
+    categories: [
+      "ROW1", "ROW2", "ROW3",
+      "ROW4", "ROW5", "ROW6"
+    ],
+    createdAt: new Date().toISOString(),
+    deletionDate: ""
+  };
+
+  state.auctions.push(auction);
+  state.selectedAuctionId = auction.id;
+
+  save();
+}      
 /* MAXIMUM AUCTION DATE — 4 MONTHS */
 function setAuctionDateLimit(){
 
