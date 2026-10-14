@@ -6328,8 +6328,11 @@ const isSouthAfrica=
   normalizedCountry==="rsa";
 
 const isInternational=!isSouthAfrica;   
-const accountNumber=document.getElementById("regAccountNumber").value.trim();
-const defaultNumber=document.getElementById("regDefaultNumber").value.trim();
+const accountNumber =
+  document.getElementById("regAccountNumber")?.value.trim() || "";
+
+const defaultNumber =
+  document.getElementById("regDefaultNumber")?.value.trim() || "";
 const rulesAccepted=document.getElementById("reg").checked;
 
 if(!address || !suburb || !postal || !country || !rulesAccepted){
