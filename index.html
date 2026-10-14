@@ -6252,7 +6252,11 @@ if(common) common.style.display="block";
   document.getElementById("bidderBusinessFields").style.display = type === "COMPANY" ? "block" : "none";
  document.getElementById("bidderAddressFields").style.display = (type === "PRIVATE" || type === "COMPANY") ? "block" : "none";
 }
-  
+  function validPhoneNumber(phone){
+  const cleaned = String(phone || "").replace(/[\s()-]/g, "");
+
+  return /^\+?[0-9]{7,15}$/.test(cleaned);
+}
   async function registerBidder(){
   const name=document.getElementById("regName").value.trim();
   const phone=document.getElementById("regPhone").value.trim();
