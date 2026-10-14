@@ -2923,15 +2923,10 @@ justify-content:center;
           placeholder="Describe the flower, colour, throat, markings, breeding, plant condition and any special features."
           oninput="updateSellerAIKeywords()"></textarea>
 
-<label>Keywords</label>
+<!-- Keywords generated automatically in the background -->
 <textarea id="sellerLotKeywords"
-          rows="3"
-          readonly
-          placeholder="Keywords will be created automatically from the plant information."></textarea>
-
-<div class="small" style="margin-top:6px;">
-  Keywords are created automatically from the plant information.
-</div>
+          style="display:none;"
+          readonly></textarea>
        <h3 style="margin-top:22px;">Photos</h3>
 
 <div class="formGrid">
