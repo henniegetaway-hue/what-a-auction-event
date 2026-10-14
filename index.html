@@ -918,7 +918,15 @@ auctionSupabase.auth.onAuthStateChange((event, session) => {
 </div>
   </div>
 </div>
-<nav>
+<nav style="
+  display:flex;
+  flex-wrap:nowrap;
+  align-items:center;
+  gap:6px;
+  overflow-x:auto;
+  white-space:nowrap;
+  padding-bottom:6px;
+">
   <button id="navRegister" onclick="showPage('register')">Register</button>
   <button id="navLive" onclick="showPage('live')">Live Auction</button>
 <button id="navAdmin" onclick="showPage('admin')">Admin</button>
