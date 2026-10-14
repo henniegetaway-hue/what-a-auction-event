@@ -6272,7 +6272,8 @@ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(bidderEmail)){
 }     
 const bidderPassword=document.getElementById("bidderPassword").value;
 const bidderPasswordConfirm=document.getElementById("bidderPasswordConfirm").value;
-
+        console.log("Password length:", bidderPassword.length);
+console.log("Confirm password length:", bidderPasswordConfirm.length);
 if(!bidderPassword || bidderPassword.length < 8){
   document.getElementById("regMsg").textContent=
     "Please create an account password with at least 8 characters.";
