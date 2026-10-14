@@ -4416,7 +4416,10 @@ refreshSellerSelect();
     alert("No recognised bidder found.");
     return;
   }
-
+  if(bidder.authUserId !== user.id){
+    alert("This bidder account does not belong to the signed-in user.");
+    return;
+  }
   const existingSeller=(state.sellers||[]).find(
     s=>s.phone===bidder.phone
   );
