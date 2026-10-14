@@ -6850,9 +6850,22 @@ if(action==="SELL"){
   return;
 }
 
-function openSellerSpaces(){
+async function openSellerSpaces(){
+
+  const { data, error } =
+    await cliviaSupabase.auth.getUser();
+
+  const user = data?.user;
+
+  if(error || !user || !user.email_confirmed_at){
+    alert("Please sign in to your confirmed account first.");
+    showPage("register");
+    return;
+  }
+
   const account = (state.bidders || []).find(
-    b => b.id === state.selectedBidderId
+    b => b.id === state.selectedBidderId &&
+         b.authUserId === user.id
   );
 
   if(!account){
@@ -6861,40 +6874,13 @@ function openSellerSpaces(){
     return;
   }
 
- const unlocked =
-  localStorage.getItem("cliviaBidderUnlocked") === account.id;
- if(!unlocked){
-  alert(
-    "For security, please open ACCOUNT DETAILS and enter your account password once before loading a plant."
-  );
-
-  showPage("register");
-
-  setTimeout(()=>{
-    if(typeof showRegisteredBidder === "function"){
-      showRegisteredBidder();
-    }
-  },100);
-
-  return;
-}
-
-  // Go to the page that contains the seller loading form
+  // Open the plant-loading page immediately
   showPage("sellerLoad");
 
   setTimeout(() => {
 
-    // Open and prepare the SAME plant loading form
     if(typeof showSellerLotForm === "function"){
       showSellerLotForm();
-    }
-
-    const auctionSelect =
-      document.getElementById("sellerLotAuction");
-
-    // Seller chooses the available auction
-    if(auctionSelect){
-      auctionSelect.value = "";
     }
 
     const form =
@@ -6909,12 +6895,7 @@ function openSellerSpaces(){
       });
     }
 
-    const lotName =
-      document.getElementById("sellerLotName");
-
-    if(lotName){
-      lotName.focus();
-    }
+    document.getElementById("sellerLotName")?.focus();
 
   },150);
 }
