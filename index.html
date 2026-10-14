@@ -5967,27 +5967,6 @@ async function sendBidderPasswordReset(){
     "If this email address is registered, a password reset link will be sent."
   );
 }
-
-  const msg=document.getElementById("bidderForgotMsg");
-
-  if(!bidder){
-    if(msg){
-      msg.textContent="No registered account is recognised.";
-    }
-    return;
-  }
-
-  const registeredWhatsApp=bidder.phone || bidder.businessPhone || "";
-
-  if(!registeredWhatsApp){
-    if(msg){
-      msg.textContent=
-        "No registered WhatsApp number is available for this account.";
-    }
-    return;
-  }
-
-  if(msg){
     msg.textContent=
       "Password reset will be sent to your registered WhatsApp number.";
   }
