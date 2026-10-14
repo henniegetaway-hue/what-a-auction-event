@@ -6358,36 +6358,23 @@ if(!address || !suburb || !postal || !country || !rulesAccepted){
 }
     const bidderName=entityType==="COMPANY" ? companyName : name;
 const bidderPhone=entityType==="COMPANY" ? businessPhone : phone;
-const duplicateBankUser=[
-  ...(state.bidders||[]),
-  ...(state.sellers||[])
-].find(u=>
-  String(u.accountNumber||"").replace(/\s/g,"")===String(accountNumber||"").replace(/\s/g,"") &&
-  (
-    String(u.name||"").trim().toLowerCase()!==bidderName.trim().toLowerCase() ||
-    String(u.phone||"").replace(/\s/g,"")!==bidderPhone.replace(/\s/g,"")
-  )
-);
+// Banking details are collected after email verification.
+// Do not compare empty bank account numbers during registration.
 
-if(duplicateBankUser){
-  document.getElementById("regMsg").textContent=
-    "REGISTRATION BLOCKED: This bank account is already registered to different personal details.";
-  return;
-}
-    const duplicatePhoneUser=[
-  ...(state.bidders||[]),
-  ...(state.sellers||[])
-].find(u=>
- String(u.phone||"").replace(/\s/g,"")===bidderPhone.replace(/\s/g,"") &&
-  (
-   String(u.name||"").trim().toLowerCase()!==bidderName.trim().toLowerCase() ||
-    String(u.accountNumber||"").replace(/\s/g,"")!==String(accountNumber||"").replace(/\s/g,"")
-  )
+// Check for an existing local phone number without using bank details.
+const duplicatePhoneUser = [
+  ...(state.bidders || []),
+  ...(state.sellers || [])
+].find(u =>
+  String(u.phone || "").replace(/\s/g, "") ===
+  bidderPhone.replace(/\s/g, "") &&
+  String(u.name || "").trim().toLowerCase() !==
+  bidderName.trim().toLowerCase()
 );
 
 if(duplicatePhoneUser){
-  document.getElementById("regMsg").textContent=
-    "REGISTRATION BLOCKED: This phone / WhatsApp number is already registered to different personal details.";
+  document.getElementById("regMsg").textContent =
+    "This WhatsApp number is already associated with different registration details.";
   return;
 }
    const { data: signUpData, error: signUpError } =
