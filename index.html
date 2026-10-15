@@ -8400,11 +8400,18 @@ async function openSellerLoadFromLot(auctionId,rowKey){
     return;
   }
 
-  if(!account.rulesAccepted){
-    alert("You must accept the Rules & Terms before loading a plant.");
-    showPage("rules");
-    return;
-  }
+  const registeredSeller = (state.sellers || []).find(
+  s => s.id === state.selectedSellerId &&
+       s.rulesAccepted === true
+);
+
+if(!registeredSeller){
+  alert(
+    "Please complete seller registration and accept the Rules & Terms before loading a plant."
+  );
+  showPage("register");
+  return;
+}
 
   // Open the plant-loading form
   await openSellerSpaces();
