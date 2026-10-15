@@ -1344,30 +1344,20 @@ By ticking “I ACCEPT THE EVENT RULES &amp; TERMS”, the Event Creator confirm
 
     <div class="small" style="margin-bottom:14px;">
       Your auction page will appear here while you create it.
-    </div>
+   </div>
 
-    <div id="ownEventPreview">
+<div id="ownEventPreview">
 
-      <div id="ownEventPreviewFrame" style="
-        position:relative;
-        min-height:430px;
-        border:1px solid rgba(255,255,255,.18);
-        border-radius:14px;
-        overflow:hidden;
-        padding:18px;
-        background:#000;   
-      ">
-
-        <!-- FADED SAMPLE BACKGROUND -->
-        <div style="
-          position:absolute;
-          inset:0;
-          opacity:.18;
-          background:
-            linear-gradient(rgba(0,0,0,.25),rgba(0,0,0,.25)),
-            url('https://images.unsplash.com/photo-1497250681960-ef046c08a56e?auto=format&fit=crop&w=1200&q=80')
-            center/cover no-repeat;
-        "></div>
+  <div id="ownEventPreviewFrame" style="
+    position:relative;
+    min-height:620px;
+    border:1px solid #315a38;
+    border-radius:14px;
+    overflow:hidden;
+    padding:12px;
+    background:#071b0d;
+    color:#ffffff;
+  ">
 
         <div style="position:relative;z-index:2;">
 <div style="text-align:left;margin-bottom:10px;position:absolute;left:0;top:0;">
@@ -1409,12 +1399,14 @@ max-height:110px;
      ">
   Tell bidders about your auction, business or event.
 </div>
-         <div id="previewLotsGrid" style="
+        <div id="previewLotsGrid" style="
   display:grid;
- grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:7px;
-  margin-top:12px;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
+  margin-top:18px;
+  width:100%;
   opacity:1;
+  align-items:start;
 ">
 </div>
 
@@ -10062,20 +10054,34 @@ const rows = select && select.value
 
     const lot = document.createElement("div");
     lot.className = "previewSampleLot";
-     lot.style.display = "flex";
+    lot.style.display = "flex";
 lot.style.flexDirection = "column";
-lot.style.gap = "4px";
+lot.style.gap = "8px";
 lot.style.minWidth = "0";
-lot.style.padding = "5px";
-lot.style.boxSizing = "border-box";  
-  lot.style.border = "1px solid " + accentColor;
-lot.style.borderRadius = "7px";     
+lot.style.padding = "10px";
+lot.style.boxSizing = "border-box";
+lot.style.background = "#092412";
+lot.style.color = "#ffffff";
+lot.style.border = "1px solid " + accentColor;
+lot.style.borderRadius = "12px";
+lot.style.overflow = "hidden";
+lot.style.boxShadow = "0 4px 12px rgba(0,0,0,0.35)";   
 
     lot.innerHTML = `
+   <div style="
+  text-align:center;
+  font-size:18px;
+  font-weight:bold;
+  color:${accentColor};
+  padding:6px 0;
+  letter-spacing:1px;
+">
+  LOT-${String(i).padStart(3,"0")}
+</div> 
      <div onclick="document.getElementById('lotPhoto${i}_1').click()"
      style="
-       height:140px;
-       border-radius:6px;
+      height:220px;
+border-radius:10px;
        background:
          linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.55)),
          url('mix%20auction%20lot%20.png') center/cover no-repeat;
@@ -10136,21 +10142,35 @@ font-size:10px;
      style="font-size:10px;text-align:center;opacity:.75;margin-top:2px;">
   Up to 3 photos
 </div>
-
-    <strong style="
-  display:block;
-  text-align:center;
-  font-size:13px;
-  color:${accentColor};
-  margin:4px 0;
-">
-  LOT ${i}
-</strong>
-
+<button type="button"
+  disabled
+  style="
+    width:100%;
+    background:#9acd32;
+    color:#071b0d;
+    border:none;
+    border-radius:8px;
+    padding:12px 6px;
+    font-size:15px;
+    font-weight:bold;
+    cursor:default;
+    opacity:1;
+  ">
+  PLACE BID
+</button>
 <input type="text" class="ownLotName"
        placeholder="Lot / Item Name"
        style="width:100%;margin-top:5px;padding:5px;font-size:11px;box-sizing:border-box;border:1px solid ${accentColor};color:#fff;background:#000;">
-
+<div style="
+  text-align:center;
+  color:#ff9b22;
+  font-size:15px;
+  font-weight:bold;
+  margin-top:6px;
+">
+  STARTING BID:
+  <span class="previewStartingBidAmount">—</span>
+</div>
 <input type="number" class="ownLotStartingBid"
        placeholder="${currencySymbols[currency] || currency} Starting bid"
       min="${
@@ -10167,18 +10187,105 @@ font-size:10px;
        placeholder="${currencySymbols[currency] || currency} Minimum increment"
        min="0"
       style="width:100%;margin-top:4px;padding:5px;font-size:11px;box-sizing:border-box;border:1px solid ${accentColor};color:#fff;background:#000;">
+<div style="
+  background:#06170b;
+  border:1px solid #315a38;
+  border-radius:8px;
+  padding:10px;
+  text-align:center;
+  margin-top:8px;
+">
+  <div style="
+    color:#ffffff;
+    font-size:12px;
+    font-weight:bold;
+  ">
+    CURRENT BID
+  </div>
+
+  <div style="
+    color:#ff9b22;
+    font-size:18px;
+    font-weight:bold;
+    margin-top:5px;
+  ">
+    NO BIDS YET
+  </div>
+</div>
+<button type="button"
+  onclick="document.getElementById('lotPhoto${i}_2').click()"
+  style="
+    width:100%;
+    background:#163d20;
+    color:#ffffff;
+    border:1px solid ${accentColor};
+    border-radius:8px;
+    padding:10px 5px;
+    font-size:11px;
+    font-weight:bold;
+    cursor:pointer;
+    margin-top:6px;
+  ">
+  VIEW / ADD MORE PHOTOS
+</button>
 <textarea class="ownLotDescription" placeholder="Short description"
           rows="1"
           style="width:100%;margin-top:4px;padding:5px;font-size:11px;box-sizing:border-box;resize:vertical;border:1px solid ${accentColor};"></textarea>
               <input type="url" class="ownLotLink"
        placeholder="Link (optional)"
        style="width:100%;margin-top:4px;padding:5px;font-size:11px;box-sizing:border-box;resize:vertical;border:1px solid ${accentColor};color:#fff;background:#000;">
+    <button type="button"
+  onclick="shareCreatorPreviewLot(${i})"
+  style="
+    width:100%;
+    background:#168b3c;
+    color:#ffffff;
+    border:1px solid #9acd32;
+    border-radius:8px;
+    padding:12px 6px;
+    font-size:12px;
+    font-weight:bold;
+    cursor:pointer;
+    margin-top:8px;
+  ">
+  SHARE ON WHATSAPP
+</button>
     `;
 
    grid.appendChild(lot);
-     lot.querySelectorAll("input, textarea").forEach(field=>{
+    lot.querySelectorAll("input, textarea").forEach(field=>{
   field.addEventListener("input", saveOwnEventLots);
-});   
+});
+
+const startingBidInput = lot.querySelector(".ownLotStartingBid");
+const startingBidDisplay = lot.querySelector(".previewStartingBidAmount");
+
+if(startingBidInput && startingBidDisplay){
+
+  const updateStartingBidDisplay = function(){
+    const currency =
+      document.getElementById("ownEventCurrency")?.value || "ZAR";
+
+    const symbols = {
+      ZAR:"R", EUR:"€", USD:"$", GBP:"£",
+      AUD:"A$", NZD:"NZ$", CAD:"C$"
+    };
+
+    const amount = Number(startingBidInput.value);
+
+    startingBidDisplay.textContent =
+      startingBidInput.value !== "" && Number.isFinite(amount)
+        ? (symbols[currency] || currency) + " " +
+          amount.toLocaleString("en-ZA", {
+            minimumFractionDigits:2,
+            maximumFractionDigits:2
+          })
+        : "—";
+  };
+
+  startingBidInput.addEventListener("input", updateStartingBidDisplay);
+  updateStartingBidDisplay();
+}
   }
 
   updateOwnEventCurrency();
@@ -10204,6 +10311,33 @@ font-size:10px;
   });
 
   localStorage.setItem("ownEventLots", JSON.stringify(lots));
+}   
+   function shareCreatorPreviewLot(lotNumber){
+
+  const lot = document.querySelectorAll(
+    "#previewLotsGrid .previewSampleLot"
+  )[lotNumber - 1];
+
+  if(!lot) return;
+
+  const name =
+    lot.querySelector(".ownLotName")?.value.trim() || "Auction Item";
+
+  const eventName =
+    document.getElementById("ownEventName")?.value.trim() || "Online Auction";
+
+  const message =
+    eventName + "\n" +
+    "LOT-" + String(lotNumber).padStart(3, "0") + "\n" +
+    name + "\n\n" +
+    "View the auction:\n" +
+    window.location.href;
+
+  window.open(
+    "https://wa.me/?text=" + encodeURIComponent(message),
+    "_blank",
+    "noopener,noreferrer"
+  );
 }   
   updateOwnEventRowsPreview();    
 
@@ -10301,6 +10435,7 @@ function previewOwnEventLogo(input){
   }
 
   /* Creator uploaded their own logo */
+  if(photoNumber !== 1) return;    
   const reader = new FileReader();
 
   reader.onload = function(e){
