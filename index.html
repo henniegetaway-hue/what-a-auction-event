@@ -8294,16 +8294,16 @@ async function openSellerLoadFromLot(auctionId,rowKey){
   }
 
   const registeredSeller = (state.sellers || []).find(
-  s => s.id === state.selectedSellerId &&
-       s.rulesAccepted === true
+  s => s.authUserId === user.id ||
+       (
+         s.email?.trim().toLowerCase() ===
+         user.email?.trim().toLowerCase()
+       )
 );
 
-if(!registeredSeller){
-  alert(
-    "Please complete seller registration and accept the Rules & Terms before loading a plant."
-  );
-  showPage("register");
-  return;
+if(registeredSeller && registeredSeller.rulesAccepted === true){
+  state.selectedSellerId = registeredSeller.id;
+  save();
 }
 
   // Open the plant-loading form
