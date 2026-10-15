@@ -2956,7 +2956,52 @@ justify-content:center;
   <input id="sellerLotTerms"
          type="checkbox"
          style="width:auto;">
-  I confirm that this plant is my own, the information is correct,id="sellerRightColumn"
+ I confirm that this plant is my own, the information is correct, and I accept the Rules &amp; Terms.
+</label>
+
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;">
+  <button type="button" class="accountBtn" onclick="closeSellerLotForm()">CANCEL</button>
+  <button type="button" class="goldBtn" onclick="saveSellerLotDraft()">SAVE AS DRAFT</button>
+  <button type="button" class="greenBtn" onclick="publishSellerLot()">PUBLISH LOT</button>
+</div>
+
+<div id="sellerLotMsg" class="small" style="margin-top:10px;"></div>
+
+</div>
+</div>
+
+<!-- RIGHT COLUMN — LIVE PREVIEW AND BEST SELLERS -->
+<div id="sellerRightColumn"
+     style="display:flex;flex-direction:column;gap:16px;min-width:0;">
+
+  <div id="sellerLivePreviewPanel" class="panel">
+    <h2 style="text-align:center;">🌸 LIVE PLANT PREVIEW</h2>
+
+    <div id="sellerLivePreviewCard" style="background:#111;border:1px solid #9acd32;border-radius:12px;padding:15px;text-align:center;color:white;">
+
+      <div id="sellerPreviewPhoto" style="height:220px;display:flex;align-items:center;justify-content:center;background:#222;border-radius:8px;margin-bottom:12px;overflow:hidden;">
+        Your plant photo will appear here
+      </div>
+
+      <div style="display:flex;justify-content:center;gap:6px;margin-bottom:10px;">
+        <button type="button" onclick="showSellerPreviewPhoto(1)" style="background:#87CEFA;color:#000;border:0;border-radius:5px;padding:4px 10px;font-weight:bold;">PIC 1</button>
+        <button type="button" onclick="showSellerPreviewPhoto(2)" style="background:#87CEFA;color:#000;border:0;border-radius:5px;padding:4px 10px;font-weight:bold;">PIC 2</button>
+      </div>
+
+      <h3 id="sellerPreviewName">YOUR PLANT NAME</h3>
+      <p id="sellerPreviewBreeding">Breeding: —</p>
+      <p id="sellerPreviewBreeder">Breeder: —</p>
+      <h3 id="sellerPreviewBid" style="color:orange;">Starting Bid: R0</h3>
+
+    </div>
+  </div>
+
+  <div id="bestSellersPanel" class="panel">
+    <h2>🏆 Best Sellers</h2>
+    <div class="small" style="margin-bottom:12px;">
+      Top 4 Clivia flowers sold on Clivia Dreamers
+    </div>
+    <div id="bestSellersList"></div>
 </div> <!-- closes bestSellersPanel -->
 
 </div> <!-- closes sellerRightColumn -->
