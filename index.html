@@ -2912,7 +2912,10 @@ justify-content:center;
 
   <div>
     <label>Main Photo *</label>
-   <input id="sellerLotPhoto1"
+  <input id="sellerLotPhoto1"
+       type="file"
+       accept="image/*"
+       onchange="showSellerPreviewPhoto(1)">
        type="file"
        accept="image/*"
        onchange="
