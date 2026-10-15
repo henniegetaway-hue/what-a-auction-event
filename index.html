@@ -4831,7 +4831,38 @@ function showSellerLotForm(){
 
   const form = document.getElementById("sellerLotForm");
   if(!form) return;
+  if(auctionSelect){
+    auctionSelect.innerHTML =
+      '<option value="">-- SELECT UPCOMING AUCTION --</option>';
 
+    (state.auctions || [])
+      .filter(auction =>
+        auction &&
+        !["CLOSED", "COMPLETED", "CANCELLED"].includes(
+          String(auction.status || "").toUpperCase()
+        )
+      )
+      .forEach(auction => {
+        const option = document.createElement("option");
+
+        option.value = auction.id;
+
+        const date =
+          auction.auctionDate ||
+          auction.date ||
+          "Date to be announced";
+
+        const time =
+          auction.auctionTime ||
+          auction.preferredAuctionTime ||
+          "Time to be announced";
+
+        option.textContent =
+          date + " — " + time + " — Available";
+
+        auctionSelect.appendChild(option);
+      });
+  }
   const auctionSelect =
     document.getElementById("sellerLotAuction");
 
