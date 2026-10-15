@@ -4695,7 +4695,41 @@ function showSellerForgotPassword(){
       "Starting Bid: R" + (input.value || "0");
   }
 }
-     
+     function showSellerPreviewPhoto(photoNumber){
+
+  const input = document.getElementById(
+    photoNumber === 1 ? "sellerLotPhoto1" : "sellerLotPhoto2"
+  );
+
+  const preview = document.getElementById("sellerPreviewPhoto");
+
+  if(!input || !preview) return;
+
+  const file = input.files?.[0];
+
+  if(!file){
+    preview.textContent =
+      photoNumber === 1
+        ? "Please select Photo 1"
+        : "Please select Photo 2";
+    return;
+  }
+
+  const url = URL.createObjectURL(file);
+
+  preview.innerHTML = "";
+
+  const img = document.createElement("img");
+  img.src = url;
+  img.alt = photoNumber === 1 ? "Flower Photo" : "Plant Photo";
+  img.style.width = "100%";
+  img.style.height = "100%";
+  img.style.objectFit = "contain";
+
+  img.onload = () => URL.revokeObjectURL(url);
+
+  preview.appendChild(img);
+}
  function showSellerLotForm(){
   const form = document.getElementById("sellerLotForm");
 
