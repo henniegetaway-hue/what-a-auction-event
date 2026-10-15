@@ -3952,6 +3952,13 @@ if(logo) logo.src="new logo.png";
       document.getElementById("registeredBidderSection");
 
     if(!error && user?.email_confirmed_at && bidder){
+     const newAccountBtn = document.querySelector(
+  'button[onclick*="showNewBidderRegistration"]'
+);
+
+if(newAccountBtn){
+  newAccountBtn.style.display = "none";
+}     
       state.selectedBidderId = bidder.id;
 
       if(registration) registration.style.display = "none";
