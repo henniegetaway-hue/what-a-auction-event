@@ -920,12 +920,12 @@ auctionSupabase.auth.onAuthStateChange((event, session) => {
 </div>
 <nav style="
   display:flex;
-  flex-wrap:nowrap;
+  flex-wrap:wrap;
   align-items:center;
-  gap:6px;
-  overflow-x:auto;
-  white-space:nowrap;
-  padding-bottom:6px;
+  gap:4px;
+  overflow:visible;
+  white-space:normal;
+  padding:5px;
 ">
   <button id="navRegister" onclick="showPage('register')">Register</button>
   <button id="navLive" onclick="showPage('live')">Live Auction</button>
