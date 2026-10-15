@@ -8081,7 +8081,7 @@ if(activeHotBidding || state.settings.open){
 }
  
 
-function placeBid(lotId){
+async function placeBid(lotId){
   const auction=(state.auctions||[]).find(a=>a.id===state.selectedAuctionId);
 const currencySymbol=auction && auction.currency==="EUR" ? "€" : "R";
   if(!state.settings.open){
