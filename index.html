@@ -11303,7 +11303,15 @@ function showWebsiteInvoices() {
 
 
 function showBankReconciliation() {
- function shareSellerPreviewWhatsApp() {
+  const box = document.getElementById("invoiceList");
+  if (!box) return;
+
+  box.innerHTML =
+    "<h3>Bank Reconciliation</h3>" +
+    "<p>Monthly website payment reconciliation will appear here.</p>";
+}
+
+function shareSellerPreviewWhatsApp() {
 
   const plantName =
     document.getElementById("sellerPreviewName")
