@@ -2911,32 +2911,13 @@ justify-content:center;
 <div class="formGrid">
 
   <div>
-    <label>Main Photo *</label>
+   <div>
+  <label>Main Photo *</label>
   <input id="sellerLotPhoto1"
-       type="file"
-       accept="image/*"
-       onchange="showSellerPreviewPhoto(1)">
-       type="file"
-       accept="image/*"
-       onchange="
-         const file = this.files[0];
-         const preview = document.getElementById('sellerPreviewPhoto');
-
-         if(file && preview){
-           const url = URL.createObjectURL(file);
-           preview.innerHTML = '';
-           const img = document.createElement('img');
-           img.src = url;
-           img.alt = 'Plant preview';
-           img.style.width = '100%';
-           img.style.height = '100%';
-           img.style.objectFit = 'cover';
-           img.onload = () => URL.revokeObjectURL(url);
-           preview.appendChild(img);
-         }
-       ">
-  </div>
-
+         type="file"
+         accept="image/*"
+         onchange="showSellerPreviewPhoto(1)">
+</div>
   <div>
     <label>Photo 2 (optional)</label>
     <input id="sellerLotPhoto2"
