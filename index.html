@@ -6806,49 +6806,57 @@ function refreshLotCategorySelect(){
     select.appendChild(option);
   });
 }
-      function selectAccountAction(action){
-          const bidder = (state.bidders || []).find(
-  b => b.id === state.selectedBidderId
-);
+      async function selectAccountAction(action){
 
-if(!bidder){
-  alert("Please open your registered account first.");
-  return;
-}  
-            
- const unlocked=
-  localStorage.getItem("cliviaBidderUnlocked")===bidder.id;
-
-if(action==="BID" && !unlocked){
-  alert(
-    "Please open ACCOUNT DETAILS and enter your account password before bidding."
+  const bidder = (state.bidders || []).find(
+    b => b.id === state.selectedBidderId
   );
 
-  document.querySelectorAll('input[name="accountAction"]').forEach(radio=>{
-    if(radio.value==="BID"){
-      radio.checked=false;
-    }
-  });
+  if(!bidder){
+    alert("Please open your registered account first.");
+    showPage("register");
+    return;
+  }
 
-  return;
-}
+  const { data, error } =
+    await cliviaSupabase.auth.getUser();
 
-if(action==="BID"){
-    const loadPanel=document.getElementById("sellerLoadPanel");
+  const user = data?.user;
+
+  if(
+    error ||
+    !user ||
+    !user.email_confirmed_at ||
+    bidder.authUserId !== user.id
+  ){
+    alert("Please sign in to your confirmed account first.");
+
+    document.querySelectorAll(
+      'input[name="accountAction"]'
+    ).forEach(radio => {
+      radio.checked = false;
+    });
+
+    showPage("register");
+    return;
+  }
+
+  if(action === "BID"){
+
+    const loadPanel =
+      document.getElementById("sellerLoadPanel");
 
     if(loadPanel){
-      loadPanel.style.display="none";
+      loadPanel.style.display = "none";
     }
 
     return;
   }
 
-if(action==="SELL"){
-  openSellerSpaces();
-  return;
-}
-
-  return;
+  if(action === "SELL"){
+    await openSellerSpaces();
+    return;
+  }
 }
 
 async function openSellerSpaces(){
@@ -6900,127 +6908,8 @@ async function openSellerSpaces(){
 
   },150);
 }
-function openSellerLoadFromBidder(){
-  const bidder=(state.bidders||[]).find(
-    b=>b.id===state.selectedBidderId
-  );
-
-  if(!bidder){
-    alert("Please register as a bidder before loading an item for sale.");
-    return;
-  }
-const unlocked=
-  localStorage.getItem("cliviaBidderUnlocked")===bidder.id;
-
-if(!unlocked){
-  alert(
-    "Please open MY ACCOUNT and enter your account password before loading an item for sale."
-  );
-  return;
-}
- let currentAuction=(state.auctions||[]).find(
-  a=>a.id===state.selectedAuctionId &&
-     a.status!=="CLOSED" &&
-     !isAuctionFull(a)
-);
-
-// If selected auction is not usable, find the first open auction with space
-if(!currentAuction){
-  currentAuction=(state.auctions||[])
-    .filter(a=>
-      a.status!=="CLOSED" &&
-      !isAuctionFull(a)
-    )
-    .sort((a,b)=>{
-      const da=new Date(
-        (a.auctionDate||"9999-12-31")+"T"+(a.auctionTime||"23:59")
-      );
-
-      const db=new Date(
-        (b.auctionDate||"9999-12-31")+"T"+(b.auctionTime||"23:59")
-      );
-
-      return da-db;
-    })[0];
-}
-
-if(currentAuction){
-  state.selectedAuctionId=currentAuction.id;
-  save();
-
-  showPage("live");
-    showPage("live");
-
-    setTimeout(()=>{
-     const loadPanel=document.getElementById("sellerLoadPanel");
-
-if(loadPanel){
-      loadPanel.style.display="block";
-      
-  loadPanel.scrollIntoView({
-    behavior:"smooth",
-    block:"start"
-  });
-}
-    },200);
-
-    return;
-  }
-
-  // Find the next auction with available space
-  const nextAuction=(state.auctions||[])
-    .filter(a=>
-      a.id!==state.selectedAuctionId &&
-      a.status!=="CLOSED" &&
-      a.auctionDate &&
-      !isAuctionFull(a)
-    )
-    .sort((a,b)=>{
-      const aDate=new Date(
-        a.auctionDate+"T"+(a.auctionTime || "00:00")
-      );
-
-      const bDate=new Date(
-        b.auctionDate+"T"+(b.auctionTime || "00:00")
-      );
-
-      return aDate-bDate;
-    })[0];
-
-  if(!nextAuction){
-    alert(
-      "The current auction is full.\n\n"+
-      "There is no next available auction scheduled yet."
-    );
-    return;
-  }
-
-  const ok=confirm(
-    "THE CURRENT AUCTION IS FULL.\n\n"+
-    "Next available auction:\n"+
-    nextAuction.auctionDate+
-    " at "+
-    (nextAuction.auctionTime || "Time to be announced")+
-    "\n\nDo you want to load your item into this auction?"
-  );
-
-  if(!ok) return;
-
-  state.selectedAuctionId=nextAuction.id;
-  save();
-
-  showPage("live");
-
-  setTimeout(()=>{
-    const loadPanel=document.getElementById("sellerLoadPanel");
-
-if(loadPanel){
-  loadPanel.scrollIntoView({
-    behavior:"smooth",
-    block:"start"
-  });
-}
-  },200);
+async function openSellerLoadFromBidder(){
+  await openSellerSpaces();
 }
   function isCategoryFull(auction,category){
   const count=(state.lots||[]).filter(lot=>lot.auctionId===auction.id && lot.category===category).length;
@@ -8224,27 +8113,21 @@ if(auction && auction.auctionDate && auction.auctionCloseTime && lot){
   showPage("register");
   return;
 }
- const unlockedBidderId=localStorage.getItem("cliviaBidderUnlocked");
+ // Verify the bidder's existing Supabase login
+const { data, error } =
+  await cliviaSupabase.auth.getUser();
 
-if(unlockedBidderId!==bidder.id){
+const user = data?.user;
 
-  const enteredPassword=prompt(
-    "REGISTERED BIDDER\n\nPlease enter your Account password to place this bid:"
-  );
-
-  if(enteredPassword===null){
-    return;
-  }
-
-  if(enteredPassword!==bidder.password){
-    alert("Incorrect Account password.");
-    return;
-  }
-  localStorage.setItem("cliviaBidderUnlocked", bidder.id);
-
-  refreshBidderSelect();
-
-  alert("Bidding unlocked. This device will remain recognised.");
+if(
+  error ||
+  !user ||
+  !user.email_confirmed_at ||
+  bidder.authUserId !== user.id
+){
+  alert("Please sign in to your registered account before bidding.");
+  showPage("register");
+  return;
 }
   if(!bidder.isOwnerTest && bidder.isInternational && !bidder.internationalRegistrationPaid){
   alert("International bidders must pay the R2,000 registration fee before bidding.");
