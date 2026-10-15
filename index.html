@@ -2858,12 +2858,22 @@ justify-content:center;
     <h2>Add New Plant / Create a Lot</h2>
     <p>List your Clivia for auction.</p>
 
-    <h3>1. Auction Selection</h3>
+   <h3>1. Auction Selection</h3>
 
-    <label>Select Auction *</label>
-    <select id="sellerLotAuction">
-      <option value="">-- Choose Auction --</option>
-    </select>
+<label>Select Upcoming Auction *</label>
+
+<select id="sellerLotAuction">
+  <option value="">NEXT AUCTION — DATE TO BE ANNOUNCED</option>
+</select>
+
+<div id="sellerAuctionScheduleNotice"
+     class="small"
+     style="margin-top:8px;color:#9acd32;">
+  Auction date will be announced when 80% of the lots
+  are filled (39 of 48 lots).
+  The auction will then be scheduled automatically
+  for the following Friday.
+</div>
 <h3 style="margin-top:22px;">2. Plant Details</h3>
 
 <label>Plant / Flower Name *</label>
