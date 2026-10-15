@@ -6647,8 +6647,10 @@ securityProof:"",
 }     
 async function refreshBidderSelect(){
   const select=document.getElementById("bidderSelect");
-     const { data: { user }, error: authError } =
-    await cliviaSupabase.auth.getUser();
+   const { data: { session }, error: authError } =
+    await cliviaSupabase.auth.getSession();
+
+const user = session?.user || null;
 
   if(authError || !user || !user.email_confirmed_at){
     state.bidders = [];
