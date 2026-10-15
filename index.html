@@ -5436,6 +5436,11 @@ document.getElementById("sellerLotStartRow").value = "";
 document.getElementById("sellerLotPhoto1").value = "";
 document.getElementById("sellerLotPhoto2").value = "";
 document.getElementById("sellerLotTerms").checked = false;
+ const previewLeaves = document.getElementById("sellerPreviewLeaves");
+const previewOffsets = document.getElementById("sellerPreviewOffsets");
+
+if(previewLeaves) previewLeaves.textContent = "—";
+if(previewOffsets) previewOffsets.textContent = "—";      
        
 if(msg){
   msg.innerHTML = "<b>Plant published successfully.</b>";
