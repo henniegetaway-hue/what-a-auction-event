@@ -3968,7 +3968,42 @@ if(logo) logo.src="new logo.png";
   document.getElementById(map[page][1]).classList.add("active");
 
   if(page==="live") renderLots();
-  if(page==="register") refreshBidderSelect();    
+  if(page==="register"){
+  Promise.resolve(refreshBidderSelect()).then(async ()=>{
+    const { data, error } = await cliviaSupabase.auth.getUser();
+    const user = data?.user;
+
+    const bidder = (state.bidders || []).find(
+      b => b.authUserId === user?.id
+    );
+
+    const registration =
+      document.getElementById("newBidderRegistration");
+
+    const account =
+      document.getElementById("registeredBidderSection");
+
+    if(!error && user?.email_confirmed_at && bidder){
+      state.selectedBidderId = bidder.id;
+
+      if(registration) registration.style.display = "none";
+
+      if(account){
+        account.style.display = "block";
+        account.classList.remove("hidden");
+      }
+
+      const bidderSelect = document.getElementById("bidderSelect");
+      if(bidderSelect) bidderSelect.value = bidder.id;
+
+    }else{
+      if(registration) registration.style.display = "block";
+      if(account) account.style.display = "none";
+    }
+  }).catch(error=>{
+    console.error("Account display error:", error);
+  });
+}   
   if(page==="admin") renderAdminLots();
   if(page==="invoices") renderInvoices();
   if(page==="rules"){
