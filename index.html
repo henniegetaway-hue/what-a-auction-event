@@ -2969,9 +2969,39 @@ justify-content:center;
   <div id="sellerLivePreviewPanel" class="panel">
     <h2 style="text-align:center;">🌸 LIVE PLANT PREVIEW</h2>
 
-    <div id="sellerLivePreviewCard" style="background:#111;border:1px solid #9acd32;border-radius:12px;padding:15px;text-align:center;color:white;">
-
-      <div id="sellerPreviewPhoto" style="height:350px;display:flex;align-items:center;justify-content:center;background:#222;border-radius:8px;margin-bottom:12px;overflow:hidden;">
+    <div id=<div id="sellerLivePreviewCard" style="
+  background:#071b0d;
+  border:1px solid #315a38;
+  border-radius:12px;
+  padding:10px;
+  text-align:left;
+  color:#ffffff;
+  overflow:hidden;
+  box-shadow:0 4px 12px rgba(0,0,0,.35);
+">"sellerLivePreviewCard" style="background:#111;border:1px solid #9acd32;border-radius:12px;padding:15px;text-align:center;color:white;">
+<div id="sellerPreviewLotNumber" style="
+  color:#b6ff80;
+  font-size:15px;
+  font-weight:bold;
+  text-align:left;
+  padding:4px 0 10px 0;
+">
+  LOT-001
+</div>
+     <div id="sellerPreviewPhoto" style="
+  height:250px;
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#07170b;
+  border-radius:8px;
+  margin-bottom:8px;
+  overflow:hidden;
+  background-position:center;
+  background-size:contain;
+  background-repeat:no-repeat;
+">
         Your plant photo will appear here
       </div>
 
@@ -2979,12 +3009,165 @@ justify-content:center;
         <button type="button" onclick="showSellerPreviewPhoto(1)" style="background:#87CEFA;color:#000;border:0;border-radius:5px;padding:4px 10px;font-weight:bold;">PIC 1</button>
         <button type="button" onclick="showSellerPreviewPhoto(2)" style="background:#87CEFA;color:#000;border:0;border-radius:5px;padding:4px 10px;font-weight:bold;">PIC 2</button>
       </div>
+<button type="button"
+  disabled
+  style="
+    width:100%;
+    background:linear-gradient(90deg,#a0ff80,#39e52d);
+    color:#000;
+    border:2px solid #b6ff80;
+    border-radius:9px;
+    padding:12px 6px;
+    font-size:15px;
+    font-weight:bold;
+    opacity:1;
+    cursor:default;
+    margin:8px 0 12px 0;
+  ">
+  🔨 PLACE BID
+</button>
+        <div style="
+  background:#102a16;
+  border:1px solid #315a38;
+  border-radius:8px;
+  padding:10px;
+  margin:8px 0;
+  text-align:center;
+">
+  <h3 id="sellerPreviewBid" style="
+    color:#ff9b22;
+    font-size:19px;
+    font-weight:bold;
+    margin:0;
+  ">
+    Starting Bid: R0
+  </h3>
+</div>  
+     <div style="
+  background:#0b2111;
+  border:1px solid #315a38;
+  border-radius:8px;
+  padding:12px;
+  margin-top:10px;
+  color:#ffffff;
+  text-align:left;
+  line-height:1.8;
+">
 
-      <h3 id="sellerPreviewName">YOUR PLANT NAME</h3>
-      <p id="sellerPreviewBreeding">Breeding: —</p>
-      <p id="sellerPreviewBreeder">Breeder: —</p>
-      <h3 id="sellerPreviewBid" style="color:orange;">Starting Bid: R0</h3>
+  <h3 id="sellerPreviewName" style="
+    color:#b6ff80;
+    font-size:17px;
+    margin:0 0 10px 0;
+    text-align:center;
+  ">
+    YOUR PLANT NAME
+  </h3>
 
+  <p id="sellerPreviewBreeding" style="margin:4px 0;">
+    Breeding: —
+  </p>
+
+  <p id="sellerPreviewBreeder" style="margin:4px 0;">
+    Breeder: —
+  </p>
+
+</div>
+     <div style="
+  background:#0b2111;
+  border:1px solid #315a38;
+  border-radius:8px;
+  padding:12px;
+  margin-top:10px;
+  text-align:center;
+">
+
+  <div style="color:#ffffff;font-weight:bold;font-size:13px;">
+    CURRENT BID
+  </div>
+
+  <div id="sellerPreviewCurrentBid" style="
+    color:#ff9b22;
+    font-size:20px;
+    font-weight:bold;
+    margin:6px 0 12px;
+  ">
+    NO BIDS YET
+  </div>
+
+  <div style="color:#ffffff;font-weight:bold;font-size:13px;">
+    TIME LEFT
+  </div>
+
+  <div id="sellerPreviewTimeLeft" style="
+    color:#b6ff80;
+    font-size:17px;
+    font-weight:bold;
+    margin-top:6px;
+  ">
+    Awaiting auction start
+  </div>
+
+</div>   
+      <div style="
+  background:#0b2111;
+  border:1px solid #315a38;
+  border-radius:8px;
+  padding:12px;
+  margin-top:10px;
+  color:#ffffff;
+  font-size:13px;
+  line-height:1.9;
+  text-align:left;
+">
+
+  <div>
+    <strong>SELLER:</strong>
+    <span id="sellerPreviewSeller">—</span>
+  </div>
+
+  <div>
+    <strong>LEAVES:</strong>
+    <span id="sellerPreviewLeaves">—</span>
+  </div>
+
+  <div>
+    <strong>OFFSETS:</strong>
+    <span id="sellerPreviewOffsets">—</span>
+  </div>
+
+</div>  
+     <button type="button"
+  onclick="showSellerPreviewPhoto(2)"
+  style="
+    width:100%;
+    background:#193b26;
+    color:#ffffff;
+    border:1px solid #537c59;
+    border-radius:8px;
+    padding:12px 8px;
+    font-size:13px;
+    font-weight:bold;
+    cursor:pointer;
+    margin-top:12px;
+  ">
+  📷 VIEW ACTUAL PLANT / MORE PHOTOS
+</button>   
+   <button type="button"
+  onclick="shareSellerPreviewWhatsApp()"
+  style="
+    width:100%;
+    background:#17c96b;
+    color:#ffffff;
+    border:1px solid #40ef92;
+    border-radius:8px;
+    padding:12px 8px;
+    font-size:14px;
+    font-weight:bold;
+    cursor:pointer;
+    margin-top:12px;
+  ">
+  📲 SHARE ON WHATSAPP
+</button>       
     </div>
   </div>
 
@@ -4618,81 +4801,6 @@ function showSellerForgotPassword(){
     previewBid.textContent =
       "Starting Bid: R" + (input.value || "0");
   }
-}
-     function showSellerPreviewPhoto(photoNumber){
-
-  const input = document.getElementById(
-    photoNumber === 1 ? "sellerLotPhoto1" : "sellerLotPhoto2"
-  );
-
-  const preview = document.getElementById("sellerPreviewPhoto");
-
-  if(!input || !preview) return;
-
-  const file = input.files?.[0];
-
-  if(!file){
-    preview.textContent =
-      photoNumber === 1
-        ? "Please select Photo 1"
-        : "Please select Photo 2";
-    return;
-  }
-
-  const url = URL.createObjectURL(file);
-
-  preview.innerHTML = "";
-
-  const img = document.createElement("img");
-  img.src = url;
-  img.alt = photoNumber === 1 ? "Flower Photo" : "Plant Photo";
-  img.style.width = "100%";
-  img.style.height = "100%";
-  img.style.objectFit = "cover";
-
-  img.onload = () => URL.revokeObjectURL(url);
-
-  preview.appendChild(img);
-}
- function showSellerLotForm(){
-  const form = document.getElementById("sellerLotForm");
-
-  if(!form) return;
-
-  const auctionSelect =
-    document.getElementById("sellerLotAuction");
-
-  if(auctionSelect){
-    auctionSelect.innerHTML =
-      '<option value="">-- Choose Auction --</option>';
-
-   (state.auctions || [])
-  .filter(auction =>
-    auction.status !== "CLOSED" &&
-    !(typeof isAuctionFull === "function" && isAuctionFull(auction))
-  )
-  .sort((a,b) => {
-    const dateA = new Date(
-      (a.auctionDate || "9999-12-31") +
-      "T" +
-      (a.auctionTime || a.preferredAuctionTime || "23:59")
-    );
-
-    const dateB = new Date(
-      (b.auctionDate || "9999-12-31") +
-      "T" +
-      (b.auctionTime || b.preferredAuctionTime || "23:59")
-    );
-
-    return dateA - dateB;
-  })
-  .forEach(auction => {
-    const option = document.createElement("option");
-
-    option.value = auction.id;
-
-    const date =
-      auction.auctionDate || "Date to be announced";
 
     const time =
       auction.auctionTime ||
@@ -11195,13 +11303,29 @@ function showWebsiteInvoices() {
 
 
 function showBankReconciliation() {
-  const box = document.getElementById("invoiceList");
-  if (!box) return;
+ function shareSellerPreviewWhatsApp() {
 
-  box.innerHTML =
-    "<h3>Bank Reconciliation</h3>" +
-    "<p>Monthly website payment reconciliation will appear here.</p>";
-}     
+  const plantName =
+    document.getElementById("sellerPreviewName")
+      ?.textContent.trim() || "Clivia Plant";
+
+  const startingBid =
+    document.getElementById("sellerPreviewBid")
+      ?.textContent.trim() || "";
+
+  const message =
+    "🌸 CLIVIA DREAMERS AUCTION 🌸\n\n" +
+    "Plant: " + plantName + "\n" +
+    startingBid + "\n\n" +
+    "View the auction:\n" +
+    window.location.href;
+
+  window.open(
+    "https://wa.me/?text=" + encodeURIComponent(message),
+    "_blank",
+    "noopener,noreferrer"
+  );
+}
 </script>
 
 <footer style="
