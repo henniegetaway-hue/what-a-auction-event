@@ -1841,7 +1841,15 @@ justify-content:center;
   Select an account to see bidding capacity.
 </div>
   <div id="bidderCapacityControl" style="display:none;margin-top:12px;">
- <button class="accountBtn"
+<button type="button"
+        onclick="increaseBidderCapacity()"
+        style="background:#111!important;
+               color:#fff!important;
+               border:1px solid #fff!important;
+               border-radius:8px;
+               padding:10px 18px;
+               font-weight:bold;
+               cursor:pointer;">
         type="button"
         onclick="increaseBidderCapacity()"
        style="background:#87CEFA!important;color:#000!important;border:1px solid #5DADE2!important;padding:10px 18px!important;box-shadow:none!important;"
