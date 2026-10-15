@@ -4725,7 +4725,7 @@ function showSellerForgotPassword(){
   img.alt = photoNumber === 1 ? "Flower Photo" : "Plant Photo";
   img.style.width = "100%";
   img.style.height = "100%";
-  img.style.objectFit = "contain";
+  img.style.objectFit = "cover";
 
   img.onload = () => URL.revokeObjectURL(url);
 
