@@ -2917,7 +2917,7 @@ justify-content:center;
            img.alt = 'Plant preview';
            img.style.width = '100%';
            img.style.height = '100%';
-           img.style.objectFit = 'contain';
+           img.style.objectFit = 'cover';
            img.onload = () => URL.revokeObjectURL(url);
            preview.appendChild(img);
          }
