@@ -4830,6 +4830,8 @@ function showSellerLotForm(){
 
   const form = document.getElementById("sellerLotForm");
   if(!form) return;
+      const auctionSelect =
+  document.getElementById("sellerLotAuction");
   if(auctionSelect){
     auctionSelect.innerHTML =
       '<option value="">-- SELECT UPCOMING AUCTION --</option>';
