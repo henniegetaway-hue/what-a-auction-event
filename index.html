@@ -2897,12 +2897,34 @@ justify-content:center;
 <textarea id="sellerLotDescription"
           rows="4"
           placeholder="Describe the flower, colour, throat, markings, breeding, plant condition and any special features."
-          oninput="updateSellerAIKeywords()"></textarea>
+          oninput="
+            updateSellerAIKeywords();
+            document.getElementById('sellerPreviewDescription').textContent =
+              'Description: ' + (this.value || '—');
+          "></textarea>
 
 <!-- Keywords generated automatically in the background -->
 <textarea id="sellerLotKeywords"
           style="display:none;"
           readonly></textarea>
+        <label>Number of Leaves</label>
+<input id="sellerLotLeaves"
+       type="number"
+       min="0"
+       placeholder="e.g. 8"
+       oninput="
+         document.getElementById('sellerPreviewLeaves').textContent =
+           this.value || '—';
+       ">
+        <label>Number of Offsets</label>
+<input id="sellerLotOffsets"
+       type="number"
+       min="0"
+       placeholder="e.g. 2"
+       oninput="
+         document.getElementById('sellerPreviewOffsets').textContent =
+           this.value || '—';
+       ">
        <h3 style="margin-top:22px;">Photos</h3>
 
 <div class="formGrid">
@@ -2969,7 +2991,7 @@ justify-content:center;
   <div id="sellerLivePreviewPanel" class="panel">
     <h2 style="text-align:center;">🌸 LIVE PLANT PREVIEW</h2>
 
-    <div id=<div id="sellerLivePreviewCard" style="
+    <div id="sellerLivePreviewCard" style="
   background:#071b0d;
   border:1px solid #315a38;
   border-radius:12px;
@@ -2978,7 +3000,7 @@ justify-content:center;
   color:#ffffff;
   overflow:hidden;
   box-shadow:0 4px 12px rgba(0,0,0,.35);
-">"sellerLivePreviewCard" style="background:#111;border:1px solid #9acd32;border-radius:12px;padding:15px;text-align:center;color:white;">
+">
 <div id="sellerPreviewLotNumber" style="
   color:#b6ff80;
   font-size:15px;
@@ -5110,7 +5132,15 @@ function closeSellerLotForm(){
 
     breeder:
       document.getElementById("sellerLotBreeder")?.value.trim() || "",
+    leaves:
+      document.getElementById("sellerLotLeaves")?.value === ""
+        ? null
+        : Number(document.getElementById("sellerLotLeaves")?.value),
 
+    offsets:
+      document.getElementById("sellerLotOffsets")?.value === ""
+        ? null
+        : Number(document.getElementById("sellerLotOffsets")?.value),
     description:
       document.getElementById("sellerLotDescription")?.value.trim() || "",
 
@@ -5153,6 +5183,14 @@ const start = Number(document.getElementById("sellerLotStart")?.value || 0);
 
 const breeder =
   document.getElementById("sellerLotBreeder")?.value.trim() || "";
+ const leavesValue =
+  document.getElementById("sellerLotLeaves")?.value ?? "";
+
+const offsetsValue =
+  document.getElementById("sellerLotOffsets")?.value ?? "";
+
+const leaves = leavesValue === "" ? null : Number(leavesValue);
+const offsets = offsetsValue === "" ? null : Number(offsetsValue);      
 
 const description =
   document.getElementById("sellerLotDescription")?.value.trim() || "";
@@ -5344,10 +5382,12 @@ const newLot = {
       ...(state.lots || []).map(l => Number(l.lotNumber) || 0)
     ) + 1,
 
-  name: name,
-breeding: breeding,
-breeder: breeder,
-description: description,
+   name: name,
+  breeding: breeding,
+  breeder: breeder,
+  leaves: leaves,
+  offsets: offsets,
+  description: description,
 keywords: keywords,
 category: category,
 
