@@ -4819,22 +4819,21 @@ function showSellerForgotPassword(){
   // UPDATE LIVE PLANT PREVIEW
   const previewBid = document.getElementById("sellerPreviewBid");
 
-  if(previewBid){
+   if(previewBid){
     previewBid.textContent =
       "Starting Bid: R" + (input.value || "0");
   }
 
-    const time =
-      auction.auctionTime ||
-      auction.preferredAuctionTime ||
-      "Time to be announced";
+}
+   }
 
-    option.textContent =
-      date + " — " + time + " — Available";
+function showSellerLotForm(){
 
-    auctionSelect.appendChild(option);
-  });
-  }
+  const form = document.getElementById("sellerLotForm");
+  if(!form) return;
+
+  const auctionSelect =
+    document.getElementById("sellerLotAuction");
 
   const categorySelect =
     document.getElementById("sellerLotCategory");
