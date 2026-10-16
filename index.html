@@ -2925,6 +2925,16 @@ justify-content:center;
          document.getElementById('sellerPreviewOffsets').textContent =
            this.value || '—';
        ">
+        <label>Year Plant First Flowered</label>
+<input id="sellerLotFirstFlowered"
+       type="number"
+       min="1900"
+       max="2100"
+       placeholder="e.g. 2023"
+       oninput="
+         const preview = document.getElementById('sellerPreviewFirstFlowered');
+         if(preview) preview.textContent = this.value || '—';
+       ">
        <h3 style="margin-top:22px;">Photos</h3>
 
 <div class="formGrid">
