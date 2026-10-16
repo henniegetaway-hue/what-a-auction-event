@@ -8584,7 +8584,10 @@ if(hotLot){
 }
 
 function createInvoices(){
-  const alreadyCreated=(state.invoices||[]).some(inv=>inv.auctionId===state.selectedAuctionId);
+  const alreadyCreated=(state.invoices||[]).some(inv=>
+  inv.auctionId===state.selectedAuctionId &&
+  inv.type==="BUYER_INVOICE"
+);
 if(alreadyCreated) return;
   const winners={};
 
@@ -8594,9 +8597,11 @@ if(alreadyCreated) return;
     const winningBid=lot.bids.slice().sort((a,b)=>b.amount-a.amount)[0];
 
     if(!winners[winningBid.bidderId]){
-      winners[winningBid.bidderId]={
-        bidderId:winningBid.bidderId,
-        auctionId:state.selectedAuctionId,
+     winners[winningBid.bidderId]={
+  id:crypto.randomUUID(),
+  type:"BUYER_INVOICE",
+  bidderId:winningBid.bidderId,
+  auctionId:state.selectedAuctionId,
 auctionCountry:(state.auctions.find(a=>a.id===state.selectedAuctionId)||{}).country||"",
 currency:(state.auctions.find(a=>a.id===state.selectedAuctionId)||{}).currency||"ZAR",
         bidderName:winningBid.bidderName,
@@ -8631,7 +8636,18 @@ paymentStatus:"UNPAID",
     winners[winningBid.bidderId].total+=Number(winningBid.amount);
   });
 
-  state.invoices=[...(state.invoices||[]), ...Object.values(winners)];
+   const newInvoices = Object.values(winners);
+
+  if(newInvoices.length === 0){
+    save();
+    return;
+  }
+
+  state.invoices=[
+    ...(state.invoices||[]),
+    ...newInvoices
+  ];
+
   save();
   renderInvoices();
 }
@@ -11427,8 +11443,7 @@ Website content, design and original material may not be copied or reproduced wi
   text-align:center;
 ">
 
-  <h3 style="color:#9acd32;">
-   <div style="
+    <div style="
   background:#101b12;
   border:1px solid #9acd32;
   border-radius:10px;
