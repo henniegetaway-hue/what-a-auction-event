@@ -8550,6 +8550,17 @@ function getNextAuction(currentAuction){
 }
 
 function setAuctionOpen(open){
+  if(!open){
+    const confirmed=confirm(
+      "CLOSE AUCTION?\n\n" +
+      "This will close the auction and create invoices for winning bidders, " +
+      "unless HOT BIDDING is still active.\n\n" +
+      "Do you want to continue?"
+    );
+
+    if(!confirmed) return;
+  }
+
   state.settings.open=open;
 
   if(!open){
