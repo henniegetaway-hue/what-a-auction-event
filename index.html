@@ -11332,6 +11332,61 @@ function downloadEventDatabase(){
 
   }
 }  
+ 
+async function loadCentralInvoices(){
+  const box = document.getElementById("centralInvoiceResults");
+  if(!box) return;
+
+  box.textContent = "Loading central invoices...";
+
+  const { data: userData, error: userError } =
+    await auctionSupabase.auth.getUser();
+
+  if(userError || !userData.user){
+    box.textContent = "Please sign in as the authorised Owner.";
+    return;
+  }
+
+  const { data, error } = await auctionSupabase
+    .from("invoices")
+    .select("invoice_number, platform, invoice_type, total_amount, currency, payment_status, created_at")
+    .order("created_at", { ascending: false })
+    .limit(100);
+
+  if(error){
+    box.textContent = "Unable to load invoices: " + error.message;
+    return;
+  }
+
+  box.replaceChildren();
+
+  if(!data || data.length === 0){
+    box.textContent = "No central invoices recorded yet.";
+    return;
+  }
+
+  data.forEach(inv => {
+    const panel = document.createElement("div");
+    panel.className = "panel";
+
+    const fields = [
+      ["Invoice", inv.invoice_number],
+      ["Platform", inv.platform],
+      ["Type", inv.invoice_type],
+      ["Amount", (inv.currency || "") + " " + Number(inv.total_amount || 0).toFixed(2)],
+      ["Status", inv.payment_status]
+    ];
+
+    fields.forEach(([label, value]) => {
+      const line = document.createElement("div");
+      line.textContent = label + ": " + (value ?? "");
+      panel.appendChild(line);
+    });
+
+    box.appendChild(panel);
+  });
+}
+       
  function showAuctionInvoices() {
   const box = document.getElementById("invoiceList");
   if (!box) return;
