@@ -3575,15 +3575,14 @@ async function openCreatorRegistration(){
   const { data, error } =
     await auctionSupabase.auth.getUser();
 
-  if(!error && data?.user){
-    await showOwnEventPage();
-    return;
-  }
-
+  
+if(!error && data?.user){
+  showOwnAuctionPage();
+  return;
+}
 
   // Open the existing registration page
  
-
 showPage("register");
 document.body.classList.add("ownEventMode");
 setOwnEventHeader();
