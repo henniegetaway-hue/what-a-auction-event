@@ -1073,6 +1073,19 @@ auctionSupabase.auth.onAuthStateChange((event, session) => {
 <label>Auction / Event Type *</label>
 <input id="ownEventType"
        placeholder="e.g. Racing Horses, Bulls, Cars, Livestock, Collectables">
+      
+<label>Auction Access *</label>
+<select id="ownEventAccess" onchange="updateOwnEventPreview()">
+  <option value="PUBLIC" selected>PUBLIC — Open to all registered bidders</option>
+  <option value="PRIVATE">PRIVATE — Invited or approved bidders only</option>
+</select>
+
+<div class="small" style="margin:5px 0 12px 0;">
+  PUBLIC auctions are visible to everyone.
+  PRIVATE auctions are restricted to bidders
+  invited or approved by the Event Creator.
+</div>
+
       <input id="ownEventCurrency" type="hidden" value="ZAR">
       <div id="ownEventCurrencyDisplay" class="small" style="margin:5px 0 10px 0;">
   Auction Currency: <strong>ZAR (R)</strong>
@@ -3553,7 +3566,7 @@ if(sessionData.session?.user){
 
   if(page) page.classList.remove("hidden");
   if(btn) btn.classList.add("active");
-
+  await loadMyAuctions();
 }
 function showOwnAuctionPage(){
  document.body.classList.add("ownEventMode");
@@ -9473,7 +9486,73 @@ function markExpiredOwnEvents(){
     );
   }
 }      
- markExpiredOwnEvents();     
+ markExpiredOwnEvents();   
+   
+async function loadMyAuctions(){
+
+  const display =
+    document.getElementById("ownEventManagementList");
+
+  if(!display) return;
+
+  const { data: userData, error: userError } =
+    await auctionSupabase.auth.getUser();
+
+  if(userError || !userData?.user){
+    display.textContent = "Sign in to view your auctions.";
+    return;
+  }
+
+  display.textContent = "Loading your auctions...";
+
+  const { data: events, error } = await auctionSupabase
+    .from("auction_events")
+    .select("event_data")
+    .eq("creator_id", userData.user.id);
+
+  if(error){
+    display.textContent =
+      "Unable to load auctions: " + error.message;
+    return;
+  }
+
+  display.innerHTML = "";
+
+  if(!events?.length){
+    display.textContent = "No auctions created yet.";
+    return;
+  }
+
+  events.forEach(record => {
+
+    const event = record.event_data || {};
+    const item = document.createElement("div");
+
+    item.style.padding = "12px";
+    item.style.marginBottom = "10px";
+    item.style.border = "1px solid #9acd32";
+    item.style.borderRadius = "8px";
+
+    const name = document.createElement("strong");
+    name.textContent = event.name || "Unnamed Auction";
+
+    const details = document.createElement("div");
+    details.className = "small";
+    details.textContent =
+      (event.auctionDate || "Date not set") +
+      " | " +
+      (event.eventStatus || "DRAFT") +
+      " | " +
+      (event.access || "PUBLIC");
+
+    item.appendChild(name);
+    item.appendChild(details);
+    display.appendChild(item);
+
+  });
+
+}
+   
  async function signOutAuctionCreator(){
 
   const { error } = await auctionSupabase.auth.signOut();
@@ -9877,8 +9956,11 @@ retentionExpired: false,
   name: eventName,
   tagline: tagline,
   description: description,
+  
   type: eventType,
+  access: document.getElementById("ownEventAccess")?.value || "PUBLIC",
   country: country,
+
    currency: document.getElementById("ownEventCurrency")?.value || "USD",
    backgroundColor: document.getElementById("ownEventBgColor")?.value || "#000000",
 textColor: document.getElementById("ownEventTextColor")?.value || "#ffffff",
