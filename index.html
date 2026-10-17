@@ -1110,8 +1110,11 @@ auctionSupabase.auth.onAuthStateChange((event, session) => {
   Auction date may be scheduled up to 4 months in advance.
   Auction records will be retained for 3 months after the auction closes.
 </div>   
-      <label>Auction Country *</label>
+      
+<div style="display:none;">
+<label>Auction Country *</label>
 <select id="ownEventCountry" onchange="updateOwnEventCountryCurrency()">
+
   <option value="">-- Select Auction Country --</option>
   <option value="ZA">South Africa</option>
   <option value="EU">Eurozone / Euro (€)</option>
@@ -1121,8 +1124,9 @@ auctionSupabase.auth.onAuthStateChange((event, session) => {
   <option value="NZ">New Zealand</option>
   <option value="CA">Canada</option>
   <option value="OTHER">Other Country</option>
-</select>
-  
+</select>  
+</div>
+   
 <div id="retailPaymentCountryDisplay" style="
   background:#000;
   color:#9acd32;
