@@ -3570,8 +3570,18 @@ setOwnEventHeader();
   const mode = document.getElementById("registrationMode");
   if(mode) mode.value = "CREATOR";
 
+  
+  // Show the Auction Creator heading first
+  const creatorHeading =
+    document.querySelector("#registrationMainPanel h2");
+
+  if(creatorHeading){
+    creatorHeading.textContent = "Auction Creator Registration";
+  }
+
   // Open the registration form
   showNewBidderRegistration();
+
 
   // Hide Clivia-specific notices
   document.querySelectorAll(
