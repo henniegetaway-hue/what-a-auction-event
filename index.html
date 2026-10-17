@@ -7128,20 +7128,6 @@ function refreshLotCategorySelect(){
     showPage("register");
     return;
   }
-
-  const { data, error } =
-    await cliviaSupabase.auth.getUser();
-
-  const user = data?.user;
-
-  if(
-    error ||
-    !user ||
-    !user.email_confirmed_at ||
-    bidder.authUserId !== user.id
-  ){
-    alert("Please sign in to your confirmed account first.");
-   
   const { data, error } =
     await cliviaSupabase.auth.getUser();
 
