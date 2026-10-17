@@ -1671,13 +1671,13 @@ justify-content:center;
 
 <label>Country *</label>
 <input id="regCountry" placeholder="e.g. South Africa, USA, UK, Australia" oninput="updateInternationalBidderNotice()">
-<div id="internationalBidderNotice" class="notice" style="display:none;">
+<div id="internationalBidderNotice" class="notice cliviaOnly" style="display:none;">
   <b>INTERNATIONAL BIDDER</b><br>
   Registration fee: <b>R2,000</b><br>
   International bidders may only view and bid on plants offered by export sellers.
 </div>     
 
-<div class="notice">
+<div class="notice cliviaOnly">
   <b>BANK ACCOUNT VERIFICATION</b>
   <p>
     After confirming your email and signing in, you will be
@@ -1691,7 +1691,7 @@ justify-content:center;
 <input id="regAccountNumber" type="hidden" value="">
 <input id="regDefaultNumber" type="hidden" value="">
 
-<div class="notice">
+<div class="notice cliviaOnly">
   SECURITY: Your bank account number must match the account used for payment verification. You cannot bid until your bank account number has been confirmed.
 </div>
      
@@ -1699,7 +1699,7 @@ justify-content:center;
       <br><br>
       <label style="display:flex;gap:8px;align-items:center;margin:12px 0;">
   <input id="reg" type="checkbox" style="width:auto;">
-  I have read and accept the "What a Auction Event" Rules & Terms.
+  <span id="registrationRulesText">I have read and accept the Clivia Dreamers Buyer Rules &amp; Terms.</span>
 </label>
       
 <label>Notify me about auctions?</label>
@@ -2834,7 +2834,7 @@ justify-content:center;
     <br><br>
     <label style="display:flex;gap:8px;align-items:center;margin:12px 0;">
   <input id="seller" type="checkbox" style="width:auto;">
-  I have read and accept the "What a Auction Event" Rules & Terms.
+  <span id="registrationRulesText">I have read and accept the Clivia Dreamers Buyer Rules &amp; Terms.</span>
 </label>
 <label>Notify me about auctions?</label>
 
@@ -3556,6 +3556,24 @@ if(siteLogo){
 }
 
 function openCreatorRegistration(){
+   
+  const rulesText =
+    document.getElementById("registrationRulesText");
+
+  if(rulesText){
+    rulesText.textContent =
+      "I have read and accept the What a Auction Event Auction Creator Rules & Terms.";
+  }
+
+  const rulesCheckbox = document.getElementById("reg");
+  if(rulesCheckbox) rulesCheckbox.checked = false;
+
+  document.querySelectorAll(
+    "#newBidderRegistration .cliviaOnly"
+  ).forEach(el => {
+    el.style.display = "none";
+  });
+   
   showPage("register");
 
   const mode = document.getElementById("registrationMode");
@@ -4088,6 +4106,18 @@ function showPage(page){
 
     const mode = document.getElementById("registrationMode");
     if(mode) mode.value = "CLIVIA";
+   
+    const rulesText =
+      document.getElementById("registrationRulesText");
+
+    if(rulesText){
+      rulesText.textContent =
+        "I have read and accept the Clivia Dreamers Buyer Rules & Terms.";
+    }
+
+    const rulesCheckbox = document.getElementById("reg");
+    if(rulesCheckbox) rulesCheckbox.checked = false;
+     
   }
  
       const siteLogo=document.getElementById("siteLogo");
@@ -5920,6 +5950,19 @@ function toggleBidderAuctionNotifications(){
   }
 }
   function showNewBidderRegistration(){
+   
+  const mode =
+    document.getElementById("registrationMode")?.value || "CLIVIA";
+
+  if(mode === "CLIVIA"){
+    document.querySelectorAll(
+      "#newBidderRegistration .cliviaOnly"
+    ).forEach(el => {
+      el.style.display =
+        el.id === "internationalBidderNotice" ? "none" : "block";
+    });
+  }
+     
   document.getElementById("newBidderRegistration").style.display="block";
   document.getElementById("registeredBidderSection").style.display="none";
              document.getElementById("bidderForgotChoiceRow").style.display="none";
@@ -6496,6 +6539,16 @@ if(common) common.style.display="block";
   return /^\+?[0-9]{7,15}$/.test(cleaned);
 }
   async function registerBidder(){
+  
+  const registrationMode =
+    document.getElementById("registrationMode")?.value || "CLIVIA";
+
+  if(registrationMode === "CREATOR"){
+    document.getElementById("regMsg").textContent =
+      "Auction Creator registration is being connected. Please do not submit this form yet.";
+    return;
+  }
+      
   const name=document.getElementById("regName").value.trim();
   const phone=document.getElementById("regPhone").value.trim();
     const businessName=document.getElementById("regBusinessName").value.trim();
