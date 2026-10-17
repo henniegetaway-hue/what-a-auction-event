@@ -1137,11 +1137,11 @@ auctionSupabase.auth.onAuthStateChange((event, session) => {
   line-height:1.6;
 ">
   Select your auction country to view
-  possible retail payment services.
+  possible retail vouchers, moeny transfer, online payment services.
 </div>
 
 <p style="color:#aaa;font-size:12px;">
-  Retail payment services are optional.
+  Retail Vouchers, Money Transfer online payment services are optional.
   Sellers must confirm that their selected
   provider can accept payments for their
   auction invoices.
@@ -2746,11 +2746,11 @@ justify-content:center;
     <input type="checkbox"
            id="sellerAcceptRetailPayments"
            style="width:auto;margin-right:8px;">
-    I wish to offer retail bill-payment options.
+    I wish to offer retail voucher, money tranfer bill-payment options.
   </label>
 
   <label style="margin-top:12px;">
-    Accepted Retail Payment Services
+    Accepted Retail Voucher, Money Tranfer Payment Services
   </label>
 <style>
 #sellerRetailPaymentChoices label {
@@ -2815,7 +2815,7 @@ justify-content:center;
   </label>
 
   <p class="small" style="color:#aaa;">
-    Retail payment services are optional.
+    Retail Vouchers, Money Transfer payment services are optional.
     What a Auction Event does not process
     these payments. Sellers must verify
     receipt of funds before confirming payment.
@@ -4524,7 +4524,7 @@ if(acceptRetailPayments &&
     !retailPaymentConfirmed)){
 
   alert(
-    "To offer retail payments, please enter your accepted services, payment instructions and confirm that you are authorised to receive these payments."
+    "To offer Retail Voucher, Money Transfer payments, please enter your accepted services, payment instructions and confirm that you are authorised to receive these payments."
   );
 
   return;
@@ -4599,7 +4599,7 @@ exporterApproved:false,
     accountNumber,
     bankConfirmed:false,
 
-    // Optional retail payment methods
+    // Optional Retail Voucher, Money Transfer payment methods
     acceptRetailPayments: acceptRetailPayments,
     retailPaymentServices: acceptRetailPayments
       ? retailPaymentServices
@@ -9184,7 +9184,7 @@ ${seller.acceptRetailPayments &&
       border:1px solid #9acd32;
       border-radius:8px;
     ">
-      <b>OPTIONAL RETAIL PAYMENT SERVICES</b><br>
+      <b>OPTIONAL RETAIL VOUCHER, MONEY TRANSFER PAYMENT SERVICES</b><br>
      ${paymentCountry==="GB" &&
   /\bpaypoint\b/i.test(seller.retailPaymentServices || "")
   ? '<a href="https://www.paypoint.com/" target="_blank" rel="noopener noreferrer" style="color:#9acd32;">UK — PayPoint information</a><br>'
@@ -11723,7 +11723,7 @@ Website content, design and original material may not be copied or reproduced wi
   </p>
 
 </div>     
-  HOW RETAIL AND ONLINE PAYMENTS WORK
+  HOW RETAIL VOUCHERS, MONEY TRANSFERS AND ONLINE PAYMENTS WORK
 </h3>
 
 <div style="
@@ -11789,7 +11789,7 @@ Website content, design and original material may not be copied or reproduced wi
 </div>
 
 <h3 style="color:#9acd32;">
-  RETAIL PAYMENT OPTIONS FOR WINNING BIDDERS
+  RETAIL VOUCHERS, MONEY TRANFERS, PAYMENT OPTIONS FOR WINNING BIDDERS
 </h3>
 
 <div style="
