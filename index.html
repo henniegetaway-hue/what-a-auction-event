@@ -3578,6 +3578,15 @@ showPage("register");
 document.body.classList.add("ownEventMode");
 setOwnEventHeader();
 
+  // Full-width registration for Auction Creators
+  const eventsPanel = document.getElementById("cliviaEventsPanel");
+  if(eventsPanel) eventsPanel.style.display = "none";
+
+  const registrationGrid = document.getElementById("registerPageGrid");
+  if(registrationGrid){
+    registrationGrid.style.gridTemplateColumns = "minmax(0, 1fr)";
+  }
+
 
 
   // Select Auction Creator registration
