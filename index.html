@@ -3554,8 +3554,36 @@ if(siteLogo){
   if(status) status.textContent="CREATE";
 }
 
+
 function openCreatorRegistration(){
-   
+
+  // Open the existing registration page
+  showPage("register");
+
+  // Select Auction Creator registration
+  const mode = document.getElementById("registrationMode");
+  if(mode) mode.value = "CREATOR";
+
+  // Open the registration form
+  showNewBidderRegistration();
+
+  // Hide Clivia-specific notices
+  document.querySelectorAll(
+    "#newBidderRegistration .cliviaOnly"
+  ).forEach(el => {
+    el.style.display = "none";
+  });
+
+  // Show Auction Creator heading
+  const heading = document.querySelector(
+    "#registrationMainPanel h2"
+  );
+
+  if(heading){
+    heading.textContent = "Auction Creator Registration";
+  }
+
+  // Show Auction Creator rules wording
   const rulesText =
     document.getElementById("registrationRulesText");
 
@@ -3564,30 +3592,11 @@ function openCreatorRegistration(){
       "I have read and accept the What a Auction Event Auction Creator Rules & Terms.";
   }
 
+  // Require fresh acceptance
   const rulesCheckbox = document.getElementById("reg");
   if(rulesCheckbox) rulesCheckbox.checked = false;
-
-  document.querySelectorAll(
-    "#newBidderRegistration .cliviaOnly"
-  ).forEach(el => {
-    el.style.display = "none";
-  });
-   
-  showPage("register");
-
-  const mode = document.getElementById("registrationMode");
-  if(mode) mode.value = "CREATOR";
-
-  showNewBidderRegistration();
-
-  const heading = document.querySelector(
-    "#registrationMainPanel h2"
-  );
-
-  if(heading){
-    heading.textContent = "Auction Creator Registration";
-  }
 }
+
       
 async function showOwnEventPage(){
   setOwnEventSEO();
