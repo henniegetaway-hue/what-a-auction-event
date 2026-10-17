@@ -3569,7 +3569,17 @@ if(siteLogo){
 }
 
 
-function openCreatorRegistration(){
+
+async function openCreatorRegistration(){
+
+  const { data, error } =
+    await auctionSupabase.auth.getUser();
+
+  if(!error && data?.user){
+    await showOwnEventPage();
+    return;
+  }
+
 
   // Open the existing registration page
  
