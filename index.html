@@ -3558,7 +3558,10 @@ if(siteLogo){
 function openCreatorRegistration(){
 
   // Open the existing registration page
-  showPage("register");
+ 
+showPage("register");
+setOwnEventHeader();
+
 
   // Select Auction Creator registration
   const mode = document.getElementById("registrationMode");
@@ -4187,12 +4190,17 @@ if(logo) logo.src="new logo.png";
   document.getElementById(map[page][1]).classList.add("active");
 
   if(page==="live") renderLots();
-  if(page==="register"){
+  
+if(page==="register" &&
+   document.getElementById("registrationMode")?.value !== "CREATOR"){
   Promise.resolve(refreshBidderSelect()).then(async ()=>{
+
     
-    if(document.getElementById("registrationMode")?.value === "CREATOR"){
-      return;
-    }
+   
+if(document.getElementById("registrationMode")?.value === "CREATOR"){
+  return;
+}
+
     
     const { data, error } = await cliviaSupabase.auth.getUser();
     const user = data?.user;
@@ -7133,37 +7141,7 @@ function refreshLotCategorySelect(){
     bidder.authUserId !== user.id
   ){
     alert("Please sign in to your confirmed account first.");
-
-    document.querySelectorAll(
-      'input[name="accountAction"]'
-    ).forEach(radio => {
-      radio.checked = false;
-    });
-
-    showPage("register");
-    return;
-  }
-
-  if(action === "BID"){
-
-    const loadPanel =
-      document.getElementById("sellerLoadPanel");
-
-    if(loadPanel){
-      loadPanel.style.display = "none";
-    }
-
-    return;
-  }
-
-  if(action === "SELL"){
-    await openSellerSpaces();
-    return;
-  }
-}
-
-async function openSellerSpaces(){
-
+   
   const { data, error } =
     await cliviaSupabase.auth.getUser();
 
