@@ -932,7 +932,7 @@ auctionSupabase.auth.onAuthStateChange((event, session) => {
   <button id="navInvoices" onclick="showPage('invoices')">Invoices</button>
  <button id="navRules" onclick="showPage('rules')">Rules & Terms</button>
 <div class="ownEventTabGroup">
-  <button id="navOwnEvent" class="ownEventTab" onclick="showOwnEventPage()">
+  <button id="navOwnEvent" class="ownEventTab" onclick="openCreatorRegistration()">
     CREATE YOUR OWN EVENT
   </button>
 
@@ -1593,6 +1593,7 @@ justify-content:center;
 </div>
 
 <input id="regEntityType" type="hidden" value="">
+<input id="registrationMode" type="hidden" value="CLIVIA">              
 
 <div id="bidderPrivateFields" style="display:none;">
   <label>Full Name *</label>
@@ -3553,6 +3554,24 @@ if(siteLogo){
   if(nextTop) nextTop.textContent="Build and test your event before going live";
   if(status) status.textContent="CREATE";
 }
+
+function openCreatorRegistration(){
+  showPage("register");
+
+  const mode = document.getElementById("registrationMode");
+  if(mode) mode.value = "CREATOR";
+
+  showNewBidderRegistration();
+
+  const heading = document.querySelector(
+    "#registrationMainPanel h2"
+  );
+
+  if(heading){
+    heading.textContent = "Auction Creator Registration";
+  }
+}
+      
 async function showOwnEventPage(){
   setOwnEventSEO();
   document.body.classList.add("ownEventMode");
@@ -4057,6 +4076,20 @@ function setCliviaSEO(){
   });
 }   
 function showPage(page){
+     
+  if(page === "register"){
+    const heading = document.querySelector(
+      "#registrationMainPanel h2"
+    );
+
+    if(heading){
+      heading.textContent = "Clivia Dreamers Registration";
+    }
+
+    const mode = document.getElementById("registrationMode");
+    if(mode) mode.value = "CLIVIA";
+  }
+ 
       const siteLogo=document.getElementById("siteLogo");
 
 if(siteLogo){
