@@ -4189,6 +4189,11 @@ if(logo) logo.src="new logo.png";
   if(page==="live") renderLots();
   if(page==="register"){
   Promise.resolve(refreshBidderSelect()).then(async ()=>{
+    
+    if(document.getElementById("registrationMode")?.value === "CREATOR"){
+      return;
+    }
+    
     const { data, error } = await cliviaSupabase.auth.getUser();
     const user = data?.user;
 
