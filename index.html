@@ -8403,9 +8403,22 @@ if(amount<required){
   });
 lot.lastBidTime=new Date().toISOString();
   const closeTime=new Date(auction.auctionDate+"T"+auction.auctionCloseTime+":00+02:00");
-if(Date.now()>=closeTime.getTime()-60000){
-  lot.extendedCloseUntil=new Date(Date.now()+60000).toISOString();
+
+const existingExtension = lot.extendedCloseUntil
+  ? new Date(lot.extendedCloseUntil).getTime()
+  : 0;
+
+if(
+  Date.now() >= closeTime.getTime() - 60000 ||
+  existingExtension > Date.now()
+){
+  const newExtension = Date.now() + 60000;
+
+  lot.extendedCloseUntil = new Date(
+    Math.max(existingExtension, newExtension)
+  ).toISOString();
 }
+
   save();
   renderLots();
 }
