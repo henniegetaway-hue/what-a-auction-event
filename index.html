@@ -9545,9 +9545,25 @@ async function loadMyAuctions(){
       " | " +
       (event.access || "PUBLIC");
 
+    
+    const openButton = document.createElement("button");
+    openButton.type = "button";
+    openButton.className = "goldBtn";
+    openButton.textContent = "OPEN / EDIT AUCTION";
+    openButton.style.marginTop = "10px";
+
+    openButton.onclick = function(){
+      alert(
+        "Selected auction: " + (event.name || "Unnamed Auction") +
+        "\n\nNext we will connect this button to the auction editor."
+      );
+    };
+
     item.appendChild(name);
     item.appendChild(details);
+    item.appendChild(openButton);
     display.appendChild(item);
+
 
   });
 
