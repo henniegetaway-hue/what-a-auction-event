@@ -3675,6 +3675,33 @@ if(sessionData.session?.user){
   if(page) page.classList.remove("hidden");
   if(btn) btn.classList.add("active");
   await loadMyAuctions();
+
+  const selectedLot = Number(
+    localStorage.getItem("selectedCreatorLot") || 0
+  );
+
+  if(selectedLot > 0){
+    const lotCards = document.querySelectorAll(
+      "#previewLotsGrid .previewSampleLot"
+    );
+
+    const targetLot = lotCards[selectedLot - 1];
+
+    if(targetLot){
+      targetLot.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+
+      targetLot.style.outline = "3px solid #9acd32";
+
+      setTimeout(() => {
+        targetLot.style.outline = "";
+      }, 4000);
+
+      localStorage.removeItem("selectedCreatorLot");
+    }
+  }
 }
 function showOwnAuctionPage(){
  document.body.classList.add("ownEventMode");
@@ -3791,12 +3818,16 @@ function renderOwnEventAuction(){
   display.style.display = "grid";
   display.style.gridTemplateColumns = "repeat(4, minmax(0, 1fr))";
   display.style.gap = "12px";
-  lots.forEach((lot, index)=>{
+  lots.sort((a, b) =>
+  (Number(a.startingBid) || 0) -
+  (Number(b.startingBid) || 0)
+).forEach((lot, index)=>{
 
-  const lotNumber = lot.lotNumber || index + 1;
-
+  const lotNumber = index + 1;
+const originalLotNumber = lot.lotNumber || index + 1;
     const photos =
-  (window.creatorLotPhotoData?.[lotNumber] || []).filter(Boolean);
+ const photos =
+  (window.creatorLotPhotoData?.[originalLotNumber] || []).filter(Boolean);
 
   const firstPhoto =
     photos[0] || "mix%20auction%20lot%20.png";
@@ -3812,7 +3843,7 @@ card.style.minWidth = "0";
 
   card.innerHTML = `
  <div class="auctionPhotoViewer"
-     data-lot="${lotNumber}"
+     data-lot="${originalLotNumber}"
      data-photo="0"
      onclick="nextAuctionLotPhoto(this)"
      onmousemove="moveAuctionLotPhoto(event, this)"
@@ -3844,6 +3875,14 @@ box-sizing:border-box;
     </div>
 
     <p>${lot.description || ""}</p>
+
+${!lot.name && !Number(lot.startingBid) ? `
+  <button class="goldBtn"
+    onclick="localStorage.setItem('selectedCreatorLot', '${originalLotNumber}'); showOwnEventPage();"
+    style="width:100%;margin-top:10px;">
+    + LOAD HERE
+  </button>
+` : ""}
   `;
   display.appendChild(card);
 
@@ -9629,10 +9668,9 @@ async function loadMyAuctions(){
   display.textContent = "Loading your auctions...";
 
   const { data: events, error } = await auctionSupabase
-    .from("auction_events")
-    .select("event_data")
-    .eq("creator_id", userData.user.id);
-
+   .from("auction_events")
+.select("id, event_data")
+.eq("creator_id", userData.user.id);
   if(error){
     display.textContent =
       "Unable to load auctions: " + error.message;
@@ -9674,14 +9712,54 @@ async function loadMyAuctions(){
     openButton.className = "goldBtn";
     openButton.textContent = "OPEN / EDIT AUCTION";
     openButton.style.marginTop = "10px";
+       
+openButton.onclick = function(){
 
-    openButton.onclick = function(){
-      alert(
-        "Selected auction: " + (event.name || "Unnamed Auction") +
-        "\n\nNext we will connect this button to the auction editor."
-      );
-    };
+  if(!record.id){
+    alert("This auction has no database ID.");
+    return;
+  }
 
+  localStorage.setItem(
+    "selectedCreatorAuctionId",
+    String(record.id)
+  );
+
+  const fields = {
+    ownEventName: event.name,
+    ownEventTagline: event.tagline,
+    ownEventDescription: event.description,
+    ownEventType: event.type,
+    ownEventDate: event.auctionDate,
+    ownEventStartTime: event.startTime,
+    ownEventCloseTime: event.closeTime,
+    ownEventCountry: event.country,
+    ownEventCurrency: event.currency,
+    ownEventRows: event.rows,
+    ownEventAccess: event.access,
+    ownEventBgColor: event.backgroundColor,
+    ownEventTextColor: event.textColor,
+    ownEventAccentColor: event.accentColor
+  };
+
+  Object.entries(fields).forEach(([id, value]) => {
+    const input = document.getElementById(id);
+    if(input && value !== undefined && value !== null){
+      input.value = value;
+    }
+  });
+
+  updateOwnEventRowsPreview();
+  restoreCreatorAuctionLots(event.lots || []);
+
+  alert(
+    "AUCTION LOADED\n\n" +
+    (event.name || "Unnamed Auction") +
+    "\n\nYou can continue editing."
+  );
+
+};
+ 
     item.appendChild(name);
     item.appendChild(details);
     item.appendChild(openButton);
@@ -10122,14 +10200,78 @@ accentColor: document.getElementById("ownEventAccentColor")?.value || "#9acd32",
   aiDescription: aiDescription ? aiDescription.value : "",
 
 };
-const { error: eventSaveError } =
-  await auctionSupabase
+
+const selectedAuctionId =
+  localStorage.getItem("selectedCreatorAuctionId");
+
+let savedAuction = null;
+let eventSaveError = null;
+
+if(selectedAuctionId){
+
+  // EDIT: Find the existing auction first.
+  const { data: existingAuction, error: loadError } =
+    await auctionSupabase
+      .from("auction_events")
+      .select("id, event_data")
+      .eq("id", selectedAuctionId)
+      .eq("creator_id", creatorAuth.user.id)
+      .single();
+
+  if(loadError || !existingAuction){
+    alert(
+      "EXISTING AUCTION NOT FOUND\n\n" +
+      "Your changes were not saved."
+    );
+    return;
+  }
+
+  // Keep the original auction identity and status.
+  const original = existingAuction.event_data || {};
+
+  const updatedEvent = {
+    ...original,
+    ...newEvent,
+    id: original.id || newEvent.id,
+    eventStatus: original.eventStatus || "DRAFT",
+    liveEnabled: original.liveEnabled || false,
+    permanentHistory: original.permanentHistory ||
+      newEvent.permanentHistory,
+    activationInvoiceId: original.activationInvoiceId || null,
+    activationPaymentStatus:
+      original.activationPaymentStatus || "NOT_INVOICED",
+    activationApproved: original.activationApproved || false,
+    activationApprovedAt: original.activationApprovedAt || null
+  };
+
+  const result = await auctionSupabase
+    .from("auction_events")
+    .update({ event_data: updatedEvent })
+    .eq("id", selectedAuctionId)
+    .eq("creator_id", creatorAuth.user.id)
+    .select("id")
+    .single();
+
+  savedAuction = result.data;
+  eventSaveError = result.error;
+
+} else {
+
+  // NEW: Create a separate auction.
+  const result = await auctionSupabase
     .from("auction_events")
     .insert({
       creator_id: creatorAuth.user.id,
       platform: "WHAT_A_AUCTION_EVENT",
       event_data: newEvent
-    });
+    })
+    .select("id")
+    .single();
+
+  savedAuction = result.data;
+  eventSaveError = result.error;
+}
+
 
 if(eventSaveError){
   alert(
@@ -10138,6 +10280,12 @@ if(eventSaveError){
   );
   return;
 }
+ if(savedAuction?.id){
+  localStorage.setItem(
+    "selectedCreatorAuctionId",
+    String(savedAuction.id)
+  );
+}     
 window.createdOwnEvents.push(newEvent); 
       
   localStorage.setItem(
@@ -10731,6 +10879,52 @@ if(startingBidInput && startingBidDisplay){
 
   updateOwnEventCurrency();
 }
+ 
+function restoreCreatorAuctionLots(savedLots){
+
+  if(!Array.isArray(savedLots)) return;
+
+  const grid = document.getElementById("previewLotsGrid");
+  if(!grid) return;
+
+  grid.querySelectorAll(".previewSampleLot").forEach((card, index) => {
+
+    const saved = savedLots.find(
+      item => Number(item.lotNumber) === index + 1
+    );
+
+    if(!saved) return;
+
+    const fields = {
+      ".ownLotName": saved.name || "",
+      ".ownLotStartingBid": saved.startingBid ?? "",
+      ".ownLotMinimumIncrement": saved.increment ?? "",
+      ".ownLotDescription": saved.description || "",
+      ".ownLotLink": saved.link || ""
+    };
+
+    Object.entries(fields).forEach(([selector, value]) => {
+
+      const input = card.querySelector(selector);
+
+      if(input){
+        input.value = value;
+      }
+
+    });
+
+    const startingBid = card.querySelector(".ownLotStartingBid");
+
+    if(startingBid){
+      startingBid.dispatchEvent(
+        new Event("input", { bubbles: true })
+      );
+    }
+
+  });
+
+}
+     
    function saveOwnEventLots(){
 
   const grid = document.getElementById("previewLotsGrid");
