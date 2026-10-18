@@ -4324,8 +4324,18 @@ if(logo) logo.src="new logo.png";
   invoices:["pageInvoices","navInvoices"]
 };
 
-  document.getElementById(map[page][0]).classList.remove("hidden");
-  document.getElementById(map[page][1]).classList.add("active");
+  
+const selectedPage = document.getElementById(map[page][0]);
+const selectedButton = document.getElementById(map[page][1]);
+
+if(selectedPage){
+  selectedPage.classList.remove("hidden");
+}
+
+if(selectedButton){
+  selectedButton.classList.add("active");
+}
+
 
   if(page==="live") renderLots();
   
