@@ -4359,10 +4359,15 @@ if(account){
       const bidderSelect = document.getElementById("bidderSelect");
       if(bidderSelect) bidderSelect.value = bidder.id;
 
-    }else{
-      if(registration) registration.style.display = "block";
-      if(account) account.style.display = "none";
-    }
+   
+}else{
+  if(registration) registration.style.display = "none";
+  if(account){
+    account.style.display = "none";
+    account.classList.add("hidden");
+  }
+}
+
   }).catch(error=>{
     console.error("Account display error:", error);
   });
