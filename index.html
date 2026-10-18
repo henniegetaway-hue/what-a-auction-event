@@ -4289,12 +4289,14 @@ function setCliviaSEO(){
   });
 }  
 
+ 
+function showPage(page){
+
   // Lock bidder account when leaving registration page
   if(page !== "register"){
     lockBidderAccount();
   }
-      
-function showPage(page){
+
      
   if(page === "register"){
     const heading = document.querySelector(
