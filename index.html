@@ -1461,6 +1461,17 @@ justify-content:center;
          type="password"
          autocomplete="current-password"
          placeholder="Your account password">
+      
+<label style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+  <input type="checkbox"
+         style="width:auto;"
+         onchange="
+           document.getElementById('bidderLoginPassword').type =
+           this.checked ? 'text' : 'password';
+         ">
+  SHOW PASSWORD
+</label>
+
 
   <button type="button" class="goldBtn"
           onclick="signInCliviaBidder()">
