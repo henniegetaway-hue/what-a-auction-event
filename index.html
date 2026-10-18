@@ -4406,8 +4406,7 @@ if(document.getElementById("registrationMode")?.value === "CREATOR"){
       document.getElementById("registeredBidderSection");
 
     
-if(!error && user?.email_confirmed_at && bidder && bidderAccountUnlocked){
-
+if(!error && user?.email_confirmed_at && bidder){
      const newAccountBtn = document.querySelector(
   'button[onclick*="showNewBidderRegistration"]'
 );
@@ -4419,10 +4418,17 @@ if(newAccountBtn){
 
       if(registration) registration.style.display = "none";
 
-      if(account){
-        account.style.display = "block";
-        account.classList.remove("hidden");
-      }
+     
+if(account){
+  if(bidderAccountUnlocked){
+    account.style.display = "block";
+    account.classList.remove("hidden");
+  }else{
+    account.style.display = "none";
+    account.classList.add("hidden");
+  }
+}
+
 
       const bidderSelect = document.getElementById("bidderSelect");
       if(bidderSelect) bidderSelect.value = bidder.id;
