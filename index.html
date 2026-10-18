@@ -6487,6 +6487,69 @@ async function sendBidderPasswordReset(){
   );
 }
    
+let bidderAccountUnlocked = false;
+let bidderAccountLastActivity = 0;
+
+const BIDDER_ACCOUNT_TIMEOUT = 20 * 60 * 1000;
+
+function lockBidderAccount(){
+  bidderAccountUnlocked = false;
+  bidderAccountLastActivity = 0;
+
+  const account = document.getElementById(
+    "registeredBidderSection"
+  );
+
+  if(account){
+    account.style.display = "none";
+    account.classList.add("hidden");
+  }
+
+  const detailsBtn = document.getElementById(
+    "accountDetailsBtn"
+  );
+
+  if(detailsBtn){
+    detailsBtn.style.display = "";
+  }
+
+  const password = document.getElementById(
+    "bidderLoginPassword"
+  );
+
+  if(password){
+    password.value = "";
+  }
+}
+
+function unlockBidderAccount(){
+  bidderAccountUnlocked = true;
+  bidderAccountLastActivity = Date.now();
+}
+
+["click", "keydown", "input", "scroll"].forEach(eventName => {
+  document.addEventListener(eventName, () => {
+    if(bidderAccountUnlocked){
+      bidderAccountLastActivity = Date.now();
+    }
+  });
+});
+
+setInterval(() => {
+  if(
+    bidderAccountUnlocked &&
+    Date.now() - bidderAccountLastActivity >=
+      BIDDER_ACCOUNT_TIMEOUT
+  ){
+    lockBidderAccount();
+    alert(
+      "Your account has been locked after " +
+      "20 minutes of inactivity.\n\n" +
+      "Please enter your password again."
+    );
+  }
+}, 30000);
+
   async function showRegisteredBidder(){
    const forgotChoiceRow = document.getElementById("bidderForgotChoiceRow");
 const forgotPasswordBox = document.getElementById("bidderForgotPasswordBox");
