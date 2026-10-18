@@ -6810,6 +6810,14 @@ setTimeout(() => {
 
 }
   function saveBidderAddressChange(){
+   
+  if(!bidderAccountUnlocked){
+    alert(
+      "ACCOUNT LOCKED\n\nPlease sign in before changing your account details."
+    );
+    return;
+  }
+     
   const bidder=(state.bidders||[]).find(
     b=>b.id===state.selectedBidderId
   );
