@@ -6559,6 +6559,7 @@ setInterval(() => {
 }, 30000);
 
   async function showRegisteredBidder(){
+        
    const forgotChoiceRow = document.getElementById("bidderForgotChoiceRow");
 const forgotPasswordBox = document.getElementById("bidderForgotPasswordBox");
 
@@ -6569,6 +6570,15 @@ if(forgotChoiceRow){
 if(forgotPasswordBox){
   forgotPasswordBox.style.display = "none";
 }
+  
+  // Hide NEW ACCOUNT while opening ACCOUNT DETAILS
+  const registrationForm =
+    document.getElementById("newBidderRegistration");
+
+  if(registrationForm){
+    registrationForm.style.display = "none";
+  }
+      
   const enteredEmail = prompt(
   "MY ACCOUNT\n\nPlease enter your registered email address:"
 );
