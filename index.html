@@ -1758,6 +1758,32 @@ justify-content:center;
      <h2>My Clivia Dreamers Account</h2>
       <p>Your registered account for bidding and selling.</p>
 
+<div class="notice" style="
+  background:#111c12;
+  border:2px solid #9acd32;
+  border-radius:10px;
+  padding:12px;
+  margin:12px 0;
+  color:white;
+  text-align:center;
+">
+  <strong style="color:#9acd32;">
+    🔔 IMPORTANT — CHECK YOUR PRE-BIDS
+  </strong>
+
+  <p>
+    BIDDERS: Please check your auction account
+    regularly for new pre-bids and outbid alerts.
+  </p>
+
+  <p>
+    Check whether your pre-bid is still the highest
+    and respond to any confirmation requests,
+    especially during the 24 hours before
+    the auction starts.
+  </p>
+</div>
+
       <label>Select account</label>
       <select id="bidderSelect" onchange="selectBidder()">
         <option value="">— Select account —</option>
@@ -2501,6 +2527,28 @@ justify-content:center;
   <div id="selectedSellerNotice" class="notice">
     No seller selected yet.
   </div>
+        
+<div class="notice" style="
+  border:2px solid #9acd32;
+  background:#111c12;
+  color:white;
+  padding:12px;
+  margin-top:12px;
+  border-radius:10px;
+">
+  <strong style="color:#9acd32;">
+    🔔 IMPORTANT — CHECK YOUR PRE-BIDS
+  </strong>
+  <p>
+    SELLERS: Please check your auction account
+    regularly for new pre-bids received on your plants.
+  </p>
+  <p>
+    Review your pre-bids especially during the
+    24 hours before the auction starts.
+  </p>
+</div>
+
      <!-- UNSOLD PLANT CARRY-FORWARD NOTIFICATIONS -->
 <div id="sellerRolloverPanel"
      style="display:none;margin-top:12px;
@@ -2885,6 +2933,31 @@ justify-content:center;
 </div>
 </section>
  <!-- SELLER PLANT LOADING PAGE -->
+     
+<div class="notice" style="
+  background:#111c12;
+  border:2px solid #9acd32;
+  border-radius:10px;
+  padding:12px;
+  margin:10px 0 15px;
+  color:white;
+  text-align:center;
+">
+  <strong style="color:#9acd32;">
+    🔔 IMPORTANT — CHECK YOUR PRE-BIDS
+  </strong>
+
+  <p>
+    SELLERS: Please check your auction account
+    regularly for new pre-bids received on your plants.
+  </p>
+
+  <p>
+    Review your pre-bids especially during the
+    24 hours before the auction starts.
+  </p>
+</div>
+     
 <section id="pageSellerLoad" class="page hidden">
 
 <div id="sellerLoadGrid" style="
@@ -3000,6 +3073,34 @@ justify-content:center;
   </div>
 
 </div> 
+    
+<div class="notice" style="
+  border:2px solid #9acd32;
+  border-radius:10px;
+  padding:12px;
+  margin:15px 0;
+">
+  <h3 style="color:#9acd32;margin-top:0;">
+    PRE-BID OPTIONS
+  </h3>
+
+  <label style="display:flex;align-items:center;gap:10px;">
+    <input
+      type="checkbox"
+      id="sellerAcceptPreBids"
+      style="width:auto;"
+    >
+    ACCEPT PRE-BIDS BEFORE THE LIVE AUCTION
+  </label>
+
+  <p class="small">
+    Pre-bidding becomes available once the auction
+    date and time are confirmed.
+    Please check your seller account regularly
+    for new pre-bids.
+  </p>
+</div>
+    
     <h3 style="margin-top:22px;">3. Starting Bid</h3>
 
 <label>Starting Bid Row *</label>
