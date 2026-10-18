@@ -6476,6 +6476,22 @@ const BIDDER_ACCOUNT_TIMEOUT = 20 * 60 * 1000;
 function lockBidderAccount(){
   bidderAccountUnlocked = false;
   bidderAccountLastActivity = 0;
+  
+  const loginBox = document.getElementById("bidderLoginBox");
+
+  if(loginBox){
+    loginBox.style.display = "none";
+  }
+
+  const passwordFields = document.querySelectorAll(
+    "#bidderLoginPassword, #bidderPassword, #bidderPasswordConfirm"
+  );
+
+  passwordFields.forEach(field => {
+    field.value = "";
+    field.type = "password";
+  });
+    
 
   const account = document.getElementById(
     "registeredBidderSection"
