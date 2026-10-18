@@ -4351,6 +4351,29 @@ if(newAccountBtn){
   }
 }
 }
+      
+async function openSellerSpaces(){
+
+  showPage("sellerLoad");
+
+  if(typeof showSellerLotForm === "function"){
+    showSellerLotForm();
+  }
+
+  const form = document.getElementById("sellerLotForm");
+
+  if(form){
+    form.style.display = "block";
+
+    setTimeout(() => {
+      form.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    }, 150);
+  }
+}
+
 function showSellerBankPhoneChange(){
   const seller=(state.sellers||[]).find(
     s=>s.id===state.selectedSellerId
