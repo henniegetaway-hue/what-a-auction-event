@@ -11591,6 +11591,11 @@ async function saveNewRecoveryPassword(){
     
 
   if(msg){
+    return;
+  }
+
+  const ownerLogin =
+    document.getElementById("ownerLogin");
     msg.textContent =
       "Password changed successfully.";
   }
@@ -11667,12 +11672,8 @@ async function openOwner(){
       ownerLoginMsg.textContent =
         "ACCESS DENIED — This account is not authorised as Owner.";
     }
-    return;
-  }
-
-  const ownerLogin =
-    document.getElementById("ownerLogin");
-
+ return;
+}
   const ownerArea =
     document.getElementById("ownerArea");
 
