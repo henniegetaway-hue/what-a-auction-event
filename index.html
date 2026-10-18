@@ -982,65 +982,6 @@ auctionSupabase.auth.onAuthStateChange((event, session) => {
   padding:12px;
   margin-bottom:15px;
 ">
-
-  <h3 style="margin-top:0;">CREATOR ACCESS</h3>
-        <button type="button"
-        onclick="signOutAuctionCreator()"
-        style="
-          float:right;
-          margin-top:-42px;
-          padding:6px 12px;
-          cursor:pointer;
-        ">
-  SIGN OUT
-</button>
-
-  <label>WhatsApp Number *</label>
-  <input id="ownEventCreatorWhatsApp"
-         placeholder="e.g. +27 82 123 4567">
-
-  <label>Email Address *</label>
-  <input id="ownEventCreatorEmail"
-         type="email"
-         placeholder="Used for creator access and recovery">
-
-  <label>Password *</label>
-  <input id="ownEventCreatorPassword"
-         type="password"
-         autocomplete="new-password">
-
- <label>Confirm Password *</label>
-<input id="ownEventCreatorPasswordConfirm"
-       type="password"
-       autocomplete="new-password">
-
-<label style="display:flex;align-items:center;gap:8px;margin-top:8px;">
-  <input type="checkbox"
-         style="width:auto;"
-         onchange="
-           document.getElementById('ownEventCreatorPassword').type=this.checked?'text':'password';
-           document.getElementById('ownEventCreatorPasswordConfirm').type=this.checked?'text':'password';
-         ">
-
-  Show password
-</label>
-
-<button type="button"
-        class="goldBtn"
-        style="margin-top:12px;"
-        onclick="requestCreatorPasswordReset()">
-  FORGOT PASSWORD?
-</button>
-
-<p class="small">
-  Password recovery is available through
-  your registered email address only.
-  WhatsApp cannot be used to reset passwords.
-</p>
-
-</div>
-
-
 <!-- CREATOR AUCTION MANAGEMENT -->
 <div class="panel" id="ownEventManagement">
 
