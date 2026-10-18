@@ -1554,6 +1554,43 @@ justify-content:center;
   ACCOUNT DETAILS
 </button>
 
+
+<div id="bidderLoginBox"
+     style="display:none;border:2px solid #ff9800;
+     border-radius:12px;padding:15px;margin-top:12px;">
+
+  <h3>MY CLIVIA DREAMERS ACCOUNT</h3>
+
+  <label>Registered Email Address</label>
+  <input id="bidderLoginEmail"
+         type="email"
+         autocomplete="username"
+         placeholder="Your registered email">
+
+  <label>Password</label>
+  <input id="bidderLoginPassword"
+         type="password"
+         autocomplete="current-password"
+         placeholder="Your account password">
+
+  <button type="button"
+          class="goldBtn"
+          onclick="signInCliviaBidder()">
+    SIGN IN
+  </button>
+
+  <button type="button"
+          class="accountBtn"
+          onclick="resetCliviaBidderPassword()">
+    FORGOT PASSWORD?
+  </button>
+
+  <div id="bidderLoginMessage"
+       class="small"
+       role="status"
+       style="margin-top:10px;"></div>
+</div>
+
 </div>
 
 <button id="bidderWantToSellBtn"
