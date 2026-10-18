@@ -6613,6 +6613,19 @@ if(!email){
 
   unlockBidderAccount();
   state.selectedBidderId = bidder.id;
+  
+localStorage.setItem(
+  "cliviaRememberedEmail",
+  loginData.user.email.toLowerCase()
+);
+
+const newAccountButton =
+  document.getElementById("newBidderBtn");
+
+if(newAccountButton){
+  newAccountButton.style.display = "none";
+}
+    
 
   const account =
     document.getElementById("registeredBidderSection");
