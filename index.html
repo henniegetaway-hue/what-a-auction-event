@@ -6604,7 +6604,14 @@ setInterval(() => {
 }, 30000);
 
   async function showRegisteredBidder(){
-        
+       
+  // Open the account login form
+  const loginBox = document.getElementById("bidderLoginBox");
+
+  if(loginBox){
+    loginBox.style.display = "block";
+  }
+ 
    const forgotChoiceRow = document.getElementById("bidderForgotChoiceRow");
 const forgotPasswordBox = document.getElementById("bidderForgotPasswordBox");
 
