@@ -11604,16 +11604,11 @@ async function saveNewRecoveryPassword(){
   }
     
 
-  if(msg){
-    return;
-  }
-
-  const ownerLogin =
-    document.getElementById("ownerLogin");
+   if(msg){
     msg.textContent =
       "Password changed successfully.";
   }
-}     
+}
 async function openOwner(){
    const passwordInput =
     document.getElementById("ownerAccessPassword");
