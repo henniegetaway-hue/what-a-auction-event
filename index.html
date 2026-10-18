@@ -7443,8 +7443,21 @@ const user = session?.user || null;
       console.error("Unable to load bidder account:", accountError.message);
       state.bidders = [];
       state.selectedBidderId = "";
-    } else if(account){
-      const bidder = {
+   
+} else if(account){
+  const { data: bankDetails, error: bankError } =
+    await cliviaSupabase
+      .from("bidder_bank_details")
+      .select("bank_confirmed")
+      .eq("auth_user_id", user.id)
+      .maybeSingle();
+
+  if(bankError){
+    console.error("Unable to check bank verification:", bankError.message);
+  }
+
+  const bidder = {
+
         id: String(account.id),
         authUserId: account.auth_user_id,
         name: account.full_name,
@@ -7456,7 +7469,7 @@ const user = session?.user || null;
         country: account.country || "",
         companyName: account.company_name || "",
         businessPhone: account.business_whatsapp || "",
-        bankConfirmed: false
+       bankConfirmed: !bankError && bankDetails?.bank_confirmed === true
       };
 
       state.bidders = [bidder];
