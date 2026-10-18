@@ -6608,9 +6608,20 @@ setInterval(() => {
   // Open the account login form
   const loginBox = document.getElementById("bidderLoginBox");
 
-  if(loginBox){
-    loginBox.style.display = "block";
+ 
+if(loginBox){
+  loginBox.style.display = "block";
+
+  const registrationForm =
+    document.getElementById("newBidderRegistration");
+
+  if(registrationForm){
+    registrationForm.style.display = "none";
   }
+
+  return;
+}
+
  
    const forgotChoiceRow = document.getElementById("bidderForgotChoiceRow");
 const forgotPasswordBox = document.getElementById("bidderForgotPasswordBox");
