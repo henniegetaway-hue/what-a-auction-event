@@ -6614,6 +6614,10 @@ if(!bidder){
   return;
 }
 
+  // Password verified — unlock bidder account
+  unlockBidderAccount();
+  state.selectedBidderId = bidder.id;
+     
   const newRegistration=document.getElementById("newBidderRegistration");
 const accountSection=document.getElementById("registeredBidderSection");
 const bidderSelect=document.getElementById("bidderSelect");
