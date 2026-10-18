@@ -6892,6 +6892,14 @@ box.scrollIntoView({
 });
 }   
  function saveBidderBankPhoneChange(){
+ 
+  if(!bidderAccountUnlocked){
+    alert(
+      "ACCOUNT LOCKED\n\nPlease sign in before changing your banking or WhatsApp details."
+    );
+    return;
+  }
+      
   const bidder=(state.bidders||[]).find(
     b=>b.id===state.selectedBidderId
   );
