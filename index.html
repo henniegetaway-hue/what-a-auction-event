@@ -6547,9 +6547,26 @@ async function signInCliviaBidder(){
   
 const { data } = await cliviaSupabase.auth.getUser();
 
-const email =
+
+let email =
   data?.user?.email ||
   localStorage.getItem("cliviaRememberedEmail");
+
+if(!email){
+  const enteredEmail = prompt(
+    "FIRST-TIME ACCOUNT RECOGNITION\n\nEnter your existing registered email address:"
+  );
+
+  if(enteredEmail === null) return;
+
+  email = enteredEmail.trim().toLowerCase();
+
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    if(msg) msg.textContent = "Please enter a valid email address.";
+    return;
+  }
+}
+
 
 if(!email){
   if(msg){
