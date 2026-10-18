@@ -1451,25 +1451,10 @@ justify-content:center;
         onclick="showRegisteredBidder()">
   ACCOUNT DETAILS
 </button>
+</div>
 
-
-<div id="bidderLoginBox"
-     style="display:none;border:2px solid #ff9800;
-     border-radius:12px;padding:15px;margin-top:12px;">
-
+<div id="bidderLoginBox" style="display:none;border:2px solid #ff9800;border-radius:12px;padding:15px;margin-top:12px;">
   <h3>MY CLIVIA DREAMERS ACCOUNT</h3>
-
-  <label>Registered Email Address</label>
-  
-<input id="bidderLoginEmail"
-       type="email"
-       autocomplete="username"
-       placeholder="Registered email address"
-       readonly>
-
-         type="email"
-         autocomplete="username"
-         placeholder="Your registered email">
 
   <label>Password</label>
   <input id="bidderLoginPassword"
@@ -1477,17 +1462,13 @@ justify-content:center;
          autocomplete="current-password"
          placeholder="Your account password">
 
-  <button type="button"
-          class="goldBtn"
+  <button type="button" class="goldBtn"
           onclick="signInCliviaBidder()">
     SIGN IN
   </button>
 
-  <button type="button"
-          class="accountBtn"
-         
-onclick="sendBidderPasswordReset()"
-
+  <button type="button" class="accountBtn"
+          onclick="sendBidderPasswordReset()">
     FORGOT PASSWORD?
   </button>
 
