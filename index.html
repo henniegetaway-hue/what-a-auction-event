@@ -4405,7 +4405,9 @@ if(document.getElementById("registrationMode")?.value === "CREATOR"){
     const account =
       document.getElementById("registeredBidderSection");
 
-    if(!error && user?.email_confirmed_at && bidder){
+    
+if(!error && user?.email_confirmed_at && bidder && bidderAccountUnlocked){
+
      const newAccountBtn = document.querySelector(
   'button[onclick*="showNewBidderRegistration"]'
 );
