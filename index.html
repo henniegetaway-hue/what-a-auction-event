@@ -8876,11 +8876,25 @@ if(
   alert("International bidders may only bid on export-eligible plants.");
   return;
 }
- if(!bidder.isOwnerTest && !bidder.bankConfirmed){
-  alert("Please confirm your bank account before bidding.");
-  showPage("register");
-  return;
+
+if(!bidder.isOwnerTest){
+  const { data: bankDetails, error: bankError } =
+    await cliviaSupabase
+      .from("bidder_bank_details")
+      .select("bank_confirmed")
+      .eq("auth_user_id", user.id)
+      .maybeSingle();
+
+  if(bankError || bankDetails?.bank_confirmed !== true){
+    alert(
+      "Your bank account has not yet been verified.\n\n" +
+      "Administrator approval is required before bidding."
+    );
+    showPage("register");
+    return;
+  }
 }
+
   if(!bidder.isOwnerTest && bidder.paymentHold){
   alert("Your account is ON HOLD because a payment came from an unregistered bank account. No further bidding is allowed until the seller confirms the payment or Admin clears the hold.");
   return;
