@@ -4344,6 +4344,20 @@ if(selectedButton){
   selectedButton.style.background="#9acd32";
   selectedButton.style.color="#000";
 }
+ // SHOW OPEN / CLOSED STATUS ON NAVIGATION TABS
+document.querySelectorAll("nav button").forEach(btn => {
+
+  if(!btn.dataset.originalLabel){
+    btn.dataset.originalLabel = btn.textContent.trim();
+  }
+
+  const isOpen = btn === selectedButton;
+
+  btn.textContent =
+    btn.dataset.originalLabel +
+    (isOpen ? " — OPEN" : " — CLOSED");
+
+});     
 
 
 
