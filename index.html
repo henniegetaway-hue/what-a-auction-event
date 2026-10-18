@@ -6855,6 +6855,14 @@ setTimeout(() => {
   document.getElementById("bidderAddressChangeBox").style.display="none";
 }  
    function showBidderBankPhoneChange(){
+       
+  if(!bidderAccountUnlocked){
+    alert(
+      "ACCOUNT LOCKED\n\nPlease sign in before viewing or changing your banking details."
+    );
+    return;
+  }
+  
   const bidder=(state.bidders||[]).find(
     b=>b.id===state.selectedBidderId
   );
