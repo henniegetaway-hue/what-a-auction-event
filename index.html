@@ -6490,6 +6490,94 @@ setInterval(() => {
   }
 }, 30000);
 
+async function signInCliviaBidder(){
+
+  const password =
+    document.getElementById("bidderLoginPassword")?.value || "";
+
+  const msg =
+    document.getElementById("bidderLoginMessage");
+
+  if(!password){
+    if(msg) msg.textContent = "Please enter your password.";
+    return;
+  }
+
+  const { data, error } =
+    await cliviaSupabase.auth.getUser();
+
+  const email = data?.user?.email;
+
+  if(error || !email){
+    if(msg){
+      msg.textContent =
+        "Your registered account could not be identified. " +
+        "Please use password recovery or sign in with your email.";
+    }
+    return;
+  }
+
+  const { data: loginData, error: loginError } =
+    await cliviaSupabase.auth.signInWithPassword({
+      email: email,
+      password: password
+    });
+
+  document.getElementById("bidderLoginPassword").value = "";
+
+  if(loginError || !loginData?.user){
+    if(msg){
+      msg.textContent =
+        "Incorrect password or login failed. Please try again.";
+    }
+    return;
+  }
+
+  if(!loginData.user.email_confirmed_at){
+    if(msg) msg.textContent = "Please confirm your email first.";
+    return;
+  }
+
+  await refreshBidderSelect();
+
+  const bidder = (state.bidders || []).find(
+    b => b.authUserId === loginData.user.id
+  );
+
+  if(!bidder){
+    if(msg) msg.textContent = "Registered bidder record not found.";
+    return;
+  }
+
+  unlockBidderAccount();
+  state.selectedBidderId = bidder.id;
+
+  const account =
+    document.getElementById("registeredBidderSection");
+
+  if(account){
+    account.style.display = "block";
+    account.classList.remove("hidden");
+  }
+
+  const registration =
+    document.getElementById("newBidderRegistration");
+
+  if(registration) registration.style.display = "none";
+
+  const loginBox =
+    document.getElementById("bidderLoginBox");
+
+  if(loginBox) loginBox.style.display = "none";
+
+  if(msg) msg.textContent = "";
+
+  account?.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+}
+
   async function showRegisteredBidder(){
        
   // Open the account login form
