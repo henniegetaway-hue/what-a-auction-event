@@ -4871,7 +4871,7 @@ selectedNotificationAuctions:[],
 state.sellers.push(seller);
 save();
 refreshSellerSelect();
-  alert("Seller registration successful. You can now list plants for auction.");
+ alert("Seller registration successful.\n\nYour bank account is awaiting administrator verification. You can list plants once your bank account has been approved.");
   }
  async function becomeSellerFromBidder(){
   const {data:{user},error} = await cliviaSupabase.auth.getUser();
