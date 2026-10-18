@@ -7400,16 +7400,6 @@ function refreshLotCategorySelect(){
   });
 }
       async function selectAccountAction(action){
-
-  const bidder = (state.bidders || []).find(
-    b => b.id === state.selectedBidderId
-  );
-
-  if(!bidder){
-    alert("Please open your registered account first.");
-    showPage("register");
-    return;
-  }
   const { data, error } =
     await cliviaSupabase.auth.getUser();
 
