@@ -6123,11 +6123,21 @@ function approveSelectedExporter(){
 
   if(!ok) return;
 
-  seller.bankConfirmed=true;
-  seller.bankConfirmedDate=new Date().toISOString();
-  save();
+  
+seller.bankDetailsAcknowledged = true;
+seller.bankDetailsAcknowledgedDate = new Date().toISOString();
 
-  alert("Seller bank account confirmed.");
+// Seller confirmation is NOT bank verification.
+seller.bankConfirmed = false;
+seller.bankConfirmedDate = null;
+
+save();
+
+alert(
+  "Your banking details have been acknowledged.\n\n" +
+  "Bank verification is still pending administrator approval."
+);
+
 }
   function updateInternationalBidderNotice(){
   const country=(document.getElementById("regCountry").value||"").trim().toLowerCase();
