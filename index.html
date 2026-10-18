@@ -6544,19 +6544,23 @@ async function signInCliviaBidder(){
     return;
   }
 
-  const { data, error } =
-    await cliviaSupabase.auth.getUser();
+  
+const { data } = await cliviaSupabase.auth.getUser();
 
-  const email = data?.user?.email;
+const email =
+  data?.user?.email ||
+  localStorage.getItem("cliviaRememberedEmail");
 
-  if(error || !email){
-    if(msg){
-      msg.textContent =
-        "Your registered account could not be identified. " +
-        "Please use password recovery or sign in with your email.";
-    }
-    return;
+if(!email){
+  if(msg){
+    msg.textContent =
+      "This browser does not yet recognise your account. " +
+      "Your registered email must be linked once before " +
+      "password-only sign in can work.";
   }
+  return;
+}
+
 
   const { data: loginData, error: loginError } =
     await cliviaSupabase.auth.signInWithPassword({
