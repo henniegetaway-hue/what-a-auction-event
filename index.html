@@ -4759,8 +4759,18 @@ async function registerSeller(){
     alert(
       "Please sign in to your verified Clivia Dreamers account before registering as a seller."
     );
+        return;
+  }
+
+  const alreadyRegistered = (state.sellers || []).some(
+    s => s.authUserId === user.id
+  );
+
+  if(alreadyRegistered){
+    alert("You are already registered as a seller. Please use your existing seller account.");
     return;
-  } 
+  }
+
   const name=document.getElementById("sellerName").value.trim();
   const phone=document.getElementById("sellerPhone").value.trim();
   const companyName=document.getElementById("sellerCompanyName").value.trim();
