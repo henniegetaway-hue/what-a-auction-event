@@ -4947,8 +4947,8 @@ refreshSellerSelect();
     alert("This bidder account does not belong to the signed-in user.");
     return;
   }
-  const existingSeller=(state.sellers||[]).find(
-    s=>s.phone===bidder.phone
+ const existingSeller=(state.sellers||[]).find(
+    s=>s.authUserId === user.id
   );
 
  if(existingSeller){
