@@ -817,6 +817,34 @@ th,td{
     font-size: 24px !important;
     line-height: 1.1 !important;
   }
+}    
+  @media (max-width: 600px) {
+  nav {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 5px !important;
+  }
+
+  nav > button {
+    order: 1;
+    flex: 0 0 auto;
+    padding: 9px 10px !important;
+    font-size: 12px !important;
+  }
+
+  #navLive {
+    order: 3 !important;
+  }
+
+  .ownEventTabGroup {
+    order: 2;
+  }
+
+  nav > button,
+  .ownEventTabGroup {
+    white-space: nowrap;
+  }
 }      
   </style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
