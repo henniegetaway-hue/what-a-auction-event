@@ -2799,24 +2799,24 @@ justify-content:center;
     align-items: center;
   }
 
-  /* SMALLER MOBILE NAVIGATION TABS */
+ /* MOBILE NAVIGATION — ONE LINE */
 nav {
-  gap: 3px !important;
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 2px !important;
   padding: 3px !important;
+  overflow-x: auto !important;
+  white-space: nowrap !important;
 }
 
 nav button {
-  font-size: 10px !important;
-  padding: 5px 7px !important;
-  min-height: 28px !important;
-  line-height: 1.2 !important;
-  border-radius: 6px !important;
+  flex: 0 0 auto !important;
+  font-size: 8px !important;
+  padding: 5px 3px !important;
+  min-height: 26px !important;
+  line-height: 1.1 !important;
+  border-radius: 5px !important;
 }
-
-nav button#navRegister {
-  padding: 5px 7px !important;   
-  }
-
   .siteLogoWrap .logo {
     width: 45px !important;
     height: 45px !important;
