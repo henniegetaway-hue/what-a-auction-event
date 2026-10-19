@@ -812,34 +812,6 @@ th,td{
   flex-shrink: 0;
 }
   body.ownEventMode #cliviaCarryForwardFooter{display:none !important;}
-  /* MATCHING BLACK AND LIME INFORMATION PANELS */
-
-.auctionInfoPanel {
-  width: 100%;
-  max-width: 1050px;
-  margin: 20px auto;
-  padding: 22px;
-  box-sizing: border-box;
-  background: #000;
-  color: #fff;
-  border: 2px solid #9acd32;
-  border-radius: 12px;
-  line-height: 1.6;
-  box-shadow: 0 0 12px rgba(154,205,50,0.12);
-}
-
-.auctionInfoPanel h2,
-.auctionInfoPanel h3 {
-  color: #9acd32;
-  text-align: center;
-}
-
-.auctionInfoPanel p,
-.auctionInfoPanel li {
-  color: #fff;
-  font-size: 15px;
-  text-align: left;
-}      
   </style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
  <script>
@@ -1012,8 +984,8 @@ auctionSupabase.auth.onAuthStateChange((event, session) => {
  <button id="navRules" onclick="showPage('rules')">Rules & Terms</button>
 <div class="ownEventTabGroup">
   <button id="navOwnEvent" class="ownEventTab" onclick="openCreatorRegistration()">
-  CREATE OWN EVENT
-</button>
+    CREATE YOUR OWN EVENT
+  </button>
 
   <button id="navOwnAuction" class="ownEventTab" onclick="showOwnAuctionPage()">
     AUCTION
@@ -1485,16 +1457,63 @@ justify-content:center;
 ">
   <div id="ownBest10Left"></div>
   <div id="ownBest10Right"></div>
+</div>
+
+<div id="ownBest10SEO" style="
+  margin-top:25px;
+  padding:15px;
+  text-align:center;
+">
+</div>
   </div>
-  </div>
+
 </section>
+<section id="pageRegister" class="page">
+<div id="registerPageGrid"
+     style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start;">
+   <div class="panel" id="registrationMainPanel">
+     <h2>Clivia Dreamers Registration</h2>
 
-<!-- CLIVIA DREAMERS REGISTRATION -->
-<section id="pageRegister" class="page hidden">
-  <div id="registerPageGrid">
-    <div id="registrationMainPanel" class="panel">
-      <h2>Clivia Dreamers Registration</h2>
+<div style="display:flex;gap:10px;margin:12px 0;flex-wrap:wrap;">
 
+  <button id="newBidderBtn"
+          type="button"
+          class="goldBtn"
+          onclick="showNewBidderRegistration()">
+    NEW ACCOUNT
+  </button>
+
+ <button id="accountDetailsBtn"
+        type="button"
+        class="accountBtn"
+        onclick="showRegisteredBidder()">
+  ACCOUNT DETAILS
+</button>
+</div>
+
+<div id="bidderLoginBox" style="display:none;border:2px solid #ff9800;border-radius:12px;padding:15px;margin-top:12px;">
+  <h3>MY CLIVIA DREAMERS ACCOUNT</h3>
+
+  
+<input id="bidderLoginPassword"
+       type="password"
+       autocomplete="new-password"
+       value=""
+       placeholder="Your account password">
+
+      
+<label style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+  <input type="checkbox"
+         style="width:auto;"
+         onchange="
+           document.getElementById('bidderLoginPassword').type =
+           this.checked ? 'text' : 'password';
+         ">
+  SHOW PASSWORD
+</label>
+
+
+  
 <button type="button" class="goldBtn"
         style="background:#ff9800;color:#000;font-weight:bold;border:2px solid #e67e00;"
         onclick="signInCliviaBidder()">
@@ -1919,7 +1938,7 @@ justify-content:center;
 
 </div>  <!-- closes registrationMainPanel / LEFT column -->
 
-<div id="cliviaEventsPanel" class="panel">
+<div id="cliviaEventsPanel" class="panel" style="display:block;">
   <h2>🌱 Clivia Events & Shows</h2>
 
   <div id="cliviaEventsList">
@@ -2453,20 +2472,10 @@ justify-content:center;
 
      <!-- UNSOLD PLANT CARRY-FORWARD NOTIFICATIONS -->
 <div id="sellerRolloverPanel"
-     style="
-       display:none;
-       margin:20px auto;
-       padding:22px;
-       width:100%;
-       max-width:1050px;
-       box-sizing:border-box;
-       background:#000;
-       border:2px solid #9acd32;
-       border-radius:12px;
-       color:#fff;
-       line-height:1.6;
-       box-shadow:0 0 12px rgba(154,205,50,0.12);
-     ">
+     style="display:none;margin-top:12px;
+            padding:14px;background:#111;
+            border:1px solid #9acd32;
+            border-radius:10px;color:white;">
 
   <h3 style="color:#9acd32;margin-top:0;">
     🌸 UNSOLD PLANTS — NEXT AUCTION
@@ -2743,161 +2752,6 @@ justify-content:center;
   margin: 0;
   flex-shrink: 0;
 }
-/* MOBILE PHONE HEADER ONLY */
-@media (max-width: 700px) {
-
-  .top {
-    padding: 8px 6px !important;
-    gap: 6px !important;
-    align-items: center;
-  }
-
-  /* SAMPLE AUCTION CARDS */
-  .sampleLot .lotTop {
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
-    align-items: center !important;
-    gap: 3px !important;
-    padding: 6px 2px !important;
-    text-align: center !important;
-  }
-
-  .sampleLot .lotTop span {
-    font-size: 8px !important;
-    line-height: 1.2 !important;
-    letter-spacing: 0 !important;
-    white-space: normal !important;
-    overflow-wrap: anywhere !important;
-    text-align: center !important;
-  }
-
-  /* CENTRE REGISTRATION ON PHONES */
-  #pageRegister .panel {
-    text-align: center !important;
-  }
-
-  #pageRegister .panel h1,
-  #pageRegister .panel h2,
-  #pageRegister .panel h3 {
-    text-align: center !important;
-  }
-
-  #pageRegister .accountBtn {
-    display: block !important;
-    width: fit-content !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-  }
-}
-
-.sampleLot .lotTop span {
-  font-size: 8px !important;
-  line-height: 1.2 !important;
-  letter-spacing: 0 !important;
-  white-space: normal !important;
-  overflow-wrap: anywhere !important;
-  text-align: center !important;
-}
-
-.sampleLot .flowerWrap > div {
-  font-size: 16px !important;
-  letter-spacing: 0 !important;
-  text-align: center !important;
-  padding: 3px !important;
-  box-sizing: border-box !important;
-  overflow-wrap: anywhere !important;
-}
-
-.sampleLot .lotName {
-  font-size: 10px !important;
-  line-height: 1.3 !important;
-  overflow-wrap: anywhere !important;
-}    
-  }
-
-/* MOBILE NAVIGATION — EQUAL TAB SIZES */
-@media (max-width: 700px) {
-
-  nav {
-    display: grid !important;
-   grid-template-columns: repeat(8, minmax(95px, 1fr));
-    gap: 3px !important;
-    width: 100% !important;
-    padding: 4px !important;
-    box-sizing: border-box !important;
-    align-items: stretch !important;
-    overflow-x: auto !important;
-  }
-
-  nav > button,
-  nav .ownEventTab {
-    min-width: 0 !important;
-    width: 100% !important;
-    height: 32px !important;
-    min-height: 32px !important;
-    padding: 3px 2px !important;
-    font-size: 12px !important;
-    line-height: 1.1 !important;
-    font-weight: bold !important;
-    text-align: center !important;
-    white-space: normal !important;
-    overflow-wrap: normal !important;
-    border-radius: 5px !important;
-  }
-
-  nav .ownEventTabGroup {
-    grid-column: span 3;
-    display: grid !important;
-    grid-template-columns: 2.8fr 1.3fr 1fr;
-    gap: 3px !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    min-width: 0 !important;
-    height: auto !important;
-    align-items: stretch !important;
-   }
-
-  .siteLogoWrap .logo {
-    width: 45px !important;
-    height: 45px !important;
-    object-fit: contain;
-  }
-
-  .brand {
-    min-width: 0;
-    flex: 1;
-  }
-
-  #siteBrandName {
-    font-size: 19px !important;
-    line-height: 1.1 !important;
-    margin: 0 !important;
-  }
-
-  #siteBrandTagline {
-    font-size: 9px !important;
-    margin-top: 3px !important;
-  }
-
-  .status {
-    max-width: 105px;
-    font-size: 9px !important;
-    line-height: 1.2;
-    text-align: right;
-  }
-
-  .statusBadge {
-    font-size: 9px !important;
-    padding: 3px 6px !important;
-  }
-
-  #auctionTitleTop,
-  #nextAuctionTop {
-    font-size: 9px !important;
-    line-height: 1.2 !important;
-  }
-}     
 </style>
   <div id="sellerRetailPaymentChoices"
      style="display:flex;flex-wrap:wrap;gap:10px;margin:10px 0;">
@@ -4514,13 +4368,7 @@ const selectedButton = document.getElementById(map[page][1]);
 if(selectedPage){
   selectedPage.classList.remove("hidden");
 }
-// Clivia Events & Shows: registration page only
-const cliviaEventsPanel = document.getElementById("cliviaEventsPanel");
 
-if(cliviaEventsPanel){
-  cliviaEventsPanel.style.display =
-    page === "register" ? "block" : "none";
-}
 // Show the Clivia-only carry-forward notice on Clivia pages, not Rules or creator pages.
 const carryForwardNotice = document.getElementById("cliviaCarryForwardFooter");
 if(carryForwardNotice){
@@ -4903,26 +4751,7 @@ function toggleSellerBusinessFields(){
   });
 
 }    
-async function registerSeller(){
-       const { data: { user }, error: authError } =
-    await cliviaSupabase.auth.getUser();
-
-  if(authError || !user || !user.email_confirmed_at){
-    alert(
-      "Please sign in to your verified Clivia Dreamers account before registering as a seller."
-    );
-        return;
-  }
-
-  const alreadyRegistered = (state.sellers || []).some(
-    s => s.authUserId === user.id
-  );
-
-  if(alreadyRegistered){
-    alert("You are already registered as a seller. Please use your existing seller account.");
-    return;
-  }
-
+function registerSeller(){
   const name=document.getElementById("sellerName").value.trim();
   const phone=document.getElementById("sellerPhone").value.trim();
   const companyName=document.getElementById("sellerCompanyName").value.trim();
@@ -5028,8 +4857,7 @@ if(duplicatePhoneUser){
 }
   const seller={
     id:"S"+Date.now(),
-        authUserId:user.id,    
-    name,     
+    name,
     phone,
     email,
     entityType,
@@ -5074,28 +4902,9 @@ notifyNextAuction:state.sellerNotifyChoice || "none",
 selectedNotificationAuctions:[],  
   };
 
-  const { error: sellerSaveError } = await cliviaSupabase
-    .from("sellers")
-    .insert({
-      id: seller.id,
-      auth_user_id: user.id,
-      name: seller.name,
-      phone: seller.phone,
-      email: seller.email,
-      bank_confirmed: false
-    });
-
-  if(sellerSaveError){
-    alert(
-      "Seller registration could not be saved to Supabase: " +
-      sellerSaveError.message
-    );
-    return;
-  }
-
-  state.sellers = state.sellers || [];
-  state.sellers.push(seller);
-  save();
+ state.sellers=state.sellers||[];
+state.sellers.push(seller);
+save();
 refreshSellerSelect();
  alert("Seller registration successful.\n\nYour bank account is awaiting administrator verification. You can list plants once your bank account has been approved.");
   }
@@ -5118,8 +4927,8 @@ refreshSellerSelect();
     alert("This bidder account does not belong to the signed-in user.");
     return;
   }
- const existingSeller=(state.sellers||[]).find(
-    s=>s.authUserId === user.id
+  const existingSeller=(state.sellers||[]).find(
+    s=>s.phone===bidder.phone
   );
 
  if(existingSeller){
@@ -8847,12 +8656,10 @@ for(let i=0;i<samplesNeeded;i++){
           display:flex;
           align-items:center;
           justify-content:center;
-          font-size:13px;
-font-weight:800;
-color:#7ddcff;
-letter-spacing:0;
-line-height:1.3;
-text-align:center;
+          font-size:28px;
+          font-weight:900;
+          color:#7ddcff;
+          letter-spacing:2px;
           text-shadow:0 2px 8px #000;
           pointer-events:auto;
           cursor:pointer;
@@ -8990,6 +8797,18 @@ ${
       R${sellerAuction?.increment || state.settings.increment || 50}
     </span>
   </div>
+
+  <button type="button"
+          class="greenBtn"
+          style="
+            font-size:18px;
+            font-weight:bold;
+            padding:14px 22px;
+            white-space:nowrap;
+          "
+          onclick="openSellerSpaces()">
+    LOAD FOR NEXT AUCTION
+  </button>
 
 </div>
 
@@ -12533,8 +12352,6 @@ function shareSellerPreviewWhatsApp() {
 </script>
 
 <!-- CLIVIA DREAMERS UNSOLD PLANTS RULES -->
-      <section id="cliviaCarryForwardFooter"
-         class="auctionInfoPanel">
 <section id="cliviaCarryForwardFooter"
   style="
     display:block;
@@ -12602,7 +12419,7 @@ function shareSellerPreviewWhatsApp() {
 
     <div style="
   background:#101b12;
- border:none;
+  border:1px solid #9acd32;
   border-radius:10px;
   padding:18px;
   margin:20px auto;
@@ -12651,21 +12468,18 @@ function shareSellerPreviewWhatsApp() {
     will not be displayed publicly.
   </p>
 
-</div>
+</div>     
+  HOW RETAIL VOUCHERS, MONEY TRANSFERS AND ONLINE PAYMENTS WORK
+</h3>
 
-<div class="auctionInfoPanel">
-
-  <h3 style="color:#9acd32;text-align:center;">
-    HOW RETAIL VOUCHERS, MONEY TRANSFERS AND ONLINE PAYMENTS WORK
-  </h3>
-
-  <div style="
-    text-align:left;
-    width:100%;
-    color:#fff;
-    font-size:15px;
-    line-height:1.8;
-  ">
+<div style="
+  text-align:left;
+  max-width:850px;
+  margin:15px auto;
+  color:#fff;
+  font-size:14px;
+  line-height:1.8;
+">
 
   <p>
    "What a Auction Event" offers winning bidders convenient online and retail voucher payment options, subject to the seller’s acceptance and approval. All payments are made directly to the seller, and the seller must confirm receipt of payment.
