@@ -811,6 +811,7 @@ th,td{
   display: block;
   flex-shrink: 0;
 }
+  body.ownEventMode #cliviaCarryForwardFooter{display:none !important;}
   </style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
  <script>
@@ -2349,71 +2350,38 @@ justify-content:center;
 
 <section id="pageRules" class="page hidden">
   <div class="panel">
-
     <div id="cliviaRulesContent">
-
-     <h2 style="color:#ff8c00;font-weight:bold;">
-  By registering as a buyer or seller, you agree to these rules.
-</h2>
-
-    <h3>Buyer Rules</h3>
-
-<p>1. Buyers must register with correct contact details and a full delivery address.</p>
-
-<p>2. A valid bank account number must be supplied and confirmed before normal bidding is allowed.</p>
-
-<p>3. Bids must comply with the bidding increment displayed for the applicable auction or lot. ZAR and EUR auctions may have different bidding increments.</p>
-
-<p>4. A bidder receives the initial bidding capacity applicable to the auction. Additional bidding capacity is unlocked by paying the applicable security fee. For standard ZAR brackets, R150 unlocks the next R5,000 bidding capacity. For standard EUR brackets, €15 unlocks the next €350 bidding capacity.</p>
-
-<p>5. Security fees increase bidding capacity only after the required payment has been confirmed. If proof of payment is awaiting verification, the additional bidding capacity remains locked until verification is completed.</p>
-
-<p>6. A winning bidder must pay the seller directly for the winning plant within the required payment period. Any separate Clivia Dreamers platform fees or other amounts payable to Clivia Dreamers must be paid according to the relevant invoice.</p>
-
-<p>7. A bidder with an unpaid invoice may be blocked from further bidding until the outstanding invoice has been paid.</p>
-
-<p>8. A payment received from an unregistered or unconfirmed bank account may place the bidder's account on hold until the payment has been verified or the hold has been cleared by Admin.</p>
-
-<p>9. International bidders must pay the applicable international registration fee before bidding and may bid only on plants specifically marked as export eligible.</p>
-
-<p>10. International buyers are responsible for applicable export, import, phytosanitary, courier and destination-country requirements and costs unless expressly stated otherwise.</p>
-
-<p>11. Bids are binding. A bidder must not place a bid unless willing and able to complete the purchase if that bid wins.</p>
-
-<p>12. Where an auction uses an extended-closing or anti-sniping period, a qualifying late bid may extend the closing time of that particular lot in accordance with the auction settings.</p>
-
-<p>13. OWNER TEST MODE is strictly an administrative testing facility. Test-mode exemptions do not apply to ordinary registered bidders and do not create any entitlement to free bidding, waived fees or waived payment obligations.</p>
-    <h3>Seller Rules</h3>
-
-<p>14. Sellers must provide accurate plant descriptions, photographs and seller details. Breeding names and a small copyright mark are allowed on plant photos.</p>
-
-<p>15. Flowers containing more than 20% orange colour may not qualify for the auction. The system may check the flower photo automatically. If the system is uncertain, the plant will be referred for Admin review rather than automatically rejected.</p>
-
-<p>16. Sellers are responsible for ensuring that the plant offered for sale corresponds with the photographs and description supplied for the lot.</p>
-
-<p>17. Where a seller is VAT registered and has supplied a VAT number, the Clivia Dreamers platform fee is calculated on the sale amount excluding the seller's VAT portion. No Clivia Dreamers platform fee is charged on the VAT portion of that sale.</p>
-
-<p>18. Where applicable, the Clivia Dreamers platform fee is 10% of the applicable sale amount less the R50 listing fee, and applies only where the sale exceeds R2,000, subject to the auction rules and settings.</p>
-
-<p>19. Clivia Dreamers is not VAT registered and therefore does not add VAT to its own platform-fee invoice.</p>
-
-    <h3>Export Services</h3>
-<p>20. Export service provider details are not displayed publicly.</p>
-<p>21. An R500 export connection fee applies before export-service contact details are released.</p>
-    <h3>Payments & Privacy</h3>
-    <p>18. Payment information may be checked against registered bank account details and payment amounts.</p>
-    <p>19. Buyer delivery/contact details are shared only where required to complete a winning order.</p>
-    <p>20. Payment for a winning item is made directly by the buyer to the seller. "What a Auction Event" is not the recipient of the purchase payment.</p>
-    <p>21. Any transaction, payment, delivery or other arrangement between a buyer and seller is undertaken at their own risk. "What a Auction Event" provides the auction platform but is not a party to the sale between the buyer and seller.</p>
-    <p>26. All Clivia Dreamers platform fees, listing fees, registration/security fees and export connection fees are non-refundable once paid, except where otherwise required by law.</p>
-     <p>23. "What a Auction Event" may update these rules when necessary. Updated rules may require acceptance again.</p>
-
-     <p>24. The bidder and seller/owner are responsible for completing the transaction, payment and delivery arrangements between themselves.</p>
-    <p>25. "What a Auction Event" does not guarantee that any plant listed for auction will receive bids or be sold. Sellers are encouraged to actively promote and share their auction plants through Facebook, WhatsApp, social media and any other sharing or advertising options provided by Clivia Dreamers Auction. These promotional tools are made available to all sellers to help increase exposure, but the responsibility for promoting a listed plant and attracting potential bidders remains with the seller.</p>
-  <p>26.Clivia Dreamers shall not be liable for delays, interruptions, postponement, cancellation or failure to perform caused by circumstances beyond its reasonable control, including natural disasters, fire, flood, severe weather, war, civil unrest, government action, widespread power or telecommunications failures, strikes, epidemics or pandemics. Where reasonably possible, Clivia Dreamers may postpone, extend, suspend or reschedule an affected auction or event.</p>
-    <h3>Gentleman's Agreement</h3>
-<p>"What a Auction Event" operates in the spirit of trust, fairness and respect between buyers and sellers. Please honour your bids, payments, sales and commitments, and do not abuse the opportunity or privileges provided by this platform.</p>
-  </div>  <!-- closes cliviaRulesContent -->
+      <h2 style="color:#ff8c00;font-weight:bold;">By registering as a buyer or seller, you agree to these rules.</h2>
+      <h3>Buyer Rules</h3>
+      <p>1. Buyers must register using accurate contact information and a valid delivery or collection address.</p>
+      <p>2. Bidders must complete any identity, account or bank verification required by the platform before bidding.</p>
+      <p>3. Every bid must meet the starting price and minimum bid increment displayed for its auction and currency.</p>
+      <p>4. Any bidding capacity or security payment requirements displayed for an auction must be satisfied before higher bids are permitted. Payments awaiting verification do not unlock capacity.</p>
+      <p>5. Winning bids are binding, subject to applicable law and the published event terms. Bid only when able to pay.</p>
+      <p>6. Winning bidders receive an invoice after the auction closes and must pay the seller or Event Creator directly using the verified payment instructions on the invoice.</p>
+      <p>7. Unpaid winning invoices may lead to bidding restrictions while the outstanding payment is resolved.</p>
+      <p>8. Where enabled, qualifying last-minute bids may extend the closing time of the affected lot under the auction’s hot-bidding rules.</p>
+      <p>9. International buyers are responsible for any applicable import, export, customs, transport and destination-country requirements, unless the event terms state otherwise.</p>
+      <h3>Seller and Event Creator Rules</h3>
+      <p>10. Sellers and Event Creators must supply accurate descriptions, photographs, starting bids, increments and material condition information for each lot.</p>
+      <p>11. Only goods and content permitted by the platform and applicable law may be listed. Prohibited listings include people, sexual or pornographic material, cruelty, firearms, ammunition, explosives and illegal goods.</p>
+      <p>12. Sellers must have the right to offer the goods and to use uploaded photographs, logos and descriptions.</p>
+      <p>13. Event Creators must state collection, shipping, delivery, export, tax and other relevant terms before bidding closes.</p>
+      <p>14. Creating and testing an event is free. The applicable one-time activation fee is payable before the first LIVE event; returning Event Creators who have already paid it are not charged again.</p>
+      <p>15. The Event Creator is responsible for checking auction dates, closing times, banking details and lot information before making an event LIVE.</p>
+      <p>16. Test-mode bids and invoices are demonstrations only, not genuine sales or payment obligations.</p>
+      <h3>Payments, Privacy and Responsibility</h3>
+      <p>17. Buyer payments for winning lots go directly to the seller or Event Creator. What a Auction Event does not receive those purchase payments.</p>
+      <p>18. The seller or Event Creator must verify that cleared funds have been received before confirming payment. A screenshot or payment notification alone is not confirmation.</p>
+      <p>19. Payment and bank information may be verified for account security and reconciliation. Private contact and delivery details are shared only when needed to complete a winning transaction.</p>
+      <p>20. Buyers and sellers are responsible for completing payment, collection and delivery arrangements and resolving disputes about the goods or fulfilment, subject to applicable consumer law.</p>
+      <p>21. What a Auction Event provides the auction platform and does not guarantee that a listed lot will receive a bid or sell. Sellers are encouraged to share their listings using the available promotional tools.</p>
+      <p>22. Platform fees, where applicable, are described in the relevant published fee schedule or invoice. Refunds and cancellations are governed by those terms and applicable law.</p>
+      <p>23. What a Auction Event may revise its rules and request renewed acceptance when appropriate.</p>
+      <p>24. Events may be postponed or interrupted by circumstances beyond reasonable control, including severe weather, outages, civil unrest or government action. The platform will communicate material changes where reasonably possible.</p>
+      <h3>Gentleman’s Agreement</h3>
+      <p>25. What a Auction Event operates in a spirit of trust, fairness and respect. Please honour your bids, payments, sales and commitments and treat other participants fairly.</p>
+    </div>  <!-- closes cliviaRulesContent -->
     <div id="generalRulesContent" style="display:none;">
   <h2 id="generalRulesTitle">Event Rules &amp; Terms</h2>
 
@@ -4399,6 +4367,12 @@ const selectedButton = document.getElementById(map[page][1]);
 
 if(selectedPage){
   selectedPage.classList.remove("hidden");
+}
+
+// Show the Clivia-only carry-forward notice on Clivia pages, not Rules or creator pages.
+const carryForwardNotice = document.getElementById("cliviaCarryForwardFooter");
+if(carryForwardNotice){
+  carryForwardNotice.style.display = page === "rules" ? "none" : "block";
 }
 
 
@@ -12376,12 +12350,11 @@ function shareSellerPreviewWhatsApp() {
   );
 }
 </script>
-</script>
 
 <!-- CLIVIA DREAMERS UNSOLD PLANTS RULES -->
 <section id="cliviaCarryForwardFooter"
   style="
-    display:none;
+    display:block;
     background:#101b12;
     color:#fff;
     border:1px solid #9acd32;
@@ -12424,7 +12397,6 @@ function shareSellerPreviewWhatsApp() {
 
 </section>
 
-<footer style="
 <footer style="
   text-align:center;
   padding:25px 10px;
