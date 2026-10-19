@@ -1483,61 +1483,7 @@ color:#fff;
 justify-content:center;
   gap:20px;
 ">
-  <div id="ownBest10Left"></div>
-  <div id="ownBest10Right"></div>
-</div>
-
-<div id="ownBest10SEO" style="
-  margin-top:25px;
-  padding:15px;
-  text-align:center;
-">
-</div>
-  </div>
-
-</section>
-<section id="pageRegister" class="page">
-<div id="registerPageGrid"
-     style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start;">
-   <div class="panel" id="registrationMainPanel">
-     <h2>Clivia Dreamers Registration</h2>
-
-<div style="display:flex;gap:10px;margin:12px 0;flex-wrap:wrap;">
-
-  <button id="newBidderBtn"
-          type="button"
-          class="goldBtn"
-          onclick="showNewBidderRegistration()">
-    NEW ACCOUNT
-  </button>
-
- <button id="accountDetailsBtn"
-        type="button"
-        class="accountBtn"
-        onclick="showRegisteredBidder()">
-  ACCOUNT DETAILS
-</button>
-</div>
-
-<div id="bidderLoginBox" style="display:none;border:2px solid #ff9800;border-radius:12px;padding:15px;margin-top:12px;">
-  <h3>MY CLIVIA DREAMERS ACCOUNT</h3>
-
-  
-<input id="bidderLoginPassword"
-       type="password"
-       autocomplete="new-password"
-       value=""
-       placeholder="Your account password">
-
-      
-<label style="display:flex;align-items:center;gap:8px;margin-top:8px;">
-  <input type="checkbox"
-         style="width:auto;"
-         onchange="
-           document.getElementById('bidderLoginPassword').type =
-           this.checked ? 'text' : 'password';
-         ">
-  SHOW PASSWORD
+  <div id="ownBest10Left"></div>Clivia Dreamers Registration
 </label>
 
 
@@ -2807,6 +2753,23 @@ justify-content:center;
   gap: 3px !important;
   padding: 6px 2px !important;
   text-align: center !important;
+    /* CENTRE REGISTRATION PANEL ON PHONES ONLY */
+#pageRegister .panel {
+  text-align: center !important;
+}
+
+#pageRegister .panel h1,
+#pageRegister .panel h2,
+#pageRegister .panel h3 {
+  text-align: center !important;
+}
+
+#pageRegister .accountBtn {
+  display: block !important;
+  width: fit-content !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}  
 }
 
 .sampleLot .lotTop span {
