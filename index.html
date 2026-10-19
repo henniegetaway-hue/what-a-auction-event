@@ -3793,7 +3793,11 @@ if(auctionTagline){
     "Your created auction will appear here when it is ready to go live.";
 }
   document.querySelectorAll(".page").forEach(x=>x.classList.add("hidden"));
-  document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
+ document.querySelectorAll("nav button").forEach(btn=>{
+  btn.classList.remove("active");
+  btn.style.background="#101810";
+  btn.style.color="#fff";
+});
       
 renderOwnEventAuction();
       
