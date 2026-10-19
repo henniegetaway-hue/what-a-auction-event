@@ -4332,10 +4332,19 @@ function showPage(page){
       const siteLogo=document.getElementById("siteLogo");
 
 if(siteLogo){
-  siteLogo.src="new logo.png";
+   siteLogo.src="new logo.png";
   siteLogo.alt="Clivia Dreamers logo";
-  siteLogo.style.opacity="1";
-  siteLogo.style.filter="none";
+
+  const rulesPageOpen =
+    !document.getElementById("pageRules")?.classList.contains("hidden");
+
+  siteBrandName.textContent = rulesPageOpen
+    ? "What a Auction Event Rules"
+    : "Clivia Dreamers Auction";
+
+  siteBrandTagline.textContent = rulesPageOpen
+    ? "Rules & Terms"
+    : "Rare • Exquisite • Timeless";
 }
       document.body.classList.remove("ownEventMode");  
       
