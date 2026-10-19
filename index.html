@@ -2790,6 +2790,55 @@ justify-content:center;
   margin: 0;
   flex-shrink: 0;
 }
+ /* MOBILE PHONE HEADER ONLY */
+@media (max-width: 600px) {
+
+  .top {
+    padding: 8px 6px !important;
+    gap: 6px !important;
+    align-items: center;
+  }
+
+  .siteLogoWrap .logo {
+    width: 45px !important;
+    height: 45px !important;
+    object-fit: contain;
+  }
+
+  .brand {
+    min-width: 0;
+    flex: 1;
+  }
+
+  #siteBrandName {
+    font-size: 19px !important;
+    line-height: 1.1 !important;
+    margin: 0 !important;
+  }
+
+  #siteBrandTagline {
+    font-size: 9px !important;
+    margin-top: 3px !important;
+  }
+
+  .status {
+    max-width: 105px;
+    font-size: 9px !important;
+    line-height: 1.2;
+    text-align: right;
+  }
+
+  .statusBadge {
+    font-size: 9px !important;
+    padding: 3px 6px !important;
+  }
+
+  #auctionTitleTop,
+  #nextAuctionTop {
+    font-size: 9px !important;
+    line-height: 1.2 !important;
+  }
+}     
 </style>
   <div id="sellerRetailPaymentChoices"
      style="display:flex;flex-wrap:wrap;gap:10px;margin:10px 0;">
