@@ -4356,8 +4356,15 @@ const nextTop=document.getElementById("nextAuctionTop");
 const status=document.getElementById("auctionStatus");
 const logo=document.getElementById("siteLogo");
 
-if(brandName) brandName.textContent="Clivia Dreamers Auction";
-if(brandTagline) brandTagline.textContent="Rare • Exquisite • Timeless";
+if(brandName) brandName.textContent =
+  page === "rules"
+    ? "What a Auction Event Rules"
+    : "Clivia Dreamers Auction";
+
+if(brandTagline) brandTagline.textContent =
+  page === "rules"
+    ? "Rules & Terms"
+    : "Rare • Exquisite • Timeless";
 if(titleTop) titleTop.textContent="Clivia Dreamers Live Auction";
 if(nextTop) nextTop.textContent="Next Auction: date to be announced";
 if(status) status.textContent="OPEN";
