@@ -4507,7 +4507,13 @@ const selectedButton = document.getElementById(map[page][1]);
 if(selectedPage){
   selectedPage.classList.remove("hidden");
 }
+// Clivia Events & Shows: registration page only
+const cliviaEventsPanel = document.getElementById("cliviaEventsPanel");
 
+if(cliviaEventsPanel){
+  cliviaEventsPanel.style.display =
+    page === "register" ? "block" : "none";
+}
 // Show the Clivia-only carry-forward notice on Clivia pages, not Rules or creator pages.
 const carryForwardNotice = document.getElementById("cliviaCarryForwardFooter");
 if(carryForwardNotice){
