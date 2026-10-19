@@ -4365,9 +4365,28 @@ if(brandTagline) brandTagline.textContent =
   page === "rules"
     ? "Rules & Terms"
     : "Rare • Exquisite • Timeless";
-if(titleTop) titleTop.textContent="Clivia Dreamers Live Auction";
-if(nextTop) nextTop.textContent="Next Auction: date to be announced";
-if(status) status.textContent="OPEN";
+if(titleTop) titleTop.textContent =
+  page === "rules"
+    ? "Live Your Dreams"
+    : "Clivia Dreamers Live Auction";
+
+if(nextTop) nextTop.textContent =
+  page === "rules"
+    ? "Create The World Around You"
+    : "Next Auction: date to be announced";
+
+if(status){
+  status.textContent = page === "rules" ? "❤️" : "OPEN";
+
+  status.style.background =
+    page === "rules" ? "transparent" : "";
+
+  status.style.border =
+    page === "rules" ? "none" : "";
+
+  status.style.fontSize =
+    page === "rules" ? "26px" : "";
+}
 if(logo) logo.src="new logo.png";
       
     // Lock account sections whenever another page is opened
