@@ -4378,7 +4378,11 @@ if(status){
   status.style.fontSize =
     page === "rules" ? "26px" : "";
 }
-if(logo) logo.src="new logo.png";
+if(logo){
+  logo.src = page === "rules"
+    ? "WHAT-A-AUCTION-LOGO.png"
+    : "new logo.png";
+}
       
     // Lock account sections whenever another page is opened
   if(page!=="register"){
