@@ -2739,37 +2739,49 @@ justify-content:center;
 /* MOBILE PHONE HEADER ONLY */
 @media (max-width: 700px) {
 
-   .top {
+  .top {
     padding: 8px 6px !important;
     gap: 6px !important;
     align-items: center;
-     /* SAMPLE AUCTION CARDS — MOBILE ONLY */
+  }
 
-.sampleLot .lotTop {
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: center !important;
-  align-items: center !important;
-  gap: 3px !important;
-  padding: 6px 2px !important;
-  text-align: center !important;
-    /* CENTRE REGISTRATION PANEL ON PHONES ONLY */
-#pageRegister .panel {
-  text-align: center !important;
-}
+  /* SAMPLE AUCTION CARDS */
+  .sampleLot .lotTop {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 3px !important;
+    padding: 6px 2px !important;
+    text-align: center !important;
+  }
 
-#pageRegister .panel h1,
-#pageRegister .panel h2,
-#pageRegister .panel h3 {
-  text-align: center !important;
-}
+  .sampleLot .lotTop span {
+    font-size: 8px !important;
+    line-height: 1.2 !important;
+    letter-spacing: 0 !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+    text-align: center !important;
+  }
 
-#pageRegister .accountBtn {
-  display: block !important;
-  width: fit-content !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-}  
+  /* CENTRE REGISTRATION ON PHONES */
+  #pageRegister .panel {
+    text-align: center !important;
+  }
+
+  #pageRegister .panel h1,
+  #pageRegister .panel h2,
+  #pageRegister .panel h3 {
+    text-align: center !important;
+  }
+
+  #pageRegister .accountBtn {
+    display: block !important;
+    width: fit-content !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
 }
 
 .sampleLot .lotTop span {
