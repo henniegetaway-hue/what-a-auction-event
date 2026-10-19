@@ -4751,7 +4751,16 @@ function toggleSellerBusinessFields(){
   });
 
 }    
-function registerSeller(){
+async function registerSeller(){
+       const { data: { user }, error: authError } =
+    await cliviaSupabase.auth.getUser();
+
+  if(authError || !user || !user.email_confirmed_at){
+    alert(
+      "Please sign in to your verified Clivia Dreamers account before registering as a seller."
+    );
+    return;
+  } 
   const name=document.getElementById("sellerName").value.trim();
   const phone=document.getElementById("sellerPhone").value.trim();
   const companyName=document.getElementById("sellerCompanyName").value.trim();
@@ -4857,7 +4866,8 @@ if(duplicatePhoneUser){
 }
   const seller={
     id:"S"+Date.now(),
-    name,
+        authUserId:user.id,    
+    name,     
     phone,
     email,
     entityType,
