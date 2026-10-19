@@ -4932,9 +4932,7 @@ notifyNextAuction:state.sellerNotifyChoice || "none",
 selectedNotificationAuctions:[],  
   };
 
- state.sellers=state.sellers||[];
-state.sellers.push(seller);
-    const { error: sellerSaveError } = await cliviaSupabase
+  const { error: sellerSaveError } = await cliviaSupabase
     .from("sellers")
     .insert({
       id: seller.id,
@@ -4951,26 +4949,11 @@ state.sellers.push(seller);
       sellerSaveError.message
     );
     return;
-  }    
-save();
-   const { error: sellerSaveError } = await cliviaSupabase
-    .from("sellers")
-    .insert({
-      id: seller.id,
-      auth_user_id: user.id,
-      name: seller.name,
-      phone: seller.phone,
-      email: seller.email,
-      bank_confirmed: false
-    });
+  }
 
-  if(sellerSaveError){
-    alert(
-      "Seller registration could not be saved to Supabase: " +
-      sellerSaveError.message
-    );
-    return;
-  }     
+  state.sellers = state.sellers || [];
+  state.sellers.push(seller);
+  save();
 refreshSellerSelect();
  alert("Seller registration successful.\n\nYour bank account is awaiting administrator verification. You can list plants once your bank account has been approved.");
   }
