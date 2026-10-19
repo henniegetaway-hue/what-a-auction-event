@@ -4925,6 +4925,24 @@ selectedNotificationAuctions:[],
  state.sellers=state.sellers||[];
 state.sellers.push(seller);
 save();
+   const { error: sellerSaveError } = await cliviaSupabase
+    .from("sellers")
+    .insert({
+      id: seller.id,
+      auth_user_id: user.id,
+      name: seller.name,
+      phone: seller.phone,
+      email: seller.email,
+      bank_confirmed: false
+    });
+
+  if(sellerSaveError){
+    alert(
+      "Seller registration could not be saved to Supabase: " +
+      sellerSaveError.message
+    );
+    return;
+  }     
 refreshSellerSelect();
  alert("Seller registration successful.\n\nYour bank account is awaiting administrator verification. You can list plants once your bank account has been approved.");
   }
