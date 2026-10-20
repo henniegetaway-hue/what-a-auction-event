@@ -10884,7 +10884,7 @@ openButton.onclick = function(){
     }
   });
 
-  updateOwnEventRowsPreview();
+    updateOwnEventRowsPreview();
   restoreCreatorAuctionLots(event.lots || []);
 
   alert(
@@ -10892,6 +10892,20 @@ openButton.onclick = function(){
     (event.name || "Unnamed Auction") +
     "\n\nYou can continue editing."
   );
+
+  // PHONE ONLY — SCROLL TO AUCTION EDITING FORM
+  if(window.innerWidth <= 600){
+
+    const editForm = document.getElementById("ownEventName");
+
+    if(editForm){
+      editForm.scrollIntoView({
+        behavior:"smooth",
+        block:"center"
+      });
+    }
+
+  }
 
 };
  
