@@ -1682,6 +1682,9 @@ window.addEventListener("load", function(){
   Each auction row contains 4 lot spaces.
 </div>
 
+<!-- PHONE ONLY — LOAD YOUR CARDS -->
+<div id="phoneLoadCardsPosition"></div>
+
 <label>Choose Your Auction Page Background Color</label>
 <input id="ownEventBgColor"
        type="color"
@@ -13071,7 +13074,22 @@ function shareSellerPreviewWhatsApp() {
 function closeCreatorPreview(){
   document.getElementById("ownEventPreviewPanel")
     ?.classList.remove("creatorPreviewOpen");
-}    
+}  
+ /* MOVE LOAD YOUR CARDS ON PHONE ONLY */
+function positionPhoneLoadCards(){
+
+  const button = document.getElementById("openCreatorPreviewBtn");
+  const phonePosition = document.getElementById("phoneLoadCardsPosition");
+
+  if(!button || !phonePosition) return;
+
+  if(window.innerWidth <= 600){
+    phonePosition.appendChild(button);
+  }
+}
+
+window.addEventListener("DOMContentLoaded", positionPhoneLoadCards);
+window.addEventListener("resize", positionPhoneLoadCards);     
 </script>
 
 <!-- CLIVIA DREAMERS UNSOLD PLANTS RULES -->
