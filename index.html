@@ -1341,7 +1341,16 @@ th,td{
    /* REMOVE OUTER GREEN BORDER — RULES PAGE */
 #pageRules > .panel {
   border: none !important;
-}     
+}  
+  /* NOTICE BORDERS — ORANGE TOP TO GREEN BOTTOM */
+#cliviaCarryForwardFooter,
+.auctionNoticeGradient {
+  border:2px solid transparent !important;
+  border-radius:10px !important;
+  background:
+    linear-gradient(#101b12,#101b12) padding-box,
+    linear-gradient(to bottom,#ff7900 0%,#ff7900 30%,#9acd32 70%,#9acd32 100%) border-box !important;
+}      
   </style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
  <script>
