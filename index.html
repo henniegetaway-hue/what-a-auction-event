@@ -1355,7 +1355,17 @@ th,td{
 /* BLACK BACKGROUND BEHIND THE UNSOLD NOTICE */
 body:has(#cliviaCarryForwardFooter) {
   /* Do not change the main page background */
-}       
+}   
+   /* DESKTOP — CREATE YOUR OWN EVENT NAVIGATION TEXT */
+@media (min-width:901px){
+  #navOwnEvent,
+  #navOwnAuction,
+  #navOwnBest10 {
+    font-size:14px !important;
+    font-weight:700 !important;
+    color:#000 !important;
+  }
+}     
   </style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
  <script>
