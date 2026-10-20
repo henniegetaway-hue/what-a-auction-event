@@ -1250,12 +1250,41 @@ th,td{
   font-weight:bold;
   cursor:pointer;
 }
-/* KEEP PHONE LAYOUT */
+/* PHONE — THREE ROUND BUTTONS IN ONE ROW */
 @media(max-width:600px){
+
   .plantShareRow{
-    grid-template-columns:1fr;
+    display:flex !important;
+    flex-direction:row !important;
+    justify-content:center !important;
+    align-items:center !important;
+    gap:8px !important;
   }
-}     
+
+  .plantShareRow button{
+    width:55px !important;
+    height:55px !important;
+    min-width:55px !important;
+    flex:0 0 55px !important;
+    aspect-ratio:auto !important;
+    border-radius:50% !important;
+    padding:3px !important;
+    font-size:7px !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:2px !important;
+  }
+
+  .plantShareRow .shareIcon{
+    font-size:16px !important;
+  }
+
+  .plantShareRow button span:last-child{
+    font-size:6px !important;
+  }
+}
   /* DESKTOP ONLY — SMALL ROUND SHARE BUTTONS */
 @media(min-width:601px){
 
