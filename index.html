@@ -13084,10 +13084,47 @@ function positionPhoneLoadCards(){
   const button = document.getElementById("openCreatorPreviewBtn");
   const phonePosition = document.getElementById("phoneLoadCardsPosition");
 
-  if(!button || !phonePosition) return;
+  const auctionsPanel = document.getElementById("ownEventManagement");
+  const auctionsPosition = document.getElementById("phoneAuctionsListPosition");
+
+  if(!button || !phonePosition || !auctionsPanel || !auctionsPosition) return;
+
+  if(!button.dataset.originalPosition){
+    const marker = document.createElement("span");
+    marker.id = "creatorButtonOriginalPosition";
+    marker.style.display = "none";
+    button.parentNode.insertBefore(marker, button);
+    button.dataset.originalPosition = "saved";
+  }
+
+  if(!auctionsPanel.dataset.originalPosition){
+    const marker = document.createElement("span");
+    marker.id = "creatorAuctionsOriginalPosition";
+    marker.style.display = "none";
+    auctionsPanel.parentNode.insertBefore(marker, auctionsPanel);
+    auctionsPanel.dataset.originalPosition = "saved";
+  }
 
   if(window.innerWidth <= 600){
+
     phonePosition.appendChild(button);
+    auctionsPosition.appendChild(auctionsPanel);
+
+  }else{
+
+    const buttonMarker =
+      document.getElementById("creatorButtonOriginalPosition");
+
+    const auctionsMarker =
+      document.getElementById("creatorAuctionsOriginalPosition");
+
+    if(buttonMarker){
+      buttonMarker.after(button);
+    }
+
+    if(auctionsMarker){
+      auctionsMarker.after(auctionsPanel);
+    }
   }
 }
 
