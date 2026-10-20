@@ -1453,8 +1453,16 @@ function closePlantPreview(){
   </p>
 
   <div id="ownEventManagementList">
-    Sign in to view your auctions.
-  </div>
+  Sign in to view your auctions.
+</div>
+
+<!-- PHONE ONLY — AUCTION PREVIEW BUTTON -->
+<button type="button"
+        id="openCreatorPreviewBtn"
+        class="goldBtn"
+        onclick="openCreatorPreview()">
+  VIEW AUCTION PREVIEW
+</button>
 
 </div>
 
@@ -1552,14 +1560,6 @@ function closePlantPreview(){
 <div class="small" style="margin-top:5px;">
   Each auction row contains 4 lot spaces.
 </div>
-
-<!-- PHONE ONLY — AUCTION PREVIEW BUTTON -->
-<button type="button"
-        id="openCreatorPreviewBtn"
-        class="goldBtn"
-        onclick="openCreatorPreview()">
-  VIEW AUCTION PREVIEW
-</button>
 
 <label>Choose Your Auction Page Background Color</label>
 <input id="ownEventBgColor"
