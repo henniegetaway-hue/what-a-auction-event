@@ -990,7 +990,33 @@ th,td{
     letter-spacing:-0.4px !important;
   }
 
-}      
+}   
+     /* PHONE ONLY — REGISTRATION HEADING AND BUTTON */
+@media (max-width:600px){
+
+  #registerPageGrid{
+    grid-template-columns:1fr !important;
+  }
+
+  #registrationMainPanel{
+    width:100% !important;
+    min-width:0 !important;
+    box-sizing:border-box !important;
+    text-align:center !important;
+  }
+
+  #registrationMainPanel > h2{
+    font-size:clamp(12px,3.5vw,15px) !important;
+    white-space:nowrap !important;
+    letter-spacing:-0.4px !important;
+    text-align:center !important;
+  }
+
+  #registrationMainPanel > div:first-of-type{
+    justify-content:center !important;
+  }
+
+}   
   </style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
  <script>
