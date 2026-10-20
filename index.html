@@ -6977,6 +6977,43 @@ function toggleBidderAuctionNotifications(){
     });
   }
 }
+  async function updateRegistrationAccountButtons(){
+
+  const newButton =
+    document.getElementById("newBidderBtn");
+
+  const accountButton =
+    document.getElementById("accountDetailsBtn");
+
+  if(!newButton || !accountButton) return;
+
+  // Hide account details until authentication is checked
+  newButton.style.display = "inline-block";
+  accountButton.style.display = "none";
+
+  try {
+    const { data, error } =
+      await cliviaSupabase.auth.getUser();
+
+    if(error || !data?.user) return;
+
+    const user = data.user;
+
+    await refreshBidderSelect();
+
+    const bidder = (state.bidders || []).find(
+      b => b.authUserId === user.id
+    );
+
+    if(bidder){
+      newButton.style.display = "none";
+      accountButton.style.display = "inline-block";
+    }
+
+  } catch(err){
+    console.error("Account recognition error:", err);
+  }
+}    
   function showNewBidderRegistration(){
    
   const mode =
