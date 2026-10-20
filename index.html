@@ -7454,16 +7454,69 @@ if(newAccountButton){
 }
 
   async function showRegisteredBidder(){
-       
-  // Open the account login form
-  const loginBox = document.getElementById("bidderLoginBox");
 
- 
-if(loginBox){
-  loginBox.style.display = "block";
+  const loginBox =
+    document.getElementById("bidderLoginBox");
 
   const registrationForm =
     document.getElementById("newBidderRegistration");
+
+  const account =
+    document.getElementById("registeredBidderSection");
+
+  // Check existing signed-in account
+  const { data, error } =
+    await cliviaSupabase.auth.getUser();
+
+  const user = !error ? data?.user : null;
+
+  if(user){
+    await refreshBidderSelect();
+  }
+
+  const bidder = user
+    ? (state.bidders || []).find(
+        b => b.authUserId === user.id
+      )
+    : null;
+
+  if(user && bidder){
+
+    unlockBidderAccount();
+    state.selectedBidderId = bidder.id;
+
+    if(registrationForm){
+      registrationForm.style.display = "none";
+    }
+
+    if(loginBox){
+      loginBox.style.display = "none";
+    }
+
+    if(account){
+      account.style.display = "block";
+      account.classList.remove("hidden");
+    }
+
+    const newAccountButton =
+      document.getElementById("newBidderBtn");
+
+    if(newAccountButton){
+      newAccountButton.style.display = "none";
+    }
+
+    account?.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+
+    return;
+  }
+
+  // Not signed in — show password login
+  if(loginBox){
+    loginBox.style.display = "block";
+  }
 
   if(registrationForm){
     registrationForm.style.display = "none";
