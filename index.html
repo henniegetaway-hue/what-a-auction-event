@@ -3388,6 +3388,29 @@ justify-content:center;
   font-size:22px;
   font-weight:bold;
   line-height:1;
+}  
+ /* DESKTOP ONLY — CREATOR FORM AND PREVIEW */
+@media (min-width:901px){
+
+  #pageOwnEvent .creatorPageLayout{
+    display:grid !important;
+    grid-template-columns:minmax(280px,0.75fr) minmax(0,1.5fr) !important;
+    align-items:start !important;
+    gap:16px !important;
+    width:100% !important;
+  }
+
+  #pageOwnEvent .creatorPageLayout > div{
+    min-width:0 !important;
+    box-sizing:border-box !important;
+  }
+
+  #pageOwnEvent #ownEventPreviewPanel{
+    display:block !important;
+    position:static !important;
+    width:100% !important;
+    max-width:100% !important;
+  }
 }     
 </style>
   <div id="sellerRetailPaymentChoices"
