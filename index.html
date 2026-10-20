@@ -1603,8 +1603,23 @@ By ticking “I ACCEPT THE EVENT RULES &amp; TERMS”, the Event Creator confirm
 
   </div>
 
-  <!-- RIGHT SIDE: LIVE AUCTION PAGE PREVIEW -->
-  <div class="panel" id="ownEventPreviewPanel">
+  <!-- PHONE ONLY — OPEN AUCTION PREVIEW -->
+<button type="button"
+        id="openCreatorPreviewBtn"
+        class="goldBtn"
+        onclick="openCreatorPreview()">
+  VIEW AUCTION PREVIEW
+</button>
+
+<!-- RIGHT SIDE: LIVE AUCTION PAGE PREVIEW -->
+<div class="panel" id="ownEventPreviewPanel">
+
+  <button type="button"
+          id="closeCreatorPreviewBtn"
+          class="goldBtn"
+          onclick="closeCreatorPreview()">
+    ✕ CLOSE PREVIEW
+  </button>
 
     <div style="
   display:flex;
@@ -3084,6 +3099,47 @@ justify-content:center;
     box-sizing:border-box !important;
   }
 
+}  
+  /* PHONE ONLY — CREATOR AUCTION PREVIEW POPUP */
+#openCreatorPreviewBtn,
+#closeCreatorPreviewBtn{
+  display:none;
+}
+
+@media(max-width:600px){
+
+  #openCreatorPreviewBtn{
+    display:block;
+    width:100%;
+    margin:12px 0;
+  }
+
+  #ownEventPreviewPanel{
+    display:none !important;
+  }
+
+  #ownEventPreviewPanel.creatorPreviewOpen{
+    display:block !important;
+    position:fixed !important;
+    inset:0 !important;
+    width:100vw !important;
+    height:100dvh !important;
+    max-width:none !important;
+    overflow-y:auto !important;
+    box-sizing:border-box !important;
+    z-index:99999 !important;
+    margin:0 !important;
+    padding:15px !important;
+  }
+
+  #closeCreatorPreviewBtn{
+    display:block;
+    width:100%;
+    margin-bottom:15px;
+    position:sticky;
+    top:0;
+    z-index:10;
+  }
 }    
 </style>
   <div id="sellerRetailPaymentChoices"
