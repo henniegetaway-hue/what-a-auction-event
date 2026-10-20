@@ -4107,9 +4107,40 @@ ${!lot.name && !Number(lot.startingBid) ? `
   </button>
 ` : ""}
   `;
+   // PHONE ONLY — TAP CARD TO ENLARGE
+  card.addEventListener("click", function(event){
+
+    // Keep buttons working normally
+    if(event.target.closest("button, input, select, textarea, a")){
+      return;
+    }
+
+    // Only activate on phone screens
+    if(window.innerWidth > 600){
+      return;
+    }
+
+    // Don't enlarge when tapping the photo to change photos
+    if(event.target.closest(".auctionPhotoViewer")){
+      return;
+    }
+
+    const wasExpanded = card.classList.contains("phoneLotExpanded");
+
+    // Close any previously expanded card
+    document.querySelectorAll(".phoneLotExpanded").forEach(other=>{
+      other.classList.remove("phoneLotExpanded");
+    });
+
+    if(!wasExpanded){
+      card.classList.add("phoneLotExpanded");
+    }
+
+  });
+
   display.appendChild(card);
 
-});    
+});
 }
 function showOwnBest10Page(){
  document.body.classList.add("ownEventMode"); 
