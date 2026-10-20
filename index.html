@@ -789,6 +789,52 @@ th,td{
 #sellerLotForm{
   margin-top:0 !important;
 }
+  /* PHONE VIEW — AUCTION CARDS */
+@media (max-width:600px){
+
+  .lotsGrid,
+  .auctionRowScroll{
+    grid-template-columns:repeat(2, minmax(0, 1fr)) !important;
+    gap:8px !important;
+  }
+
+  .lotCard{
+    min-width:0 !important;
+    width:100% !important;
+  }
+
+  .lotTop{
+    font-size:11px !important;
+    padding:7px !important;
+  }
+
+  .lotBody{
+    padding:8px !important;
+  }
+
+  .lotName{
+    font-size:14px !important;
+    overflow-wrap:anywhere;
+  }
+
+  .price{
+    font-size:18px !important;
+  }
+
+  .meta{
+    font-size:11px !important;
+  }
+
+  .bidRow{
+    flex-wrap:wrap;
+  }
+
+  .bidRow button{
+    width:100%;
+    min-height:36px;
+  }
+
+}      
 
 #pageSellerLoad .panel{
   margin-top:0 !important;
