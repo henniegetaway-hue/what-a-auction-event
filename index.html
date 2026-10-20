@@ -4124,8 +4124,11 @@ function renderOwnEventAuction(){
   display.innerHTML = "";
 
   display.style.display = "grid";
-  display.style.gridTemplateColumns = "repeat(4, minmax(0, 1fr))";
-  display.style.gap = "12px";
+display.style.gridTemplateColumns =
+  window.innerWidth <= 600
+    ? "repeat(2, minmax(0, 1fr))"
+    : "repeat(4, minmax(0, 1fr))";
+display.style.gap = window.innerWidth <= 600 ? "8px" : "12px";
   lots.sort((a, b) =>
   (Number(a.startingBid) || 0) -
   (Number(b.startingBid) || 0)
@@ -4155,7 +4158,7 @@ card.style.minWidth = "0";
      onclick="if(window.innerWidth > 600){nextAuctionLotPhoto(this)}"
      onmousemove="moveAuctionLotPhoto(event, this)"
      style="
-       height:180px;
+       height:${window.innerWidth <= 600 ? "125px" : "180px"};
        width:100%;
        min-width:100%;
 box-sizing:border-box;
