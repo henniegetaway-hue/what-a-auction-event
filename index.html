@@ -1233,7 +1233,7 @@ th,td{
     font-weight:900 !important;
   }
 }    
-  /* PLANT SHARING BUTTONS — ONE ROW */
+ /* SHARING BUTTONS — DESKTOP ROUND */
 .plantShareRow{
   display:grid;
   grid-template-columns:repeat(3,minmax(0,1fr));
@@ -1251,62 +1251,42 @@ th,td{
   cursor:pointer;
 }
 
+/* DESKTOP ONLY */
+@media(min-width:601px){
+  .plantShareRow button{
+    width:100% !important;
+    aspect-ratio:1 / 1 !important;
+    border-radius:50% !important;
+    padding:3px !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:3px !important;
+    font-size:7px !important;
+    line-height:1.1 !important;
+    text-align:center !important;
+    box-sizing:border-box !important;
+    overflow:hidden !important;
+  }
+
+  .plantShareRow .shareIcon{
+    font-size:18px !important;
+    line-height:1 !important;
+  }
+
+  .plantShareRow button span:last-child{
+    font-size:7px !important;
+    overflow-wrap:anywhere;
+  }
+}
+
+/* KEEP PHONE LAYOUT */
 @media(max-width:600px){
   .plantShareRow{
     grid-template-columns:1fr;
   }
-}    
- function getSellerPreviewShareData(){
-  const name =
-    document.getElementById("sellerPreviewName")
-      ?.textContent.trim() || "Clivia Auction Lot";
-
-  const text =
-    "View this Clivia on Clivia Dreamers Auction: " + name;
-
-  return {
-    title:name,
-    text:text,
-    url:window.location.href
-  };
-}
-
-function shareSellerPreviewFacebook(){
-  const data = getSellerPreviewShareData();
-
-  window.open(
-    "https://www.facebook.com/sharer/sharer.php?u=" +
-      encodeURIComponent(data.url),
-    "_blank",
-    "noopener,noreferrer"
-  );
-}
-
-async function shareSellerPreviewOther(){
-  const data = getSellerPreviewShareData();
-
-  if(navigator.share){
-    try{
-      await navigator.share(data);
-    }catch(error){
-      if(error.name !== "AbortError"){
-        console.error(error);
-      }
-    }
-  }else{
-    try{
-      await navigator.clipboard.writeText(
-        data.text + "\n" + data.url
-      );
-      alert("Auction link copied. Paste it into the app you want.");
-    }catch(error){
-      window.prompt(
-        "Copy this auction link:",
-        data.url
-      );
-    }
-  }
-}       
+}     
   </style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
  <script>
