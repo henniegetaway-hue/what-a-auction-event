@@ -1232,7 +1232,81 @@ th,td{
     border:1px solid #ffad42 !important;
     font-weight:900 !important;
   }
-}        
+}    
+  /* PLANT SHARING BUTTONS — ONE ROW */
+.plantShareRow{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:6px;
+  margin-top:12px;
+}
+
+.plantShareRow button{
+  min-width:0;
+  padding:10px 3px;
+  border:0;
+  border-radius:8px;
+  font-size:11px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+@media(max-width:600px){
+  .plantShareRow{
+    grid-template-columns:1fr;
+  }
+}    
+ function getSellerPreviewShareData(){
+  const name =
+    document.getElementById("sellerPreviewName")
+      ?.textContent.trim() || "Clivia Auction Lot";
+
+  const text =
+    "View this Clivia on Clivia Dreamers Auction: " + name;
+
+  return {
+    title:name,
+    text:text,
+    url:window.location.href
+  };
+}
+
+function shareSellerPreviewFacebook(){
+  const data = getSellerPreviewShareData();
+
+  window.open(
+    "https://www.facebook.com/sharer/sharer.php?u=" +
+      encodeURIComponent(data.url),
+    "_blank",
+    "noopener,noreferrer"
+  );
+}
+
+async function shareSellerPreviewOther(){
+  const data = getSellerPreviewShareData();
+
+  if(navigator.share){
+    try{
+      await navigator.share(data);
+    }catch(error){
+      if(error.name !== "AbortError"){
+        console.error(error);
+      }
+    }
+  }else{
+    try{
+      await navigator.clipboard.writeText(
+        data.text + "\n" + data.url
+      );
+      alert("Auction link copied. Paste it into the app you want.");
+    }catch(error){
+      window.prompt(
+        "Copy this auction link:",
+        data.url
+      );
+    }
+  }
+}       
   </style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
  <script>
@@ -3278,7 +3352,21 @@ justify-content:center;
     top:0;
     z-index:10;
   }
-}    
+} 
+ /* SHARE BUTTON ICONS */
+.plantShareRow button{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+}
+
+.plantShareRow .shareIcon{
+  font-size:22px;
+  font-weight:bold;
+  line-height:1;
+}     
 </style>
   <div id="sellerRetailPaymentChoices"
      style="display:flex;flex-wrap:wrap;gap:10px;margin:10px 0;">
@@ -11829,22 +11917,32 @@ font-size:10px;
               <input type="url" class="ownLotLink"
        placeholder="Link (optional)"
        style="width:100%;margin-top:4px;padding:5px;font-size:11px;box-sizing:border-box;resize:vertical;border:1px solid ${accentColor};color:#fff;background:#000;">
-    <button type="button"
-  onclick="shareCreatorPreviewLot(${i})"
-  style="
-    width:100%;
-    background:#168b3c;
-    color:#ffffff;
-    border:1px solid #9acd32;
-    border-radius:8px;
-    padding:12px 6px;
-    font-size:12px;
-    font-weight:bold;
-    cursor:pointer;
-    margin-top:8px;
-  ">
-  SHARE ON WHATSAPP
-</button>
+   <!-- SHARE PLANT PREVIEW — THREE BUTTONS IN ONE ROW -->
+<!-- CREATOR AUCTION — SHARE EACH LOT -->
+<div class="plantShareRow">
+
+  <button type="button"
+    onclick="shareCreatorPreviewLot(${i})"
+    style="background:#17c96b;color:white;">
+    <span class="shareIcon">📲</span>
+    <span>WHATSAPP</span>
+  </button>
+
+  <button type="button"
+    onclick="shareCreatorPreviewFacebook(${i})"
+    style="background:#1877f2;color:white;">
+    <span class="shareIcon">ⓕ</span>
+    <span>FACEBOOK</span>
+  </button>
+
+  <button type="button"
+    onclick="shareCreatorPreviewOther(${i})"
+    style="background:#ffcc80;color:black;">
+    <span class="shareIcon">↗</span>
+    <span>OTHER APPS</span>
+  </button>
+
+</div>
     `;
 
    grid.appendChild(lot);
