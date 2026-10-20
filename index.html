@@ -12131,11 +12131,18 @@ font-size:10px;
   </button>
 
   <button type="button"
-    onclick="shareCreatorPreviewFacebook(${i})"
-    style="background:#1877f2;color:white;">
-    <span class="shareIcon">ⓕ</span>
-    <span>FACEBOOK</span>
-  </button>
+  onclick="shareCreatorPreviewFacebook(${i})"
+  title="Share on Facebook"
+  aria-label="Share on Facebook"
+  style="background:#1877f2;color:white;">
+
+  <span class="shareIcon">
+    <img src="https://cdn.jsdelivr.net/npm/simple-icons@v15/icons/facebook.svg"
+         alt=""
+         style="width:16px;height:16px;filter:brightness(0) invert(1);">
+  </span>
+
+</button>
 
   <button type="button"
     onclick="shareCreatorPreviewOther(${i})"
