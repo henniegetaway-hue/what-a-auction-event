@@ -1199,7 +1199,31 @@ th,td{
     border:1px solid #ffad42 !important;
     font-weight:900 !important;
   }
-}        
+}   
+  /* PHONE ONLY — CLIVIA SELLER LOAD PAGE */
+@media (max-width:600px){
+
+  #pageSellerLoad #sellerLoadGrid{
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) !important;
+    gap:12px !important;
+    width:100% !important;
+    min-width:0 !important;
+  }
+
+  #pageSellerLoad #sellerLotForm,
+  #pageSellerLoad #sellerRightColumn{
+    width:100% !important;
+    min-width:0 !important;
+    max-width:100% !important;
+    box-sizing:border-box !important;
+  }
+
+  #pageSellerLoad .panel{
+    box-sizing:border-box !important;
+    max-width:100% !important;
+  }
+}      
   </style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
  <script>
