@@ -7453,22 +7453,28 @@ if(newAccountButton){
   });
 }
 
-  async function showRegisteredBidder(){
+  
+async function showRegisteredBidder(){
 
   // Open the existing account login form
   const loginBox =
     document.getElementById("bidderLoginBox");
 
-if(loginBox){
-  loginBox.style.display = "block";
-}
+  const registrationForm =
+    document.getElementById("newBidderRegistration");
+
+  if(loginBox){
+    loginBox.style.display = "block";
+  }
 
   if(registrationForm){
     registrationForm.style.display = "none";
   }
 
   return;
-}
+
+  // Existing account code continues below
+
 
  
    const forgotChoiceRow = document.getElementById("bidderForgotChoiceRow");
