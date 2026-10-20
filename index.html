@@ -1042,7 +1042,41 @@ th,td{
     white-space:nowrap !important;
     text-align:center !important;
   }
-}      
+}   
+   /* PHONE ONLY — CREATOR AUCTION CARD FULL SCREEN */
+@media (max-width:600px){
+
+  #ownAuctionDisplay .ownAuctionLotCard.phoneLotExpanded{
+    position:fixed !important;
+    inset:0 !important;
+    width:100vw !important;
+    max-width:none !important;
+    height:100dvh !important;
+    min-height:100dvh !important;
+    z-index:99999 !important;
+    overflow-y:auto !important;
+    padding:20px !important;
+    margin:0 !important;
+    box-sizing:border-box !important;
+    background:#101a12 !important;
+    border:2px solid #9acd32 !important;
+    border-radius:0 !important;
+    cursor:pointer;
+  }
+
+  #ownAuctionDisplay .phoneLotExpanded .auctionPhotoViewer{
+    height:45vh !important;
+  }
+
+  #ownAuctionDisplay .phoneLotExpanded h3{
+    font-size:24px !important;
+  }
+
+  #ownAuctionDisplay .phoneLotExpanded p{
+    font-size:16px !important;
+  }
+
+}     
   </style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
  <script>
@@ -4120,7 +4154,7 @@ card.style.minWidth = "0";
  <div class="auctionPhotoViewer"
      data-lot="${originalLotNumber}"
      data-photo="0"
-     onclick="nextAuctionLotPhoto(this)"
+     onclick="if(window.innerWidth > 600){nextAuctionLotPhoto(this)}"
      onmousemove="moveAuctionLotPhoto(event, this)"
      style="
        height:180px;
@@ -4169,11 +4203,6 @@ ${!lot.name && !Number(lot.startingBid) ? `
 
     // Only activate on phone screens
     if(window.innerWidth > 600){
-      return;
-    }
-
-    // Don't enlarge when tapping the photo to change photos
-    if(event.target.closest(".auctionPhotoViewer")){
       return;
     }
 
