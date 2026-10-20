@@ -1150,6 +1150,47 @@ th,td{
     box-sizing:border-box !important;
   }
 }     
+      /* PHONE ONLY — CLIVIA PLANT PREVIEW */
+#openPlantPreviewBtn,
+#closePlantPreviewBtn{
+  display:none;
+}
+
+@media(max-width:600px){
+
+  #openPlantPreviewBtn{
+    display:block;
+    width:100%;
+    margin:12px 0;
+  }
+
+  #sellerLivePreviewPanel{
+    display:none !important;
+  }
+
+  #sellerLivePreviewPanel.plantPreviewOpen{
+    display:block !important;
+    position:fixed !important;
+    inset:0 !important;
+    width:100vw !important;
+    height:100dvh !important;
+    max-width:none !important;
+    overflow-y:auto !important;
+    box-sizing:border-box !important;
+    z-index:99999 !important;
+    margin:0 !important;
+    padding:15px !important;
+  }
+
+  #closePlantPreviewBtn{
+    display:block;
+    width:100%;
+    margin-bottom:15px;
+    position:sticky;
+    top:0;
+    z-index:10;
+  }
+}  
   </style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
  <script>
@@ -1218,7 +1259,19 @@ auctionSupabase.auth.onAuthStateChange((event, session) => {
 
 });    
 </script>     
-      
+   <script>
+function openPlantPreview(){
+  if(window.innerWidth > 600) return;
+
+  document.getElementById("sellerLivePreviewPanel")
+    ?.classList.add("plantPreviewOpen");
+}
+
+function closePlantPreview(){
+  document.getElementById("sellerLivePreviewPanel")
+    ?.classList.remove("plantPreviewOpen");
+}
+</script>   
 </head>
 
 <body id="siteBody">
@@ -3471,6 +3524,13 @@ justify-content:center;
 
 <div id="sellerLotMsg" class="small" style="margin-top:10px;"></div>
 
+<button type="button"
+        id="openPlantPreviewBtn"
+        class="goldBtn"
+        onclick="openPlantPreview()">
+  VIEW PLANT PREVIEW
+</button>
+
 </div>
 </div>
 
@@ -3479,6 +3539,14 @@ justify-content:center;
      style="display:flex;flex-direction:column;gap:16px;min-width:0;">
 
   <div id="sellerLivePreviewPanel" class="panel">
+
+    <button type="button"
+            id="closePlantPreviewBtn"
+            class="goldBtn"
+            onclick="closePlantPreview()">
+      ✕ CLOSE PREVIEW
+    </button>
+
     <h2 style="text-align:center;">🌸 LIVE PLANT PREVIEW</h2>
 
     <div id="sellerLivePreviewCard" style="
