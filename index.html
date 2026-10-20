@@ -957,6 +957,29 @@ th,td{
     line-height:1.25 !important;
   }
 
+}   
+   /* PHONE ONLY — BEST 10 CARDS ONE BELOW ANOTHER */
+@media (max-width:600px){
+
+  #ownBest10Display{
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) !important;
+    gap:16px !important;
+    width:100% !important;
+  }
+
+  #ownBest10Left,
+  #ownBest10Right{
+    width:100% !important;
+    min-width:0 !important;
+    max-width:100% !important;
+  }
+
+  #pageOwnBest10 .panel{
+    min-width:0 !important;
+    box-sizing:border-box;
+  }
+
 }     
   </style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
