@@ -12865,6 +12865,27 @@ function shareSellerPreviewWhatsApp() {
     "noopener,noreferrer"
   );
 }
+  function openCreatorPreview(){
+  if(window.innerWidth > 600) return;
+
+  if(typeof updateOwnEventPreview === "function"){
+    updateOwnEventPreview();
+  }
+
+  const panel = document.getElementById("ownEventPreviewPanel");
+
+  if(!panel){
+    alert("Auction preview panel not found.");
+    return;
+  }
+
+  panel.classList.add("creatorPreviewOpen");
+}
+
+function closeCreatorPreview(){
+  document.getElementById("ownEventPreviewPanel")
+    ?.classList.remove("creatorPreviewOpen");
+}    
 </script>
 
 <!-- CLIVIA DREAMERS UNSOLD PLANTS RULES -->
