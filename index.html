@@ -1127,6 +1127,29 @@ th,td{
     animation:none;
   }
 }     
+   /* PHONE ONLY — CREATOR AUCTION LOTS */
+@media (max-width:600px){
+
+  #previewLotsGrid{
+    display:grid !important;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:8px !important;
+  }
+
+  #previewLotsGrid .previewSampleLot{
+    width:100% !important;
+    min-width:0 !important;
+    padding:6px !important;
+    box-sizing:border-box !important;
+  }
+
+  #previewLotsGrid .previewSampleLot input,
+  #previewLotsGrid .previewSampleLot button{
+    min-width:0 !important;
+    max-width:100% !important;
+    box-sizing:border-box !important;
+  }
+}     
   </style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
  <script>
