@@ -1256,6 +1256,48 @@ th,td{
     grid-template-columns:1fr;
   }
 }     
+  /* DESKTOP ONLY — SMALL ROUND SHARE BUTTONS */
+@media(min-width:601px){
+
+  .plantShareRow{
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
+    gap:10px !important;
+  }
+
+  .plantShareRow button{
+    width:55px !important;
+    height:55px !important;
+    min-width:55px !important;
+    flex:0 0 55px !important;
+    aspect-ratio:auto !important;
+    border-radius:50% !important;
+    padding:3px !important;
+
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:2px !important;
+
+    font-size:7px !important;
+    line-height:1 !important;
+    text-align:center !important;
+    box-sizing:border-box !important;
+    overflow:hidden !important;
+  }
+
+  .plantShareRow .shareIcon{
+    font-size:16px !important;
+    line-height:1 !important;
+  }
+
+  .plantShareRow button span:last-child{
+    font-size:6px !important;
+    overflow-wrap:anywhere;
+  }
+}      
   </style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
  <script>
