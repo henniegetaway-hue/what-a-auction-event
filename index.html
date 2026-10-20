@@ -3968,16 +3968,14 @@ document.querySelectorAll("nav button").forEach(x=>{
     if(page) page.classList.remove("hidden");
   if(btn) btn.classList.add("active");
 
-  // Update OPEN / CLOSED labels
+    // Restore normal navigation button labels
   document.querySelectorAll("nav button").forEach(button => {
-    if(!button.dataset.originalLabel){
-      button.dataset.originalLabel =
+    if(button.dataset.originalLabel){
+      button.textContent = button.dataset.originalLabel;
+    } else {
+      button.textContent =
         button.textContent.trim().replace(/\s+[—-]\s+(OPEN|CLOSED)$/, "");
     }
-
-    button.textContent =
-      button.dataset.originalLabel +
-      (button === btn ? " — OPEN" : " — CLOSED");
   });
 
   await loadMyAuctions();;
