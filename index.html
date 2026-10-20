@@ -4986,6 +4986,10 @@ function setCliviaSEO(){
 
  
 function showPage(page){
+      
+      if(page === "register"){
+  updateRegistrationAccountButtons();
+}
 
   // Lock bidder account when leaving registration page
   if(page !== "register"){
