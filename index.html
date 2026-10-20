@@ -1077,6 +1077,56 @@ th,td{
   }
 
 }     
+   /* FOUR MOVING HEARTS */
+.dreamHearts{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:8px;
+}
+
+.dreamHearts span{
+  display:inline-block;
+  line-height:1;
+  transform-origin:center;
+  animation:dreamHeartbeat 1.8s ease-in-out infinite;
+}
+
+/* TWO LARGE OUTSIDE HEARTS */
+.dreamHearts span:nth-child(1),
+.dreamHearts span:nth-child(4){
+  font-size:27px !important;
+}
+
+/* TWO SMALL MIDDLE HEARTS */
+.dreamHearts span:nth-child(2),
+.dreamHearts span:nth-child(3){
+  font-size:12px !important;
+}
+
+.dreamHearts span:nth-child(2){
+  animation-delay:.2s;
+}
+
+.dreamHearts span:nth-child(3){
+  animation-delay:.4s;
+}
+
+.dreamHearts span:nth-child(4){
+  animation-delay:.6s;
+}
+
+@keyframes dreamHeartbeat{
+  0%,100%{transform:scale(1);}
+  25%{transform:scale(1.2);}
+  50%{transform:scale(1);}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .dreamHearts span{
+    animation:none;
+  }
+}     
   </style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
  <script>
