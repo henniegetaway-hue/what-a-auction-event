@@ -1465,8 +1465,17 @@ auctionSupabase.auth.onAuthStateChange((event, session) => {
 
 <div class="small" style="margin-top:5px;">
   Each auction row contains 4 lot spaces.
-</div>  
-      <label>Choose Your Auction Page Background Color</label>
+</div>
+
+<!-- PHONE ONLY — AUCTION PREVIEW BUTTON -->
+<button type="button"
+        id="openCreatorPreviewBtn"
+        class="goldBtn"
+        onclick="openCreatorPreview()">
+  VIEW AUCTION PREVIEW
+</button>
+
+<label>Choose Your Auction Page Background Color</label>
 <input id="ownEventBgColor"
        type="color"
        value="#000000"
@@ -1625,14 +1634,6 @@ By ticking “I ACCEPT THE EVENT RULES &amp; TERMS”, the Event Creator confirm
     </button>
 
   </div>
-
-  <!-- PHONE ONLY — OPEN AUCTION PREVIEW -->
-<button type="button"
-        id="openCreatorPreviewBtn"
-        class="goldBtn"
-        onclick="openCreatorPreview()">
-  VIEW AUCTION PREVIEW
-</button>
 
 <!-- RIGHT SIDE: LIVE AUCTION PAGE PREVIEW -->
 <div class="panel" id="ownEventPreviewPanel">
