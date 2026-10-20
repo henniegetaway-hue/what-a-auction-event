@@ -3549,7 +3549,15 @@ justify-content:center;
        min="200"
        step="50"
        placeholder="Select a Starting Bid Row first">
-        <h3 style="margin-top:22px;">3. Confirm & Publish</h3>
+        <!-- PHONE ONLY — PLANT CARD PREVIEW -->
+<button type="button"
+        id="openPlantPreviewBtn"
+        class="goldBtn"
+        onclick="openPlantPreview()">
+  VIEW LOT / PLANT CARD
+</button>
+
+<h3 style="margin-top:22px;">3. Confirm & Publish</h3>
 
 <label style="display:flex;align-items:center;gap:8px;margin:12px 0;">
   <input id="sellerLotTerms"
@@ -3565,13 +3573,6 @@ justify-content:center;
 </div>
 
 <div id="sellerLotMsg" class="small" style="margin-top:10px;"></div>
-
-<button type="button"
-        id="openPlantPreviewBtn"
-        class="goldBtn"
-        onclick="openPlantPreview()">
-  VIEW LOT / PLANT CARD
-</button>
 
 </div>
 </div>
