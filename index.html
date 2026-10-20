@@ -1356,14 +1356,17 @@ th,td{
 body:has(#cliviaCarryForwardFooter) {
   /* Do not change the main page background */
 }   
- /* DESKTOP — MATCH MAIN NAVIGATION TEXT */
+ /* DESKTOP — MATCH MAIN NAVIGATION TABS */
 @media (min-width:901px){
   #navOwnEvent,
   #navOwnAuction,
-  #navOwnBest10 {
+  #navOwnBest10,
+  #navOwnEvent *,
+  #navOwnAuction *,
+  #navOwnBest10 *{
     font-size:16px !important;
     font-weight:700 !important;
-    color:#000 !important;
+    color:#fff !important;
   }
 }
   </style>
