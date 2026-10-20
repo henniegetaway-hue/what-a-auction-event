@@ -1350,7 +1350,18 @@ th,td{
   background:
     linear-gradient(#101b12,#101b12) padding-box,
     linear-gradient(to bottom,#ff7900 0%,#ff7900 30%,#9acd32 70%,#9acd32 100%) border-box !important;
-}      
+}    
+ /* SOLID BLACK BACKGROUND BEHIND FOOTER NOTICES */
+#cliviaCarryForwardFooter{
+  background:
+    linear-gradient(#101b12,#101b12) padding-box,
+    linear-gradient(to bottom,#ff7900 0%,#9acd32 100%) border-box !important;
+}
+
+/* BLACK BACKGROUND BEHIND THE UNSOLD NOTICE */
+body:has(#cliviaCarryForwardFooter) {
+  /* Do not change the main page background */
+}       
   </style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
  <script>
