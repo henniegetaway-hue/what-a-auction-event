@@ -1033,6 +1033,16 @@ th,td{
   }
 
 }     
+  /* PHONE ONLY — AUCTION CREATOR DASHBOARD */
+@media (max-width:600px) {
+  #creatorDashboardHeading {
+    font-size:12px !important;
+    line-height:1.2 !important;
+    letter-spacing:-0.5px !important;
+    white-space:nowrap !important;
+    text-align:center !important;
+  }
+}      
   </style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
  <script>
@@ -1642,7 +1652,7 @@ color:#fff;
        style="max-width:180px;max-height:100px;object-fit:contain;">
 </div>
     
-<h2>AUCTION CREATOR DASHBOARD</h2>
+<h2 id="creatorDashboardHeading">AUCTION CREATOR DASHBOARD</h2>
 
 <p class="small">
   Manage your saved auctions, create new auctions
