@@ -13148,7 +13148,292 @@ function showAuctionInvoices() {
   `;
 }
 
+
 function showTestBidderInvoice() {
+  const box = document.getElementById("invoiceList");
+  if (!box) return;
+
+  // Isolated TEST ONLY data. No real auction records are changed.
+  const test = {
+    bidderPaid: false,
+    sellerReceived: false,
+    delivery: "",
+    dispatched: false,
+    history: ["TEST invoice and seller statement opened"]
+  };
+
+  const logo = "WHAT-A-AUCTION-LOGO.png";
+
+  const paperStyle = `
+    background:#fff !important;
+    color:#000 !important;
+    padding:24px;
+    max-width:750px;
+    margin:20px auto;
+    border:2px solid #000;
+    border-radius:8px;
+    font-family:Arial,sans-serif;
+    line-height:1.6;
+  `;
+
+  const heading = title => `
+    <div style="text-align:center;">
+      <img src="${logo}"
+           alt="What A Auction Event Hammer Logo"
+           style="width:145px;height:115px;object-fit:contain;">
+      <h2>WHAT A AUCTION EVENT</h2>
+      <h3>${title}</h3>
+      <p><strong>TEST ONLY — NOT FOR PAYMENT</strong></p>
+    </div>
+    <hr>
+  `;
+
+  box.innerHTML = `
+    <div id="testBuyerInvoice" style="${paperStyle}">
+      ${heading("WINNING BIDDER INVOICE")}
+
+      <h3>INVOICE DETAILS</h3>
+      <p><strong>Invoice:</strong> TEST-BUYER-001</p>
+      <p><strong>Auction:</strong> Clivia Dreamers Auction</p>
+      <p><strong>Winning Bidder:</strong> Example Bidder</p>
+      <p><strong>Bidder Email:</strong> bidder@example.com</p>
+      <p><strong>Seller:</strong> Example Seller</p>
+      <p><strong>Lot:</strong> 001</p>
+      <p><strong>Description:</strong> Clivia Plant</p>
+      <p><strong>Winning Bid:</strong> R500.00</p>
+      <h2>TOTAL PAYABLE: R500.00</h2>
+
+      <hr>
+
+      <h3>SELLER PAYMENT DETAILS</h3>
+      <p>Pay the seller directly.</p>
+      <p><strong>Bank:</strong> TEST BANK</p>
+      <p><strong>Account Holder:</strong> TEST SELLER</p>
+      <p><strong>Account Number:</strong> TEST ONLY</p>
+      <p><strong>Reference:</strong> TEST-BUYER-001</p>
+
+      <hr>
+
+      <h3>BIDDER PAYMENT COMMUNICATION</h3>
+      <p id="testBuyerPaymentStatus">Awaiting payment</p>
+      <button type="button" id="testBidderPaidBtn">
+        TEST — BIDDER CONFIRM PAYMENT MADE
+      </button>
+
+      <p id="testBuyerSellerStatus">
+        Seller has not confirmed receipt.
+      </p>
+
+      <hr>
+
+      <h3>DELIVERY SELECTION</h3>
+      <p>Winning bidder chooses the delivery method.</p>
+
+      <select id="testDeliveryChoice">
+        <option value="">SELECT DELIVERY METHOD</option>
+        <option value="Collection">Collection</option>
+        <option value="Courier Guy">Courier Guy</option>
+        <option value="PostNet">PostNet</option>
+        <option value="Other courier">Other courier</option>
+      </select>
+
+      <p id="testBuyerDeliveryStatus">
+        Delivery method not selected.
+      </p>
+
+      <p id="testBuyerDispatchStatus">
+        Seller has not confirmed dispatch.
+      </p>
+
+      <hr>
+      <h3>TRANSACTION HISTORY</h3>
+      <div id="testBuyerHistory"></div>
+
+      <hr>
+      <p><strong>TEST ONLY — NO REAL PAYMENT.</strong></p>
+    </div>
+
+    <div id="testSellerInvoice" style="${paperStyle}">
+      ${heading("SELLER TRANSACTION STATEMENT")}
+
+      <h3>TRANSACTION DETAILS</h3>
+      <p><strong>Statement:</strong> TEST-SELLER-001</p>
+      <p><strong>Auction:</strong> Clivia Dreamers Auction</p>
+      <p><strong>Seller:</strong> Example Seller</p>
+      <p><strong>Winning Bidder:</strong> Example Bidder</p>
+      <p><strong>Bidder Email:</strong> bidder@example.com</p>
+      <p><strong>Lot:</strong> 001</p>
+      <p><strong>Description:</strong> Clivia Plant</p>
+      <h2>SALE AMOUNT: R500.00</h2>
+
+      <hr>
+
+      <h3>SELLER PAYMENT COMMUNICATION</h3>
+      <p id="testSellerBidderStatus">
+        Bidder has not confirmed payment.
+      </p>
+
+      <p id="testSellerPaymentStatus">
+        Payment receipt not confirmed.
+      </p>
+
+      <button type="button" id="testSellerReceivedBtn">
+        TEST — SELLER CONFIRM PAYMENT RECEIVED
+      </button>
+
+      <hr>
+
+      <h3>DELIVERY COMMUNICATION</h3>
+      <p id="testSellerDeliveryChoice">
+        Bidder has not selected delivery.
+      </p>
+
+      <p id="testSellerDispatchStatus">
+        Dispatch not confirmed.
+      </p>
+
+      <button type="button" id="testSellerDispatchBtn">
+        TEST — SELLER CONFIRM DISPATCH
+      </button>
+
+      <hr>
+
+      <h3>TRANSACTION HISTORY</h3>
+      <div id="testSellerHistory"></div>
+
+      <hr>
+      <p><strong>TEST ONLY — NO REAL TRANSACTION.</strong></p>
+    </div>
+
+    <div style="text-align:center;margin:20px;">
+      <button type="button" id="testInvoiceBackBtn">
+        BACK TO INVOICES
+      </button>
+    </div>
+  `;
+
+  const get = id => box.querySelector("#" + id);
+
+  function updateTestInvoices() {
+    get("testBuyerPaymentStatus").textContent =
+      test.bidderPaid
+        ? "Bidder reports payment made — awaiting seller verification"
+        : "Awaiting payment";
+
+    get("testSellerBidderStatus").textContent =
+      test.bidderPaid
+        ? "Bidder reports payment made"
+        : "Bidder has not confirmed payment";
+
+    get("testSellerPaymentStatus").textContent =
+      test.sellerReceived
+        ? "Seller confirmed funds received"
+        : "Payment receipt not confirmed";
+
+    get("testBuyerSellerStatus").textContent =
+      test.sellerReceived
+        ? "Seller confirmed payment received"
+        : "Seller has not confirmed receipt";
+
+    get("testBuyerDeliveryStatus").textContent =
+      test.delivery
+        ? "Selected delivery: " + test.delivery
+        : "Delivery method not selected";
+
+    get("testSellerDeliveryChoice").textContent =
+      test.delivery
+        ? "Bidder selected: " + test.delivery
+        : "Bidder has not selected delivery";
+
+    const dispatchText = test.dispatched
+      ? "Seller confirmed dispatch / handover"
+      : "Dispatch not confirmed";
+
+    get("testBuyerDispatchStatus").textContent = dispatchText;
+    get("testSellerDispatchStatus").textContent = dispatchText;
+
+    // Confirmation order: bidder first, seller second.
+    get("testSellerReceivedBtn").disabled = !test.bidderPaid;
+    get("testSellerDispatchBtn").disabled =
+      !test.sellerReceived || !test.delivery;
+
+    get("testBidderPaidBtn").disabled = test.bidderPaid;
+
+    get("testSellerReceivedBtn").disabled =
+      !test.bidderPaid || test.sellerReceived;
+
+    get("testSellerDispatchBtn").disabled =
+      !test.sellerReceived || !test.delivery || test.dispatched;
+
+    const history = document.createElement("div");
+
+    test.history.forEach(entry => {
+      const p = document.createElement("p");
+      p.textContent = entry;
+      history.appendChild(p);
+    });
+
+    get("testBuyerHistory").replaceChildren(history.cloneNode(true));
+    get("testSellerHistory").replaceChildren(history);
+
+    // Force invoice writing to black; do not recolour the logo.
+    box.querySelectorAll(
+      "#testBuyerInvoice *, #testSellerInvoice *"
+    ).forEach(el => {
+      if (el.tagName !== "IMG") {
+        el.style.setProperty("color", "#000", "important");
+      }
+    });
+  }
+
+  get("testBidderPaidBtn").addEventListener("click", () => {
+    test.bidderPaid = true;
+    test.history.push(
+      "TEST: Bidder reported payment made. Seller notified on preview."
+    );
+    updateTestInvoices();
+  });
+
+  get("testSellerReceivedBtn").addEventListener("click", () => {
+    if (!test.bidderPaid) return;
+    test.sellerReceived = true;
+    test.history.push(
+      "TEST: Seller confirmed payment received. Bidder status updated."
+    );
+    updateTestInvoices();
+  });
+
+  get("testDeliveryChoice").addEventListener("change", event => {
+    test.delivery = event.target.value;
+    test.dispatched = false;
+
+    if (test.delivery) {
+      test.history.push(
+        "TEST: Bidder selected " + test.delivery +
+        ". Seller delivery status updated."
+      );
+    }
+
+    updateTestInvoices();
+  });
+
+  get("testSellerDispatchBtn").addEventListener("click", () => {
+    if (!test.sellerReceived || !test.delivery) return;
+
+    test.dispatched = true;
+    test.history.push(
+      "TEST: Seller confirmed dispatch / handover. Bidder status updated."
+    );
+    updateTestInvoices();
+  });
+
+  get("testInvoiceBackBtn").addEventListener("click", () => {
+    showAuctionInvoices();
+  });
+
+  updateTestInvoices();
+}
+
   const box = document.getElementById("invoiceList");
   if (!box) return;
 
