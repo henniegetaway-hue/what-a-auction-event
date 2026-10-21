@@ -13433,63 +13433,6 @@ function showTestBidderInvoice() {
 
   updateTestInvoices();
 }
-
-  const box = document.getElementById("invoiceList");
-  if (!box) return;
-
-  box.innerHTML = `
-      <div style="
-  background:#fff;
-  color:#000;
-  padding:24px;
-  max-width:650px;
-  margin:20px auto;
-  border:2px solid #000;
-  border-radius:10px;
-">
-
-    <div style="text-align:center;margin-bottom:15px;">
-  <img
-    src="WHAT-A-AUCTION-LOGO.png"
-    alt="What A Auction Event Hammer Logo"
-    style="width:145px;height:115px;object-fit:contain;"
-  >
-</div>
-
-<h2 style="text-align:center;">WHAT A AUCTION EVENT</h2>
-<h3 style="text-align:center;">TEST INVOICE PREVIEW</h3>
-
-      <p style="color:#b00020;text-align:center;font-weight:bold;">
-        TEST ONLY — NOT FOR PAYMENT
-      </p>
-
-      <hr>
-
-      <p><strong>Invoice:</strong> TEST-001</p>
-      <p><strong>Auction:</strong> Clivia Dreamers Auction</p>
-      <p><strong>Winning Bidder:</strong> Example Bidder</p>
-      <p><strong>Seller:</strong> Example Seller</p>
-
-      <hr>
-
-      <p><strong>Lot:</strong> 001</p>
-      <p><strong>Description:</strong> Clivia Plant</p>
-      <p><strong>Winning Bid:</strong> R500.00</p>
-
-      <hr>
-
-      <h3>Total: R500.00</h3>
-
-      <p><strong>Payment:</strong> Pay the seller directly.</p>
-      <p><strong>Banking Details:</strong> TEST DETAILS ONLY</p>
-      <p><strong>Delivery:</strong> To be confirmed by winning bidder.</p>
-
-      <hr>
-
-      <p style="color:#b00020;font-weight:bold;">
-        THIS IS A SAMPLE ONLY. DO NOT MAKE PAYMENT.
-      </p>
-
       <button onclick="showAuctionInvoices()">
         BACK TO INVOICES
       </button>
