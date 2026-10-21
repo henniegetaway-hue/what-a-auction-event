@@ -13134,13 +13134,67 @@ async function loadCentralInvoices(){
     "<p>Winning bidder invoices will appear here after the auction closes.</p>";
 }
 
-function showSellerPayments() {
+function showAuctionInvoices() {
   const box = document.getElementById("invoiceList");
   if (!box) return;
 
-  box.innerHTML =
-    "<h3>Seller Payments</h3>" +
-    "<p>Seller payment confirmations will appear here.</p>";
+  box.innerHTML = `
+    <h3>Buyer Invoices</h3>
+    <p>Winning bidder invoices will appear here after the auction closes.</p>
+
+    <button class="goldBtn" onclick="showTestBidderInvoice()">
+      VIEW TEST INVOICE
+    </button>
+  `;
+}
+
+function showTestBidderInvoice() {
+  const box = document.getElementById("invoiceList");
+  if (!box) return;
+
+  box.innerHTML = `
+    <div style="background:white;color:#222;padding:24px;
+                max-width:650px;margin:20px auto;border:2px solid #333;">
+
+      <h2 style="text-align:center;">WHAT A AUCTION EVENT</h2>
+      <h3 style="text-align:center;">TEST INVOICE PREVIEW</h3>
+
+      <p style="color:#b00020;text-align:center;font-weight:bold;">
+        TEST ONLY — NOT FOR PAYMENT
+      </p>
+
+      <hr>
+
+      <p><strong>Invoice:</strong> TEST-001</p>
+      <p><strong>Auction:</strong> Clivia Dreamers Auction</p>
+      <p><strong>Winning Bidder:</strong> Example Bidder</p>
+      <p><strong>Seller:</strong> Example Seller</p>
+
+      <hr>
+
+      <p><strong>Lot:</strong> 001</p>
+      <p><strong>Description:</strong> Clivia Plant</p>
+      <p><strong>Winning Bid:</strong> R500.00</p>
+
+      <hr>
+
+      <h3>Total: R500.00</h3>
+
+      <p><strong>Payment:</strong> Pay the seller directly.</p>
+      <p><strong>Banking Details:</strong> TEST DETAILS ONLY</p>
+      <p><strong>Delivery:</strong> To be confirmed by winning bidder.</p>
+
+      <hr>
+
+      <p style="color:#b00020;font-weight:bold;">
+        THIS IS A SAMPLE ONLY. DO NOT MAKE PAYMENT.
+      </p>
+
+      <button onclick="showAuctionInvoices()">
+        BACK TO INVOICES
+      </button>
+    </div>
+  `;
 }
 
 
