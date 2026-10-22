@@ -1412,7 +1412,29 @@ body:has(#cliviaCarryForwardFooter) {
   /* CLIVIA DREAMERS — BLACK WHATSAPP LOGO */
 #pageSellerLoad .plantShareRow button:first-child img {
   filter: brightness(0) !important;
-}          
+}
+ 
+/* FORCE THREE SHARING BUTTONS TO BE ROUND */
+#pageSellerLoad .plantShareRow {
+  display: flex !important;
+  justify-content: center !important;
+  gap: 12px !important;
+}
+
+#pageSellerLoad .plantShareRow button {
+  width: 40px !important;
+  min-width: 40px !important;
+  max-width: 40px !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  flex: 0 0 40px !important;
+  border-radius: 50% !important;
+  padding: 4px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+       
   </style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
  <script>
