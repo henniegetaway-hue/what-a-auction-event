@@ -2163,7 +2163,21 @@ justify-content:center;
 
 <div id="bidderLoginBox" style="display:none;border:2px solid #ff9800;border-radius:12px;padding:15px;margin-top:12px;">
   <h3>MY CLIVIA DREAMERS ACCOUNT</h3>
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 14px;">
 
+  <button type="button" class="goldBtn"
+    style="background:#ff9800;color:#000;font-weight:bold;border:2px solid #e67e00;"
+    onclick="signInCliviaBidder()">
+    SIGN IN
+  </button>
+
+  <button type="button" class="accountBtn"
+    style="background:#ffeb3b;color:#000;font-weight:bold;border:2px solid #e6c800;"
+    onclick="sendBidderPasswordReset()">
+    FORGOT PASSWORD?
+  </button>
+
+</div>
   
 <input id="bidderLoginPassword"
        type="password"
@@ -2181,23 +2195,6 @@ justify-content:center;
          ">
   SHOW PASSWORD
 </label>
-
-
-  
-<button type="button" class="goldBtn"
-        style="background:#ff9800;color:#000;font-weight:bold;border:2px solid #e67e00;"
-        onclick="signInCliviaBidder()">
-
-    SIGN IN
-  </button>
-
-  
-<button type="button" class="accountBtn"
-        style="background:#ffeb3b;color:#000;font-weight:bold;border:2px solid #e6c800;"
-        onclick="sendBidderPasswordReset()">
-
-    FORGOT PASSWORD?
-  </button>
 
   <div id="bidderLoginMessage"
        class="small"
