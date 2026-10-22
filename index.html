@@ -4826,7 +4826,8 @@ function showOwnBest10Page(){
 const eventName =
   localStorage.getItem("ownEventName") ||
   "What A Auction Event";
-
+const displayEventName =
+  eventName.replace(/\b\w/g, letter => letter.toUpperCase());
 
 const eventType =
   document.getElementById("ownEventType")?.value.trim() ||
@@ -4838,7 +4839,7 @@ const displayEventType =
    
   if(seoBox){
   seoBox.innerHTML = `
-    <h3>${eventName.replace(/\b\w/g, letter => letter.toUpperCase())} — Every Auction Leaves a Story Behind</h3>
+   <h3>${displayEventName} — Every Auction Leaves a Story Behind</h3>
 
     <p>
       Discover the standout results from ${eventName}.
