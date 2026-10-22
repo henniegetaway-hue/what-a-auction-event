@@ -1,4 +1,4 @@
-<head>
+<head> 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title id="seoTitle">Clivia Dreamers Auction</title>
@@ -7653,138 +7653,45 @@ if(newAccountButton){
   
 async function showRegisteredBidder(){
 
-  // Open the existing account login form
   const loginBox =
     document.getElementById("bidderLoginBox");
 
   const registrationForm =
     document.getElementById("newBidderRegistration");
 
-  if(loginBox){
-    loginBox.style.display = "block";
-  }
+  const forgotChoiceRow =
+    document.getElementById("bidderForgotChoiceRow");
+
+  const forgotPasswordBox =
+    document.getElementById("bidderForgotPasswordBox");
 
   if(registrationForm){
     registrationForm.style.display = "none";
   }
 
- 
-   const forgotChoiceRow = document.getElementById("bidderForgotChoiceRow");
-const forgotPasswordBox = document.getElementById("bidderForgotPasswordBox");
-
-if(forgotChoiceRow){
-  forgotChoiceRow.style.display = "block";
-}
-
-if(forgotPasswordBox){
-  forgotPasswordBox.style.display = "none";
-}
-  
-  // Hide NEW ACCOUNT while opening ACCOUNT DETAILS
-if(registrationForm){
-  registrationForm.style.display = "none";
-}
-      
-  const enteredEmail = prompt(
-  "MY ACCOUNT\n\nPlease enter your registered email address:"
-);
-
-if(enteredEmail === null) return;
-
-if(!enteredEmail.trim()){
-  alert("Please enter your registered email address.");
-  return;
-}
-
-const enteredPassword = prompt(
-  "MY ACCOUNT\n\nPlease enter your account password:"
-);
-
-  if(enteredPassword===null){
-    return;
+  if(forgotChoiceRow){
+    forgotChoiceRow.style.display = "block";
   }
 
-  const { data: loginData, error: loginError } =
-  await cliviaSupabase.auth.signInWithPassword({
-  email: enteredEmail.trim().toLowerCase(),
-  password: enteredPassword
-});
+  if(forgotPasswordBox){
+    forgotPasswordBox.style.display = "none";
+  }
 
-if(loginError || !loginData?.user){
-  alert(
-    "Login failed.\n\n" +
-    (loginError?.message || "No user returned by Supabase.")
-  );
-  return;
-}
-
-if(loginData.user.email_confirmed_at === null){
-  alert("Please confirm your email before accessing your account.");
-  await cliviaSupabase.auth.signOut();
-  return;
-}
-
-await refreshBidderSelect();
-
-const bidder = (state.bidders || []).find(
-  b => b.authUserId === loginData.user.id
-);
-
-if(!bidder){
-  alert(
-    "Login succeeded, but your bidder account could not be loaded.\n\n" +
-    "Please contact support."
-  );
-  return;
-}
-
-  // Password verified — unlock bidder account
-  unlockBidderAccount();
-  state.selectedBidderId = bidder.id;
-     
-  const newRegistration=document.getElementById("newBidderRegistration");
-const accountSection=document.getElementById("registeredBidderSection");
-const bidderSelect=document.getElementById("bidderSelect");
-
-if(newRegistration){
-  newRegistration.style.display="none";
-}
-
-if(accountSection){
-  accountSection.style.display="block";
-  accountSection.classList.remove("hidden");
-}
- const accountDetailsBtn = document.getElementById("accountDetailsBtn");
-const forgotRow = document.getElementById("bidderForgotChoiceRow");
-
-if(accountDetailsBtn){
-  accountDetailsBtn.style.display = "none";
-}
-
-if(forgotRow){
-  forgotRow.style.display = "none";
-}       
-
-if(bidderSelect){
-  bidderSelect.value=bidder.id;
-}
-
-// Show seller option after account password is accepted
-const sellBtn = document.getElementById("bidderWantToSellBtn");
-
-if(sellBtn){
-  sellBtn.style.display = "block";
-}
-
-setTimeout(() => {
-  if(accountSection){
-    accountSection.scrollIntoView({
+  if(loginBox){
+    loginBox.style.display = "block";
+    loginBox.scrollIntoView({
       behavior: "smooth",
-      block: "start"
+      block: "center"
     });
   }
-}, 150);
 
+  const passwordField =
+    document.getElementById("bidderLoginPassword");
+
+  if(passwordField){
+    passwordField.value = "";
+    passwordField.focus();
+  }
 }
   function saveBidderAddressChange(){
    
