@@ -4827,10 +4827,15 @@ const eventName =
   localStorage.getItem("ownEventName") ||
   "What A Auction Event";
 
+
 const eventType =
   document.getElementById("ownEventType")?.value.trim() ||
   localStorage.getItem("ownEventType") ||
-  "online auction";   
+  "online auction";
+
+const displayEventType =
+  eventType.replace(/\b\w/g, letter => letter.toUpperCase());
+   
   if(seoBox){
   seoBox.innerHTML = `
     <h3>${eventName} — Every Auction Leaves a Story Behind</h3>
