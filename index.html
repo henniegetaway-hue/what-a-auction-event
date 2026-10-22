@@ -2144,73 +2144,78 @@ justify-content:center;
    <div class="panel" id="registrationMainPanel">
      <h2>Clivia Dreamers Registration</h2>
 
-<div style="display:flex;gap:24px;margin:12px 0;flex-wrap:wrap;justify-content:center;align-items:center;">
+<!-- TOP ACCOUNT BUTTONS -->
+<div style="display:flex;justify-content:center;align-items:center;gap:25px;flex-wrap:wrap;margin:15px 0 20px;">
 
   <button id="newBidderBtn"
           type="button"
           class="goldBtn"
+          style="width:150px;min-height:40px;"
           onclick="showNewBidderRegistration()">
     NEW ACCOUNT
   </button>
 
-<button id="accountDetailsBtn"
-        type="button"
-        class="accountBtn"
-        style="display:none;"
-        onclick="showRegisteredBidder()">
-  ACCOUNT DETAILS
-</button>
-
-<div id="bidderLoginBox" style="display:none;border:2px solid #ff9800;border-radius:12px;padding:15px;margin-top:12px;">
-  <h3>MY CLIVIA DREAMERS ACCOUNT</h3>
-<div style="display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 14px;">
-
-  <button type="button" class="goldBtn"
-    style="background:#ff9800;color:#000;font-weight:bold;border:2px solid #e67e00;"
-    onclick="signInCliviaBidder()">
-    SIGN IN
+  <button id="accountDetailsBtn"
+          type="button"
+          class="accountBtn"
+          style="display:none;width:150px;min-height:40px;"
+          onclick="showRegisteredBidder()">
+    ACCOUNT DETAILS
   </button>
 
-  <button type="button" class="accountBtn"
-    style="background:#ffeb3b;color:#000;font-weight:bold;border:2px solid #e6c800;"
-    onclick="sendBidderPasswordReset()">
-    FORGOT PASSWORD?
+  <button id="bidderWantToSellBtn"
+          type="button"
+          class="accountBtn"
+          style="display:none;width:150px;min-height:40px;background:#ffcc80;color:#111;"
+          onclick="becomeSellerFromBidder()">
+    I WANT TO SELL
   </button>
 
 </div>
-  
-<input id="bidderLoginPassword"
-       type="password"
-       autocomplete="new-password"
-       value=""
-       placeholder="Your account password">
 
-      
-<label style="display:flex;align-items:center;gap:8px;margin-top:8px;">
-  <input type="checkbox"
-         style="width:auto;"
-         onchange="
-           document.getElementById('bidderLoginPassword').type =
-           this.checked ? 'text' : 'password';
-         ">
-  SHOW PASSWORD
-</label>
+<!-- LOGIN BOX BELOW BUTTONS -->
+<div id="bidderLoginBox"
+     style="display:none;border:2px solid #ff9800;border-radius:12px;padding:15px;margin:15px auto;max-width:330px;">
+
+  <h3>MY CLIVIA DREAMERS ACCOUNT</h3>
+
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 14px;">
+
+    <button type="button"
+            class="goldBtn"
+            style="background:#ff9800;color:#000;font-weight:bold;border:2px solid #e67e00;"
+            onclick="signInCliviaBidder()">
+      SIGN IN
+    </button>
+
+    <button type="button"
+            class="accountBtn"
+            style="background:#ffeb3b;color:#000;font-weight:bold;border:2px solid #e6c800;"
+            onclick="sendBidderPasswordReset()">
+      FORGOT PASSWORD?
+    </button>
+
+  </div>
+
+  <input id="bidderLoginPassword"
+         type="password"
+         autocomplete="new-password"
+         value=""
+         placeholder="Your account password">
+
+  <label style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+    <input type="checkbox"
+           style="width:auto;"
+           onchange="document.getElementById('bidderLoginPassword').type=this.checked?'text':'password';">
+    SHOW PASSWORD
+  </label>
 
   <div id="bidderLoginMessage"
        class="small"
        role="status"
        style="margin-top:10px;"></div>
-</div>
 
 </div>
-
-<button id="bidderWantToSellBtn"
-        type="button"
-        class="accountBtn"
-        style="display:none;margin-top:10px;background:#ffcc80;color:#111;"
-       onclick="becomeSellerFromBidder()">
-  I WANT TO SELL
-</button>
 
 <div id="bidderForgotMsg"
      class="small"
