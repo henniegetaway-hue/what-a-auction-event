@@ -4838,7 +4838,7 @@ const displayEventType =
    
   if(seoBox){
   seoBox.innerHTML = `
-    <h3>${eventName} — Every Auction Leaves a Story Behind</h3>
+    <h3>${eventName.replace(/\b\w/g, letter => letter.toUpperCase())} — Every Auction Leaves a Story Behind</h3>
 
     <p>
       Discover the standout results from ${eventName}.
