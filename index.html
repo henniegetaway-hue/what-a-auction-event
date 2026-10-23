@@ -7488,7 +7488,7 @@ async function sendBidderPasswordReset(){
   );
 
   if(error){
-    alert("Password reset request failed. Please try again.");
+   alert("Password reset failed: " + error.message);
     return;
   }
 
