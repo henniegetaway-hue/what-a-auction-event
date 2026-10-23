@@ -10495,6 +10495,28 @@ checkCommissionReminders();
   }
 
   box.innerHTML=visibleInvoices.map(inv=>`
+  <div style="text-align:center;margin:12px 0 20px;">
+
+  <img src="WHAT-A-AUCTION-LOGO.png"
+       alt="What A Auction Event"
+       style="width:145px;height:115px;object-fit:contain;">
+
+  <div style="margin-top:8px;">
+    <a href="https://henniegetaway-hue.github.io/what-a-auction-event/"
+       target="_blank"
+       rel="noopener noreferrer"
+       style="display:inline-block;color:#003399;
+              border:2px solid #003399;
+              border-radius:6px;
+              padding:8px 14px;
+              text-decoration:underline;
+              font-weight:bold;
+              font-size:13px;">
+      VISIT WHAT A AUCTION EVENT WEBSITE
+    </a>
+  </div>
+
+</div>
     <div class="panel">
 
     ${inv.type==="PLATFORM_FEE"
@@ -13243,9 +13265,14 @@ function showTestBidderInvoice() {
 
   const heading = title => `
     <div style="text-align:center;">
-      <img src="${logo}"
-           alt="What A Auction Event Hammer Logo"
-           style="width:145px;height:115px;object-fit:contain;">
+     <div style="margin:8px 0 12px;">
+  <a href="https://henniegetaway-hue.github.io/what-a-auction-event/"
+     target="_blank"
+     rel="noopener noreferrer"
+     style="display:inline-block;color:#003399;border:2px solid #003399;border-radius:6px;padding:7px 12px;text-decoration:underline;font-weight:bold;font-size:13px;">
+    VISIT WHAT A AUCTION EVENT WEBSITE
+  </a>
+</div>
       <h2>WHAT A AUCTION EVENT</h2>
       <h3>${title}</h3>
       <p><strong>TEST ONLY — NOT FOR PAYMENT</strong></p>
