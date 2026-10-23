@@ -7647,7 +7647,7 @@ if(!email){
   if(loginError || !loginData?.user){
     if(msg){
       msg.textContent =
-        "Incorrect password or login failed. Please try again.";
+       loginError?.message || "Login failed. Please try again.";
     }
     return;
   }
