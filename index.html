@@ -13951,11 +13951,7 @@ function closeAuctionPromo(){
 }
 
 document.getElementById("auctionPromoVideo").addEventListener("ended",function(){
-  const promo=document.getElementById("auctionPromo");
-  promo.style.inset="auto 12px 12px auto";
-  promo.style.width="300px";
-  promo.style.background="transparent";
-  promo.style.display="block";
+  closeAuctionPromo();
 });
 </script>
 </body>
