@@ -12262,28 +12262,62 @@ function restoreCreatorAuctionLots(savedLots){
 
 }
      
-   function saveOwnEventLots(){
+  function saveOwnEventLots(){
 
   const grid = document.getElementById("previewLotsGrid");
-  if(!grid) return;
+  if(!grid) return false;
 
   const lots = [];
 
-  grid.querySelectorAll(".previewSampleLot").forEach((lot, index)=>{
+  const forbidden = [
+    /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i,
+    /(?:https?:\/\/|www\.)\S+/i,
+    /\b(?:\+?\d[\d\s().-]{7,}\d)\b/,
+    /\b(?:whatsapp|telegram|contact me|call me|email me|visit our website)\b/i,
+    /\b(?:advertisement|sponsored|special offer|buy direct|order now)\b/i
+  ];
+
+  const cards = [...grid.querySelectorAll(".previewSampleLot")];
+
+  for(const [index, lot] of cards.entries()){
+
+    const name = lot.querySelector(".ownLotName")?.value.trim() || "";
+    const description = lot.querySelector(".ownLotDescription")?.value.trim() || "";
+    const link = lot.querySelector(".ownLotLink")?.value.trim() || "";
+
+    const textToCheck = [name, description, link].join(" ");
+
+    if(forbidden.some(rule => rule.test(textToCheck))){
+      alert(
+        "LOT REJECTED — PROHIBITED CONTENT\n\n" +
+        "Lot " + (index + 1) +
+        " contains contact details, a link or advertising language.\n\n" +
+        "Please remove it before saving."
+      );
+      return false;
+    }
+
+    if(link){
+      alert(
+        "LOT REJECTED — LINKS NOT ALLOWED\n\n" +
+        "Remove the link from Lot " + (index + 1) + "."
+      );
+      return false;
+    }
 
     lots.push({
       lotNumber: index + 1,
-      name: lot.querySelector(".ownLotName")?.value.trim() || "",
+      name,
       startingBid: lot.querySelector(".ownLotStartingBid")?.value || "",
       increment: lot.querySelector(".ownLotMinimumIncrement")?.value || "",
-      description: lot.querySelector(".ownLotDescription")?.value.trim() || "",
-      link: lot.querySelector(".ownLotLink")?.value.trim() || ""
+      description,
+      link: ""
     });
-
-  });
+  }
 
   localStorage.setItem("ownEventLots", JSON.stringify(lots));
-}   
+  return true;
+}
    function shareCreatorPreviewLot(lotNumber){
 
   const lot = document.querySelectorAll(
