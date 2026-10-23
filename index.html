@@ -2163,13 +2163,35 @@ justify-content:center;
     ACCOUNT DETAILS
   </button>
 
-  <button id="bidderWantToSellBtn"
-          type="button"
-          class="accountBtn"
-          style="display:none;width:150px;min-height:40px;background:#ffcc80;color:#111;"
-          onclick="becomeSellerFromBidder()">
-   LOAD NOW
-  </button>
+ <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+
+  <div style="text-align:center;">
+    <button id="bidderWantToSellBtn"
+            type="button"
+            class="accountBtn"
+            style="display:none;width:150px;min-height:40px;background:#8bd14b;color:#111;"
+            onclick="becomeSellerFromBidder()">
+      LOAD HERE
+    </button>
+    <div style="font-size:12px;font-weight:bold;margin-top:5px;">
+      Clivia Auctions
+    </div>
+  </div>
+
+  <div style="text-align:center;">
+    <button id="creatorLoadHereBtn"
+            type="button"
+            class="accountBtn"
+            style="width:150px;min-height:40px;background:#ffcc80;color:#111;"
+            onclick="showOwnEventPage()">
+      LOAD HERE
+    </button>
+    <div style="font-size:12px;font-weight:bold;margin-top:5px;">
+      Create Your Own
+    </div>
+  </div>
+
+</div>
 
 </div>
 
