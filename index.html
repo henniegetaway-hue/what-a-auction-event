@@ -2197,7 +2197,7 @@ justify-content:center;
 
 <!-- LOGIN BOX BELOW BUTTONS -->
 <div id="bidderLoginBox"
-     style="display:none;border:2px solid #ff9800;border-radius:12px;padding:15px;margin:15px auto;max-width:330px;">
+     style="display:block;border:2px solid #ff9800;border-radius:12px;padding:15px;margin:15px auto;max-width:330px;">
 
   <h3>MY CLIVIA DREAMERS ACCOUNT</h3>
 
@@ -5376,8 +5376,10 @@ if(account){
   }
 }
 
-  }).catch(error=>{
+   }).catch(error=>{
     console.error("Account display error:", error);
+  }).finally(()=>{
+    updateRegistrationAccountButtons();
   });
 }   
   if(page==="admin") renderAdminLots();
@@ -7140,7 +7142,8 @@ function toggleBidderAuctionNotifications(){
     });
   }
 }
-  async function updateRegistrationAccountButtons(){
+  
+async function updateRegistrationAccountButtons(){
 
   const newButton =
     document.getElementById("newBidderBtn");
@@ -7148,11 +7151,15 @@ function toggleBidderAuctionNotifications(){
   const accountButton =
     document.getElementById("accountDetailsBtn");
 
-  if(!newButton || !accountButton) return;
+  const loginBox =
+    document.getElementById("bidderLoginBox");
 
-  // Hide account details until authentication is checked
+  if(!newButton || !accountButton || !loginBox) return;
+
+  // Default: visitors can browse, register or sign in.
   newButton.style.display = "inline-block";
   accountButton.style.display = "none";
+  loginBox.style.display = "block";
 
   try {
     const { data, error } =
@@ -7160,22 +7167,24 @@ function toggleBidderAuctionNotifications(){
 
     if(error || !data?.user) return;
 
-    const user = data.user;
-
     await refreshBidderSelect();
 
     const bidder = (state.bidders || []).find(
-      b => b.authUserId === user.id
+      b => b.authUserId === data.user.id
     );
 
     if(bidder){
+      // Existing authenticated member.
       newButton.style.display = "none";
       accountButton.style.display = "inline-block";
+      loginBox.style.display = "none";
     }
 
   } catch(err){
     console.error("Account recognition error:", err);
   }
+}
+
 }    
   function showNewBidderRegistration(){
    
@@ -7678,9 +7687,11 @@ if(newAccountButton){
   const loginBox =
     document.getElementById("bidderLoginBox");
 
-  if(loginBox) loginBox.style.display = "none";
+ if(loginBox) loginBox.style.display = "none";
 
-  if(msg) msg.textContent = "";
+await updateRegistrationAccountButtons();
+
+if(msg) msg.textContent = "";
 
   account?.scrollIntoView({
     behavior: "smooth",
@@ -8462,11 +8473,6 @@ if(info){
   b=>b.id===state.selectedBidderId
 );
 
-const newBidderBtn=document.getElementById("newBidderBtn");
-
-if(newBidderBtn){
-  newBidderBtn.style.display = "inline-block";
-} 
  const bidderForgotRow=document.getElementById("bidderForgotChoiceRow");
 
 if(bidderForgotRow){
@@ -10938,7 +10944,7 @@ if(state.selectedBidderId){
   }
 
 }else{
-  showPage("live");
+  showPage("register");
 }
    setTimeout(()=>{
   const hash = window.location.hash;
