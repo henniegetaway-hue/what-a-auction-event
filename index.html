@@ -7588,7 +7588,21 @@ async function signInCliviaBidder(){
   }
 
   
-const { data } = await cliviaSupabase.auth.getUser();
+let data;
+
+try {
+  const result = await cliviaSupabase.auth.getUser();
+  data = result.data;
+} catch(error) {
+  console.error("Clivia sign-in error:", error);
+
+  if(msg){
+    msg.textContent =
+      "Unable to connect to your account. Please try again.";
+  }
+
+  return;
+}
 
 
 let email =
