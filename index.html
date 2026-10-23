@@ -8955,6 +8955,42 @@ if(selectedRowCount>=8){
     "This starting bid row is FULL (8 plants). Please choose another available row.";
   return;
 }   
+ // CLIVIA SELLER LIMIT — NEW LOADS ONLY
+
+const upcomingAuctions = (state.auctions || [])
+  .filter(a => {
+    if (!a.auctionDate) return true;
+
+    const closeTime = a.auctionCloseTime || a.auctionTime || "23:59";
+    const closeDate = new Date(a.auctionDate + "T" + closeTime + ":00+02:00");
+
+    return closeDate.getTime() > Date.now();
+  })
+  .sort((a, b) => {
+    const dateA = (a.auctionDate || "9999-12-31") + "T" + (a.auctionTime || "23:59");
+    const dateB = (b.auctionDate || "9999-12-31") + "T" + (b.auctionTime || "23:59");
+    return dateA.localeCompare(dateB);
+  });
+
+const auctionPosition = upcomingAuctions.findIndex(a => a.id === auction.id);
+
+const maxNewLots = auctionPosition >= 0 && auctionPosition < 2 ? 2 : 1;
+
+const sellerNewLotsInRow = (state.lots || []).filter(lot =>
+  lot.auctionId === auction.id &&
+  lot.sellerId === sellerId &&
+  lot.startRow === startRow &&
+  lot.auctionAppearances === 1
+).length;
+
+if (sellerNewLotsInRow >= maxNewLots) {
+  document.getElementById("lotMsg").textContent =
+    "Seller limit reached. You may load only " +
+    maxNewLots +
+    " NEW plant(s) in this row for this auction. " +
+    "Automatically rolled-over plants do not count.";
+  return;
+}     
 const listingCurrency=auction && auction.currency==="EUR" ? "EUR" : "ZAR";
 const listingFee=listingCurrency==="EUR" ? 5 : 50;
    
