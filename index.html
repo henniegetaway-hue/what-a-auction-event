@@ -4515,6 +4515,7 @@ setOwnEventHeader();
       
 async function showOwnEventPage(){
   setOwnEventSEO();
+  sessionStorage.setItem("loadNowDestination", "CREATOR");    
   document.body.classList.add("ownEventMode");
    setOwnEventHeader();
    const { data: sessionData } =
