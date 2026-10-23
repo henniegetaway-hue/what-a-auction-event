@@ -13918,5 +13918,45 @@ END HIDDEN BANK VERIFICATION RULES -->
 </div>
    
 </footer>
+<!-- WHAT A AUCTION EVENT PROMOTIONAL VIDEO -->
+<div id="auctionPromo" style="
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.9);
+  z-index:99999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+">
+  <div style="position:relative;width:95%;max-width:1000px;">
+    <button onclick="closeAuctionPromo()" style="
+      position:absolute;right:5px;top:5px;
+      z-index:2;background:#ff6600;color:white;
+      border:0;padding:8px 14px;cursor:pointer;
+    ">✕ CLOSE</button>
+
+    <video id="auctionPromoVideo"
+           autoplay muted playsinline controls
+           style="width:100%;border:3px solid orange;">
+      <source src="what_a_auction_promo_faster.mp4"
+              type="video/mp4">
+    </video>
+  </div>
+</div>
+
+<script>
+function closeAuctionPromo(){
+  document.getElementById("auctionPromo").style.display="none";
+  document.getElementById("auctionPromoVideo").pause();
+}
+
+document.getElementById("auctionPromoVideo").addEventListener("ended",function(){
+  const promo=document.getElementById("auctionPromo");
+  promo.style.inset="auto 12px 12px auto";
+  promo.style.width="300px";
+  promo.style.background="transparent";
+  promo.style.display="block";
+});
+</script>
 </body>
 </html>      
