@@ -2867,6 +2867,45 @@ justify-content:center;
  </section>         
 
 <div id="adminArea" class="hidden">
+      <div class="panel" id="adminMemberMessagesPanel"
+     style="border:1px solid #9acd32;margin-bottom:18px;">
+
+  <h2 style="color:#9acd32;">MEMBER MESSAGES</h2>
+
+  <p class="small">
+    Send announcements to registered members.
+  </p>
+
+  <label>Send message to</label>
+  <select id="memberMessageRecipients">
+    <option value="ALL">All Registered Members</option>
+    <option value="BIDDERS">All Bidders</option>
+    <option value="SELLERS">All Sellers</option>
+    <option value="ONE">One Selected Member</option>
+  </select>
+
+  <label>Member Number (only for one member)</label>
+  <input id="memberMessageNumber"
+         placeholder="Enter bidder or seller number">
+
+  <label>Message subject</label>
+  <input id="memberMessageSubject"
+         placeholder="e.g. Next Auction Announcement">
+
+  <label>Your message</label>
+  <textarea id="memberMessageText" rows="5"
+            placeholder="Type your message here"></textarea>
+
+  <button class="goldBtn" type="button" disabled
+          title="Messaging will be enabled after secure setup">
+    SEND MEMBER MESSAGE — SETUP PENDING
+  </button>
+
+  <div id="memberMessageStatus" class="small">
+    Messaging is not yet connected.
+  </div>
+
+</div>
       <div class="panel" id="paymentVerificationPanel"
      style="border:1px solid #9acd32;margin-bottom:18px;">
 
