@@ -13950,7 +13950,7 @@ width:min(624px,95vw);
   display:block;
 ">
   <div style="position:relative;width:95%;max-width:1000px;">
-    <button onclick="closeAuctionPromo()" style="
+    <button type="button" onclick="document.getElementById('auctionPromo').style.display='none'; document.getElementById('auctionPromoVideo').pause();" style="
       position:absolute;right:5px;top:5px;
       z-index:2;background:#ff6600;color:white;
       border:0;padding:8px 14px;cursor:pointer;
