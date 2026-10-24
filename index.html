@@ -3015,7 +3015,39 @@ function openCliviaMembersChat() {
       Share your Clivia flowers, plants and seedlings.
       Enjoy peaceful conversations.
     </p>
+<style>
+.cliviaPostActions {
+  display:flex;
+  gap:12px;
+  justify-content:center;
+  margin-top:12px;
+}
 
+.cliviaRoundBtn {
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  border:1px solid #D99A50;
+  background:#fff;
+  color:#000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  font-size:20px;
+}
+
+.cliviaRoundBtn:disabled {
+  opacity:0.5;
+  cursor:not-allowed;
+}
+
+.cliviaSocialLogo {
+  width:32px;
+  height:32px;
+  object-fit:contain;
+}
+</style>
     <div id="cliviaChatMessages" style="
       min-height:250px;
       max-height:500px;
@@ -3027,7 +3059,11 @@ border:1px solid #D99A50;
       padding:15px;
       margin-bottom:15px;
     ">
-      Community messages will appear here.
+      <div id="cliviaChatPosts">
+  <p style="color:#000;">
+    Community messages will appear here.
+  </p>
+</div>
     </div>
 
     <h3>WRITE YOUR MESSAGE</h3>
