@@ -13974,6 +13974,39 @@ function closeAuctionPromo(){
 document.getElementById("auctionPromoVideo").addEventListener("ended",function(){
   closeAuctionPromo();
 });
+ <script>
+function showSellerPreviewPhoto(photoNumber) {
+  const input = document.getElementById(
+    photoNumber === 2 ? "sellerLotPhoto2" : "sellerLotPhoto1"
+  );
+
+  const preview = document.getElementById("sellerPreviewPhoto");
+
+  if (!input || !preview) return;
+
+  const file = input.files[0];
+  if (!file) return;
+
+  if (!file.type.startsWith("image/")) {
+    alert("Please select a valid image.");
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = function(event) {
+    preview.style.backgroundImage =
+      'url("' + event.target.result + '")';
+
+    preview.style.backgroundPosition = "center";
+    preview.style.backgroundSize = "contain";
+    preview.style.backgroundRepeat = "no-repeat";
+    preview.textContent = "";
+  };
+
+  reader.readAsDataURL(file);
+}
+</script>     
 </script>
 </body>
 </html>      
