@@ -14051,14 +14051,27 @@ function showSellerPreviewPhoto(photoNumber) {
  <script>
 function openMaintenanceAdmin() {
   const sign = document.getElementById("auctionMaintenance");
-  if (sign) sign.style.display = "none";
+  const adminPage = document.getElementById("pageAdmin");
 
-  if (typeof showPage === "function") {
-    showPage("Admin");
-  } else {
-    alert("Admin page is not available. Maintenance remains active.");
-    if (sign) sign.style.display = "flex";
+  if (!adminPage) {
+    alert("Admin page could not be found.");
+    return;
   }
+
+  // Hide other pages
+  document.querySelectorAll(".page").forEach(page => {
+    page.classList.add("hidden");
+  });
+
+  // Show Admin login
+  adminPage.classList.remove("hidden");
+
+  // Keep Admin dashboard locked until login succeeds
+  document.getElementById("adminArea")?.classList.add("hidden");
+  document.getElementById("adminLogin")?.classList.remove("hidden");
+
+  // Hide maintenance overlay for this visit
+  if (sign) sign.style.display = "none";
 }
 </script>     
      
