@@ -2776,7 +2776,42 @@ function openCliviaMembersChat() {
     window.scrollTo(0, 0);
   }
 }
-</script>     
+</script>    
+<style>
+#cliviaAdminChatLayout {
+  display: grid;
+  grid-template-columns: 35% 65%;
+  gap: 15px;
+  align-items: start;
+  padding: 15px;
+}
+
+#cliviaAdminLeft,
+#cliviaAdminRight {
+  min-width: 0;
+}
+
+#cliviaAdminRight .panel {
+  margin: 0;
+  max-width: 100%;
+}
+
+@media (max-width: 600px) {
+  #cliviaAdminChatLayout {
+    display: block;
+    padding: 10px;
+  }
+
+  #cliviaAdminLeft {
+    display: none !important;
+  }
+
+  #cliviaAdminRight {
+    display: block !important;
+    width: 100%;
+  }
+}
+</style>      
 <section id="pageAdmin" class="page hidden">
   <div id="cliviaAdminChatLayout">
   <div id="cliviaAdminLeft">    
