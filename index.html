@@ -6512,77 +6512,7 @@ const activeSellerId =
 const seller = (state.sellers || []).find(
   s => s.id === activeSellerId
 );
-
-if(seller && !state.selectedSellerId){
-  state.selectedSellerId = seller.id;
-  save();
-}
-
-const selectedAuction = (state.auctions || []).find(
-  a => a.id === auction
-);
-
-if(!seller){
-  if(msg) msg.innerHTML = "<b>Please open your registered seller account first.</b>";
-  return;
-}
- const { data: sellerSessionData } =
-  await auctionSupabase.auth.getSession();
-
-if(!sellerSessionData.session){
-  if(msg){
-    msg.innerHTML =
-      "<b>Please sign in before publishing a plant.</b>";
-  }
-  return;
-}      
-
-if(!selectedAuction){
-  if(msg) msg.innerHTML = "<b>Please select a valid auction.</b>";
-  return;
-}  
-   const unpaidSellerInvoice = (state.invoices || []).find(inv =>
-  inv.status !== "PAID" &&
-  (
-    inv.sellerId === seller.id ||
-    inv.bidderId === seller.id
-  )
-);
-
-if(unpaidSellerInvoice){
-  if(msg){
-    msg.innerHTML =
-      "<b>You have an outstanding invoice. Please pay all outstanding invoices before loading another plant.</b>";
-  }
-  return;
-} 
-
-  if(!auction){
-    if(msg) msg.innerHTML = "<b>Please select an auction.</b>";
-    return;
-  }
-
-  if(!name){
-    if(msg) msg.innerHTML = "<b>Please enter the Plant / Flower Name.</b>";
-    return;
-  }
-
- if(!description){
-  if(msg){
-    msg.innerHTML =
-      "<b>Please enter a description of the plant.</b>";
-  }
-  return;
-}      
-   if(typeof isCategoryFull === "function"){
-  if(isCategoryFull(selectedAuction, category)){
-    if(msg){
-      msg.innerHTML =
-        "<b>This category is full. Please choose another category.</b>";
-    }
-    return;
-  }
-}    
+Please select a valid auction.
 
     if(!startRow){
   if(msg) msg.innerHTML = "<b>Please select a Starting Bid Row.</b>";
