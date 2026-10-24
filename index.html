@@ -2932,7 +2932,49 @@ function openCliviaMembersChat() {
 
 </section>
 </div>
+<style>
+/* COMPACT CLIVIA CHATS — DESKTOP */
+@media (min-width: 601px) {
 
+  #cliviaAdminChatLayout {
+    grid-template-columns: 300px minmax(0, 480px) !important;
+    justify-content: center;
+    gap: 18px;
+  }
+
+  #cliviaChatPanel {
+    padding: 12px !important;
+    font-size: 13px;
+  }
+
+  #cliviaChatPanel h2 {
+    font-size: 19px !important;
+    margin: 5px 0 8px;
+  }
+
+  #cliviaChatPanel h3 {
+    font-size: 15px !important;
+    margin: 10px 0;
+  }
+
+  #cliviaChatMessages {
+    min-height: 130px !important;
+    height: 160px !important;
+    max-height: 160px !important;
+    padding: 10px !important;
+  }
+
+  #cliviaChatText {
+    height: 65px !important;
+    min-height: 65px !important;
+  }
+
+  #cliviaChatPanel input,
+  #cliviaChatPanel textarea {
+    padding: 7px !important;
+  }
+}
+</style>
 <div id="cliviaAdminRight">
       <style>
 #cliviaChatPanel,
