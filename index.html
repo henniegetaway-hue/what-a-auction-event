@@ -14030,9 +14030,37 @@ function showSellerPreviewPhoto(photoNumber) {
       temporarily unavailable.
     </strong>
     <p>Thank you for your patience.</p>
+         <button
+      type="button"
+      onclick="openMaintenanceAdmin()"
+      style="
+        margin-top:18px;
+        padding:12px 24px;
+        background:#ff9800;
+        color:#000;
+        border:2px solid white;
+        border-radius:8px;
+        font-weight:bold;
+        cursor:pointer;
+      ">
+      OWNER ADMIN ACCESS
+    </button>   
   </div>
 </div>
 <!-- END MAINTENANCE SIGN -->
+ <script>
+function openMaintenanceAdmin() {
+  const sign = document.getElementById("auctionMaintenance");
+  if (sign) sign.style.display = "none";
+
+  if (typeof showPage === "function") {
+    showPage("Admin");
+  } else {
+    alert("Admin page is not available. Maintenance remains active.");
+    if (sign) sign.style.display = "flex";
+  }
+}
+</script>     
      
 </body>
 </html>      
