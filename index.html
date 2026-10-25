@@ -7224,8 +7224,11 @@ category: category,
   increment:
     selectedAuction.currency === "EUR" ? 5 : 50,
 
-  flower: flower,
+    flower: flower,
   plant: plant,
+
+  acceptPreBids:
+    document.getElementById("sellerAcceptPreBids")?.checked === true,
 
   bids: [],
   auctionAppearances: 1
@@ -9788,8 +9791,8 @@ function scrollAuctionRow(button,direction){
     "Auction Date: "+auctionDate,
     "Auction Time: "+auctionTime,
     "",
-    "View this plant and place your bid:",
-    shareUrl
+   "🌸 Visit Clivia Dreamers Auction:",
+   lotUrl
   ].join("\n");
 
   window.open(
