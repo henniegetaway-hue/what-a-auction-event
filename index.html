@@ -6397,9 +6397,10 @@ refreshSellerSelect();
 
  if(existingSeller){
   state.selectedSellerId=existingSeller.id;
-  save();
+   save();
   refreshSellerSelect();
 
+  ensureAutomaticCliviaAuction();
   showPage("sellerLoad");
 
   setTimeout(()=>{
