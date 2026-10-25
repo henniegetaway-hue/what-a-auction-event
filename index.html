@@ -10740,7 +10740,12 @@ function flipLotPhoto(lotId){
   const lot=(state.lots||[]).find(l=>l.id===lotId);
   const img=document.getElementById("lotPhoto_"+lotId);
 
-  if(!lot || !img || !lot.plant) return;
+  if(!lot || !img) return;
+
+if(!lot.plant){
+  alert("No second plant photo is saved for this lot.");
+  return;
+}
 
   const showingFlower = img.src === lot.flower || img.dataset.view !== "plant";
 
