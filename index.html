@@ -3131,14 +3131,8 @@ if (groupsPanel) {
 
   if (!messages) return;
 
-  const headings = {
-    GENERAL: "GENERAL COMMUNITY POSTS",
-    FRIENDS: "FRIENDS — INVITATIONS & PRIVATE CHATS",
-    GROUPS: "NAMED CLIVIA GROUPS"
-  };
-
-  messages.textContent =
-    headings[section] + " — Coming soon";
+  messages.style.display =
+  section === "GENERAL" ? "block" : "none";
 }
 </script>
     <div id="cliviaChatMessages" style="
