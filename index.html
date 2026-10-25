@@ -2155,36 +2155,41 @@ CREATE YOUR OWN LOAD HERE: creatorLoadHereBtn
 DO NOT MOVE OR DUPLICATE THESE BUTTONS.
 KEEP BUTTONS ALIGNED IN ONE HORIZONTAL ROW.
 -->
+
 <!-- TOP ACCOUNT BUTTONS -->
+<!-- KEEP ALL BUTTONS IN ONE HORIZONTAL ROW -->
+
 <div style="display:flex;justify-content:center;align-items:flex-start;gap:12px;flex-wrap:nowrap;margin:15px 0 20px;">
 
+  <!-- NEW ACCOUNT -->
   <button id="newBidderBtn"
           type="button"
           class="goldBtn"
-         style="display:none;width:150px;min-height:40px;"
+          style="display:none;width:150px;min-height:40px;"
           onclick="showNewBidderRegistration()">
     NEW ACCOUNT
   </button>
 
+  <!-- ACCOUNT DETAILS -->
   <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0;">
 
-  <button id="accountDetailsBtn"
-          type="button"
-          class="accountBtn"
-          style="display:none;width:150px;min-height:40px;"
-          onclick="showRegisteredBidder()">
-    ACCOUNT DETAILS
-  </button>
+    <button id="accountDetailsBtn"
+            type="button"
+            class="accountBtn"
+            style="display:none;width:150px;min-height:40px;"
+            onclick="showRegisteredBidder()">
+      ACCOUNT DETAILS
+    </button>
 
-  <div style="font-size:11px;color:white;text-align:center;font-weight:bold;margin-top:5px;width:150px;">
-    Sign in to Open
+    <div style="font-size:14px;color:white;text-align:center;font-weight:bold;margin-top:5px;width:150px;">
+      Sign in to Open
+    </div>
+
   </div>
 
-</div>
+  <!-- CLIVIA AUCTIONS -->
+  <div style="text-align:center;flex-shrink:0;">
 
- <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-
-  <div style="text-align:center;">
     <button id="bidderWantToSellBtn"
             type="button"
             class="accountBtn"
@@ -2192,22 +2197,28 @@ KEEP BUTTONS ALIGNED IN ONE HORIZONTAL ROW.
             onclick="becomeSellerFromBidder()">
       LOAD HERE
     </button>
-    <div style="font-size:12px;font-weight:bold;margin-top:5px;">
+
+    <div style="font-size:14px;font-weight:bold;margin-top:5px;">
       Clivia Auctions
     </div>
+
   </div>
 
-  <div style="text-align:center;">
+  <!-- CREATE YOUR OWN AUCTION -->
+  <div style="text-align:center;flex-shrink:0;">
+
     <button id="creatorLoadHereBtn"
             type="button"
             class="accountBtn"
             style="width:150px;min-height:40px;background:#ffcc80;color:#111;"
             onclick="showOwnEventPage()">
-      LOAD HERE
+      CREATE YOUR OWN AUCTION
     </button>
-    <div style="font-size:12px;font-weight:bold;margin-top:5px;">
+
+    <div style="font-size:14px;font-weight:bold;margin-top:5px;">
       Create Your Own Auction
     </div>
+
   </div>
 
 </div>
