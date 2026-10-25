@@ -9984,9 +9984,9 @@ ${lot.exportEligible ? `
   Seller: ${escapeHtml(seller.name)}
   ${Number(seller.completedSales||0)>=5 ? '<div class="small">✅ Trusted Seller</div>' : ''}
 </div>
-<div class="small" style="margin-top:4px;">
-  <b>Category:</b> ${escapeHtml(lot.category || "Not supplied")}
-</div>
+
+<!-- Category hidden from Live Auction card -->
+
 <div style="
   font-size:11px;
   font-weight:bold;
