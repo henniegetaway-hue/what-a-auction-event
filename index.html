@@ -7366,11 +7366,52 @@ window.addEventListener("DOMContentLoaded", renderMyAuctionPlants);
     return;
   }
 
-  alert(
-    "Selected plant: " + lot.name +
-    "\nLot: LOT-" + String(lot.lotNumber || 0).padStart(3,"0")
-  );
-}  
+  if(String(lot.sellerId) !== String(state.selectedSellerId)){
+    alert("Only the registered seller can edit this plant.");
+    return;
+  }
+
+  const fields = {
+    name: "Plant name",
+    breeding: "Breeding",
+    breeder: "Breeder",
+    description: "Description",
+    leaves: "Leaves",
+    offsets: "Offsets"
+  };
+
+  const changes = {};
+
+  for(const [field,label] of Object.entries(fields)){
+    const answer = prompt(label, lot[field] ?? "");
+
+    if(answer === null) return;
+
+    if(field === "leaves" || field === "offsets"){
+      if(answer.trim() !== "" &&
+         (!Number.isInteger(Number(answer)) || Number(answer) < 0)){
+        alert("Please enter a valid number.");
+        return;
+      }
+      changes[field] = answer.trim() === "" ? null : Number(answer);
+    }else{
+      changes[field] = answer.trim();
+    }
+  }
+
+  if(!confirm("Save changes to " + lot.name + "?")) return;
+
+  Object.assign(lot, changes);
+  save();
+
+  renderMyAuctionPlants();
+
+  if(typeof renderLots === "function"){
+    renderLots();
+  }
+
+  alert("Plant information updated successfully.");
+}
 function showRegisteredSeller(){
   const seller=(state.sellers||[]).find(
     s=>s.id===state.selectedSellerId
