@@ -5705,7 +5705,16 @@ function setCliviaSEO(){
 
  
 function showPage(page){
-      
+
+  if(page === "ownEvent"){
+    alert(
+      "🚧 CREATE YOUR OWN EVENT\n\n" +
+      "UNDER CONSTRUCTION\n\n" +
+      "This service is coming soon. Please visit again."
+    );
+    return;
+  }
+
   if(page === "sellerLoad"){
     renderMyAuctionPlants();
   }      
