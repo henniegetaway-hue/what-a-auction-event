@@ -1389,9 +1389,12 @@ body:has(#cliviaCarryForwardFooter) {
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
-  flex-wrap: nowrap !important;
+   flex-wrap: nowrap !important;
   gap: 12px !important;
-  width: 100%;
+  width: 100% !important;
+  position: relative !important;
+  margin: 12px auto 0 !important;
+  box-sizing: border-box !important;
 }
 
 .plantShareRow button {
@@ -14561,27 +14564,7 @@ function showSellerPreviewPhoto(photoNumber) {
         border-radius:8px;
         font-weight:bold;
         cursor:pointer;
-      ">
-      OWNER ADMIN ACCESS
-    </button>   
-  </div>
-</div>
-<!-- END MAINTENANCE SIGN -->
- <script>
-function openMaintenanceAdmin() {
-  const sign = document.getElementById("auctionMaintenance");
-  const adminPage = document.getElementById("pageAdmin");
-
-  if (!adminPage) {
-    alert("Admin page could not be found.");
-    return;
-  }
-
-  // Hide other pages
-  document.querySelectorAll(".page").forEach(page => {
-    page.classList.add("hidden");
-  });
-
+      "> 
   // Show Admin login
   adminPage.classList.remove("hidden");
 
