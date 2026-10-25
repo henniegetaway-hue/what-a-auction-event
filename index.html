@@ -14829,68 +14829,7 @@ function showSellerPreviewPhoto(photoNumber) {
     reader.readAsDataURL(file);
 }
 </script>
-
-<!-- TEMPORARY WEBSITE MAINTENANCE SIGN -->
-<div id="auctionMaintenance" style="
-  position:fixed;
-  inset:0;
-  z-index:2147483647;
-  background:rgba(0,0,0,0.55);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  padding:20px;
-  box-sizing:border-box;
-">
-  <div style="
-    background:#171717;
-    color:white;
-    border:3px solid orange;
-    border-radius:15px;
-    padding:30px;
-    max-width:500px;
-    text-align:center;
-    box-shadow:0 0 35px #000;
-  ">
-    <h1 style="color:orange;">
-      🚧 WEBSITE UNDER CONSTRUCTION
-    </h1>
-    <h2>WHAT A AUCTION EVENT</h2>
-    <h3 style="color:#9acd32;">
-      CLIVIA DREAMERS AUCTION
-    </h3>
-    <p>
-      We are upgrading our registration,
-      bidding and invoicing systems.
-    </p>
-    <p>
-      You can still see our website in the background.
-    </p>
-    <strong style="color:orange;">
-      Registration and live bidding are
-      temporarily unavailable.
-    </strong>
-    <p>Thank you for your patience.</p>
-        
-    <button
-      type="button"
-      onclick="openMaintenanceAdmin()"
-      style="
-        margin-top:18px;
-        padding:12px 24px;
-        background:#ff9800;
-        color:#000;
-        border:2px solid white;
-        border-radius:8px;
-        font-weight:bold;
-        cursor:pointer;
-      ">
-      OWNER ADMIN ACCESS
-    </button>
-  </div>
-</div>
-<!-- END MAINTENANCE SIGN -->
-
+      
 <script>
 function openMaintenanceAdmin() {
   const sign = document.getElementById("auctionMaintenance");
