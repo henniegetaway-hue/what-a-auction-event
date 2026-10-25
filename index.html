@@ -9980,12 +9980,12 @@ return `
   id="lotPhoto_${lot.id}"
   src="${lot.flower}"
   alt="${escapeHtml(lot.name)} flower"
-  ${lot.plant ? `
-    onmouseenter="this.src=${JSON.stringify(lot.plant)}"
-    onmouseleave="this.src=${JSON.stringify(lot.flower)}"
-    onclick="flipLotPhoto('${lot.id}')"
-    style="cursor:pointer;"
-  ` : ""}
+  onmouseenter="if(this.dataset.plant){this.src=this.dataset.plant}"
+  onmouseleave="this.src=this.dataset.flower"
+  onclick="flipLotPhoto('${lot.id}')"
+  data-flower="${lot.flower}"
+  data-plant="${lot.plant || ''}"
+  style="cursor:pointer;"
 >
 
   ${hotBidding ? `
