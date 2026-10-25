@@ -14274,12 +14274,51 @@ function shareSellerPreviewWhatsApp() {
     document.getElementById("sellerPreviewBid")
       ?.textContent.trim() || "";
 
-  const message =
-    "🌸 CLIVIA DREAMERS AUCTION 🌸\n\n" +
-    "Plant: " + plantName + "\n" +
-    startingBid + "\n\n" +
-    "View the auction:\n" +
-    window.location.href;
+  const lotNumber =
+    document.getElementById("sellerPreviewLotNumber")
+      ?.textContent.trim() || "To be allocated";
+
+  const seller = (state.sellers || []).find(
+    s => String(s.id) === String(state.selectedSellerId)
+  );
+
+  const successfulDeals = Number(seller?.completedSales || 0);
+  const happyBuyers = Math.min(
+    Number(seller?.happyBuyers || 0),
+    successfulDeals
+  );
+
+  const auctionId =
+    document.getElementById("sellerLotAuction")?.value;
+
+  const auction = (state.auctions || []).find(
+    a => String(a.id) === String(auctionId)
+  );
+
+  const auctionDate =
+    auction?.auctionDate || "To be announced";
+
+  const auctionTime =
+    auction?.auctionTime ||
+    auction?.preferredAuctionTime ||
+    "To be announced";
+
+  const message = [
+    "🌸 CLIVIA DREAMERS AUCTION 🌸",
+    "",
+    "🌼 Plant: " + plantName,
+    "🔢 Lot Number: " + lotNumber,
+    "💰 " + startingBid,
+    "",
+    "🏆 Successful Deals by Seller: " + successfulDeals,
+    "😊 Happy Buyers: " + happyBuyers,
+    "",
+    "📅 Auction Date: " + auctionDate,
+    "🕒 Auction Time: " + auctionTime,
+    "",
+    "🔨 View the auction and place your bid:",
+    window.location.href
+  ].join("\n");
 
   window.open(
     "https://wa.me/?text=" + encodeURIComponent(message),
