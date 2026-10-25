@@ -7576,27 +7576,34 @@ function toggleBidderAuctionNotifications(){
   
 async function updateRegistrationAccountButtons(){
 
-  const newButton =
-    document.getElementById("newBidderBtn");
-
-  const accountButton =
-    document.getElementById("accountDetailsBtn");
-
-  const loginBox =
-    document.getElementById("bidderLoginBox");
+  const newButton = document.getElementById("newBidderBtn");
+  const accountButton = document.getElementById("accountDetailsBtn");
+  const loginBox = document.getElementById("bidderLoginBox");
 
   if(!newButton || !accountButton || !loginBox) return;
 
-  // Default: visitors can browse, register or sign in.
-  newButton.style.display = "inline-block";
+  newButton.style.display = "none";
   accountButton.style.display = "none";
-  loginBox.style.display = "block";
+  loginBox.style.display = "none";
 
   try {
-    const { data, error } =
-      await cliviaSupabase.auth.getUser();
+    const { data, error } = await cliviaSupabase.auth.getUser();
 
-    if(error || !data?.user) return;
+    if(error || !data?.user){
+
+      const rememberedEmail =
+        localStorage.getItem("cliviaRememberedEmail");
+
+      if(rememberedEmail){
+        newButton.style.display = "none";
+        accountButton.style.display = "inline-block";
+      } else {
+        newButton.style.display = "inline-block";
+        accountButton.style.display = "none";
+      }
+
+      return;
+    }
 
     await refreshBidderSelect();
 
@@ -7605,17 +7612,20 @@ async function updateRegistrationAccountButtons(){
     );
 
     if(bidder){
-      // Existing authenticated member.
       newButton.style.display = "none";
       accountButton.style.display = "inline-block";
-      loginBox.style.display = "none";
+    } else {
+      newButton.style.display = "inline-block";
+      accountButton.style.display = "none";
     }
 
   } catch(err){
     console.error("Account recognition error:", err);
+
+    newButton.style.display = "inline-block";
+    accountButton.style.display = "none";
   }
 }
-    
   function showNewBidderRegistration(){
    
   const mode =
