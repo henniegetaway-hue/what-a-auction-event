@@ -7355,7 +7355,22 @@ function renderMyAuctionPlants(){
     `;
   }).join("");
 }
-window.addEventListener("DOMContentLoaded", renderMyAuctionPlants);      
+window.addEventListener("DOMContentLoaded", renderMyAuctionPlants);   
+    function editSellerPlant(lotId){
+  const lot = (state.lots || []).find(
+    l => String(l.id) === String(lotId)
+  );
+
+  if(!lot){
+    alert("Plant not found.");
+    return;
+  }
+
+  alert(
+    "Selected plant: " + lot.name +
+    "\nLot: LOT-" + String(lot.lotNumber || 0).padStart(3,"0")
+  );
+}  
 function showRegisteredSeller(){
   const seller=(state.sellers||[]).find(
     s=>s.id===state.selectedSellerId
