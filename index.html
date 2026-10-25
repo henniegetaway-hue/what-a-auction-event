@@ -7329,9 +7329,10 @@ function renderMyAuctionPlants(){
           LOT-${String(lot.lotNumber||0).padStart(3,"0")}
         </div>
         ${lot.flower?`
-          <img src="${lot.flower}"
-            alt="Clivia flower"
-            style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;">
+         <img src="${lot.flower}"
+  alt="Clivia flower"
+  onclick="this.requestFullscreen()"
+  style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;cursor:pointer;">
         `:""}
         <div style="font-size:16px;font-weight:bold;margin-top:8px;">
           ${escapeHtml(lot.name||"Clivia")}
