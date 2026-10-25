@@ -1450,17 +1450,6 @@ body:has(#cliviaCarryForwardFooter) {
   font-size: 14px !important;
 }
      
-/* LIVE CLIVIA AUCTION — LARGER CARD DETAILS */
-#lotsGrid .lotBody .small,
-#lotsGrid .lotBody > div {
-  font-size:16px !important;
-  line-height:1.5 !important;
-}
-
-#lotsGrid .lotBody .small b {
-  font-size:16px !important;
-}
-
   </style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
  <script>
@@ -9660,14 +9649,8 @@ function scrollAuctionRow(button,direction){
     ) +
     "&url=" + encodeURIComponent(lotUrl);
 
-   
-const text =
-  "CLIVIA DREAMERS AUCTION" +
-  "\n\nPlant: " + (lot.name || "Auction Lot") +
-  "\nCurrent Bid: " + symbol + price +
-  "\n\nView this Clivia and place your bid:" +
-  "\n" + shareUrl;
-
+   const text =
+    "🌸 CLIVIA DREAMERS AUCTION 🌸" +
     "\n\n🌺 " + (lot.name || "Auction Lot") +
     "\n💰 Current Bid: " + symbol + price +
     "\n\n🌿 View this beautiful Clivia and place your bid!" +
@@ -9678,37 +9661,16 @@ const text =
     "_blank"
   );
 }
- 
-function shareLotFacebook(id){
+ function shareLotFacebook(id){
   const lot=(state.lots||[]).find(l=>l.id===id);
   if(!lot) return;
 
-  const auction=(state.auctions||[]).find(
-    a=>a.id===lot.auctionId
-  );
-
-  const symbol=auction && auction.currency==="EUR" ? "€" : "R";
-  const price=currentBid(lot);
-
-  const lotUrl=
-    window.location.origin+
-    window.location.pathname+
-    "#lot-"+
-    encodeURIComponent(id);
-
-  const shareUrl=
-    "https://mynwscjggvhjrtprogmq.supabase.co/functions/v1/lot-share"+
-    "?title="+encodeURIComponent(lot.name||"Auction Lot")+
-    "&image="+encodeURIComponent(lot.flower||"")+
-    "&description="+encodeURIComponent("Current bid: "+symbol+price)+
-    "&url="+encodeURIComponent(lotUrl);
-
+ const url=window.location.origin+window.location.pathname+"#lot-"+encodeURIComponent(id);
   window.open(
-    "https://www.facebook.com/sharer/sharer.php?u="+
-    encodeURIComponent(shareUrl),
+    "https://www.facebook.com/sharer/sharer.php?u="+encodeURIComponent(url),
     "_blank"
   );
-}
+} 
   function shareLot(id){
   const lot=(state.lots||[]).find(l=>l.id===id);
   if(!lot) return;
@@ -9943,13 +9905,11 @@ return `
   <b>Breeding:</b> ${escapeHtml(lot.breeding || "Not supplied")}
 </div>
 
-
-<div class="small" style="margin-top:4px;font-size:16px !important;line-height:1.5 !important;">
+<div class="small" style="margin-top:4px;">
   <b>Breeder:</b> ${escapeHtml(lot.breeder || "Not supplied")}
 </div>
 
-
-<div class="small" style="margin-top:6px;font-size:16px !important;line-height:1.5 !important;">
+${lot.description ? `
   <div class="small" style="margin-top:6px;">
     <b>Description:</b> ${escapeHtml(lot.description)}
   </div>
@@ -9974,9 +9934,9 @@ ${lot.exportEligible ? `
   Seller: ${escapeHtml(seller.name)}
   ${Number(seller.completedSales||0)>=5 ? '<div class="small">✅ Trusted Seller</div>' : ''}
 </div>
-
-<!-- Category hidden from Live Auction card -->
-
+<div class="small" style="margin-top:4px;">
+  <b>Category:</b> ${escapeHtml(lot.category || "Not supplied")}
+</div>
 <div style="
   font-size:11px;
   font-weight:bold;
@@ -14627,6 +14587,67 @@ function showSellerPreviewPhoto(photoNumber) {
     reader.readAsDataURL(file);
 }
 </script>
+
+<!-- TEMPORARY WEBSITE MAINTENANCE SIGN -->
+<div id="auctionMaintenance" style="
+  position:fixed;
+  inset:0;
+  z-index:2147483647;
+  background:rgba(0,0,0,0.55);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+  box-sizing:border-box;
+">
+  <div style="
+    background:#171717;
+    color:white;
+    border:3px solid orange;
+    border-radius:15px;
+    padding:30px;
+    max-width:500px;
+    text-align:center;
+    box-shadow:0 0 35px #000;
+  ">
+    <h1 style="color:orange;">
+      🚧 WEBSITE UNDER CONSTRUCTION
+    </h1>
+    <h2>WHAT A AUCTION EVENT</h2>
+    <h3 style="color:#9acd32;">
+      CLIVIA DREAMERS AUCTION
+    </h3>
+    <p>
+      We are upgrading our registration,
+      bidding and invoicing systems.
+    </p>
+    <p>
+      You can still see our website in the background.
+    </p>
+    <strong style="color:orange;">
+      Registration and live bidding are
+      temporarily unavailable.
+    </strong>
+    <p>Thank you for your patience.</p>
+        
+    <button
+      type="button"
+      onclick="openMaintenanceAdmin()"
+      style="
+        margin-top:18px;
+        padding:12px 24px;
+        background:#ff9800;
+        color:#000;
+        border:2px solid white;
+        border-radius:8px;
+        font-weight:bold;
+        cursor:pointer;
+      ">
+      OWNER ADMIN ACCESS
+    </button>
+  </div>
+</div>
+<!-- END MAINTENANCE SIGN -->
 
 <script>
 function openMaintenanceAdmin() {
