@@ -9678,7 +9678,38 @@ const text =
     "_blank"
   );
 }
- function shareLotFacebook(id){
+ 
+function shareLotFacebook(id){
+  const lot=(state.lots||[]).find(l=>l.id===id);
+  if(!lot) return;
+
+  const auction=(state.auctions||[]).find(
+    a=>a.id===lot.auctionId
+  );
+
+  const symbol=auction && auction.currency==="EUR" ? "€" : "R";
+  const price=currentBid(lot);
+
+  const lotUrl=
+    window.location.origin+
+    window.location.pathname+
+    "#lot-"+
+    encodeURIComponent(id);
+
+  const shareUrl=
+    "https://mynwscjggvhjrtprogmq.supabase.co/functions/v1/lot-share"+
+    "?title="+encodeURIComponent(lot.name||"Auction Lot")+
+    "&image="+encodeURIComponent(lot.flower||"")+
+    "&description="+encodeURIComponent("Current bid: "+symbol+price)+
+    "&url="+encodeURIComponent(lotUrl);
+
+  window.open(
+    "https://www.facebook.com/sharer/sharer.php?u="+
+    encodeURIComponent(shareUrl),
+    "_blank"
+  );
+}
+
   const lot=(state.lots||[]).find(l=>l.id===id);
   if(!lot) return;
 
