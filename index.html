@@ -9784,6 +9784,13 @@ function scrollAuctionRow(button,direction){
     "Plant: "+(lot.name||"Clivia"),
     "Lot Number: "+lotNumber,
     "Current Bid: "+symbol+price,
+      ...(lot.acceptPreBids === true &&
+   auction?.auctionDate &&
+   (auction?.auctionTime || auction?.preferredAuctionTime) &&
+   new Date(auction.auctionDate + "T" +
+     (auction.auctionTime || auction.preferredAuctionTime)) > new Date()
+   ? ["OPEN FOR PRE-BIDS"]
+   : []), 
     "",
     "Successful Deals by Seller: "+successfulDeals,
     "Happy Buyers: "+happyBuyers,
@@ -9791,7 +9798,7 @@ function scrollAuctionRow(button,direction){
     "Auction Date: "+auctionDate,
     "Auction Time: "+auctionTime,
     "",
-   "🌸 Visit Clivia Dreamers Auction:",
+  "Visit Clivia Dreamers Auction:",
    lotUrl
   ].join("\n");
 
