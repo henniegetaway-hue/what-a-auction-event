@@ -7205,6 +7205,11 @@ updateAuctionFullStatus(selectedAuction);
 save();
 localStorage.removeItem("cliviaSellerLotDraft");
 
+if(typeof renderMyAuctionPlants === "function"){
+  renderMyAuctionPlants();
+}
+       
+
 [
   "sellerLotName",
   "sellerLotBreeding",
