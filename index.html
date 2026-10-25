@@ -7006,6 +7006,18 @@ function closeSellerLotForm(){
  async function publishSellerLot(){
 
   const auction = document.getElementById("sellerLotAuction")?.value || "";
+
+  const selectedAuction = (state.auctions || []).find(a =>
+    String(a.id) === String(auction || state.selectedAuctionId)
+  );
+
+  if(!selectedAuction){
+    const msg = document.getElementById("sellerLotMsg");
+    if(msg){
+      msg.textContent = "Please select a valid Clivia auction before publishing.";
+    }
+    return;
+  }
   const name = document.getElementById("sellerLotName")?.value.trim() || "";
   const category = document.getElementById("sellerLotCategory")?.value || "";
   const startRow = document.getElementById("sellerLotStartRow")?.value || "";
