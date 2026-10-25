@@ -7238,7 +7238,74 @@ if(previewOffsets) previewOffsets.textContent = "—";
 if(msg){
   msg.innerHTML = "<b>Plant published successfully.</b>";
 }
-}     
+}   
+
+function renderMyAuctionPlants(){
+  const box=document.getElementById("myAuctionPlantsGrid");
+  if(!box) return;
+
+  const sellerId=state.selectedSellerId ||
+    document.getElementById("sellerSelect")?.value;
+
+  if(!sellerId){
+    box.innerHTML="<p>Sign in to view your auction plants.</p>";
+    return;
+  }
+
+  const plants=(state.lots||[])
+    .filter(lot=>String(lot.sellerId)===String(sellerId))
+    .map(lot=>{
+      const auction=(state.auctions||[]).find(
+        a=>String(a.id)===String(lot.auctionId)
+      );
+      return {lot,auction};
+    })
+    .sort((a,b)=>{
+      const dateA=(a.auction?.auctionDate||"9999-12-31")+
+        "T"+(a.auction?.auctionTime||"00:00");
+      const dateB=(b.auction?.auctionDate||"9999-12-31")+
+        "T"+(b.auction?.auctionTime||"00:00");
+      return dateA.localeCompare(dateB);
+    });
+
+  if(!plants.length){
+    box.innerHTML="<p>No published plants yet.</p>";
+    return;
+  }
+
+  box.innerHTML=plants.map(({lot,auction})=>{
+    const symbol=auction?.currency==="EUR"?"€":"R";
+    const date=auction?.auctionDate||"To be announced";
+    const time=auction?.auctionTime||
+      auction?.preferredAuctionTime||"To be announced";
+    const current=typeof currentBid==="function"
+      ? currentBid(lot):lot.startBid;
+
+    return `
+      <div class="lotCard" style="padding:10px;">
+        <div style="font-weight:bold;color:#9acd32;">
+          LOT-${String(lot.lotNumber||0).padStart(3,"0")}
+        </div>
+        ${lot.flower?`
+          <img src="${lot.flower}"
+            alt="Clivia flower"
+            style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;">
+        `:""}
+        <div style="font-size:16px;font-weight:bold;margin-top:8px;">
+          ${escapeHtml(lot.name||"Clivia")}
+        </div>
+        <div style="font-size:14px;margin-top:6px;">
+          <b>Auction:</b> ${escapeHtml(date)}<br>
+          <b>Time:</b> ${escapeHtml(time)}<br>
+          <b>Starting Bid:</b> ${symbol}${lot.startBid}<br>
+          <b>Current Bid:</b> ${symbol}${current}<br>
+          <b>Status:</b> ${escapeHtml(auction?.status||"Scheduled")}
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+      
 function showRegisteredSeller(){
   const seller=(state.sellers||[]).find(
     s=>s.id===state.selectedSellerId
@@ -9933,9 +10000,6 @@ ${lot.exportEligible ? `
  <div style="margin-top:6px;font-size:15px;font-weight:bold">
   Seller: ${escapeHtml(seller.name)}
   ${Number(seller.completedSales||0)>=5 ? '<div class="small">✅ Trusted Seller</div>' : ''}
-</div>
-<div class="small" style="margin-top:4px;">
-  <b>Category:</b> ${escapeHtml(lot.category || "Not supplied")}
 </div>
 <div style="
   font-size:16px;
