@@ -5105,6 +5105,14 @@ setOwnEventHeader();
 
       
 async function showOwnEventPage(){
+
+  alert(
+    "🚧 CREATE YOUR OWN EVENT\n\n" +
+    "UNDER CONSTRUCTION\n\n" +
+    "We are preparing this service. Please visit again soon."
+  );
+  return;
+
   setOwnEventSEO();
   sessionStorage.setItem("loadNowDestination", "CREATOR");    
   document.body.classList.add("ownEventMode");
