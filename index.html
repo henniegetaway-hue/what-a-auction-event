@@ -9732,39 +9732,72 @@ function scrollAuctionRow(button,direction){
     behavior:"smooth"
   });
 }
-    function shareLotWhatsApp(id){
-  const lot=(state.lots||[]).find(l=>l.id===id);
+   function shareLotWhatsApp(id){
+  const lot=(state.lots||[]).find(l=>String(l.id)===String(id));
   if(!lot) return;
 
-  const auction=(state.auctions||[]).find(a=>a.id===lot.auctionId);
-  const symbol=auction && auction.currency==="EUR" ? "€" : "R";
-  const price=currentBid(lot);
+  const auction=(state.auctions||[]).find(
+    a=>String(a.id)===String(lot.auctionId)
+  );
 
-  const lotUrl =
-    window.location.origin +
-    window.location.pathname +
-    "#lot-" +
-    encodeURIComponent(id);
+  const seller=(state.sellers||[]).find(
+    s=>String(s.id)===String(lot.sellerId)
+  );
 
-  const shareUrl =
-   "https://mynwscjggvhjrtprogmq.supabase.co/functions/v1/lot-share" +
-    "?title=" + encodeURIComponent(lot.name || "Auction Lot") +
-    "&image=" + encodeURIComponent(lot.flower || "") +
-    "&description=" + encodeURIComponent(
-      "Current bid: " + symbol + price
-    ) +
-    "&url=" + encodeURIComponent(lotUrl);
+  const symbol=auction?.currency==="EUR" ? "€" : "R";
+  const price=typeof currentBid==="function"
+    ? currentBid(lot)
+    : lot.startBid;
 
-   const text =
-    "🌸 CLIVIA DREAMERS AUCTION 🌸" +
-    "\n\n🌺 " + (lot.name || "Auction Lot") +
-    "\n💰 Current Bid: " + symbol + price +
-    "\n\n🌿 View this beautiful Clivia and place your bid!" +
-    "\n\n" + shareUrl;
+  const lotNumber="LOT-"+String(lot.lotNumber||1).padStart(3,"0");
+
+  const successfulDeals=Number(seller?.completedSales||0);
+  const happyBuyers=Math.min(
+    Number(seller?.happyBuyers||0),
+    successfulDeals
+  );
+
+  const auctionDate=auction?.auctionDate||"To be announced";
+  const auctionTime=
+    auction?.auctionTime||
+    auction?.preferredAuctionTime||
+    "To be announced";
+
+  const lotUrl=
+    window.location.origin+
+    window.location.pathname+
+    "#lot-"+encodeURIComponent(id);
+
+  const shareUrl=
+    "https://mynwscjggvhjrtprogmq.supabase.co/functions/v1/lot-share"+
+    "?title="+encodeURIComponent(lot.name||"Auction Lot")+
+    "&image="+encodeURIComponent(lot.flower||"")+
+    "&description="+encodeURIComponent(
+      lotNumber+" | Current bid: "+symbol+price
+    )+
+    "&url="+encodeURIComponent(lotUrl);
+
+  const message=[
+    "CLIVIA DREAMERS AUCTION",
+    "",
+    "Plant: "+(lot.name||"Clivia"),
+    "Lot Number: "+lotNumber,
+    "Current Bid: "+symbol+price,
+    "",
+    "Successful Deals by Seller: "+successfulDeals,
+    "Happy Buyers: "+happyBuyers,
+    "",
+    "Auction Date: "+auctionDate,
+    "Auction Time: "+auctionTime,
+    "",
+    "View this plant and place your bid:",
+    shareUrl
+  ].join("\n");
 
   window.open(
-    "https://wa.me/?text=" + encodeURIComponent(text),
-    "_blank"
+    "https://wa.me/?text="+encodeURIComponent(message),
+    "_blank",
+    "noopener,noreferrer"
   );
 }
  function shareLotFacebook(id){
