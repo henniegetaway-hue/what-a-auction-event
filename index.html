@@ -3033,6 +3033,80 @@ function openCliviaMembersChat() {
   object-fit:contain;
 }
 </style>
+        <!-- CLIVIA CHATS SECTIONS -->
+<div id="cliviaChatTabs" style="
+  display:flex;
+  gap:5px;
+  margin-bottom:12px;
+  width:100%;
+">
+
+  <button type="button"
+    class="cliviaChatTab"
+    onclick="showCliviaChatSection('GENERAL')">
+    🌸 GENERAL
+  </button>
+
+  <button type="button"
+    class="cliviaChatTab"
+    onclick="showCliviaChatSection('FRIENDS')">
+    👥 FRIENDS
+  </button>
+
+  <button type="button"
+    class="cliviaChatTab"
+    onclick="showCliviaChatSection('GROUPS')">
+    🌼 GROUPS
+  </button>
+
+</div>
+
+<style>
+#cliviaChatTabs .cliviaChatTab {
+  flex:1;
+  min-width:0;
+  padding:9px 3px;
+  border:1px solid #D99A50;
+  border-radius:8px;
+  background:#FFF8EE;
+  color:#000;
+  font-size:11px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+#cliviaChatTabs .cliviaChatTab.active {
+  background:#F4B56D;
+  border-color:#B95D14;
+}
+</style>
+
+<script>
+function showCliviaChatSection(section) {
+  document.querySelectorAll(
+    "#cliviaChatTabs .cliviaChatTab"
+  ).forEach(function(button) {
+    button.classList.toggle(
+      "active",
+      button.textContent.includes(section)
+    );
+  });
+
+  const messages =
+    document.getElementById("cliviaChatMessages");
+
+  if (!messages) return;
+
+  const headings = {
+    GENERAL: "GENERAL COMMUNITY POSTS",
+    FRIENDS: "FRIENDS — INVITATIONS & PRIVATE CHATS",
+    GROUPS: "NAMED CLIVIA GROUPS"
+  };
+
+  messages.textContent =
+    headings[section] + " — Coming soon";
+}
+</script>
     <div id="cliviaChatMessages" style="
       min-height:250px;
       max-height:500px;
