@@ -1617,7 +1617,7 @@ window.addEventListener("load", function(){
   <p id="siteBrandTagline">Rare • Exquisite • Timeless</p>
 </div>
   <div class="status">
-    <span class="statusBadge" id="auctionStatus">OPEN</span>
+    <span class="statusBadge" id="auctionStatus">VIEWING &amp; SELLER LOADING OPEN</span>
     <div id="auctionTitleTop" style="margin-top:7px">Clivia Dreamers Live Auction</div>
     <div id="nextAuctionTop" style="margin-top:6px;font-weight:bold">
   Next Auction: date to be announced
@@ -6069,7 +6069,7 @@ if(state.settings.open && selectedAuction && selectedAuction.auctionDate && sele
 )) headerStatus="HOT BIDDING";
 }
 
-document.getElementById("auctionStatus").textContent=headerStatus;
+document.getElementById("auctionStatus").textContent="VIEWING & SELLER LOADING OPEN";
   if(headerStatus==="UPCOMING" || headerStatus==="OPEN" || headerStatus==="HOT BIDDING"){
   setTimeout(updateHeader,1000);
 }
