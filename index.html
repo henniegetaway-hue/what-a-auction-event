@@ -9649,8 +9649,14 @@ function scrollAuctionRow(button,direction){
     ) +
     "&url=" + encodeURIComponent(lotUrl);
 
-   const text =
-    "🌸 CLIVIA DREAMERS AUCTION 🌸" +
+   
+const text =
+  "CLIVIA DREAMERS AUCTION" +
+  "\n\nPlant: " + (lot.name || "Auction Lot") +
+  "\nCurrent Bid: " + symbol + price +
+  "\n\nView this Clivia and place your bid:" +
+  "\n" + shareUrl;
+
     "\n\n🌺 " + (lot.name || "Auction Lot") +
     "\n💰 Current Bid: " + symbol + price +
     "\n\n🌿 View this beautiful Clivia and place your bid!" +
@@ -9905,9 +9911,11 @@ return `
   <b>Breeding:</b> ${escapeHtml(lot.breeding || "Not supplied")}
 </div>
 
-<div class="small" style="margin-top:4px;">
+
+<div class="small" style="margin-top:4px;font-size:16px !important;line-height:1.5 !important;">
   <b>Breeder:</b> ${escapeHtml(lot.breeder || "Not supplied")}
 </div>
+
 
 ${lot.description ? `
   <div class="small" style="margin-top:6px;">
