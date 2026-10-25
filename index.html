@@ -7341,8 +7341,16 @@ function renderMyAuctionPlants(){
           <b>Time:</b> ${escapeHtml(time)}<br>
           <b>Starting Bid:</b> ${symbol}${lot.startBid}<br>
           <b>Current Bid:</b> ${symbol}${current}<br>
-          <b>Status:</b> ${escapeHtml(auction?.status||"Scheduled")}
+         <b>Status:</b> ${escapeHtml(auction?.status||"Scheduled")}
         </div>
+
+        <button type="button"
+          class="goldBtn"
+          style="margin-top:10px;font-size:12px;"
+          onclick="editSellerPlant('${lot.id}')">
+          ✏️ EDIT PLANT
+        </button>
+
       </div>
     `;
   }).join("");
