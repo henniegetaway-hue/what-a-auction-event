@@ -9709,16 +9709,6 @@ function shareLotFacebook(id){
     "_blank"
   );
 }
-
-  const lot=(state.lots||[]).find(l=>l.id===id);
-  if(!lot) return;
-
- const url=window.location.origin+window.location.pathname+"#lot-"+encodeURIComponent(id);
-  window.open(
-    "https://www.facebook.com/sharer/sharer.php?u="+encodeURIComponent(url),
-    "_blank"
-  );
-} 
   function shareLot(id){
   const lot=(state.lots||[]).find(l=>l.id===id);
   if(!lot) return;
