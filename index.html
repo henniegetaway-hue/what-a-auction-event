@@ -9982,11 +9982,24 @@ ${lot.exportEligible ? `
             📷 VIEW ACTUAL PLANT / MORE PHOTOS
           </button>
         `:""}
-        <button class="photoBtn"
-  onclick="shareLotWhatsApp('${lot.id}')"
-  style="background:#25D366;color:#fff;margin-top:8px;">
-  📲 SHARE ON WHATSAPP
-</button>
+       <div style="display:flex;justify-content:center;margin-top:8px;">
+  <button type="button"
+    onclick="shareLotWhatsApp('${lot.id}')"
+    title="Share on WhatsApp"
+    aria-label="Share on WhatsApp"
+    style="background:#25D366;color:white;
+           width:40px;height:40px;
+           min-width:40px;
+           border-radius:50%;
+           border:none;padding:0;
+           display:flex;align-items:center;
+           justify-content:center;cursor:pointer;">
+    <img
+      src="https://cdn.jsdelivr.net/npm/simple-icons@v15/icons/whatsapp.svg"
+      alt="WhatsApp"
+      style="width:21px;height:21px;filter:brightness(0) invert(1);">
+  </button>
+</div>
 
        <div class="bidRow">
   <input id="bid_${lot.id}" type="number" value="${next}" min="${next}">
