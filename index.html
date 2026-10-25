@@ -7333,7 +7333,7 @@ function renderMyAuctionPlants(){
     `;
   }).join("");
 }
-      
+window.addEventListener("DOMContentLoaded", renderMyAuctionPlants);      
 function showRegisteredSeller(){
   const seller=(state.sellers||[]).find(
     s=>s.id===state.selectedSellerId
