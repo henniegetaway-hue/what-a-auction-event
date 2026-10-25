@@ -4649,9 +4649,37 @@ background:linear-gradient(90deg,#a0ff80,#39e52d);
     <div id="bestSellersList"></div>
 </div> <!-- closes bestSellersPanel -->
 
-</div> <!-- closes sellerRightColumn -->
-
 </div> <!-- closes sellerLoadGrid -->
+
+<!-- SELLER'S UPLOADED CLIVIA AUCTION PLANTS -->
+<div id="myAuctionPlantsSection"
+     class="panel"
+     style="
+       width:calc(100% - 32px);
+       max-width:900px;
+       margin:20px auto;
+       box-sizing:border-box;
+       padding:16px;
+     ">
+
+  <h3 style="color:#9acd32;text-align:center;">
+    🌸 MY AUCTION PLANTS
+  </h3>
+
+  <p style="text-align:center;font-size:13px;">
+    Your uploaded Clivias and their scheduled auctions
+  </p>
+
+  <div id="myAuctionPlantsGrid"
+       style="
+         display:grid;
+         grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+         gap:12px;
+         margin-top:15px;
+       ">
+  </div>
+
+</div>
 
 </section>
 <!-- END SELLER PLANT LOADING PAGE -->
@@ -14322,45 +14350,6 @@ function positionPhoneLoadCards(){
 window.addEventListener("DOMContentLoaded", positionPhoneLoadCards);
 window.addEventListener("resize", positionPhoneLoadCards);     
 </script>
-<!-- FOOTER NOTICES BLACK BACKGROUND -->
-<div id="footerNoticesArea" style="
-  background:#000;
-  padding:20px 16px;
-  width:100%;
-  box-sizing:border-box;
-">
-
-<!-- SELLER'S UPLOADED CLIVIA AUCTION PLANTS -->
-<section id="myAuctionPlantsSection"
-  class="panel"
-  style="
-    width:calc(100% - 32px);
-    max-width:900px;
-    margin:20px auto;
-    box-sizing:border-box;
-    padding:16px;
-  ">
-
-  <h3 style="color:#9acd32;text-align:center;">
-    🌸 MY AUCTION PLANTS
-  </h3>
-
-  <p style="text-align:center;font-size:13px;">
-    Your uploaded Clivias and their scheduled auctions
-  </p>
-
-  <div id="myAuctionPlantsGrid"
-    style="
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-      gap:12px;
-      margin-top:15px;
-    ">
-  </div>
-
-</section>
-      
-<!-- CLIVIA DREAMERS UNSOLD PLANTS RULES -->
 <section id="cliviaCarryForwardFooter"
   style="
     display:block;
