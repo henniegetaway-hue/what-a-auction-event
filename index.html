@@ -6162,7 +6162,14 @@ function toggleSellerBusinessFields(){
   });
 
 }    
-function registerSeller(){
+async function registerSeller(){
+      const { data: { user }, error: authError } =
+    await cliviaSupabase.auth.getUser();
+
+  if (authError || !user || !user.email_confirmed_at) {
+    alert("Please sign in to your verified Clivia Dreamers account before registering as a seller.");
+    return;
+  }  
   const name=document.getElementById("sellerName").value.trim();
   const phone=document.getElementById("sellerPhone").value.trim();
   const companyName=document.getElementById("sellerCompanyName").value.trim();
@@ -6258,7 +6265,7 @@ if(duplicateBankUser){
   String(u.phone||"").replace(/\s/g,"")===phone.replace(/\s/g,"") &&
   (
     String(u.name||"").trim().toLowerCase()!==name.trim().toLowerCase() ||
-  String(u.name||"").trim().toLowerCase()!==bidderName.trim().toLowerCase()
+String(u.phone||"").replace(/\s/g,"")!==phone.replace(/\s/g,"")
   )
 );
 
@@ -6268,6 +6275,7 @@ if(duplicatePhoneUser){
 }
   const seller={
     id:"S"+Date.now(),
+    authUserId:user.id,  
     name,
     phone,
     email,
@@ -6313,7 +6321,23 @@ notifyNextAuction:state.sellerNotifyChoice || "none",
 selectedNotificationAuctions:[],  
   };
 
- state.sellers=state.sellers||[];
+const { error: sellerError } = await cliviaSupabase
+  .from("sellers")
+  .insert({
+    id: seller.id,
+    auth_user_id: user.id,
+    name: seller.name,
+    phone: seller.phone,
+    email: seller.email,
+    bank_confirmed: false
+  });
+
+if (sellerError) {
+  alert("Seller registration could not be saved: " + sellerError.message);
+  return;
+}
+
+state.sellers = state.sellers || [];
 state.sellers.push(seller);
 save();
 refreshSellerSelect();
