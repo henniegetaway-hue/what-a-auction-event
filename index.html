@@ -6443,7 +6443,8 @@ refreshSellerSelect();
   save();
   refreshSellerSelect();
 
- showPage("sellerLoad");
+  ensureAutomaticCliviaAuction();
+  showPage("sellerLoad");
 
 setTimeout(()=>{
   const form=document.getElementById("sellerLotForm");
