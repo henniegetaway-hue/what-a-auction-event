@@ -9639,7 +9639,7 @@ const sellerAuctionChoicesHtml=upcomingSellerAuctions.map(a=>{
   const spacesLeft=Math.max(0,48-lotsInAuction);
 
   return `
-    <div class="notice" style="margin-bottom:10px;">
+    <div class="notice" style="display:none;
       <b>${a.auctionDate || "Date to be announced"}</b><br>
       Time: ${a.auctionTime || a.preferredAuctionTime || "To be announced"}<br>
       Spaces left: <b>${spacesLeft}</b><br>
