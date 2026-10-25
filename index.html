@@ -11822,11 +11822,17 @@ if(selectedAuctionId){
   const original = existingAuction.event_data || {};
 
   const updatedEvent = {
-    ...original,
-    ...newEvent,
-    id: original.id || newEvent.id,
+  ...original,
+  ...newEvent,
+  id: original.id || newEvent.id,
+  deletionDate: original.deletionDate,
     eventStatus: original.eventStatus || "DRAFT",
     liveEnabled: original.liveEnabled || false,
+    lots:
+  original.liveEnabled === true ||
+  original.eventStatus !== "DRAFT"
+    ? original.lots
+    : newEvent.lots,    
     permanentHistory: original.permanentHistory ||
       newEvent.permanentHistory,
     activationInvoiceId: original.activationInvoiceId || null,
