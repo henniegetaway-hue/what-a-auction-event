@@ -3112,7 +3112,13 @@ function showCliviaChatSection(section) {
       button.textContent.includes(section)
     );
   });
+const friendsPanel =
+  document.getElementById("cliviaFriendsPanel");
 
+if (friendsPanel) {
+  friendsPanel.style.display =
+    section === "FRIENDS" ? "block" : "none";
+}
   const messages =
     document.getElementById("cliviaChatMessages");
 
