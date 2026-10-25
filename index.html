@@ -5917,6 +5917,8 @@ if(account){
       
 async function openSellerSpaces(){
 
+  ensureAutomaticCliviaAuction();
+
   showPage("sellerLoad");
 
   if(typeof showSellerLotForm === "function"){
