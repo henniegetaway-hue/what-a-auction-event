@@ -13480,7 +13480,11 @@ function ensureAutomaticCliviaAuction(){
     ["LOADING", "SCHEDULING"].includes(a.status)
   );
 
-  if(existingAuction) return;
+ if(existingAuction){
+  state.selectedAuctionId = existingAuction.id;
+  save();
+  return;
+}
 
   const auction = {
     id: "AUC-" + Date.now(),
