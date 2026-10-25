@@ -9219,7 +9219,10 @@ function fileToDataURL(file){
 
  function getStartRowSpacesLeft(rowKey){
   const auction=(state.auctions||[]).find(a=>a.id===state.selectedAuctionId);
-  if(!auction) return 0;
+  if(!auction){
+  console.warn("No auction selected for row:", rowKey);
+  return 0;
+}
 
   const lots=(state.lots||[]).filter(lot=>
     lot.auctionId===auction.id &&
