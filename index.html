@@ -4277,10 +4277,77 @@ nav #navLive.active:hover {
     No separate activation fee.
   </p>
 
+ <!-- GROUP PRESIDENT REGISTRATION -->
+<div id="groupPresidentRegistration"
+     style="border:1px solid #9acd32;
+            border-radius:8px;
+            padding:15px;
+            margin-top:15px;">
+
+  <h3>REGISTER YOUR CLIVIA GROUP</h3>
+
   <p class="small">
-    Group President registration and management controls
-    will be added here.
+    The registered Group President controls this group.
+    The group name will be locked after registration.
+    Each additional group requires its own subscription.
   </p>
+
+  <label>Registered Group Name *</label>
+  <input id="cliviaGroupName"
+         type="text"
+         placeholder="Enter your Clivia Group Name">
+
+  <label>Group President</label>
+  <p class="small">
+    The President must use an existing registered account.
+  </p>
+
+  <label>Subscription Plan *</label>
+  <select id="cliviaGroupSubscription">
+    <option value="">-- SELECT SUBSCRIPTION --</option>
+    <option value="MONTHLY">R200 per month</option>
+    <option value="ANNUAL">R2,000 per year</option>
+  </select>
+
+  <label>Auction Access *</label>
+  <select id="cliviaGroupVisibility">
+    <option value="PRIVATE">PRIVATE — Approved Members Only</option>
+    <option value="PUBLIC">PUBLIC — Registered Bidders</option>
+  </select>
+
+  <label>International Members May Bid</label>
+  <select id="cliviaGroupInternational">
+    <option value="NO">NO — International Bidding Disabled</option>
+    <option value="YES">YES — International Bidding Allowed</option>
+  </select>
+
+  <label style="display:flex;align-items:center;gap:8px;">
+    <input type="checkbox"
+           id="cliviaGroupResponsibility"
+           style="width:18px;height:18px;">
+    I accept responsibility for international bids
+    when international bidding is enabled.
+  </label>
+
+  <button type="button"
+          style="background:#9acd32;
+                 color:#000;
+                 border:2px solid #ffd700;
+                 border-radius:8px;
+                 padding:12px;
+                 margin-top:15px;"
+          disabled>
+    REGISTER GROUP — COMING SOON
+  </button>
+
+  <p class="small">
+    One subscription covers multiple auctions under
+    the same registered group name.
+    No separate activation fee.
+  </p>
+
+</div>
+<!-- END GROUP PRESIDENT REGISTRATION -->
 
 </div>
 <!-- END GROUP AUCTION AREA -->
