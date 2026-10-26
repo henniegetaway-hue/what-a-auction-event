@@ -15336,28 +15336,3 @@ function openMaintenanceAdmin() {
 
 </body>
 </html>
-
-      style="
-        margin-top:18px;
-        padding:12px 24px;
-        background:#ff9800;
-        color:#000;
-        border:2px solid white;
-        border-radius:8px;
-        font-weight:bold;
-        cursor:pointer;
-      "> 
-  // Show Admin login
-  adminPage.classList.remove("hidden");
-
-  // Keep Admin dashboard locked until login succeeds
-  document.getElementById("adminArea")?.classList.add("hidden");
-  document.getElementById("adminLogin")?.classList.remove("hidden");
-
-  // Hide maintenance overlay for this visit
-  if (sign) sign.style.display = "none";
-}
-</script>     
-     
-</body>
-</html>      
