@@ -4243,48 +4243,51 @@ nav #navLive.active:hover {
   ">
 
     <button type="button"
-  id="normalCliviaLoadBtn"
-  onclick="
-    document.getElementById('sellerLoadGrid').style.display='grid';
-    document.getElementById('groupAuctionPanel').style.display='none';
-    this.style.background='#c0c0c0';
-    document.getElementById('groupCliviaLoadBtn').style.background='#add8e6';
-  "
-  style="background:#c0c0c0;color:#000;
-         padding:12px;border:2px solid #ffd700;
-         border-radius:8px;">
-  🌸 NORMAL CLIVIA AUCTION
-</button>
+      id="normalCliviaLoadBtn"
+      onclick="
+        document.getElementById('sellerLoadGrid').style.display='grid';
+        document.getElementById('groupAuctionPanel').style.display='none';
 
-<button type="button"
-  id="groupCliviaLoadBtn"
-  onclick="
-    document.getElementById('sellerLoadGrid').style.display='none';
-    document.getElementById('groupAuctionPanel').style.display='block';
-    this.style.background='#c0c0c0';
-    document.getElementById('normalCliviaLoadBtn').style.background='#add8e6';
-  "
-  style="background:#add8e6;color:#000;
-         padding:12px;border:2px solid #ffd700;
-         border-radius:8px;">
-  👥 GROUP AUCTION
-</button>
-      onclick="document.getElementById('sellerLoadGrid').style.display='grid';document.getElementById('groupAuctionPanel').style.display='none';"
-      style="background:#9acd32;color:#000;padding:12px;border:2px solid #ffd700;border-radius:8px;">
+        this.style.background='#c0c0c0';
+        this.style.color='#000';
+
+        document.getElementById('groupCliviaLoadBtn').style.background='#111';
+        document.getElementById('groupCliviaLoadBtn').style.color='#fff';
+      "
+      style="
+        background:#c0c0c0;
+        color:#000;
+        padding:12px;
+        border:2px solid #ffd700;
+        border-radius:8px;
+      ">
       🌸 NORMAL CLIVIA AUCTION
     </button>
 
     <button type="button"
       id="groupCliviaLoadBtn"
-      onclick="document.getElementById('sellerLoadGrid').style.display='none';document.getElementById('groupAuctionPanel').style.display='block';"
-      style="background:#111;color:#fff;padding:12px;border:2px solid #ffd700;border-radius:8px;">
+      onclick="
+        document.getElementById('sellerLoadGrid').style.display='none';
+        document.getElementById('groupAuctionPanel').style.display='block';
+
+        this.style.background='#c0c0c0';
+        this.style.color='#000';
+
+        document.getElementById('normalCliviaLoadBtn').style.background='#111';
+        document.getElementById('normalCliviaLoadBtn').style.color='#fff';
+      "
+      style="
+        background:#111;
+        color:#fff;
+        padding:12px;
+        border:2px solid #ffd700;
+        border-radius:8px;
+      ">
       👥 GROUP AUCTION
     </button>
 
   </div>
 </div>
-
-<!-- GROUP AUCTION AREA -->
 <div id="groupAuctionPanel"
      class="panel"
      style="display:none;margin-bottom:16px;
