@@ -10901,12 +10901,14 @@ ${lot.exportEligible ? `
     🌍 INTERNATIONAL / EXPORT ELIGIBLE
   </div>
 ` : ''}
-       ${seller ? `
- <div style="margin-top:6px;font-size:15px;font-weight:bold">
+      
+${seller ? `
+<div class="auctionSellerName" style="margin-top:6px;font-size:15px;font-weight:bold;">
   Seller: ${escapeHtml(seller.name)}
   ${Number(seller.completedSales||0)>=5 ? '<div class="small">✅ Trusted Seller</div>' : ''}
 </div>
-<div style="
+
+<div class="auctionSellerStats" style="
   font-size:16px;
   font-weight:bold;
   margin:6px 0;
@@ -10931,7 +10933,8 @@ ${lot.exportEligible ? `
     Happy Buyers
   </span>
 </div>
-` : ''} 
+` : ''}
+
         ${lot.preferredAuctionTime ? '<div class="small">Preferred auction time: '+lot.preferredAuctionTime+'</div>' : ''}
 
 <div class="price">
