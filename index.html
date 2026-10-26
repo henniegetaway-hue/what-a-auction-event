@@ -4227,6 +4227,63 @@ nav #navLive.active:hover {
 </div>
      
 <section id="pageSellerLoad" class="page hidden">
+      <!-- CLIVIA AUCTION TYPE SELECTION -->
+<div id="cliviaAuctionTypePanel"
+     class="panel"
+     style="margin-bottom:16px;text-align:center;">
+
+  <h2>SELECT YOUR CLIVIA AUCTION</h2>
+
+  <div style="
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:12px;
+    margin-top:15px;
+  ">
+
+    <button type="button"
+      id="normalCliviaLoadBtn"
+      onclick="document.getElementById('sellerLoadGrid').style.display='grid';document.getElementById('groupAuctionPanel').style.display='none';"
+      style="background:#9acd32;color:#000;padding:12px;border:2px solid #ffd700;border-radius:8px;">
+      🌸 NORMAL CLIVIA AUCTION
+    </button>
+
+    <button type="button"
+      id="groupCliviaLoadBtn"
+      onclick="document.getElementById('sellerLoadGrid').style.display='none';document.getElementById('groupAuctionPanel').style.display='block';"
+      style="background:#111;color:#fff;padding:12px;border:2px solid #ffd700;border-radius:8px;">
+      👥 GROUP AUCTION
+    </button>
+
+  </div>
+</div>
+
+<!-- GROUP AUCTION AREA -->
+<div id="groupAuctionPanel"
+     class="panel"
+     style="display:none;margin-bottom:16px;">
+
+  <h2>👥 CLIVIA GROUP AUCTIONS</h2>
+
+  <p>
+    Group Presidents can manage members, auction dates,
+    private or public auctions, international bidding,
+    group branding and subscriptions.
+  </p>
+
+  <p>
+    Group subscription: R200 monthly or R2,000 annually.
+    No separate activation fee.
+  </p>
+
+  <p class="small">
+    Group President registration and management controls
+    will be added here.
+  </p>
+
+</div>
+<!-- END GROUP AUCTION AREA -->
 
 <div id="sellerLoadGrid" style="
   display:grid;
