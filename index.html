@@ -15606,6 +15606,27 @@ posts.appendChild(card);
   }
 }
 
+function switchCliviaPhoneView(view) {
+  const admin = document.getElementById("cliviaAdminLeft");
+  const chats = document.getElementById("cliviaAdminRight");
+  const toChats = document.getElementById("phoneGoToChats");
+  const toAdmin = document.getElementById("phoneGoToAdmin");
+
+  if (!admin || !chats || !toChats || !toAdmin) return;
+
+  if (window.innerWidth > 600) return;
+
+  const showChats = view === "chats";
+
+  admin.style.display = showChats ? "none" : "block";
+  chats.style.display = showChats ? "block" : "none";
+
+  toChats.style.display = showChats ? "none" : "block";
+  toAdmin.style.display = showChats ? "block" : "none";
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
 async function submitCliviaChatMessage() {
   const status = document.getElementById("cliviaChatStatus");
   const name = document.getElementById("cliviaChatName")?.value.trim();
