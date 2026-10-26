@@ -15334,5 +15334,65 @@ function openMaintenanceAdmin() {
 }
 </script>
 
+<script>
+async function loadCliviaChatMessages() {
+  const posts = document.getElementById("cliviaChatPosts");
+  if (!posts) return;
+
+  if (typeof cliviaSupabase === "undefined") {
+    posts.textContent = "Clivia Chats are not available yet.";
+    return;
+  }
+
+  const { data, error } = await cliviaSupabase
+    .from("clivia_chat_messages")
+    .select("id,chat_name,message_text,created_at,parent_message_id")
+    .eq("moderation_status", "APPROVED")
+    .order("created_at", { ascending: true })
+    .limit(100);
+
+  if (error) {
+    posts.textContent = "Unable to load Clivia messages.";
+    return;
+  }
+
+  posts.replaceChildren();
+
+  if (!data || data.length === 0) {
+    posts.textContent = "No Clivia messages yet. 🌸";
+    return;
+  }
+
+  for (const message of data) {
+    const card = document.createElement("div");
+    card.style.cssText =
+      "padding:12px;margin-bottom:10px;background:#fff;border:1px solid #D99A50;border-radius:8px;";
+
+    if (message.parent_message_id != null) {
+      card.style.marginLeft = "20px";
+    }
+
+    const name = document.createElement("strong");
+    name.textContent = message.chat_name || "Clivia Member";
+
+    const body = document.createElement("p");
+    body.style.whiteSpace = "pre-wrap";
+    body.textContent = message.message_text || "";
+
+    const date = document.createElement("small");
+    date.textContent = message.created_at
+      ? new Date(message.created_at).toLocaleString()
+      : "";
+
+    card.append(name, body, date);
+    posts.appendChild(card);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadCliviaChatMessages();
+});
+</script>
+
 </body>
 </html>
