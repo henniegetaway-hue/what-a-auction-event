@@ -3254,11 +3254,26 @@ nav:has(#navRegister) .ownEventTabGroup button {
 /* COMPACT CLIVIA CHATS — DESKTOP */
 @media (min-width:601px) {
 
-  #cliviaAdminChatLayout {
-    grid-template-columns:300px minmax(0,480px) !important;
-    justify-content:center;
-    gap:18px;
-  }
+  
+#cliviaAdminChatLayout {
+  display:grid !important;
+  grid-template-columns:minmax(0,480px) 300px !important;
+  justify-content:center;
+  gap:18px;
+}
+
+#cliviaAdminRight {
+  grid-column:1 !important;
+  grid-row:1 !important;
+  display:block !important;
+}
+
+#cliviaAdminLeft {
+  grid-column:2 !important;
+  grid-row:1 !important;
+  display:block !important;
+}
+
 
   #cliviaChatPanel {
     padding:12px !important;
