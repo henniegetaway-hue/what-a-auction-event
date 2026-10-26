@@ -15384,8 +15384,21 @@ async function loadCliviaChatMessages() {
       ? new Date(message.created_at).toLocaleString()
       : "";
 
-    card.append(name, body, date);
-    posts.appendChild(card);
+   card.append(name, body, date);
+
+const replyButton = document.createElement("button");
+replyButton.type = "button";
+replyButton.textContent = "💬 REPLY";
+replyButton.className = "goldBtn";
+replyButton.style.cssText =
+  "margin-top:10px;padding:6px 12px;font-size:12px;";
+
+replyButton.addEventListener("click", () => {
+  alert("Clivia replies will be available when member posting is activated.");
+});
+
+card.appendChild(replyButton);
+posts.appendChild(card);
   }
 }
 
