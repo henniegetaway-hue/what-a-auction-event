@@ -38,10 +38,24 @@
   --text:#f4f1e8;
   --muted:#aab6aa;
   --line:#2b3b2d;
+ 
   --red:#963737;
 }
 
+/* HIDE LEFT AND RIGHT ARROWS ON PHONES */
+@media (max-width:600px) {
+  .auctionScrollArrow {
+    display:none !important;
+  }
+
+  .auctionRowScroll {
+    flex:1;
+    min-width:0;
+  }
+}
+
 *{box-sizing:border-box}
+
 
 html, body {
   min-height: 100%;
@@ -11141,7 +11155,8 @@ const rowCardsHtml=rowCards.join("");
 
     <div style="display:flex;align-items:center;gap:4px;width:100%;">
 
-  <button type="button"
+<button type="button"
+    class="auctionScrollArrow"
     onclick="scrollAuctionRow(this,-1)"
     style="
       width:26px;
@@ -11162,7 +11177,8 @@ const rowCardsHtml=rowCards.join("");
     ${rowCardsHtml}
   </div>
 
-  <button type="button"
+ <button type="button"
+    class="auctionScrollArrow"
     onclick="scrollAuctionRow(this,1)"
     style="
       width:26px;
