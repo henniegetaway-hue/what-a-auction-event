@@ -10903,7 +10903,7 @@ ${lot.exportEligible ? `
 ` : ''}
       
 ${seller ? `
-<div class="auctionSellerName" style="margin-top:6px;font-size:15px;font-weight:bold;">
+<div class="auctionSellerName" style="margin-top:6px;font-size:clamp(10px,2.5vw,15px);font-weight:bold;line-height:1.2;">
   Seller: ${escapeHtml(seller.name)}
   ${Number(seller.completedSales||0)>=5 ? '<div class="small">✅ Trusted Seller</div>' : ''}
 </div>
