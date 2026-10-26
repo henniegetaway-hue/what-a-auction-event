@@ -3018,9 +3018,27 @@ nav:has(#navRegister) .ownEventTabGroup button {
   </div>
 </section>
 <!-- END CLIVIA MEMBERS CHAT PAGE -->
+
 <section id="pageAdmin" class="page hidden">
   <div id="cliviaAdminChatLayout">
-  <div id="cliviaAdminLeft">    
+
+    <!-- PHONE ONLY: SWITCH BETWEEN ADMIN AND CHATS -->
+    <div id="cliviaPhoneSwitch">
+      <button type="button"
+              id="phoneGoToChats"
+              onclick="switchCliviaPhoneView('chats')">
+        🌸 GO TO CHATS →
+      </button>
+
+      <button type="button"
+              id="phoneGoToAdmin"
+              onclick="switchCliviaPhoneView('admin')">
+        ← GO TO ADMIN
+      </button>
+    </div>
+
+  <div id="cliviaAdminLeft">
+  
  <div id="adminLogin" class="panel" style="max-width:430px;margin:0 auto 16px;">
   <h2>Admin Access</h2>
   <p>Authorised Owner Account Only</p>
