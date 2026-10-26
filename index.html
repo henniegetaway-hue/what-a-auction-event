@@ -15761,14 +15761,26 @@ function openCliviaChatsFromAuction() {
   }
 }
 
+
 function switchCliviaPhoneView(view) {
   const admin = document.getElementById("cliviaAdminLeft");
   const chats = document.getElementById("cliviaAdminRight");
   const switchBar = document.getElementById("cliviaPhoneSwitch");
 
   if (!admin || !chats) return;
-  if (window.innerWidth > 600) return;
 
+  // DESKTOP: Always show both panels
+  if (window.innerWidth > 600) {
+    admin.style.setProperty("display", "block", "important");
+    chats.style.setProperty("display", "block", "important");
+
+    if (switchBar) {
+      switchBar.style.display = "none";
+    }
+    return;
+  }
+
+  // PHONE: Show only the selected panel
   const showChats = view === "chats";
 
   admin.style.setProperty(
@@ -15791,6 +15803,20 @@ function switchCliviaPhoneView(view) {
       });
   }
 }
+
+// Restore both panels when returning to desktop
+window.addEventListener("resize", function() {
+  if (window.innerWidth > 600) {
+    switchCliviaPhoneView("admin");
+  }
+});
+
+// Restore desktop layout when page opens
+document.addEventListener("DOMContentLoaded", function() {
+  if (window.innerWidth > 600) {
+    switchCliviaPhoneView("admin");
+  }
+});
 
 async function submitCliviaChatMessage() {
   const status = document.getElementById("cliviaChatStatus");
