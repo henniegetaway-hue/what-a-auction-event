@@ -15704,7 +15704,6 @@ card.appendChild(replyButton);
 posts.appendChild(card);
   }
 }
-
 function openCliviaChatsFromAuction() {
   showPage("admin");
 
@@ -15722,22 +15721,32 @@ function openCliviaChatsFromAuction() {
 function switchCliviaPhoneView(view) {
   const admin = document.getElementById("cliviaAdminLeft");
   const chats = document.getElementById("cliviaAdminRight");
-  const toChats = document.getElementById("phoneGoToChats");
-  const toAdmin = document.getElementById("phoneGoToAdmin");
+  const switchBar = document.getElementById("cliviaPhoneSwitch");
 
-  if (!admin || !chats || !toChats || !toAdmin) return;
-
+  if (!admin || !chats) return;
   if (window.innerWidth > 600) return;
 
   const showChats = view === "chats";
 
-  admin.style.display = showChats ? "none" : "block";
-  chats.style.display = showChats ? "block" : "none";
+  admin.style.setProperty(
+    "display", showChats ? "none" : "block", "important"
+  );
 
-  toChats.style.display = showChats ? "none" : "block";
-  toAdmin.style.display = showChats ? "block" : "none";
+  chats.style.setProperty(
+    "display", showChats ? "block" : "none", "important"
+  );
 
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  if (switchBar) {
+    switchBar.style.display = "none";
+  }
+
+  if (showChats) {
+    document.getElementById("cliviaChatPanel")
+      ?.scrollIntoView({
+        behavior: "auto",
+        block: "start"
+      });
+  }
 }
 
 async function submitCliviaChatMessage() {
