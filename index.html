@@ -1492,6 +1492,31 @@ body:has(#cliviaCarryForwardFooter) {
   }
 }
 
+/* ADMIN / CHATS SWITCH — PHONE ONLY */
+#cliviaPhoneSwitch {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  #cliviaPhoneSwitch {
+    display: flex !important;
+    width: 100%;
+    padding: 8px;
+    justify-content: center;
+  }
+
+  #cliviaPhoneSwitch button {
+    background: #9cff57;
+    color: #111;
+    border: 0;
+    border-radius: 8px;
+    padding: 12px 18px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+  }
+}
+
   </style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
  <script>
