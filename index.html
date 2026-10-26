@@ -3198,26 +3198,46 @@ nav:has(#navRegister) .ownEventTabGroup button {
 </div>
 <style>
      
+
 /* FULL-SCREEN CLIVIA CHATS — PHONE */
 @media (max-width:600px) {
 
+  #cliviaAdminChatLayout {
+    display:block !important;
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    padding:0 !important;
+    margin:0 !important;
+  }
+
+  #cliviaAdminRight {
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    padding:0 !important;
+    margin:0 !important;
+  }
+
   #cliviaChatPanel {
     position:relative !important;
-top:auto !important;
-    left:0 !important;
-    width:100vw !important;
-    height:100dvh !important;
-    max-width:none !important;
+    top:auto !important;
+    left:auto !important;
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    min-height:100dvh !important;
+    height:auto !important;
     box-sizing:border-box !important;
     margin:0 !important;
-    padding:16px !important;
+    padding:12px !important;
     border-radius:0 !important;
-    z-index:9999 !important;
-    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    overflow-y:visible !important;
   }
 
   #cliviaChatMessages {
-    height:45dvh !important;
+    height:40dvh !important;
     min-height:180px !important;
     max-height:none !important;
     overflow-y:auto !important;
@@ -3225,52 +3245,54 @@ top:auto !important;
 
   #cliviaChatPanel input,
   #cliviaChatPanel textarea {
+    width:100% !important;
     max-width:100% !important;
     box-sizing:border-box !important;
   }
 }
- 
+
 /* COMPACT CLIVIA CHATS — DESKTOP */
-@media (min-width: 601px) {
+@media (min-width:601px) {
 
   #cliviaAdminChatLayout {
-    grid-template-columns: 300px minmax(0, 480px) !important;
-    justify-content: center;
-    gap: 18px;
+    grid-template-columns:300px minmax(0,480px) !important;
+    justify-content:center;
+    gap:18px;
   }
 
   #cliviaChatPanel {
-    padding: 12px !important;
-    font-size: 13px;
+    padding:12px !important;
+    font-size:13px;
   }
 
   #cliviaChatPanel h2 {
-    font-size: 19px !important;
-    margin: 5px 0 8px;
+    font-size:19px !important;
+    margin:5px 0 8px;
   }
 
   #cliviaChatPanel h3 {
-    font-size: 15px !important;
-    margin: 10px 0;
+    font-size:15px !important;
+    margin:10px 0;
   }
 
   #cliviaChatMessages {
-    min-height: 130px !important;
-    height: 160px !important;
-    max-height: 160px !important;
-    padding: 10px !important;
+    min-height:130px !important;
+    height:160px !important;
+    max-height:160px !important;
+    padding:10px !important;
   }
 
   #cliviaChatText {
-    height: 65px !important;
-    min-height: 65px !important;
+    height:65px !important;
+    min-height:65px !important;
   }
 
   #cliviaChatPanel input,
   #cliviaChatPanel textarea {
-    padding: 7px !important;
+    padding:7px !important;
   }
 }
+
  
 /* SMALL CLIVIA CHATS BUTTON ON PHONE */
 @media (max-width:600px) {
