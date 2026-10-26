@@ -3221,27 +3221,32 @@ nav:has(#navRegister) .ownEventTabGroup button {
 
   #cliviaChatPanel {
     position:relative !important;
+   
+#cliviaChatPanel {
+    position:relative !important;
     top:auto !important;
     left:auto !important;
     width:100% !important;
     max-width:100% !important;
     min-width:0 !important;
-    min-height:100dvh !important;
-    height:auto !important;
+    height:100dvh !important;
+    min-height:0 !important;
     box-sizing:border-box !important;
     margin:0 !important;
-    padding:12px !important;
+    padding:6px !important;
     border-radius:0 !important;
     overflow-x:hidden !important;
-    overflow-y:visible !important;
-  }
-
-  #cliviaChatMessages {
-    height:40dvh !important;
-    min-height:180px !important;
-    max-height:none !important;
     overflow-y:auto !important;
-  }
+    overscroll-behavior:contain !important;
+}
+
+#cliviaChatMessages {
+    height:18dvh !important;
+    min-height:70px !important;
+    max-height:18dvh !important;
+    overflow-y:auto !important;
+}
+
 
   #cliviaChatPanel input,
   #cliviaChatPanel textarea {
