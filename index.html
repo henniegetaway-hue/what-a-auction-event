@@ -15640,6 +15640,20 @@ posts.appendChild(card);
   }
 }
 
+function openCliviaChatsFromAuction() {
+  showPage("admin");
+
+  if (window.innerWidth <= 600) {
+    switchCliviaPhoneView("chats");
+  } else {
+    document.getElementById("cliviaChatPanel")
+      ?.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+  }
+}
+
 function switchCliviaPhoneView(view) {
   const admin = document.getElementById("cliviaAdminLeft");
   const chats = document.getElementById("cliviaAdminRight");
