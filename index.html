@@ -3129,7 +3129,49 @@ function openCliviaMembersChat() {
   object-fit:contain;
 }
 </style>
-      <!-- CLIVIA CHAT SHARING -->
+     <!-- CLIVIA CHAT SHARING -->
+<div style="display:flex;justify-content:center;gap:10px;margin:12px 0;">
+
+  <button type="button"
+    title="Share on WhatsApp"
+    onclick="window.open('https://wa.me/?text='+encodeURIComponent('Join our Clivia community! '+location.origin+location.pathname),'_blank')"
+    style="width:32px;height:32px;border-radius:50%;background:#20cf70;color:#000;border:0;padding:0;cursor:pointer;font-weight:bold;">
+    ☎
+  </button>
+
+  <button type="button"
+    title="Share on Facebook"
+    onclick="window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.origin+location.pathname),'_blank')"
+    style="width:32px;height:32px;border-radius:50%;background:#1877f2;color:white;border:0;padding:0;cursor:pointer;font-weight:bold;font-size:18px;">
+    f
+  </button>
+
+  <button type="button"
+    title="More sharing options"
+    onclick="shareCliviaCommunity()"
+    style="width:32px;height:32px;border-radius:50%;background:#f3bc67;color:#000;border:0;padding:0;cursor:pointer;font-size:18px;">
+    🌐
+  </button>
+
+</div>
+
+<script>
+async function shareCliviaCommunity(){
+  const url = location.origin + location.pathname;
+  if(navigator.share){
+    try{
+      await navigator.share({
+        title:"Clivia Dreamers Community",
+        url:url
+      });
+    }catch(e){
+      if(e.name !== "AbortError") console.error(e);
+    }
+  }else{
+    prompt("Copy this link:",url);
+  }
+}
+</script>
 <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:12px 0;">
 
   <button type="button" class="goldBtn"
