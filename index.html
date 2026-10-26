@@ -6005,6 +6005,22 @@ async function openSellerSpaces(){
 
   showPage("sellerLoad");
 
+  // Highlight LOAD and deactivate Clivia Auctions
+  const loadBtn = document.getElementById("navCliviaLoad");
+  const liveBtn = document.getElementById("navLive");
+
+  if(loadBtn){
+    loadBtn.style.setProperty("background", "#ffcc80", "important");
+    loadBtn.style.setProperty("color", "#111", "important");
+    loadBtn.style.setProperty("border", "2px solid #ffd700", "important");
+  }
+
+  if(liveBtn){
+    liveBtn.style.setProperty("background", "#111", "important");
+    liveBtn.style.setProperty("color", "#fff", "important");
+    liveBtn.style.setProperty("border", "2px solid #ffd700", "important");
+  }
+
   if(typeof showSellerLotForm === "function"){
     showSellerLotForm();
   }
