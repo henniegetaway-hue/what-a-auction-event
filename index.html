@@ -5904,6 +5904,13 @@ if(selectedButton){
   selectedButton.style.color="#000";
 }
 
+// Keep the two Clivia buttons correctly coloured
+if(page === "sellerLoad"){
+  selectCliviaTab("load");
+} else {
+  selectCliviaTab(page === "live" ? "live" : "");
+}
+
   if(page==="live") renderLots();
   
 if(page==="register" &&
