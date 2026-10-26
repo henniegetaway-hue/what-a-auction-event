@@ -5998,7 +5998,32 @@ if(account){
   }
 }
 }
-      
+function selectCliviaTab(selected){
+
+  const load = document.getElementById("navCliviaLoad");
+  const live = document.getElementById("navLive");
+
+  if(!load || !live) return;
+
+  load.style.setProperty(
+    "background",
+    selected === "load" ? "#ffcc80" : "#111",
+    "important"
+  );
+
+  live.style.setProperty(
+    "background",
+    selected === "live" ? "#9acd32" : "#111",
+    "important"
+  );
+
+  load.style.setProperty("color",
+    selected === "load" ? "#111" : "#fff", "important");
+
+  live.style.setProperty("color",
+    selected === "live" ? "#111" : "#fff", "important");
+
+}      
 async function openSellerSpaces(){
 
   ensureAutomaticCliviaAuction();
