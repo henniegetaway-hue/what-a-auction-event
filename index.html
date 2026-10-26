@@ -2923,7 +2923,30 @@ function openCliviaMembersChat() {
     white-space:normal !important;
   }
 
-  nav:has(#navRegister) .ownEventTabGroup {
+ 
+nav:has(#navRegister) .ownEventTabGroup {
+  display:grid !important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  width:100% !important;
+  max-width:100% !important;
+  min-width:0 !important;
+  box-sizing:border-box !important;
+  gap:3px !important;
+  padding:3px !important;
+  margin:0 !important;
+}
+
+nav:has(#navRegister) .ownEventTabGroup button {
+  width:100% !important;
+  min-width:0 !important;
+  max-width:100% !important;
+  box-sizing:border-box !important;
+  font-size:10px !important;
+  padding:8px 2px !important;
+  white-space:normal !important;
+  overflow-wrap:anywhere !important;
+}
+
     display:flex !important;
     flex:1 1 100% !important;
     width:100% !important;
