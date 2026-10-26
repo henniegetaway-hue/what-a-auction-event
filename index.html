@@ -2883,6 +2883,64 @@ function openCliviaMembersChat() {
     width: 100%;
   }
 }
+ 
+/* PHONE NAVIGATION FIX */
+@media (max-width:600px) {
+
+  nav:has(#navRegister) {
+    display:flex !important;
+    flex-wrap:wrap !important;
+    justify-content:center !important;
+    align-items:stretch !important;
+    gap:5px !important;
+    padding:6px 4px !important;
+    width:100% !important;
+    box-sizing:border-box !important;
+  }
+
+  nav:has(#navRegister) > button {
+    flex:1 1 27% !important;
+    min-width:0 !important;
+    font-size:11px !important;
+    padding:9px 3px !important;
+    white-space:normal !important;
+  }
+
+  nav:has(#navRegister) .cliviaTabGroup {
+    order:-1 !important;
+    display:flex !important;
+    flex:1 1 100% !important;
+    min-width:0 !important;
+    box-sizing:border-box !important;
+    justify-content:center !important;
+  }
+
+  nav:has(#navRegister) .cliviaTabGroup button {
+    flex:1 1 0 !important;
+    min-width:0 !important;
+    font-size:13px !important;
+    padding:10px 5px !important;
+    white-space:normal !important;
+  }
+
+  nav:has(#navRegister) .ownEventTabGroup {
+    display:flex !important;
+    flex:1 1 100% !important;
+    width:100% !important;
+    min-width:0 !important;
+    box-sizing:border-box !important;
+  }
+
+  nav:has(#navRegister) .ownEventTabGroup button {
+    flex:1 1 0 !important;
+    min-width:0 !important;
+    font-size:11px !important;
+    padding:9px 3px !important;
+    white-space:normal !important;
+    overflow-wrap:anywhere !important;
+  }
+}
+     
 </style>   
   <!-- CLIVIA MEMBERS CHAT PAGE -->
 <section id="pageCliviaChat" class="page hidden">
