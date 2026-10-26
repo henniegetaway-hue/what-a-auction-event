@@ -1647,9 +1647,21 @@ window.addEventListener("load", function(){
   padding:5px;
 ">
   <button id="navRegister" onclick="showPage('register')">Register</button>
-<div class="cliviaTabGroup" style="display:inline-flex;align-items:center;gap:4px;border:2px solid #ffd700;border-radius:8px;padding:3px;">
-  <button id="navCliviaLoad" onclick="openSellerSpaces()">🌸 LOAD</button>
-  <button id="navLive" onclick="showPage('live')">Clivia Auctions</button>
+<div class="cliviaTabGroup"
+     style="display:inline-flex;align-items:center;gap:4px;border:2px solid #ffd700;border-radius:8px;padding:3px;">
+
+  <button id="navCliviaLoad"
+          onclick="openSellerSpaces()"
+          style="background:#111;color:white;border:2px solid #ffd700;border-radius:6px;">
+    🌸 LOAD
+  </button>
+
+  <button id="navLive"
+          onclick="showPage('live')"
+          style="background:#9acd32;color:black;border:2px solid #ffd700;border-radius:6px;">
+    Clivia Auctions
+  </button>
+
 </div>
 <button id="navAdmin" onclick="showPage('admin')">Admin</button>
   <button id="navInvoices" onclick="showPage('invoices')">Invoices</button>
