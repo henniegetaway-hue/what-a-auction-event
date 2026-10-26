@@ -6242,9 +6242,17 @@ if(logo){
       sellerAccount.style.display="none";
     }
   }    
-  if(page!=="admin"){
-  document.getElementById("adminArea").classList.add("hidden");
-  document.getElementById("adminLogin").classList.remove("hidden");
+ if(page !== "admin"){
+  const adminArea = document.getElementById("adminArea");
+  const adminLogin = document.getElementById("adminLogin");
+
+  if(adminArea){
+    adminArea.classList.add("hidden");
+  }
+
+  if(adminLogin){
+    adminLogin.classList.remove("hidden");
+  }
 }
   document.querySelectorAll(".page").forEach(x=>x.classList.add("hidden"));
   document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
