@@ -3071,6 +3071,39 @@ function openCliviaMembersChat() {
 </section>
 </div>
 <style>
+     
+/* FULL-SCREEN CLIVIA CHATS — PHONE */
+@media (max-width:600px) {
+
+  #cliviaChatPanel {
+    position:fixed !important;
+    top:0 !important;
+    left:0 !important;
+    width:100vw !important;
+    height:100dvh !important;
+    max-width:none !important;
+    box-sizing:border-box !important;
+    margin:0 !important;
+    padding:16px !important;
+    border-radius:0 !important;
+    z-index:9999 !important;
+    overflow-y:auto !important;
+  }
+
+  #cliviaChatMessages {
+    height:45dvh !important;
+    min-height:180px !important;
+    max-height:none !important;
+    overflow-y:auto !important;
+  }
+
+  #cliviaChatPanel input,
+  #cliviaChatPanel textarea {
+    max-width:100% !important;
+    box-sizing:border-box !important;
+  }
+}
+ 
 /* COMPACT CLIVIA CHATS — DESKTOP */
 @media (min-width: 601px) {
 
