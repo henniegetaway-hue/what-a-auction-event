@@ -3390,10 +3390,12 @@ border:1px solid #D99A50;
               placeholder="Write your Clivia message..."></textarea>
 
     <label>Add Clivia Photos</label>
-    <input id="cliviaChatPhotos"
-           type="file"
-           accept="image/jpeg,image/png,image/webp"
-           multiple>
+   <input id="cliviaChatPhotos"
+       type="file"
+       accept="image/jpeg,image/png,image/webp"
+       multiple
+       disabled
+       title="Photograph uploads will open after automatic checking is ready.">
 
     <p class="small">
       Clivia discussions only. No auction information,
@@ -15399,6 +15401,77 @@ replyButton.addEventListener("click", () => {
 
 card.appendChild(replyButton);
 posts.appendChild(card);
+  }
+}
+
+async function submitCliviaChatMessage() {
+  const status = document.getElementById("cliviaChatStatus");
+  const name = document.getElementById("cliviaChatName")?.value.trim();
+  const message = document.getElementById("cliviaChatText")?.value.trim();
+
+  if (status) status.textContent = "";
+
+  if (!name || !message) {
+    if (status) status.textContent =
+      "Please enter your Chat Name and message.";
+    return;
+  }
+
+  if (typeof cliviaSupabase === "undefined") {
+    if (status) status.textContent =
+      "Clivia Chats are not available.";
+    return;
+  }
+
+  try {
+    const { data, error } =
+      await cliviaSupabase.auth.getUser();
+
+    if (error || !data?.user || !data.user.email_confirmed_at) {
+      if (status) status.textContent =
+        "Please sign in to your verified Clivia Dreamers account.";
+      return;
+    }
+
+    const { data: sessionData, error: sessionError } =
+      await cliviaSupabase.auth.getSession();
+
+    if (sessionError || !sessionData?.session) {
+      if (status) status.textContent =
+        "Please sign in again.";
+      return;
+    }
+
+    const { data: result, error: sendError } =
+      await cliviaSupabase.functions.invoke(
+        "clivia-chat-moderation",
+        {
+          body: {
+            chat_name: name,
+            message_text: message,
+            parent_message_id: null,
+            photo_urls: []
+          }
+        }
+      );
+
+    if (sendError) {
+      if (status) status.textContent =
+        "Message could not be submitted. Please try again.";
+      return;
+    }
+
+    if (status) status.textContent =
+      result?.message || result?.error ||
+      "Message could not be submitted.";
+
+    if (result?.accepted && result?.status === "PENDING") {
+      document.getElementById("cliviaChatText").value = "";
+    }
+  } catch (error) {
+    console.error("Clivia chat submission failed:", error);
+    if (status) status.textContent =
+      "Message could not be submitted.";
   }
 }
 
