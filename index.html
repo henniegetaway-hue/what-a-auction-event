@@ -2896,7 +2896,18 @@ function openCliviaMembersChat() {
     <p>South African & International Clivia Members</p>
   </div>
 </section>
-<!-- END CLIVIA MEMBERS CHAT PAGE -->    
+<!-- END CLIVIA MEMBERS CHAT PAGE -->   
+ <script>
+document.addEventListener("DOMContentLoaded", function() {
+  const chatPage = document.getElementById("pageCliviaChat");
+  const chatPanel = document.getElementById("cliviaChatPanel");
+
+  if (chatPage && chatPanel) {
+    chatPage.appendChild(chatPanel);
+    chatPanel.classList.remove("hidden");
+  }
+});
+</script>     
 <section id="pageAdmin" class="page hidden">
   <div id="cliviaAdminChatLayout">
   <div id="cliviaAdminLeft">    
