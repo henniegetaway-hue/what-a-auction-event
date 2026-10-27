@@ -9669,10 +9669,11 @@ if(!email){
     return;
   }
 
-  unlockBidderAccount();
-  await checkCliviaGroupPresident();  
-      
   state.selectedBidderId = bidder.id;
+save();
+
+unlockBidderAccount();
+await checkCliviaGroupPresident();
   
 localStorage.setItem(
   "cliviaRememberedEmail",
