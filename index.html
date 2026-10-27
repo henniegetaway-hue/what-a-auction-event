@@ -11126,36 +11126,46 @@ ${lot.exportEligible ? `
 ` : ''}
       
 ${seller ? `
-<div class="auctionSellerName" style="margin-top:6px;font-size:clamp(10px,2.5vw,15px);font-weight:bold;line-height:1.2;">
-  Seller: ${escapeHtml(seller.name)}
-  ${Number(seller.completedSales||0)>=5 ? '<div class="small">✅ Trusted Seller</div>' : ''}
+<div class="auctionSellerName" style="
+  margin:10px 0;
+  font-size:17px;
+  font-weight:800;
+  line-height:1.4;
+  overflow-wrap:anywhere;
+">
+  🌿 Seller: ${escapeHtml(seller.name)}
+  ${Number(seller.completedSales||0)>=5
+    ? '<div style="font-size:13px;color:#9acd32;">✅ Trusted Seller</div>'
+    : ''}
 </div>
 
 <div class="auctionSellerStats" style="
-  font-size:clamp(9px,2.3vw,16px);
-  font-size:16px;
-  font-weight:bold;
-  margin:6px 0;
-  padding:5px 2px;
-  border-top:1px solid #ddd;
-  border-bottom:1px solid #ddd;
+  margin:8px 0 12px;
+  padding:10px;
+  background:#102417;
+  color:#ffffff;
+  border:1px solid #496b42;
+  border-radius:9px;
   display:flex;
   flex-direction:column;
-  gap:5px;
-  align-items:flex-start;
+  gap:9px;
+  font-size:14px;
+  font-weight:bold;
+  line-height:1.5;
 ">
-  <span>
-    🏆
-    <span style="color:#ff8c00;font-size:12px;font-weight:bold;">
+  <div>
+    🏆 Successful Deals:
+    <strong style="color:#ffad32;font-size:18px;">
       ${Number(seller.completedSales||0)}
-    </span>
-    Successful Deals on Site
-  </span>
+    </strong>
+  </div>
 
-  <span>
-    🙂 ${Math.min(Number(seller.happyBuyers||0),Number(seller.completedSales||0))}
-    Happy Buyers
-  </span>
+  <div>
+    😊 Happy Buyers:
+    <strong style="color:#ffad32;font-size:18px;">
+      ${Math.min(Number(seller.happyBuyers||0),Number(seller.completedSales||0))}
+    </strong>
+  </div>
 </div>
 ` : ''}
 
