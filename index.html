@@ -4912,8 +4912,9 @@ document.getElementById('siteBrandName').textContent =
        type="text"
        placeholder="Enter your Clivia Group Name"
        oninput="
-         document.getElementById('cliviaGroupBrandName').textContent =
-           this.value.trim() || 'CLIVIA GROUP AUCTIONS';
+  document.getElementById('siteBrandName').textContent =
+    this.value.trim() || 'CLIVIA GROUP AUCTIONS';
+"
        ">
       <label>Group Club Logo</label>
 <input id="cliviaGroupLogo"
