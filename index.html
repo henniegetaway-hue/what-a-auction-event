@@ -4783,6 +4783,7 @@ nav #navLive.active:hover {
     <button type="button"
       id="normalCliviaLoadBtn"
       onclick="
+         restoreNormalCliviaBranding(); 
         document.getElementById('sellerLoadGrid').style.display='grid';
         document.getElementById('groupAuctionPanel').style.display='none';
 
@@ -4809,7 +4810,10 @@ nav #navLive.active:hover {
         document.getElementById('groupAuctionPanel').style.display='block';
           
 checkCliviaGroupPresident();
-          
+       const clubName = document.getElementById('cliviaGroupName')?.value.trim();
+
+document.getElementById('siteBrandName').textContent =
+  clubName || 'CLIVIA GROUP AUCTIONS';   
         this.style.background='#c0c0c0';
         this.style.color='#000';
 
@@ -4869,36 +4873,7 @@ checkCliviaGroupPresident();
   font-size:16px !important;
   min-height:42px;
 }
-</style>
- <!-- INDIVIDUAL CLIVIA GROUP BRANDING -->
-<div id="cliviaGroupBranding"
-     style="
-       text-align:center;
-       padding:18px;
-       margin-bottom:16px;
-       background:#111;
-       border:2px solid #ffd700;
-       border-radius:10px;
-       color:#fff;
-     ">
-
-  <div id="cliviaGroupBrandLogo"
-       style="
-         font-size:42px;
-         margin-bottom:8px;
-       ">🌸</div>
-
-  <h2 id="cliviaGroupBrandName"
-      style="
-        margin:0;
-        color:#9acd32;
-        font-size:28px;
-      ">
-    CLIVIA GROUP AUCTIONS
-  </h2>
-
-</div>
-<!-- END INDIVIDUAL GROUP BRANDING -->     
+</style> 
 <!-- GROUP AUCTION TWO-COLUMN LAYOUT -->
 <div id="groupAuctionLayout">
 
@@ -4943,8 +4918,27 @@ checkCliviaGroupPresident();
       <label>Group Club Logo</label>
 <input id="cliviaGroupLogo"
        type="file"
-       accept="image/png,image/jpeg,image/webp">
+       accept="image/png,image/jpeg,image/webp"
+       onchange="
+         const file = this.files[0];
+         if(!file) return;
 
+         if(!['image/png','image/jpeg','image/webp'].includes(file.type)){
+           alert('Please select a PNG, JPG or WebP image.');
+           this.value = '';
+           return;
+         }
+
+         const logo = document.getElementById('siteLogo');
+         if(logo){
+           if(window.cliviaGroupLogoPreviewUrl){
+             URL.revokeObjectURL(window.cliviaGroupLogoPreviewUrl);
+           }
+           window.cliviaGroupLogoPreviewUrl = URL.createObjectURL(file);
+           logo.src = window.cliviaGroupLogoPreviewUrl;
+           logo.alt = 'Clivia Group Logo';
+         }
+       ">
 <p class="small">
   Upload your own club logo (optional).
   No sample pictures.
@@ -9254,7 +9248,26 @@ function lockBidderAccount(){
     password.value = "";
   }
 }
+const originalCliviaBranding = {
+  name: "Clivia Dreamers Auction",
+  tagline: "Rare • Exquisite • Timeless",
+  logo: "new logo.png"
+};
 
+function restoreNormalCliviaBranding(){
+
+  const name = document.getElementById("siteBrandName");
+  const tagline = document.getElementById("siteBrandTagline");
+  const logo = document.getElementById("siteLogo");
+
+  if(name) name.textContent = originalCliviaBranding.name;
+  if(tagline) tagline.textContent = originalCliviaBranding.tagline;
+
+  if(logo){
+    logo.src = originalCliviaBranding.logo;
+    logo.alt = "Clivia Dreamers logo";
+  }
+}
 function unlockBidderAccount(){
   bidderAccountUnlocked = true;
   bidderAccountLastActivity = Date.now();
