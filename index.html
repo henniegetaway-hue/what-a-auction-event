@@ -6669,13 +6669,7 @@ function showPage(page){
       if(page === "register"){
   updateRegistrationAccountButtons();
 }
-
-  // Lock bidder account when leaving registration page
-  if(page !== "register"){
-    lockBidderAccount();
-  }
-
-     
+ 
   if(page === "register"){
     const heading = document.querySelector(
       "#registrationMainPanel h2"
