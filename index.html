@@ -4989,7 +4989,7 @@ document.getElementById('siteBrandName').textContent =
     when international bidding is enabled.
   </label>
 
-  <button type="button"
+ <button id="cliviaGroupRegisterButton" type="button"
           style="background:#9acd32;
                  color:#000;
                  border:2px solid #ffd700;
@@ -9319,6 +9319,37 @@ async function checkCliviaGroupPresident(){
       "Unable to verify President account.";
   }
 }
+ async function verifyCliviaGroupRegistration(){
+
+  const { data, error } =
+    await cliviaSupabase.auth.getUser();
+
+  const user = data?.user;
+
+  if(error || !user?.email_confirmed_at ||
+     !bidderAccountUnlocked){
+
+    alert(
+      "Please sign in to your verified Clivia Dreamers account first."
+    );
+
+    return false;
+  }
+
+  const { data: bidder, error: bidderError } =
+    await cliviaSupabase
+      .from("bidders")
+      .select("auth_user_id")
+      .eq("auth_user_id", user.id)
+      .maybeSingle();
+
+  if(bidderError || !bidder){
+    alert("Registered Clivia Dreamers account not found.");
+    return false;
+  }
+
+  return true;
+}     
 ["click", "keydown", "input", "scroll"].forEach(eventName => {
   document.addEventListener(eventName, () => {
     if(bidderAccountUnlocked){
@@ -9437,6 +9468,8 @@ if(!email){
   }
 
   unlockBidderAccount();
+  await checkCliviaGroupPresident();  
+      
   state.selectedBidderId = bidder.id;
   
 localStorage.setItem(
