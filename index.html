@@ -4807,7 +4807,9 @@ nav #navLive.active:hover {
       onclick="
         document.getElementById('sellerLoadGrid').style.display='none';
         document.getElementById('groupAuctionPanel').style.display='block';
-
+          
+checkCliviaGroupPresident();
+          
         this.style.background='#c0c0c0';
         this.style.color='#000';
 
@@ -4906,10 +4908,23 @@ nav #navLive.active:hover {
          type="text"
          placeholder="Enter your Clivia Group Name">
 
-  <label>Group President</label>
-  <p class="small">
-    The President must use an existing registered account.
-  </p>
+ <label>Group President</label>
+<p class="small">
+  The Group President must sign in using an existing
+  verified Clivia Dreamers account.
+
+  The registered President will control group membership,
+  auction dates, plant approvals and group settings.
+</p>
+
+<div id="cliviaGroupPresidentStatus"
+     class="small"
+     style="padding:10px;
+            border:1px solid #9acd32;
+            border-radius:8px;
+            margin-bottom:12px;">
+  🔒 President account verification required.
+</div>
 
   <label>Subscription Plan *</label>
   <select id="cliviaGroupSubscription">
@@ -9198,7 +9213,53 @@ function unlockBidderAccount(){
   bidderAccountUnlocked = true;
   bidderAccountLastActivity = Date.now();
 }
+async function checkCliviaGroupPresident(){
 
+  const status = document.getElementById(
+    "cliviaGroupPresidentStatus"
+  );
+
+  if(!status) return;
+
+  status.textContent = "Checking President account...";
+
+  try {
+    const { data, error } =
+      await cliviaSupabase.auth.getUser();
+
+    const user = data?.user;
+
+    if(error || !user?.email_confirmed_at ||
+       !bidderAccountUnlocked){
+
+      status.textContent =
+        "🔒 Please sign in to your verified Clivia Dreamers account first.";
+      return;
+    }
+
+    await refreshBidderSelect();
+
+    const bidder = (state.bidders || []).find(
+      b => b.authUserId === user.id
+    );
+
+    if(!bidder){
+      status.textContent =
+        "🔒 Registered account not found.";
+      return;
+    }
+
+    status.textContent =
+      "✅ Group President account verified: " +
+      (bidder.name || user.email);
+
+  } catch(error){
+    console.error("Group President check:", error);
+
+    status.textContent =
+      "Unable to verify President account.";
+  }
+}
 ["click", "keydown", "input", "scroll"].forEach(eventName => {
   document.addEventListener(eventName, () => {
     if(bidderAccountUnlocked){
