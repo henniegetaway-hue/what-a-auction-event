@@ -6862,9 +6862,14 @@ if(account){
     updateRegistrationAccountButtons();
   });
 }   
-  if(page==="admin") renderAdminLots();
-  if(page==="invoices") renderInvoices();
-  if(page==="rules"){
+ if(page==="admin") renderAdminLots();
+if(page==="invoices") renderInvoices();
+
+if(page==="cliviaChat"){
+  window.scrollTo(0, 0);
+}
+
+if(page==="rules"){
   const auction=(state.auctions||[]).find(a=>a.id===state.selectedAuctionId);
 
   const cliviaRules=document.getElementById("cliviaRulesContent");
