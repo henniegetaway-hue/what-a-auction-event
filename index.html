@@ -9408,7 +9408,53 @@ if(logoFile){
   if(error){
     alert("Group registration failed: " + error.message);
     return;
-  }
+      }
+      
+      if(logoFile){
+    const extension =
+      logoFile.type === "image/png" ? "png" :
+      logoFile.type === "image/webp" ? "webp" : "jpg";
+
+    const logoPath =
+      data.id + "/logo-" + Date.now() + "." + extension;
+
+    const { error: uploadError } =
+      await cliviaSupabase.storage
+        .from("clivia-group-logos")
+        .upload(logoPath, logoFile, {
+          contentType: logoFile.type,
+          upsert: false
+        });
+
+    if(uploadError){
+      alert(
+        "Club record created, but logo upload failed: " +
+        uploadError.message +
+        "\nDo not register the club again."
+      );
+      return;
+    }
+
+    const { data: logoData } =
+      cliviaSupabase.storage
+        .from("clivia-group-logos")
+        .getPublicUrl(logoPath);
+
+    const { error: saveLogoError } =
+      await cliviaSupabase
+        .from("clivia_groups")
+        .update({ logo_url: logoData.publicUrl })
+        .eq("id", data.id);
+
+    if(saveLogoError){
+      alert(
+        "Club record created, but saving the logo address failed: " +
+        saveLogoError.message +
+        "\nDo not register the club again."
+      );
+      return;
+    }
+  }    
 
   alert("Group registered successfully: " + data.group_name);
 
