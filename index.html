@@ -3015,7 +3015,19 @@ function openCliviaMembersChat() {
     width: 100%;
   }
 }
- 
+/* LARGER DESKTOP NAVIGATION BUTTONS */
+@media (min-width:901px) {
+  nav:has(#navRegister) {
+    gap:8px !important;
+    justify-content:center !important;
+  }
+
+  nav:has(#navRegister) button {
+    font-size:14px !important;
+    min-height:44px !important;
+    padding:10px 12px !important;
+  }
+} 
 /* PHONE NAVIGATION FIX */
 @media (max-width:600px) {
 
