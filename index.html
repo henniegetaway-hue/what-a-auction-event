@@ -3053,7 +3053,44 @@ nav:has(#navRegister) .ownEventTabGroup button {
     overflow-wrap:anywhere !important;
   }
 }
-     
+/* PHONE ONLY — FIX REGISTRATION BUTTONS */
+@media (max-width:600px) {
+
+  #registrationButtonRow {
+    display:flex !important;
+    flex-wrap:nowrap !important;
+    justify-content:center !important;
+    align-items:flex-start !important;
+    gap:4px !important;
+    width:100% !important;
+    max-width:100% !important;
+    box-sizing:border-box !important;
+  }
+
+  #registrationButtonRow > div {
+    flex:1 1 0 !important;
+    min-width:0 !important;
+    max-width:33.33% !important;
+  }
+
+  #registrationButtonRow button {
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    box-sizing:border-box !important;
+    font-size:10px !important;
+    padding:9px 2px !important;
+    white-space:normal !important;
+    overflow-wrap:anywhere !important;
+  }
+
+  #registrationButtonRow > div > div {
+    width:100% !important;
+    font-size:10px !important;
+    text-align:center !important;
+  }
+
+}     
 </style>   
   <!-- CLIVIA MEMBERS CHAT PAGE -->
 <section id="pageCliviaChat" class="page hidden">
