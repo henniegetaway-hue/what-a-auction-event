@@ -3141,6 +3141,58 @@ nav:has(#navRegister) .ownEventTabGroup button {
 /* Paste the complete navigation CSS here */
 
 </style>
+ /* FINAL NAVIGATION TEXT AND SIZE CORRECTION */
+nav > button,
+.cliviaTabGroup > button,
+.ownEventTabGroup > button {
+  min-height:44px !important;
+  height:44px !important;
+  font-size:14px !important;
+  font-weight:700 !important;
+  line-height:1.2 !important;
+  padding:0 12px !important;
+  white-space:nowrap !important;
+}
+
+#navCliviaChat {
+  width:44px !important;
+  min-width:44px !important;
+  padding:0 !important;
+  background:white !important;
+}
+
+#navOwnEvent {
+  min-width:175px !important;
+}
+
+#navOwnAuction {
+  min-width:90px !important;
+}
+
+#navOwnBest10 {
+  min-width:85px !important;
+}
+
+@media (max-width:600px) {
+  nav > button,
+  .cliviaTabGroup > button,
+  .ownEventTabGroup > button {
+    font-size:12px !important;
+    min-height:40px !important;
+    height:40px !important;
+    padding:0 7px !important;
+  }
+
+  #navOwnEvent {
+    min-width:0 !important;
+    white-space:normal !important;
+  }
+
+  #navOwnAuction,
+  #navOwnBest10 {
+    min-width:0 !important;
+  }
+}     
 <!-- CLIVIA MEMBERS CHAT PAGE -->     
 </style>   
   <!-- CLIVIA MEMBERS CHAT PAGE -->
