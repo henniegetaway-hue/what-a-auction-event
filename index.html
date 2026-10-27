@@ -4989,7 +4989,9 @@ document.getElementById('siteBrandName').textContent =
     when international bidding is enabled.
   </label>
 
- <button id="cliviaGroupRegisterButton" type="button"
+ <button id="cliviaGroupRegisterButton"
+        type="button"
+        onclick="registerCliviaGroup()"
           style="background:#9acd32;
                  color:#000;
                  border:2px solid #ffd700;
@@ -9349,7 +9351,68 @@ async function checkCliviaGroupPresident(){
   }
 
   return true;
-}     
+}    
+async function registerCliviaGroup(){
+
+  const verified = await verifyCliviaGroupRegistration();
+
+  if(!verified) return;
+
+    const groupName =
+    document.getElementById("cliviaGroupName")?.value.trim();
+
+  const subscription =
+    document.getElementById("cliviaGroupSubscription")?.value;
+
+  const auctionAccess =
+    document.getElementById("cliviaGroupVisibility")?.value;
+
+  const international =
+    document.getElementById("cliviaGroupInternational")?.value;
+
+  if(!groupName || !subscription || !auctionAccess){
+    alert("Please complete all required Group registration fields.");
+    return;
+  }
+
+   const { data: authData, error: authError } =
+    await cliviaSupabase.auth.getUser();
+
+  if(authError || !authData?.user){
+    alert("Please sign in again.");
+    return;
+  }
+const logoFile =
+  document.getElementById("cliviaGroupLogo")?.files[0];
+
+if(logoFile){
+  if(
+    !["image/png", "image/jpeg", "image/webp"].includes(logoFile.type)
+    || logoFile.size > 2 * 1024 * 1024
+  ){
+    alert("Club logo must be PNG, JPG or WebP, maximum 2 MB.");
+    return;
+  }
+}
+  const { data, error } = await cliviaSupabase
+    .from("clivia_groups")
+    .insert({
+      group_name: groupName,
+      president_user_id: authData.user.id,
+      subscription_plan: subscription,
+      auction_access: auctionAccess,
+      international_bidding: international === "YES"
+    })
+    .select("id, group_name")
+    .single();
+  if(error){
+    alert("Group registration failed: " + error.message);
+    return;
+  }
+
+  alert("Group registered successfully: " + data.group_name);
+
+}      
 ["click", "keydown", "input", "scroll"].forEach(eventName => {
   document.addEventListener(eventName, () => {
     if(bidderAccountUnlocked){
