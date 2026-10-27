@@ -12517,6 +12517,25 @@ window.__lastWhatsAppErrorAlert=now;
 }
 }    
 load();
+// LOAD PUBLIC TEST LOT FROM SUPABASE
+async function loadPublicTestLot(){
+  const {data, error} = await cliviaSupabase
+    .from("lots")
+    .select("*")
+    .eq("lot_number", 1)
+    .eq("status", "TEST ONLY")
+    .eq("name", "Naudes 777")
+    .limit(1);
+
+  if(error){
+    console.error("Could not load test lot:", error);
+    return;
+  }
+
+  console.log("Public test lot loaded:", data);
+}
+
+loadPublicTestLot();      
 updateHeader();
 refreshBidderSelect();
 refreshSellerSelect();
