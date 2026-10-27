@@ -2984,11 +2984,9 @@ function openCliviaMembersChat() {
 </script>    
 <style>
 #cliviaAdminChatLayout {
-  display: grid;
-  grid-template-columns: 35% 65%;
-  gap: 15px;
-  align-items: start;
-  padding: 15px;
+  display:block !important;
+  width:100% !important;
+  max-width:100% !important;
 }
 
 #cliviaAdminLeft,
@@ -3210,298 +3208,11 @@ nav > button,
     min-width:0 !important;
   }
 }     
-<!-- CLIVIA MEMBERS CHAT PAGE -->     
 </style>   
   <!-- CLIVIA MEMBERS CHAT PAGE -->
 <section id="pageCliviaChat" class="page hidden">
-  <div style="text-align:center;padding:15px;">
-    <h2>🌸 CLIVIA MEMBERS COMMUNITY</h2>
-    <p>South African & International Clivia Members</p>
-  </div>
-</section>
-<!-- END CLIVIA MEMBERS CHAT PAGE -->
-
-<section id="pageAdmin" class="page hidden">
-  <div id="cliviaAdminChatLayout">
-
-    <!-- PHONE ONLY: SWITCH BETWEEN ADMIN AND CHATS -->
-    <div id="cliviaPhoneSwitch">
-      <button type="button"
-              id="phoneGoToChats"
-              onclick="switchCliviaPhoneView('chats')">
-        🌸 GO TO CHATS →
-            
-      </button>
-    </div>
-
-  <div id="cliviaAdminLeft">
-  
- <div id="adminLogin" class="panel" style="max-width:430px;margin:0 auto 16px;">
-  <h2>Admin Access</h2>
-  <p>Authorised Owner Account Only</p>
-   <input id="adminOwnerPassword"
-       type="password"
-       placeholder="Enter Owner Password">
-
-<label style="display:flex;align-items:center;gap:8px;margin-top:8px;">
-  <input type="checkbox"
-         onchange="document.getElementById('adminOwnerPassword').type=this.checked?'text':'password';"
-         style="width:auto;">
-  Show password
-</label>
-
-<br>    
-
-  <button class="goldBtn" onclick="openAdmin()">OPEN ADMIN</button>
-
-  <div id="adminLoginMsg" class="small" style="margin-top:8px"></div>
-</div>
-    <section id="pageOwner"> 
-  <div id="ownerLogin" class="panel" style="max-width:430px;margin:12px auto;">
-  <h2>Owner Access</h2>
-  <p>Clivia Dreamers Owner Only</p>
-  <input id="ownerAccessPassword"
-       type="password"
-       placeholder="Enter Owner Password">
-
-<label style="display:flex;align-items:center;gap:8px;margin-top:8px;">
-  <input type="checkbox"
-         onchange="document.getElementById('ownerAccessPassword').type=this.checked?'text':'password';"
-         style="width:auto;">
-  Show password
-</label>
-
-<br>      
-  <button class="goldBtn" onclick="openOwner()">OPEN OWNER</button>
-
-  <div id="ownerLoginMsg" class="small" style="margin-top:8px"></div>
-</div>
-<div id="ownerArea" class="hidden">
-  <div class="panel">
-    <h2>Clivia Dreamers Owner Control</h2>
-    <p><b>OWNER ONLY</b> — Private Clivia Dreamers settings and payment information.</p>
-    
-<h3>Clivia Dreamers Bank Details</h3>
-
-<label>Bank name</label>
-<input id="ownerBank" placeholder="Bank name">
-
-<label>Account name</label>
-<input id="ownerAccountName" placeholder="Account name">
-
-<label>Account number</label>
-<input id="ownerAccountNumber" placeholder="Account number">
-
-<br><br>
-<button class="goldBtn" onclick="saveOwnerBankDetails()">SAVE BANK DETAILS</button>
-
-<div id="ownerBankMsg" class="small" style="margin-top:8px;"></div>
-        <hr style="margin:25px 0;border-color:#9acd32;">
-<h2>MONTHLY BANK RECONCILIATION</h2>
-
-<p>
-  Upload your monthly bank statement to compare
-  payments received against website invoices.
-</p>
-
-<label>Upload Bank Statement</label>
-<input
-  id="monthlyBankStatement"
-  type="file"
-  accept=".pdf,.csv,.xlsx,.xls"
->
-
-<p class="small">
-  Payment matching and verification will be
-  connected later.
-</p>
-
-<div id="monthlyBankResults" class="panel">
-  <b>STATUS: NOT YET CONNECTED</b>
-  <p>No bank statement has been processed.</p>
-</div>
-
-<hr style="margin:25px 0;border-color:#9acd32;">
-
-<div class="panel" id="centralInvoicePanel">
-
-  <h2>WHAT A AUCTION EVENT — CENTRAL INVOICES</h2>
-
-  <p class="small">
-    Central invoice management for What a Auction Event
-    and Clivia Dreamers auctions.
-  </p>
-
- <button class="goldBtn"
-        type="button"
-        onclick="loadCentralInvoices()">
-  LOAD CENTRAL INVOICES
-</button>
-
-<br><br>
-
-<div id="centralInvoiceResults">
-  Central invoices have not been loaded yet.
-</div>
-
-</div>
-
-<br>
-<button class="goldBtn" onclick="closeOwner()">CLOSE OWNER</button>
-  </div>
-</div>
-
-</section>
-</div>
-<style>
-     
-
-/* FULL-SCREEN CLIVIA CHATS — PHONE */
-@media (max-width:600px) {
-
-  #cliviaAdminChatLayout {
-    display:block !important;
-    width:100% !important;
-    max-width:100% !important;
-    min-width:0 !important;
-    padding:0 !important;
-    margin:0 !important;
-  }
-
-  #cliviaAdminRight {
-    width:100% !important;
-    max-width:100% !important;
-    min-width:0 !important;
-    padding:0 !important;
-    margin:0 !important;
-  }
-
-  #cliviaChatPanel {
-    position:relative !important;
-   
-#cliviaChatPanel {
-    position:relative !important;
-    top:auto !important;
-    left:auto !important;
-    width:100% !important;
-    max-width:100% !important;
-    min-width:0 !important;
-    height:100dvh !important;
-    min-height:0 !important;
-    box-sizing:border-box !important;
-    margin:0 !important;
-    padding:6px !important;
-    border-radius:0 !important;
-    overflow-x:hidden !important;
-    overflow-y:auto !important;
-    overscroll-behavior:contain !important;
-}
-
-#cliviaChatMessages {
-    height:18dvh !important;
-    min-height:70px !important;
-    max-height:18dvh !important;
-    overflow-y:auto !important;
-}
-
-
-  #cliviaChatPanel input,
-  #cliviaChatPanel textarea {
-    width:100% !important;
-    max-width:100% !important;
-    box-sizing:border-box !important;
-  }
-}
-
-/* COMPACT CLIVIA CHATS — DESKTOP */
-@media (min-width:601px) {
-
-  
-#cliviaAdminChatLayout {
-  display:grid !important;
-  grid-template-columns:minmax(0,480px) 300px !important;
-  justify-content:center;
-  gap:18px;
-}
-
-#cliviaAdminRight {
-  grid-column:1 !important;
-  grid-row:1 !important;
-  display:block !important;
-}
-
-#cliviaAdminLeft {
-  grid-column:2 !important;
-  grid-row:1 !important;
-  display:block !important;
-  visibility:visible !important;
-}
-
-
-  #cliviaChatPanel {
-    padding:12px !important;
-    font-size:13px;
-  }
-
-  #cliviaChatPanel h2 {
-    font-size:19px !important;
-    margin:5px 0 8px;
-  }
-
-  #cliviaChatPanel h3 {
-    font-size:15px !important;
-    margin:10px 0;
-  }
-
-  #cliviaChatMessages {
-    min-height:130px !important;
-    height:160px !important;
-    max-height:160px !important;
-    padding:10px !important;
-  }
-
-  #cliviaChatText {
-    height:65px !important;
-    min-height:65px !important;
-  }
-
-  #cliviaChatPanel input,
-  #cliviaChatPanel textarea {
-    padding:7px !important;
-  }
-}
-
- 
-/* SMALL CLIVIA CHATS BUTTON ON PHONE */
-@media (max-width:600px) {
-  button[onclick="openCliviaChatsFromAuction()"] {
-    padding:4px 1px !important;
-    min-width:0 !important;
-  }
-
-  button[onclick="openCliviaChatsFromAuction()"] > span {
-    display:flex !important;
-    justify-content:center !important;
-    align-items:center !important;
-    gap:2px !important;
-    width:100% !important;
-  }
-
-  button[onclick="openCliviaChatsFromAuction()"] svg {
-    width:18px !important;
-    height:18px !important;
-    flex-shrink:0 !important;
-  }
-
-  button[onclick="openCliviaChatsFromAuction()"] > span > span:nth-child(2) {
-    font-size:10px !important;
-    font-weight:900 !important;
-    white-space:nowrap !important;
-  }
-}
-     
-</style>
-<div id="cliviaAdminRight">
+  <!-- START CLIVIA CHATS MOVE -->     
+<div id="cliviaAdminRight" style="width:100%;max-width:700px;margin:0 auto;">
       <style>
 #cliviaChatPanel,
 #cliviaChatPanel h2,
@@ -3871,7 +3582,288 @@ border:1px solid #D99A50;
   </div>
 
 </div>
+<!-- CLIVIA CHATS CLOSING TAGS CHECKED -->      
+<!-- END CLIVIA CHATS MOVE -->    
+</section>
+<!-- END CLIVIA MEMBERS CHAT PAGE -->
 
+<section id="pageAdmin" class="page hidden">
+  <div id="cliviaAdminChatLayout">
+
+    <!-- PHONE ONLY: SWITCH BETWEEN ADMIN AND CHATS -->
+    <div id="cliviaPhoneSwitch">
+      <button type="button"
+              id="phoneGoToChats"
+            onclick="showPage('cliviaChat')"
+        🌸 GO TO CHATS →
+            
+      </button>
+    </div>
+
+  <div id="cliviaAdminLeft">
+  
+ <div id="adminLogin" class="panel" style="max-width:430px;margin:0 auto 16px;">
+  <h2>Admin Access</h2>
+  <p>Authorised Owner Account Only</p>
+   <input id="adminOwnerPassword"
+       type="password"
+       placeholder="Enter Owner Password">
+
+<label style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+  <input type="checkbox"
+         onchange="document.getElementById('adminOwnerPassword').type=this.checked?'text':'password';"
+         style="width:auto;">
+  Show password
+</label>
+
+<br>    
+
+  <button class="goldBtn" onclick="openAdmin()">OPEN ADMIN</button>
+
+  <div id="adminLoginMsg" class="small" style="margin-top:8px"></div>
+</div>
+    <section id="pageOwner"> 
+  <div id="ownerLogin" class="panel" style="max-width:430px;margin:12px auto;">
+  <h2>Owner Access</h2>
+  <p>Clivia Dreamers Owner Only</p>
+  <input id="ownerAccessPassword"
+       type="password"
+       placeholder="Enter Owner Password">
+
+<label style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+  <input type="checkbox"
+         onchange="document.getElementById('ownerAccessPassword').type=this.checked?'text':'password';"
+         style="width:auto;">
+  Show password
+</label>
+
+<br>      
+  <button class="goldBtn" onclick="openOwner()">OPEN OWNER</button>
+
+  <div id="ownerLoginMsg" class="small" style="margin-top:8px"></div>
+</div>
+<div id="ownerArea" class="hidden">
+  <div class="panel">
+    <h2>Clivia Dreamers Owner Control</h2>
+    <p><b>OWNER ONLY</b> — Private Clivia Dreamers settings and payment information.</p>
+    
+<h3>Clivia Dreamers Bank Details</h3>
+
+<label>Bank name</label>
+<input id="ownerBank" placeholder="Bank name">
+
+<label>Account name</label>
+<input id="ownerAccountName" placeholder="Account name">
+
+<label>Account number</label>
+<input id="ownerAccountNumber" placeholder="Account number">
+
+<br><br>
+<button class="goldBtn" onclick="saveOwnerBankDetails()">SAVE BANK DETAILS</button>
+
+<div id="ownerBankMsg" class="small" style="margin-top:8px;"></div>
+        <hr style="margin:25px 0;border-color:#9acd32;">
+<h2>MONTHLY BANK RECONCILIATION</h2>
+
+<p>
+  Upload your monthly bank statement to compare
+  payments received against website invoices.
+</p>
+
+<label>Upload Bank Statement</label>
+<input
+  id="monthlyBankStatement"
+  type="file"
+  accept=".pdf,.csv,.xlsx,.xls"
+>
+
+<p class="small">
+  Payment matching and verification will be
+  connected later.
+</p>
+
+<div id="monthlyBankResults" class="panel">
+  <b>STATUS: NOT YET CONNECTED</b>
+  <p>No bank statement has been processed.</p>
+</div>
+
+<hr style="margin:25px 0;border-color:#9acd32;">
+
+<div class="panel" id="centralInvoicePanel">
+
+  <h2>WHAT A AUCTION EVENT — CENTRAL INVOICES</h2>
+
+  <p class="small">
+    Central invoice management for What a Auction Event
+    and Clivia Dreamers auctions.
+  </p>
+
+ <button class="goldBtn"
+        type="button"
+        onclick="loadCentralInvoices()">
+  LOAD CENTRAL INVOICES
+</button>
+
+<br><br>
+
+<div id="centralInvoiceResults">
+  Central invoices have not been loaded yet.
+</div>
+
+</div>
+
+<br>
+<button class="goldBtn" onclick="closeOwner()">CLOSE OWNER</button>
+  </div>
+</div>
+
+</section>
+</div>
+<style>
+     
+
+/* FULL-SCREEN CLIVIA CHATS — PHONE */
+@media (max-width:600px) {
+
+  #cliviaAdminChatLayout {
+    display:block !important;
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    padding:0 !important;
+    margin:0 !important;
+  }
+
+  #cliviaAdminRight {
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    padding:0 !important;
+    margin:0 !important;
+  }
+   
+#cliviaChatPanel {
+    position:relative !important;
+    top:auto !important;
+    left:auto !important;
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    height:100dvh !important;
+    min-height:0 !important;
+    box-sizing:border-box !important;
+    margin:0 !important;
+    padding:6px !important;
+    border-radius:0 !important;
+    overflow-x:hidden !important;
+    overflow-y:auto !important;
+    overscroll-behavior:contain !important;
+}
+
+#cliviaChatMessages {
+    height:18dvh !important;
+    min-height:70px !important;
+    max-height:18dvh !important;
+    overflow-y:auto !important;
+}
+
+
+  #cliviaChatPanel input,
+  #cliviaChatPanel textarea {
+    width:100% !important;
+    max-width:100% !important;
+    box-sizing:border-box !important;
+  }
+}
+
+/* COMPACT CLIVIA CHATS — DESKTOP */
+@media (min-width:601px) {
+
+  
+#cliviaAdminChatLayout {
+  display:block !important;
+  width:100% !important;
+  max-width:100% !important;
+}
+
+#cliviaAdminRight {
+  grid-column:1 !important;
+  grid-row:1 !important;
+  display:block !important;
+}
+
+#cliviaAdminLeft {
+  display:block !important;
+  width:100% !important;
+  max-width:100% !important;
+  visibility:visible !important;
+}
+
+
+  #cliviaChatPanel {
+    padding:12px !important;
+    font-size:13px;
+  }
+
+  #cliviaChatPanel h2 {
+    font-size:19px !important;
+    margin:5px 0 8px;
+  }
+
+  #cliviaChatPanel h3 {
+    font-size:15px !important;
+    margin:10px 0;
+  }
+
+  #cliviaChatMessages {
+    min-height:130px !important;
+    height:160px !important;
+    max-height:160px !important;
+    padding:10px !important;
+  }
+
+  #cliviaChatText {
+    height:65px !important;
+    min-height:65px !important;
+  }
+
+  #cliviaChatPanel input,
+  #cliviaChatPanel textarea {
+    padding:7px !important;
+  }
+}
+
+ 
+/* SMALL CLIVIA CHATS BUTTON ON PHONE */
+@media (max-width:600px) {
+  button[onclick="openCliviaChatsFromAuction()"] {
+    padding:4px 1px !important;
+    min-width:0 !important;
+  }
+
+  button[onclick="openCliviaChatsFromAuction()"] > span {
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
+    gap:2px !important;
+    width:100% !important;
+  }
+
+  button[onclick="openCliviaChatsFromAuction()"] svg {
+    width:18px !important;
+    height:18px !important;
+    flex-shrink:0 !important;
+  }
+
+  button[onclick="openCliviaChatsFromAuction()"] > span > span:nth-child(2) {
+    font-size:10px !important;
+    font-weight:900 !important;
+    white-space:nowrap !important;
+  }
+}
+     
+</style>
+  
 </div>
 
 <div id="adminArea" class="hidden">
@@ -6747,7 +6739,8 @@ if(logo){
  const map={
   register:["pageRegister","navRegister"],
   live:["pageLive","navLive"],
- sellerLoad:["pageSellerLoad","navCliviaLoad"],
+  sellerLoad:["pageSellerLoad","navCliviaLoad"],
+  cliviaChat:["pageCliviaChat","navCliviaChat"],
   rules:["pageRules","navRules"],
   admin:["pageAdmin","navAdmin"],
   invoices:["pageInvoices","navInvoices"]
@@ -15964,75 +15957,17 @@ posts.appendChild(card);
   }
 }
 function openCliviaChatsFromAuction() {
-  showPage("admin");
-
-  if (window.innerWidth <= 600) {
-    switchCliviaPhoneView("chats");
-  } else {
-    document.getElementById("cliviaChatPanel")
-      ?.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
-  }
+  showPage("cliviaChat");
 }
 
 
 function switchCliviaPhoneView(view) {
-  const admin = document.getElementById("cliviaAdminLeft");
-  const chats = document.getElementById("cliviaAdminRight");
-  const switchBar = document.getElementById("cliviaPhoneSwitch");
-
-  if (!admin || !chats) return;
-
-  // DESKTOP: Always show both panels
-  if (window.innerWidth > 600) {
-    admin.style.setProperty("display", "block", "important");
-    chats.style.setProperty("display", "block", "important");
-
-    if (switchBar) {
-      switchBar.style.display = "none";
-    }
-    return;
-  }
-
-  // PHONE: Show only the selected panel
-  const showChats = view === "chats";
-
-  admin.style.setProperty(
-    "display", showChats ? "none" : "block", "important"
-  );
-
-  chats.style.setProperty(
-    "display", showChats ? "block" : "none", "important"
-  );
-
-  if (switchBar) {
-    switchBar.style.display = "none";
-  }
-
-  if (showChats) {
-    document.getElementById("cliviaChatPanel")
-      ?.scrollIntoView({
-        behavior: "auto",
-        block: "start"
-      });
+  if (view === "chats") {
+    showPage("cliviaChat");
+  } else {
+    showPage("admin");
   }
 }
-
-// Restore both panels when returning to desktop
-window.addEventListener("resize", function() {
-  if (window.innerWidth > 600) {
-    switchCliviaPhoneView("admin");
-  }
-});
-
-// Restore desktop layout when page opens
-document.addEventListener("DOMContentLoaded", function() {
-  if (window.innerWidth > 600) {
-    switchCliviaPhoneView("admin");
-  }
-});
 
 async function submitCliviaChatMessage() {
   const status = document.getElementById("cliviaChatStatus");
