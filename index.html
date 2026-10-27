@@ -9396,6 +9396,26 @@ if(logoFile){
     return;
   }
 }
+    const { data: existingGroups, error: checkError } =
+    await cliviaSupabase
+      .from("clivia_groups")
+      .select("id, group_name, logo_url")
+      .eq("president_user_id", authData.user.id)
+      .ilike("group_name", groupName)
+      .limit(1);
+
+  if(checkError){
+    alert("Unable to check existing club registrations: " + checkError.message);
+    return;
+  }
+
+  if(existingGroups?.length){
+    alert(
+      "This club is already registered.\n\n" +
+      "Do not register it again. We must check its logo first."
+    );
+    return;
+  }    
   const { data, error } = await cliviaSupabase
     .from("clivia_groups")
     .insert({
