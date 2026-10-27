@@ -4870,6 +4870,35 @@ checkCliviaGroupPresident();
   min-height:42px;
 }
 </style>
+ <!-- INDIVIDUAL CLIVIA GROUP BRANDING -->
+<div id="cliviaGroupBranding"
+     style="
+       text-align:center;
+       padding:18px;
+       margin-bottom:16px;
+       background:#111;
+       border:2px solid #ffd700;
+       border-radius:10px;
+       color:#fff;
+     ">
+
+  <div id="cliviaGroupBrandLogo"
+       style="
+         font-size:42px;
+         margin-bottom:8px;
+       ">🌸</div>
+
+  <h2 id="cliviaGroupBrandName"
+      style="
+        margin:0;
+        color:#9acd32;
+        font-size:28px;
+      ">
+    CLIVIA GROUP AUCTIONS
+  </h2>
+
+</div>
+<!-- END INDIVIDUAL GROUP BRANDING -->     
 <!-- GROUP AUCTION TWO-COLUMN LAYOUT -->
 <div id="groupAuctionLayout">
 
@@ -4904,9 +4933,22 @@ checkCliviaGroupPresident();
   </p>
 
   <label>Registered Group Name *</label>
-  <input id="cliviaGroupName"
-         type="text"
-         placeholder="Enter your Clivia Group Name">
+ <input id="cliviaGroupName"
+       type="text"
+       placeholder="Enter your Clivia Group Name"
+       oninput="
+         document.getElementById('cliviaGroupBrandName').textContent =
+           this.value.trim() || 'CLIVIA GROUP AUCTIONS';
+       ">
+      <label>Group Club Logo</label>
+<input id="cliviaGroupLogo"
+       type="file"
+       accept="image/png,image/jpeg,image/webp">
+
+<p class="small">
+  Upload your own club logo (optional).
+  No sample pictures.
+</p>
 
  <label>Group President</label>
 <p class="small">
@@ -5001,6 +5043,10 @@ checkCliviaGroupPresident();
     <button type="button" disabled>
       👥 MEMBERS & INVITATIONS
     </button>
+        <button type="button"
+        onclick="openCliviaChatsFromAuction()">
+  💬 OPEN CLIVIA CHATS
+</button>
 
     <button type="button" disabled>
       🌸 APPROVE PLANT LISTINGS
