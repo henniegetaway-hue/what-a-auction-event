@@ -9454,11 +9454,11 @@ if(logoFile){
         .from("clivia-group-logos")
         .getPublicUrl(logoPath);
 
-    const { error: saveLogoError } =
-      await cliviaSupabase
-        .from("clivia_groups")
-        .update({ logo_url: logoData.publicUrl })
-        .eq("id", data.id);
+       const { error: saveLogoError } =
+      await cliviaSupabase.rpc("save_clivia_group_logo", {
+        p_group_id: data.id,
+        p_logo_path: logoPath
+      });
 
     if(saveLogoError){
       alert(
