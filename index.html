@@ -1787,14 +1787,6 @@ window.addEventListener("load", function(){
     🌸 LOAD
   </button>
 
-  <!-- CLIVIA AUCTIONS THIRD -->
-  <button id="navLive"
-          type="button"
-          onclick="showPage('live')"
-          style="background:#111;color:white;border:2px solid #ffd700;border-radius:6px;height:40px !important;min-height:40px !important;box-sizing:border-box;">
-    Clivia Auctions
-  </button>
-
 </div>
 <button id="navAdmin" onclick="showPage('admin')">Admin</button>
 
@@ -4992,8 +4984,8 @@ document.getElementById('siteBrandName').textContent =
                  border-radius:8px;
                  padding:12px;
                  margin-top:15px;"
-          disabled>
-    REGISTER GROUP — COMING SOON
+                   >
+    REGISTER GROUP
   </button>
 
   <p class="small">
@@ -9347,7 +9339,12 @@ async function checkCliviaGroupPresident(){
   return true;
 }    
 async function registerCliviaGroup(){
+  const registerButton =
+    document.getElementById("cliviaGroupRegisterButton");
 
+  if(registerButton?.dataset.processing === "yes"){
+    return;
+  }
   const verified = await verifyCliviaGroupRegistration();
 
   if(!verified) return;
@@ -9376,9 +9373,14 @@ async function registerCliviaGroup(){
     alert("Please sign in again.");
     return;
   }
-const logoFile =
+const logoFile =   
   document.getElementById("cliviaGroupLogo")?.files[0];
-
+      
+if(!logoFile){
+  alert("Please select your Club Logo before registering.");
+  return;
+}
+      
 if(logoFile){
   if(
     !["image/png", "image/jpeg", "image/webp"].includes(logoFile.type)
@@ -9388,7 +9390,11 @@ if(logoFile){
     return;
   }
 }
-    const { data: existingGroups, error: checkError } =
+      if(registerButton){
+    registerButton.dataset.processing = "yes";
+  }
+    try {  
+      const { data: existingGroups, error: checkError } =
     await cliviaSupabase
       .from("clivia_groups")
       .select("id, group_name, logo_url")
@@ -9401,13 +9407,56 @@ if(logoFile){
     return;
   }
 
-  if(existingGroups?.length){
+if(existingGroups?.length){
+  const existingClub = existingGroups[0];
+
+  if(existingClub.logo_url){
     alert(
-      "This club is already registered.\n\n" +
-      "Do not register it again. We must check its logo first."
+      "This club is already registered successfully.\n\n" +
+      existingClub.group_name
     );
     return;
-  }    
+  }
+
+  const extension =
+    logoFile.type === "image/png" ? "png" :
+    logoFile.type === "image/webp" ? "webp" : "jpg";
+
+  const logoPath =
+    existingClub.id + "/logo-" + Date.now() + "." + extension;
+
+  const { error: uploadError } =
+    await cliviaSupabase.storage
+      .from("clivia-group-logos")
+      .upload(logoPath, logoFile, {
+        contentType: logoFile.type,
+        upsert: false
+      });
+
+  if(uploadError){
+    alert("Logo upload failed: " + uploadError.message);
+    return;
+  }
+
+  const { error: saveLogoError } =
+    await cliviaSupabase.rpc("save_clivia_group_logo", {
+      p_group_id: existingClub.id,
+      p_logo_path: logoPath
+    });
+
+  if(saveLogoError){
+    alert(
+      "Logo uploaded, but saving its address failed: " +
+      saveLogoError.message +
+      "\nPlease try again. Do not register another club."
+    );
+    return;
+  }
+
+  alert("Club logo saved successfully: " + existingClub.group_name);
+  return;
+}
+
   const { data, error } = await cliviaSupabase
     .from("clivia_groups")
     .insert({
@@ -9470,9 +9519,23 @@ if(logoFile){
     }
   }    
 
-  alert("Group registered successfully: " + data.group_name);
+   alert("Group registered successfully: " + data.group_name);
 
-}      
+    } catch(error) {
+    console.error("Clivia Group registration error:", error);
+
+    alert(
+      "A connection or registration error occurred.\n\n" +
+      "Please try again. If the club was already created, " +
+      "the system will check its existing registration."
+    );
+
+  } finally {
+    if(registerButton){
+      registerButton.dataset.processing = "no";
+    }
+  }
+}
 ["click", "keydown", "input", "scroll"].forEach(eventName => {
   document.addEventListener(eventName, () => {
     if(bidderAccountUnlocked){
