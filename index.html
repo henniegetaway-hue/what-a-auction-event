@@ -10829,6 +10829,22 @@ const auctionRowInfo={
   ROW6:"ROW 6 — SETS / BULK PLANTS — STARTING BID R1,000+"
 };            
 const displayLots=[...auctionLots];
+
+// ADD PUBLIC TEST LOT WITHOUT CHANGING REAL AUCTION LOTS
+if(window.publicTestLot){
+  const alreadyDisplayed=displayLots.some(
+    lot=>lot.name==="Naudes 777"
+  );
+
+  if(!alreadyDisplayed){
+    displayLots.unshift({
+      ...window.publicTestLot,
+      startRow:"ROW1",
+      auctionId:state.selectedAuctionId,
+      sellerId:null
+    });
+  }
+}
   
  const renderedLots=displayLots.map((lot,i)=>{
   const seller=(state.sellers||[]).find(s=>s.id===lot.sellerId);
@@ -12569,7 +12585,31 @@ async function loadPublicTestLot(){
     return;
   }
 
-  console.log("Public test lot loaded:", data);
+ console.log("Public test lot loaded:", data);
+
+if(data && data.length > 0){
+  const record = data[0];
+
+  window.publicTestLot = {
+    id: "TEST-" + record.id,
+    lotNumber: record.lot_number,
+    name: record.name,
+    breeding: record.breeding || "",
+    breeder: record.breeder || "",
+    startBid: Number(record.starting_bid),
+    increment: Number(record.minimum_increment),
+    flower: record.flower_image_url,
+    plant: record.plant_image_url,
+    bids: [],
+    status: "TEST ONLY",
+    exportEligible: false
+  };
+
+  console.log("Naudes 777 ready for display");
+      if(document.getElementById("lotsGrid")){
+  renderLots();
+}
+}
 }
 
 loadPublicTestLot();      
