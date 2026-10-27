@@ -1744,21 +1744,27 @@ window.addEventListener("load", function(){
   </button>
 <!-- CLIVIA CHAT BUTTON -->
 <button id="navCliviaChat"
+       <button id="navCliviaChat"
         type="button"
         onclick="showPage('cliviaChat')"
         aria-label="Open Clivia Members Chat"
-        style="
-          background:white;
-          color:#003399;
-          border:2px solid #ffd700;
-          border-radius:6px;
-          padding:7px 12px;
-          cursor:pointer;
-          display:inline-flex;
-          align-items:center;
-          justify-content:center;
-        ">
-  <span style="font-size:24px;line-height:1;">🗨️</span>
+        style="background:#fff !important;
+               border:2px solid #ffd700 !important;
+               border-radius:6px;
+               height:40px;
+               min-height:40px;
+               padding:0 12px;
+               display:inline-flex;
+               align-items:center;
+               justify-content:center;
+               cursor:pointer;">
+  <svg width="29" height="29" viewBox="0 0 32 32" aria-hidden="true">
+    <path d="M5 6 H23 Q27 6 27 10 V19 Q27 23 23 23 H13 L6 28 V23 Q3 21 3 18 V10 Q3 6 5 6Z"
+          fill="#003080" stroke="#001640" stroke-width="2"/>
+    <circle cx="10" cy="15" r="2" fill="white"/>
+    <circle cx="16" cy="15" r="2" fill="white"/>
+    <circle cx="22" cy="15" r="2" fill="white"/>
+  </svg>
 </button>
   <button id="navLive"
           onclick="showPage('live')"
