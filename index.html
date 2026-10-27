@@ -3344,18 +3344,21 @@ nav > button,
 </div>
 <script>
 async function shareCliviaCommunity(){
-  const url = location.origin + location.pathname;
+  const url =
+    location.origin + location.pathname + "?page=cliviaChat";
+
   if(navigator.share){
     try{
       await navigator.share({
-        title:"Clivia Dreamers Community",
+        title:"🌸 Clivia Chats — Clivia Dreamers Community",
+        text:"Join our Clivia community! Share Clivia flowers, photos, growing advice and friendly discussions.",
         url:url
       });
     }catch(e){
       if(e.name !== "AbortError") console.error(e);
     }
   }else{
-    prompt("Copy this link:",url);
+    prompt("Copy this Clivia Chats link:",url);
   }
 }
 </script>
