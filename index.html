@@ -9279,8 +9279,7 @@ async function checkCliviaGroupPresident(){
 
     const user = data?.user;
 
-    if(error || !user?.email_confirmed_at ||
-       !bidderAccountUnlocked){
+   if(error || !user || !user.email_confirmed_at){
 
       status.textContent =
         "🔒 Please sign in to your verified Clivia Dreamers account first.";
