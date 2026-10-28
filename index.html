@@ -9427,7 +9427,24 @@ function unlockBidderAccount(){
     brand.textContent = group.group_name;
   }
 
-  alert("Selected group: " + group.group_name);
+  const registration = document.getElementById("groupPresidentRegistration");
+const management = document.getElementById("cliviaGroupManagement");
+const title = document.getElementById("cliviaGroupManagementTitle");
+
+if(registration) registration.style.display = "none";
+
+if(management){
+  management.style.display = "block";
+}
+
+if(title){
+  title.textContent = "🌸 " + group.group_name;
+}
+
+management?.scrollIntoView({
+  behavior: "smooth",
+  block: "start"
+});
 } 
    async function openMyCliviaGroups(){
 
