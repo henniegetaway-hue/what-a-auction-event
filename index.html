@@ -4950,34 +4950,7 @@ document.getElementById('siteBrandName').textContent =
            logo.alt = 'Clivia Group Logo';
          }
        ">
-       type="file"
-       accept="image/png,image/jpeg,image/webp"
-       onchange="
-         const file = this.files[0];
-         if(!file) return;
-
-         if(!['image/png','image/jpeg','image/webp'].includes(file.type)){
-           alert('Please select a PNG, JPG or WebP image.');
-           this.value = '';
-           return;
-         }
-
-         const logo = document.getElementById('siteLogo');
-         if(logo){
-           if(window.cliviaGroupLogoPreviewUrl){
-             URL.revokeObjectURL(window.cliviaGroupLogoPreviewUrl);
-           }
-           window.cliviaGroupLogoPreviewUrl = URL.createObjectURL(file);
-           logo.src = window.cliviaGroupLogoPreviewUrl;
-           logo.alt = 'Clivia Group Logo';
-            const preview = document.getElementById('cliviaGroupLogoPreview');
-
-if(preview){
-  preview.src = window.cliviaGroupLogoPreviewUrl;
-  preview.style.display = 'inline-block';
-}   
-         }
-       ">
+      
 <div style="text-align:center;margin:12px 0;">
   <img id="cliviaGroupLogoPreview"
        alt="Selected Club Logo"
@@ -10019,8 +9992,22 @@ if(common) common.style.display="block";
     return;
   }
       
-  const name=document.getElementById("regName").value.trim();
-  const phone=document.getElementById("regPhone").value.trim();
+ const name=document.getElementById("regName").value.trim();
+const phone=document.getElementById("regPhone").value.trim();
+
+const chatName =
+  document.getElementById("regChatName")?.value.trim() || "";
+
+if(
+  chatName.length < 3 ||
+  chatName.length > 30 ||
+  /@|https?:\/\/|www\.|[0-9]{7,}/i.test(chatName)
+){
+  document.getElementById("regMsg").textContent =
+    "Choose a Chat Name of 3–30 characters. " +
+    "No email addresses, links or phone numbers.";
+  return;
+}
     const businessName=document.getElementById("regBusinessName").value.trim();
     const businessPhone=document.getElementById("regBusinessPhone").value.trim();
     const companyName=document.getElementById("regCompanyName").value.trim();
@@ -10186,9 +10173,10 @@ if(!signUpData.user){
     "Clivia registration awaiting email confirmation."
   );
 }       
-  const bidder={
+ const bidder={
     id:"B"+Date.now(),
 name: bidderName,
+chatName: chatName,
 phone: bidderPhone,
 entityType,
     businessName,
