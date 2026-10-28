@@ -9427,15 +9427,20 @@ function unlockBidderAccount(){
   dropdown = document.createElement("div");
   dropdown.id = "myCliviaGroupsDropdown";
 
-  dropdown.style.cssText = `
-    background:#111;
-    border:2px solid #ffd700;
-    border-radius:8px;
-    padding:10px;
-    margin-top:8px;
-    width:100%;
-    box-sizing:border-box;
-  `;
+ dropdown.style.cssText = `
+  background:#111;
+  border:2px solid #ffd700;
+  border-radius:8px;
+  padding:6px;
+  margin-top:5px;
+  width:190px;
+  max-width:90vw;
+  box-sizing:border-box;
+  position:absolute;
+  right:0;
+  top:100%;
+  z-index:1000;
+`;
 
   if(!groups?.length){
     dropdown.textContent = "No registered groups found.";
@@ -9467,7 +9472,8 @@ function unlockBidderAccount(){
     });
   }
 
-  button.insertAdjacentElement("afterend", dropdown);
+  button.style.position = "relative";
+button.appendChild(dropdown);
 }   
 async function checkCliviaGroupPresident(){
 
