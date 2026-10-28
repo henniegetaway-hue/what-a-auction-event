@@ -3573,7 +3573,17 @@ border:1px solid #D99A50;
     <input id="cliviaChatName"
            maxlength="30"
            placeholder="Your Clivia name">
+<button type="button"
+        class="goldBtn"
+        id="cliviaRegisterChatNameBtn"
+        onclick="registerCliviaChatName()">
+  💬 REGISTER MY CHAT NAME
+</button>
 
+<div id="cliviaChatRegistrationStatus"
+     class="small"
+     style="margin-top:10px;">
+</div>
     <label>Your Message</label>
     <textarea id="cliviaChatText"
               maxlength="1000"
@@ -5189,7 +5199,33 @@ document.getElementById('siteBrandName').textContent =
 
 </div>
 <!-- END GROUP AUCTION AREA -->
+<!-- CLIVIA CHAT REGISTRATION -->
+<div id="cliviaChatRegistrationLink"
+     style="text-align:center;
+            padding:15px;
+            margin:15px 0;
+            background:#101b12;
+            border:2px solid #9acd32;
+            border-radius:10px;">
 
+  <button type="button"
+          onclick="showCliviaChatRegistration()"
+          style="background:#9acd32;
+                 color:#000;
+                 font-weight:bold;
+                 padding:12px 20px;
+                 border-radius:8px;
+                 cursor:pointer;">
+    💬 CLIVIA CHAT REGISTRATION
+  </button>
+
+  <div id="cliviaRegisteredChatName"
+       style="margin-top:8px;color:white;">
+    Chat Name: Not registered
+  </div>
+
+</div>
+<!-- END CLIVIA CHAT REGISTRATION -->
 <div id="sellerLoadGrid" style="
   display:grid;
   grid-template-columns:minmax(0,1.5fr) minmax(280px,1fr);
@@ -16374,6 +16410,151 @@ card.appendChild(replyButton);
 posts.appendChild(card);
   }
 }
+   async function registerCliviaChatName() {
+  const input = document.getElementById("cliviaChatName");
+  const status = document.getElementById("cliviaChatRegistrationStatus");
+  const button = document.getElementById("cliviaRegisterChatNameBtn");
+
+  const chatName = input?.value.trim() || "";
+
+  if (status) status.textContent = "";
+
+  if (
+    chatName.length < 3 ||
+    chatName.length > 30 ||
+    /@|https?:\/\/|www\.|[0-9]{7,}/i.test(chatName)
+  ) {
+    if (status) status.textContent =
+      "Choose a Chat Name of 3–30 characters. No email, links or phone numbers.";
+    return;
+  }
+
+  if (typeof cliviaSupabase === "undefined") {
+    if (status) status.textContent = "Clivia registration is unavailable.";
+    return;
+  }
+
+  if (button) button.disabled = true;
+
+  try {
+    const { data, error } = await cliviaSupabase.auth.getUser();
+    const user = data?.user;
+
+    if (error || !user || !user.email_confirmed_at) {
+      if (status) status.textContent =
+        "Please sign in to your verified Clivia account first.";
+      return;
+    }
+
+    const { data: existing, error: lookupError } = await cliviaSupabase
+      .from("clivia_chat_profiles")
+      .select("chat_name")
+      .eq("auth_user_id", user.id)
+      .maybeSingle();
+
+    if (lookupError) throw lookupError;
+
+    if (existing) {
+      input.value = existing.chat_name;
+      input.readOnly = true;
+      if (status) status.textContent =
+        "Your registered Chat Name is: " + existing.chat_name;
+      return;
+    }
+
+    const { error: saveError } = await cliviaSupabase
+      .from("clivia_chat_profiles")
+      .insert({
+        auth_user_id: user.id,
+        chat_name: chatName
+      });
+
+    if (saveError) {
+      if (status) status.textContent =
+        saveError.code === "23505"
+          ? "This Chat Name is already registered. Please choose another."
+          : "Unable to register Chat Name. Please try again.";
+      return;
+    }
+
+    input.value = chatName;
+    input.readOnly = true;
+
+    if (status) status.textContent =
+      "Chat Name registered successfully: " + chatName;
+
+    const display = document.getElementById("cliviaRegisteredChatName");
+    if (display) display.textContent = "Chat Name: " + chatName;
+
+  } catch (err) {
+    console.error("Chat Name registration failed:", err);
+    if (status) status.textContent =
+      "Unable to register Chat Name. Please try again.";
+  } finally {
+    if (button) button.disabled = false;
+  }
+}   
+  async function showCliviaChatRegistration() {
+  showPage("cliviaChat");
+
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: "instant"
+  });
+
+  const input = document.getElementById("cliviaChatName");
+  const status = document.getElementById("cliviaChatRegistrationStatus");
+  const display = document.getElementById("cliviaRegisteredChatName");
+  const button = document.getElementById("cliviaRegisterChatNameBtn");
+
+  if (!input || typeof cliviaSupabase === "undefined") return;
+
+  input.readOnly = false;
+  input.value = "";
+  if (button) button.style.display = "";
+  if (status) status.textContent = "";
+
+  try {
+    const { data, error } = await cliviaSupabase.auth.getUser();
+    const user = data?.user;
+
+    if (error || !user || !user.email_confirmed_at) {
+      if (status) status.textContent =
+        "Please sign in or register a verified Clivia account first.";
+      return;
+    }
+
+    const { data: profile, error: profileError } =
+      await cliviaSupabase
+        .from("clivia_chat_profiles")
+        .select("chat_name")
+        .eq("auth_user_id", user.id)
+        .maybeSingle();
+
+    if (profileError) throw profileError;
+
+    if (profile) {
+      input.value = profile.chat_name;
+      input.readOnly = true;
+
+      if (button) button.style.display = "none";
+      if (display) display.textContent =
+        "Chat Name: " + profile.chat_name;
+      if (status) status.textContent =
+        "Your registered Chat Name: " + profile.chat_name;
+    } else {
+      if (display) display.textContent = "Chat Name: Not registered";
+      if (status) status.textContent =
+        "Choose your unique Chat Name and click REGISTER MY CHAT NAME.";
+      input.focus();
+    }
+  } catch (error) {
+    console.error("Unable to load Chat Name:", error);
+    if (status) status.textContent =
+      "Unable to load your Chat Name. Please try again.";
+  }
+}
 function openCliviaChatsFromAuction() {
   showPage("cliviaChat");
 
@@ -16430,7 +16611,24 @@ async function submitCliviaChatMessage() {
         "Please sign in again.";
       return;
     }
+const { data: chatProfile, error: profileError } =
+  await cliviaSupabase
+    .from("clivia_chat_profiles")
+    .select("chat_name")
+    .eq("auth_user_id", data.user.id)
+    .maybeSingle();
 
+if (profileError || !chatProfile) {
+  if (status) status.textContent =
+    "Please register your Clivia Chat Name before sending messages.";
+  return;
+}
+
+if (name !== chatProfile.chat_name) {
+  if (status) status.textContent =
+    "Please use your registered Chat Name: " + chatProfile.chat_name;
+  return;
+}
     const { data: result, error: sendError } =
       await cliviaSupabase.functions.invoke(
         "clivia-chat-moderation",
