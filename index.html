@@ -5199,26 +5199,6 @@ document.getElementById('siteBrandName').textContent =
 
 </div>
 <!-- END GROUP AUCTION AREA -->
-<!-- CLIVIA CHAT REGISTRATION -->
-<div id="cliviaChatRegistrationLink"
-     style="text-align:center;
-            padding:15px;
-            margin:15px 0;
-            background:#101b12;
-            border:2px solid #9acd32;
-            border-radius:10px;">
-
-  <button type="button"
-          onclick="showCliviaChatRegistration()"
-          style="background:#9acd32;
-                 color:#000;
-                 font-weight:bold;
-                 padding:12px 20px;
-                 border-radius:8px;
-                 cursor:pointer;">
-    💬 CLIVIA CHAT REGISTRATION
-  </button>
-
   <div id="cliviaRegisteredChatName"
        style="margin-top:8px;color:white;">
     Chat Name: Not registered
@@ -5339,7 +5319,39 @@ document.getElementById('siteBrandName').textContent =
   </div>
 
 </div> 
-    
+   <!-- CLIVIA CHAT REGISTRATION -->
+<div id="cliviaChatRegistrationLink"
+     style="
+       display:flex;
+       align-items:center;
+       justify-content:center;
+       flex-wrap:wrap;
+       gap:12px;
+       padding:8px;
+       margin:10px 0;
+       border:1px solid #9acd32;
+       border-radius:8px;
+       background:#101b12;
+     ">
+
+  <button type="button"
+          class="goldBtn"
+          onclick="showCliviaChatRegistration()"
+          style="
+            width:auto;
+            margin:0;
+            white-space:nowrap;
+          ">
+    💬 CLIVIA CHAT REGISTRATION
+  </button>
+
+  <span id="cliviaRegisteredChatName"
+        style="color:white;font-size:13px;">
+    Chat Name: Not registered
+  </span>
+
+</div>
+<!-- END CLIVIA CHAT REGISTRATION --> 
 <div class="notice" style="
   border:2px solid #9acd32;
   border-radius:10px;
