@@ -4923,7 +4923,7 @@ document.getElementById('siteBrandName').textContent =
            URL.revokeObjectURL(window.cliviaGroupLogoPreviewUrl);
          }
 
-         window.cliviaGroupLogoPreviewUrl = URL.createObjectURL(file);
+         window.cliviaGroupLogoPreviewUrl = window.URL.createObjectURL(file);
 
          const preview = document.getElementById('cliviaGroupLogoPreview');
          if(preview){
