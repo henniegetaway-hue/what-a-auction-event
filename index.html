@@ -5177,22 +5177,36 @@ document.getElementById('siteBrandName').textContent =
 <!-- END GROUP PRESIDENT DASHBOARD -->
   <style>
 #cliviaGroupPresidentDashboard button {
-  background: #ffffff !important;
-  color: #000000 !important;
-  border: 2px solid #ffd700 !important;
-  border-radius: 6px !important;
-  font-size: 15px !important;
+ 
+<style>
+#cliviaGroupPresidentDashboard button {
+  background: transparent !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 8px 4px !important;
+  font-size: 12px !important;
   font-weight: bold !important;
+  text-align: left !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
   opacity: 1 !important;
-  padding: 12px !important;
+  min-height: 42px !important;
+  cursor: pointer;
+}
+
+#cliviaGroupPresidentDashboard button::first-letter {
+  font-size: 20px;
 }
 
 #cliviaGroupPresidentDashboard button:disabled {
-  background: #ffffff !important;
-  color: #000000 !important;
   opacity: 1 !important;
+  color: #ffffff !important;
+  cursor: default;
 }
-</style>    
+</style>
+
 <!-- END GROUP PRESIDENT REGISTRATION -->
 <!-- GROUP PRESIDENT MANAGEMENT -->
 <div id="cliviaGroupManagement"
