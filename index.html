@@ -5122,54 +5122,93 @@ document.getElementById('siteBrandName').textContent =
   ">
 
    
-<button type="button" disabled>
-  <span style="
-    display:inline-flex;
-    width:36px;
-    height:36px;
-    min-width:36px;
-    border-radius:50%;
-    background:#fff;
-    border:2px solid #ffd700;
-    align-items:center;
-    justify-content:center;
-    font-size:19px;
-  ">👥</span>
-  <span>MEMBERS & INVITATIONS</span>
-</button>
 
-        <button type="button"
-        onclick="openCliviaChatsFromAuction()">
-  💬 OPEN CLIVIA CHATS
-</button>
+<div style="display:contents;">
 
-    <button type="button" disabled>
-      🌸 APPROVE PLANT LISTINGS
-    </button>
+  <div class="presidentItem">
+    <span class="presidentIcon">👥</span>
+    <span>MEMBERS & INVITATIONS</span>
+  </div>
 
-    <button type="button" disabled>
-      🚫 BLOCK / REMOVE MEMBERS
-    </button>
+  <button type="button" class="presidentItem"
+          onclick="openCliviaChatsFromAuction()">
+    <span class="presidentIcon">💬</span>
+    <span>OPEN CLIVIA CHATS</span>
+  </button>
 
-    <button type="button" disabled>
-      🌍 INTERNATIONAL BIDDING
-    </button>
+  <div class="presidentItem">
+    <span class="presidentIcon">🌸</span>
+    <span>APPROVE PLANT LISTINGS</span>
+  </div>
 
-    <button type="button" disabled>
-      📅 AUCTION DATES
-    </button>
+  <div class="presidentItem">
+    <span class="presidentIcon">🚫</span>
+    <span>BLOCK / REMOVE MEMBERS</span>
+  </div>
 
-    <button type="button" disabled>
-      🔒 PRIVATE / PUBLIC AUCTION
-    </button>
+  <div class="presidentItem">
+    <span class="presidentIcon">🌍</span>
+    <span>INTERNATIONAL BIDDING</span>
+  </div>
 
-    <button type="button" disabled>
-      📤 SHARE GROUP AUCTION
-    </button>
+  <div class="presidentItem">
+    <span class="presidentIcon">📅</span>
+    <span>AUCTION DATES</span>
+  </div>
 
-    <button type="button" disabled>
-      💳 GROUP SUBSCRIPTION
-    </button>
+  <div class="presidentItem">
+    <span class="presidentIcon">🔒</span>
+    <span>PRIVATE / PUBLIC AUCTION</span>
+  </div>
+
+  <div class="presidentItem">
+    <span class="presidentIcon">📤</span>
+    <span>SHARE GROUP AUCTION</span>
+  </div>
+
+  <div class="presidentItem">
+    <span class="presidentIcon">💳</span>
+    <span>GROUP SUBSCRIPTION</span>
+  </div>
+
+</div>
+
+<style>
+#cliviaGroupPresidentDashboard .presidentItem {
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  gap:9px !important;
+  padding:5px !important;
+  min-height:48px !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  color:white !important;
+  font-size:12px !important;
+  font-weight:bold !important;
+  text-align:left !important;
+  opacity:1 !important;
+}
+
+#cliviaGroupPresidentDashboard .presidentIcon {
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex:0 0 38px !important;
+  width:38px !important;
+  height:38px !important;
+  min-width:38px !important;
+  background:#ffffff !important;
+  border:2px solid #ffd700 !important;
+  border-radius:50% !important;
+  box-sizing:border-box !important;
+  color:#222222 !important;
+  font-size:19px !important;
+  line-height:1 !important;
+}
+</style>
+
 
   </div>
 
