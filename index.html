@@ -5221,12 +5221,80 @@ document.getElementById('siteBrandName').textContent =
 <div id="cliviaGroupAuctionPreviews"
      style="display:flex;gap:8px;overflow-x:auto;padding:8px 0;">
 
-  <div id="cliviaGroupAuctionBlocks"
-       style="display:flex;gap:8px;flex-wrap:nowrap;">
-  </div>
+ 
+<div id="cliviaGroupAuctionBlocks"
+     style="display:flex;gap:8px;flex-wrap:nowrap;">
+
+</div>
+
 
 </div>
 <!-- END GROUP AUCTION PREVIEW BLOCKS -->
+
+<script>
+(function(){
+  const container = document.getElementById("cliviaGroupAuctionBlocks");
+  if(!container) return;
+
+  const prices = ["R200","R400","R600","R800","R1000","R1000+"];
+
+  for(let auction = 1; auction <= 5; auction++){
+    const block = document.createElement("div");
+
+    block.style.cssText =
+      "flex:0 0 145px;background:#111;border:1px solid #ffd700;" +
+      "border-radius:8px;padding:6px;color:white;box-sizing:border-box;";
+
+    const heading = document.createElement("div");
+    heading.textContent = "🌸 AUCTION " + auction;
+    heading.style.cssText =
+      "font-size:11px;text-align:center;font-weight:bold;margin-bottom:6px;";
+    block.appendChild(heading);
+
+    prices.forEach(price => {
+      const row = document.createElement("div");
+      row.style.cssText =
+        "display:flex;align-items:center;gap:3px;margin-bottom:3px;";
+
+      const label = document.createElement("span");
+      label.textContent = price;
+      label.style.cssText =
+        "width:45px;flex-shrink:0;font-size:9px;";
+      row.appendChild(label);
+
+      for(let lot = 0; lot < 4; lot++){
+        const square = document.createElement("span");
+        square.style.cssText =
+          "width:17px;height:17px;border:1px solid #aaa;" +
+          "border-radius:2px;background:#222;box-sizing:border-box;";
+        row.appendChild(square);
+      }
+
+      block.appendChild(row);
+    });
+
+    const date = document.createElement("div");
+    date.textContent = "Date: To be set";
+    date.style.cssText =
+      "font-size:9px;text-align:center;margin:7px 0;";
+    block.appendChild(date);
+
+    const loadButton = document.createElement("button");
+    loadButton.type = "button";
+    loadButton.textContent = "LOAD LOTS";
+    loadButton.style.cssText =
+      "width:100%;padding:5px;background:#ffd700;color:#000;" +
+      "border:0;border-radius:5px;font-size:10px;font-weight:bold;cursor:pointer;";
+
+    loadButton.onclick = function(){
+      alert("Auction " + auction + " loading page will be connected next.");
+    };
+
+    block.appendChild(loadButton);
+    container.appendChild(block);
+  }
+})();
+</script>
 
   </div>
 
@@ -9568,7 +9636,8 @@ if(myGroupsBtn){
         text-align:left;
       `;
 
-     item.onclick = () => {
+     item.onclick = (event) => {
+  event.stopPropagation();
   dropdown.remove();
 
   button.style.background = "#111";
