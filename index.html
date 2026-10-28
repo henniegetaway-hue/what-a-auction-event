@@ -5433,8 +5433,26 @@ document.getElementById('siteBrandName').textContent =
   });
 };
 
-    block.appendChild(loadButton);
-    container.appendChild(block);
+   
+block.appendChild(loadButton);
+
+const viewButton = document.createElement("button");
+viewButton.type = "button";
+viewButton.textContent = "👁 VIEW AUCTION";
+
+viewButton.style.cssText =
+  "width:100%;padding:6px;margin-top:6px;" +
+  "background:#111;color:#ffd700;" +
+  "border:1px solid #ffd700;border-radius:5px;" +
+  "font-size:10px;font-weight:bold;cursor:pointer;";
+
+viewButton.onclick = function() {
+  openGroupAuctionDisplay(auction);
+};
+
+block.appendChild(viewButton);
+container.appendChild(block);
+
   }
 })();
 </script>
