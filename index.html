@@ -9450,6 +9450,25 @@ management?.scrollIntoView({
   behavior: "smooth",
   block: "start"
 });
+ // HANDOVER CLUB selected — MY GROUPS is active
+const groupBtn = document.getElementById("groupCliviaLoadBtn");
+const myGroupsBtn = document.getElementById("myCliviaGroupsBtn");
+const normalBtn = document.getElementById("normalCliviaLoadBtn");
+
+if(groupBtn){
+  groupBtn.style.background = "#111";
+  groupBtn.style.color = "#fff";
+}
+
+if(normalBtn){
+  normalBtn.style.background = "#111";
+  normalBtn.style.color = "#fff";
+}
+
+if(myGroupsBtn){
+  myGroupsBtn.style.background = "#c0c0c0";
+  myGroupsBtn.style.color = "#000";
+}          
 } 
    async function openMyCliviaGroups(){
 
