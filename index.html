@@ -5282,9 +5282,58 @@ document.getElementById('siteBrandName').textContent =
       "width:100%;padding:5px;background:#ffd700;color:#000;" +
       "border:0;border-radius:5px;font-size:10px;font-weight:bold;cursor:pointer;";
 
-    loadButton.onclick = function(){
-      alert("Auction " + auction + " loading page will be connected next.");
-    };
+   loadButton.onclick = function(){
+
+  const groupName =
+    document.getElementById("cliviaGroupName")?.value.trim()
+    || "MY GROUP";
+
+  const loadingArea =
+    document.getElementById("cliviaGroupAuctionLoadingArea");
+
+  if(!loadingArea){
+    alert("Group Auction loading area must be created next.");
+    return;
+  }
+
+  loadingArea.style.display = "block";
+
+  loadingArea.innerHTML = `
+    <h2 style="color:#9acd32;">
+      🌸 ${groupName} — AUCTION ${auction}
+    </h2>
+
+    <p>24 empty lot spaces — 6 rows of 4</p>
+
+    <div id="groupAuctionLotGrid"
+         style="display:grid;
+                grid-template-columns:repeat(4,1fr);
+                gap:10px;">
+    </div>
+  `;
+
+  const grid =
+    document.getElementById("groupAuctionLotGrid");
+
+  for(let lot = 1; lot <= 24; lot++){
+    const card = document.createElement("div");
+
+    card.textContent = "LOAD HERE";
+    card.style.cssText =
+      "background:#111;color:#9acd32;" +
+      "border:1px solid #ffd700;" +
+      "border-radius:8px;min-height:100px;" +
+      "display:flex;align-items:center;" +
+      "justify-content:center;font-weight:bold;";
+
+    grid.appendChild(card);
+  }
+
+  loadingArea.scrollIntoView({
+    behavior:"smooth",
+    block:"start"
+  });
+};
 
     block.appendChild(loadButton);
     container.appendChild(block);
