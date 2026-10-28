@@ -9519,10 +9519,14 @@ management?.scrollIntoView({
         text-align:left;
       `;
 
-      item.onclick = () => {
-        dropdown.remove();
-        openSelectedCliviaGroup(group.id, group.group_name);
-      };
+     item.onclick = () => {
+  dropdown.remove();
+
+  button.style.background = "#111";
+  button.style.color = "#fff";
+
+  openSelectedCliviaGroup(group.id, group.group_name);
+};
 
       dropdown.appendChild(item);
 
@@ -9532,7 +9536,9 @@ management?.scrollIntoView({
   button.style.position = "relative";
 button.appendChild(dropdown);
 button.style.background = "#c0c0c0";
-button.style.color = "#000";         
+button.style.color = "#000";   
+ document.getElementById("normalCliviaLoadBtn").style.background = "#111";
+document.getElementById("normalCliviaLoadBtn").style.color = "#fff";        
 }   
 async function checkCliviaGroupPresident(){
 
