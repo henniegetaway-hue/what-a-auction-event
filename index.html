@@ -5193,35 +5193,49 @@ document.getElementById('siteBrandName').textContent =
 #cliviaGroupPresidentDashboard button {
  
 <style>
-#cliviaGroupPresidentDashboard button {
-  background: transparent !important;
-  color: #ffffff !important;
-  border: none !important;
-  border-radius: 0 !important;
-  padding: 8px 4px !important;
-  font-size: 12px !important;
-  font-weight: bold !important;
-  text-align: left !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 10px !important;
-  opacity: 1 !important;
-  min-height: 42px !important;
-  cursor: pointer;
-}
 
-#cliviaGroupPresidentDashboard button::first-letter {
-  font-size: 20px;
-}
-
-
+<style>
+#cliviaGroupPresidentDashboard button,
 #cliviaGroupPresidentDashboard button:disabled {
   background: transparent !important;
   border: none !important;
+  box-shadow: none !important;
+  color: white !important;
   opacity: 1 !important;
-  color: #ffffff !important;
-  cursor: default;
+  padding: 5px !important;
+  min-height: 45px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 10px !important;
+  text-align: left !important;
+  font-size: 12px !important;
+  font-weight: bold !important;
+  border-radius: 0 !important;
 }
+
+#cliviaGroupPresidentDashboard button span:first-child {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px !important;
+  border-radius: 50% !important;
+  border: 2px solid #ffd700 !important;
+  background: white !important;
+  color: #222 !important;
+  font-size: 20px !important;
+}
+
+#cliviaGroupPresidentDashboard button:disabled {
+  cursor: default !important;
+}
+
+#cliviaGroupPresidentDashboard button:not(:disabled) {
+  cursor: pointer !important;
+}
+</style>
 
 </style>
 
