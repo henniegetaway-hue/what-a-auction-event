@@ -5214,11 +5214,15 @@ document.getElementById('siteBrandName').textContent =
   font-size: 20px;
 }
 
+
 #cliviaGroupPresidentDashboard button:disabled {
+  background: transparent !important;
+  border: none !important;
   opacity: 1 !important;
   color: #ffffff !important;
   cursor: default;
 }
+
 </style>
 
 <!-- END GROUP PRESIDENT REGISTRATION -->
@@ -5676,12 +5680,13 @@ document.getElementById('siteBrandName').textContent =
   <button type="button" class="accountBtn" onclick="closeSellerLotForm()">CANCEL</button>
   <button type="button" class="goldBtn" onclick="saveSellerLotDraft()">SAVE AS DRAFT</button>
   <button type="button" class="greenBtn" onclick="publishSellerLot()">PUBLISH LOT</button>
-  <button type="button" class="goldBtn"
-  <button type="button" class="goldBtn"
+  
+<button type="button" class="goldBtn"
   style="background:#ff7900;color:#000;"
   onclick="showPage('live')">
   VIEW AUCTION
-</button> 
+</button>
+
 </div>
 
 <div id="sellerLotMsg" class="small" style="margin-top:10px;"></div>
