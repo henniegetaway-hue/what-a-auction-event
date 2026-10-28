@@ -4919,6 +4919,36 @@ document.getElementById('siteBrandName').textContent =
            return;
          }
 
+         if(window.cliviaGroupLogoPreviewUrl){
+           URL.revokeObjectURL(window.cliviaGroupLogoPreviewUrl);
+         }
+
+         window.cliviaGroupLogoPreviewUrl = URL.createObjectURL(file);
+
+         const preview = document.getElementById('cliviaGroupLogoPreview');
+         if(preview){
+           preview.src = window.cliviaGroupLogoPreviewUrl;
+           preview.style.display = 'inline-block';
+         }
+
+         const logo = document.getElementById('siteLogo');
+         if(logo){
+           logo.src = window.cliviaGroupLogoPreviewUrl;
+           logo.alt = 'Clivia Group Logo';
+         }
+       ">
+       type="file"
+       accept="image/png,image/jpeg,image/webp"
+       onchange="
+         const file = this.files[0];
+         if(!file) return;
+
+         if(!['image/png','image/jpeg','image/webp'].includes(file.type)){
+           alert('Please select a PNG, JPG or WebP image.');
+           this.value = '';
+           return;
+         }
+
          const logo = document.getElementById('siteLogo');
          if(logo){
            if(window.cliviaGroupLogoPreviewUrl){
