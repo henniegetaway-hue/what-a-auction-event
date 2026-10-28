@@ -10823,26 +10823,17 @@ if(!account){
   showPage("register");
   return;
 }
+ // SELLER LOAD — VERIFY THE SUPABASE SESSION
+// No repeated password entry for signed-in members.
+const {data:{user},error:authError} =
+  await cliviaSupabase.auth.getUser();
 
-const unlocked=
-  localStorage.getItem("cliviaBidderUnlocked")===account.id;
-
-if(!unlocked){
-  const enteredPassword=prompt(
-    "SELLER CONFIRMATION\n\nPlease enter your account password to load this item:"
-  );
-
-  if(enteredPassword===null){
-    return;
-  }
-
-  if(enteredPassword!==account.password){
-    alert("Incorrect account password.");
-    return;
-  }
-
-  localStorage.setItem("cliviaBidderUnlocked",account.id);
-}   
+if(authError || !user || !user.email_confirmed_at ||
+   String(account.authUserId) !== String(user.id)){
+  alert("Please sign in to your registered account before loading a plant.");
+  showPage("register");
+  return;
+}     
    let auction=(state.auctions||[]).find(a=>a.id===state.selectedAuctionId);
   const name=document.getElementById("lotName").value.trim();
    const breeding=document.getElementById("lotBreeding").value.trim();
