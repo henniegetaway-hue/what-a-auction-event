@@ -4812,6 +4812,18 @@ nav #navLive.active:hover {
       id="normalCliviaLoadBtn"
       onclick="
          restoreNormalCliviaBranding(); 
+          // Close MY GROUPS when Normal Auction opens
+document.getElementById('myCliviaGroupsDropdown')?.remove();
+
+const myGroupsBtn = document.getElementById('myCliviaGroupsBtn');
+if(myGroupsBtn){
+  myGroupsBtn.style.background = '#111';
+  myGroupsBtn.style.color = '#fff';
+}
+
+// Close HANDOVER CLUB management
+const management = document.getElementById('cliviaGroupManagement');
+if(management) management.style.display = 'none';
         document.getElementById('sellerLoadGrid').style.display='grid';
         document.getElementById('groupAuctionPanel').style.display='none';
 
