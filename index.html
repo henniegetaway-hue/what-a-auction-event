@@ -4927,6 +4927,12 @@ document.getElementById('siteBrandName').textContent =
            window.cliviaGroupLogoPreviewUrl = URL.createObjectURL(file);
            logo.src = window.cliviaGroupLogoPreviewUrl;
            logo.alt = 'Clivia Group Logo';
+            const preview = document.getElementById('cliviaGroupLogoPreview');
+
+if(preview){
+  preview.src = window.cliviaGroupLogoPreviewUrl;
+  preview.style.display = 'inline-block';
+}   
          }
        ">
 <div style="text-align:center;margin:12px 0;">
