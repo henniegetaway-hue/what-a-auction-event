@@ -9344,6 +9344,122 @@ function unlockBidderAccount(){
   bidderAccountUnlocked = true;
   bidderAccountLastActivity = Date.now();
 }
+     async function openSelectedCliviaGroup(groupId, groupName){
+
+  const { data: authData, error: authError } =
+    await cliviaSupabase.auth.getUser();
+
+  if(authError || !authData?.user){
+    alert("Please sign in first.");
+    return;
+  }
+
+  const { data: group, error } =
+    await cliviaSupabase
+      .from("clivia_groups")
+      .select("id, group_name")
+      .eq("id", groupId)
+      .eq("president_user_id", authData.user.id)
+      .maybeSingle();
+
+  if(error || !group){
+    alert("You are not authorised to manage this group.");
+    return;
+  }
+
+  document.getElementById("sellerLoadGrid").style.display = "none";
+  document.getElementById("groupAuctionPanel").style.display = "block";
+
+  const groupNameField = document.getElementById("cliviaGroupName");
+
+  if(groupNameField){
+    groupNameField.value = group.group_name;
+  }
+
+  const brand = document.getElementById("siteBrandName");
+
+  if(brand){
+    brand.textContent = group.group_name;
+  }
+
+  alert("Selected group: " + group.group_name);
+} 
+   async function openMyCliviaGroups(){
+
+  const button = document.getElementById("myCliviaGroupsBtn");
+
+  let dropdown = document.getElementById("myCliviaGroupsDropdown");
+
+  if(dropdown){
+    dropdown.remove();
+    return;
+  }
+
+  const { data: authData, error: authError } =
+    await cliviaSupabase.auth.getUser();
+
+  if(authError || !authData?.user){
+    alert("Please sign in to your Group President account.");
+    return;
+  }
+
+  const { data: groups, error } =
+    await cliviaSupabase
+      .from("clivia_groups")
+      .select("id, group_name")
+      .eq("president_user_id", authData.user.id)
+      .order("group_name");
+
+  if(error){
+    alert("Unable to load your groups: " + error.message);
+    return;
+  }
+
+  dropdown = document.createElement("div");
+  dropdown.id = "myCliviaGroupsDropdown";
+
+  dropdown.style.cssText = `
+    background:#111;
+    border:2px solid #ffd700;
+    border-radius:8px;
+    padding:10px;
+    margin-top:8px;
+    width:100%;
+    box-sizing:border-box;
+  `;
+
+  if(!groups?.length){
+    dropdown.textContent = "No registered groups found.";
+    dropdown.style.color = "#fff";
+  } else {
+
+    groups.forEach(group => {
+
+      const item = document.createElement("button");
+
+      item.type = "button";
+      item.className = "goldBtn";
+      item.textContent = "🌸 " + group.group_name;
+
+      item.style.cssText = `
+        display:block;
+        width:100%;
+        margin:5px 0;
+        text-align:left;
+      `;
+
+      item.onclick = () => {
+        dropdown.remove();
+        openSelectedCliviaGroup(group.id, group.group_name);
+      };
+
+      dropdown.appendChild(item);
+
+    });
+  }
+
+  button.insertAdjacentElement("afterend", dropdown);
+}   
 async function checkCliviaGroupPresident(){
 
   const status = document.getElementById(
