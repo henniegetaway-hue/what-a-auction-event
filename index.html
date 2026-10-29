@@ -8104,7 +8104,24 @@ refreshSellerSelect();
     exporterApproved:false,
     isExporter:false
   };
+  const { error: sellerSaveError } = await cliviaSupabase
+    .from("sellers")
+    .insert({
+      id: seller.id,
+      auth_user_id: user.id,
+      name: seller.name,
+      phone: seller.phone,
+      email: seller.email,
+      bank_confirmed: false
+    });
 
+  if(sellerSaveError){
+    alert(
+      "Seller registration could not be saved to Supabase:\n" +
+      sellerSaveError.message
+    );
+    return;
+  }
   state.sellers=state.sellers||[];
   state.sellers.push(seller);
   state.selectedSellerId=seller.id;
