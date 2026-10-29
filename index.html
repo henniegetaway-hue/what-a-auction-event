@@ -9896,6 +9896,15 @@ if(myGroupsBtn){
   myGroupsBtn.style.color = "#000";
 }          
 } 
+     function getInvitedCliviaGroupId(){
+
+  const params = new URLSearchParams(window.location.search);
+  const groupId = params.get("joinGroup");
+
+  if(!groupId) return null;
+
+  return groupId;
+} 
    function shareCliviaGroupWhatsApp(){
 
   const groupId = window.selectedCliviaGroupId;
