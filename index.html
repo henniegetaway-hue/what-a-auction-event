@@ -13368,6 +13368,68 @@ function getNextAuction(currentAuction){
   )[0] || null;
 }
 
+
+  function rolloverUnsoldLots(currentAuction) {
+  if (!currentAuction || currentAuction.type !== "CLIVIA") return;
+
+  state.lots = state.lots || [];
+  state.auctions = state.auctions || [];
+
+  const auctionStart = a =>
+    new Date(a.auctionDate + "T" + a.auctionTime + ":00+02:00").getTime();
+
+  const nextAuctions = state.auctions
+    .filter(a =>
+      a.id !== currentAuction.id &&
+      a.type === currentAuction.type &&
+      a.auctionDate &&
+      a.auctionTime &&
+      auctionStart(a) > auctionStart(currentAuction) &&
+      auctionStart(a) > Date.now()
+    )
+    .sort((a, b) => auctionStart(a) - auctionStart(b));
+
+  const unsoldLots = state.lots.filter(lot =>
+    lot.auctionId === currentAuction.id &&
+    (!lot.bids || lot.bids.length === 0)
+  );
+
+  for (const lot of unsoldLots) {
+    const previous = Number(lot.rolloverCount || 0);
+    if (previous >= 3) continue;
+
+    const originalId = lot.originalLotId || lot.id;
+
+    if (state.lots.some(existing =>
+      existing.rolledFromLotId === lot.id
+    )) continue;
+
+    const nextAuction = nextAuctions.find(a =>
+      state.lots.filter(l => l.auctionId === a.id).length < 48
+    );
+
+    if (!nextAuction) continue;
+
+    const newLot = {
+      ...lot,
+      id: "L-ROLLOVER-" + crypto.randomUUID(),
+      auctionId: nextAuction.id,
+      originalLotId: originalId,
+      rolledFromLotId: lot.id,
+      rolloverCount: previous + 1,
+      auctionAppearances: Number(lot.auctionAppearances || 1) + 1,
+      isRolledOver: true,
+      bids: [],
+      extendedCloseUntil: null
+    };
+
+    state.lots.push(newLot);
+    nextAuction.lots = nextAuction.lots || [];
+    nextAuction.lots.push(newLot);
+  }
+
+  save();
+}    
 function setAuctionOpen(open){
   if(!open){
     const confirmed=confirm(
