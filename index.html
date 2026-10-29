@@ -10197,6 +10197,8 @@ if(existingGroups?.length){
   }    
 
    alert("Group registered successfully: " + data.group_name);
+          
+    await openSelectedCliviaGroup(data.id, data.group_name);      
 
     } catch(error) {
     console.error("Clivia Group registration error:", error);
