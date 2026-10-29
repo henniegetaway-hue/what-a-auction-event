@@ -5458,6 +5458,23 @@ document.getElementById('siteBrandName').textContent =
     const card = document.createElement("div");
 
     card.textContent = "LOAD HERE";
+     card.style.cursor = "pointer";
+
+card.onclick = function() {
+  if (!window.selectedCliviaGroupId) {
+    alert("Please select your Clivia Group first.");
+    return;
+  }
+
+  window.selectedGroupAuctionNumber = auction;
+  window.selectedGroupLotPosition = lot;
+
+  alert(
+    "Group Auction " + auction +
+    "\nPlant Space " + lot +
+    "\n\nPlant loading form will be connected next."
+  );
+};   
     card.style.cssText =
       "background:#111;color:#9acd32;" +
       "border:1px solid #ffd700;" +
