@@ -7999,29 +7999,6 @@ exporterApproved:false,
     acceptRetailPayments: acceptRetailPayments,
     retailPaymentServices: acceptRetailPayments
       ? retailPaymentServices
-      : "",
-    retailPaymentInstructions: acceptRetailPayments
-      ? retailPaymentInstructions
-      : "",
-    retailPaymentConfirmed: acceptRetailPayments
-      ? retailPaymentConfirmed
-      : false,
-
-    completedSales:0,
-
-totalSalesValue:0,
-happyBuyers:0,
-    bankChangePending:false,
-    rulesAccepted:rulesAccepted,
-rulesAcceptedDate:new Date().toISOString(),
-notifyNextAuction:state.sellerNotifyChoice || "none",
-selectedNotificationAuctions:[],  
-  };
-
-const { error: sellerError } = await cliviaSupabase
-  .from("sellers")
-  .insert({
-    id: seller.id,
     auth_user_id: user.id,
     name: seller.name,
     phone: seller.phone,
@@ -14098,15 +14075,46 @@ function renderSiteErrorLog(){
   save();
   renderSiteErrorLog();
 }   
+
 function deleteLot(id){
+  const lot=(state.lots||[]).find(lot=>lot.id===id);
+
+  if(!lot){
+    alert("Plant not found.");
+    return;
+  }
+
+  // Protect plants with existing bids.
+  const hasBids=
+    (Array.isArray(lot.bids) && lot.bids.length>0) ||
+    Number(lot.currentBid||0)>Number(lot.startBid||0);
+
+  if(hasBids){
+    alert(
+      "This plant has bids and cannot be deleted yet. " +
+      "Commission must first be calculated on the highest bid " +
+      "and recorded before the plant can be withdrawn."
+    );
+    return;
+  }
+
+  if(!confirm("Delete this plant? This cannot be undone.")){
+    return;
+  }
+
   state.lots=state.lots.filter(lot=>lot.id!==id);
+
   (state.auctions||[]).forEach(auction=>{
-    auction.lots=(auction.lots||[]).filter(lot=>(typeof lot==="object" ? lot.id : lot)!==id);
+    auction.lots=(auction.lots||[]).filter(
+      lot=>(typeof lot==="object" ? lot.id : lot)!==id
+    );
   });
+
   save();
   renderAdminLots();
   renderLots();
 }
+
     function confirmSecurityProof(){
   const bidder=(state.bidders||[]).find(b=>b.securityProofStatus==="PENDING_AI");
 
