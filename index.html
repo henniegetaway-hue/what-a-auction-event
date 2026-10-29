@@ -9030,14 +9030,7 @@ window.addEventListener("DOMContentLoaded", renderMyAuctionPlants);
       changes[field] = answer.trim();
     }
   }
-  const preBidAnswer = confirm(
-    "ACCEPT PRE-BIDS BEFORE THE LIVE AUCTION?\n\n" +
-    "OK = YES, accept pre-bids\n" +
-    "Cancel = NO, do not accept pre-bids\n\n" +
-    "Pre-bidding will only become available after the auction date and time are confirmed."
-  );
-
-  changes.acceptPreBids = preBidAnswer;
+ 
   if(!confirm("Save changes to " + lot.name + "?")) return;
 
   Object.assign(lot, changes);
