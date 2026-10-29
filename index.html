@@ -9956,6 +9956,32 @@ if(myGroupsBtn){
     "The Group President must approve your membership."
   );
 }  
+      
+function showCliviaGroupJoinButton(){
+
+  const groupId = getInvitedCliviaGroupId();
+
+  if(!groupId) return;
+
+  if(document.getElementById("cliviaGroupJoinButton")) return;
+
+  const button = document.createElement("button");
+
+  button.id = "cliviaGroupJoinButton";
+  button.type = "button";
+  button.className = "goldBtn";
+  button.textContent = "🌿 REQUEST TO JOIN CLIVIA GROUP";
+
+  button.style.cssText =
+    "display:block;margin:20px auto;padding:15px;max-width:95%;";
+
+  button.onclick = requestToJoinCliviaGroup;
+
+  document.body.prepend(button);
+}
+
+window.addEventListener("DOMContentLoaded", showCliviaGroupJoinButton);
+
      function getInvitedCliviaGroupId(){
 
   const params = new URLSearchParams(window.location.search);
