@@ -10000,28 +10000,76 @@ if(myGroupsBtn){
   );
 }  
       
-function showCliviaGroupJoinButton(){
+
+async function showCliviaGroupJoinButton(){
 
   const groupId = getInvitedCliviaGroupId();
-
   if(!groupId) return;
 
-  if(document.getElementById("cliviaGroupJoinButton")) return;
+  let button = document.getElementById("cliviaGroupJoinButton");
 
-  const button = document.createElement("button");
+  if(!button){
+    button = document.createElement("button");
+    button.id = "cliviaGroupJoinButton";
+    button.type = "button";
+    button.className = "goldBtn";
 
-  button.id = "cliviaGroupJoinButton";
-  button.type = "button";
-  button.className = "goldBtn";
-  button.textContent = "🌿 REQUEST TO JOIN CLIVIA GROUP";
+    button.style.cssText =
+      "display:block;margin:20px auto;padding:15px;max-width:95%;";
 
-  button.style.cssText =
-    "display:block;margin:20px auto;padding:15px;max-width:95%;";
+    document.body.prepend(button);
+  }
 
-  button.onclick = requestToJoinCliviaGroup;
+  button.style.display = "none";
 
-  document.body.prepend(button);
+  const { data: authData, error: authError } =
+    await cliviaSupabase.auth.getUser();
+
+  if(authError || !authData?.user){
+    button.textContent = "🌿 SIGN IN TO REQUEST GROUP MEMBERSHIP";
+    button.onclick = () => alert(
+      "Please sign in or register first, then reopen your invitation link."
+    );
+    button.style.display = "block";
+    return;
+  }
+
+  const userId = authData.user.id;
+
+  const { data: membership, error } =
+    await cliviaSupabase
+      .from("clivia_group_members")
+      .select("status")
+      .eq("group_id", groupId)
+      .eq("member_user_id", userId)
+      .maybeSingle();
+
+  if(error){
+    console.error("Membership check failed:", error);
+    return;
+  }
+
+  if(membership?.status === "APPROVED"){
+    button.remove();
+    return;
+  }
+
+  if(membership?.status === "PENDING"){
+    button.textContent = "⏳ WAITING FOR GROUP APPROVAL";
+    button.onclick = () => alert(
+      "Your membership request is waiting for the Group President."
+    );
+  } else if(membership?.status === "BLOCKED"){
+    button.remove();
+    return;
+  } else {
+    button.textContent = "🌿 REQUEST TO JOIN CLIVIA GROUP";
+    button.onclick = requestToJoinCliviaGroup;
+  }
+
+  button.style.display = "block";
 }
+
 
 window.addEventListener("DOMContentLoaded", showCliviaGroupJoinButton);
 
