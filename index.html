@@ -12105,7 +12105,8 @@ const sellerNewLotsInRow = (state.lots || []).filter(lot =>
   lot.auctionId === auction.id &&
   lot.sellerId === sellerId &&
   lot.startRow === startRow &&
-  lot.auctionAppearances === 1
+  lot.auctionAppearances === 1 &&
+lot.isRolledOver !== true
 ).length;
 
 if (sellerNewLotsInRow >= maxNewLots) {
