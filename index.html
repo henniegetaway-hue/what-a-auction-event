@@ -9846,6 +9846,22 @@ if(myGroupsBtn){
   myGroupsBtn.style.color = "#000";
 }          
 } 
+   function openCliviaGroupMembers(){
+
+  const groupId = window.selectedCliviaGroupId;
+  const groupName = window.selectedCliviaGroupName;
+
+  if(!groupId){
+    alert("Please select your registered Clivia Group first.");
+    return;
+  }
+
+  alert(
+    "GROUP MEMBERS & INVITATIONS\n\n" +
+    "Group: " + groupName +
+    "\n\nMember management will be connected next."
+  );
+}   
    async function openMyCliviaGroups(){
 
   const button = document.getElementById("myCliviaGroupsBtn");
