@@ -9896,6 +9896,66 @@ if(myGroupsBtn){
   myGroupsBtn.style.color = "#000";
 }          
 } 
+    async function requestToJoinCliviaGroup(){
+
+  const groupId = getInvitedCliviaGroupId();
+
+  if(!groupId){
+    alert("No Group invitation link found.");
+    return;
+  }
+
+  const { data: authData, error: authError } =
+    await cliviaSupabase.auth.getUser();
+
+  const user = authData?.user;
+
+  if(authError || !user || !user.email_confirmed_at){
+    alert(
+      "Please sign in to your verified Clivia Dreamers account first."
+    );
+    return;
+  }
+
+  const { data: existing, error: checkError } =
+    await cliviaSupabase
+      .from("clivia_group_members")
+      .select("status")
+      .eq("group_id", groupId)
+      .eq("member_user_id", user.id)
+      .maybeSingle();
+
+  if(checkError){
+    alert("Unable to check membership: " + checkError.message);
+    return;
+  }
+
+  if(existing){
+    alert("Your membership status is: " + existing.status);
+    return;
+  }
+
+  const { error } =
+    await cliviaSupabase
+      .from("clivia_group_members")
+      .insert({
+        group_id: groupId,
+        member_user_id: user.id,
+        status: "PENDING",
+        can_load_plants: false,
+        can_bid: false
+      });
+
+  if(error){
+    alert("Membership request failed: " + error.message);
+    return;
+  }
+
+  alert(
+    "Your request to join this Clivia Group has been submitted.\n\n" +
+    "The Group President must approve your membership."
+  );
+}  
      function getInvitedCliviaGroupId(){
 
   const params = new URLSearchParams(window.location.search);
