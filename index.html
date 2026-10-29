@@ -5457,30 +5457,17 @@ document.getElementById('siteBrandName').textContent =
   for(let lot = 1; lot <= 24; lot++){
     const card = document.createElement("div");
 
-    card.textContent = "LOAD HERE";
-     card.style.cursor = "pointer";
+   card.textContent = "LOAD HERE";
 
 card.onclick = function() {
-  if (!window.selectedCliviaGroupId) {
-    alert("Please select your Clivia Group first.");
-    return;
-  }
-
-  window.selectedGroupAuctionNumber = auction;
-  window.selectedGroupLotPosition = lot;
-
-  alert(
-    "Group Auction " + auction +
-    "\nPlant Space " + lot +
-    "\n\nPlant loading form will be connected next."
-  );
-};   
+  openGroupPlantLoading(auction, lot);
+};
     card.style.cssText =
       "background:#111;color:#9acd32;" +
       "border:1px solid #ffd700;" +
       "border-radius:8px;min-height:100px;" +
       "display:flex;align-items:center;" +
-      "justify-content:center;font-weight:bold;";
+     "justify-content:center;font-weight:bold;cursor:pointer;";
 
     grid.appendChild(card);
   }
