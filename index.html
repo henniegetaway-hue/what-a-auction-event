@@ -10001,6 +10001,49 @@ window.addEventListener("DOMContentLoaded", showCliviaGroupJoinButton);
     return;
   }
 
+  const { data: authData, error: authError } =
+    await cliviaSupabase.auth.getUser();
+
+  if(authError || !authData?.user){
+    alert("Please sign in first.");
+    return;
+  }
+
+  const userId = authData.user.id;
+
+  const { data: group, error: groupError } =
+    await cliviaSupabase
+      .from("clivia_groups")
+      .select("president_user_id")
+      .eq("id", groupId)
+      .single();
+
+  if(groupError || !group){
+    alert("Unable to verify Group access.");
+    return;
+  }
+
+  if(group.president_user_id !== userId){
+
+    const { data: membership, error: memberError } =
+      await cliviaSupabase
+        .from("clivia_group_members")
+        .select("status, can_load_plants")
+        .eq("group_id", groupId)
+        .eq("member_user_id", userId)
+        .maybeSingle();
+
+    if(
+      memberError ||
+      !membership ||
+      membership.status !== "APPROVED" ||
+      membership.can_load_plants !== true
+    ){
+      alert("You are not authorised to load plants for this Group.");
+      return;
+    }
+  }
+
   const joinLink = new URL(window.location.href);
   joinLink.search = "";
   joinLink.hash = "";
