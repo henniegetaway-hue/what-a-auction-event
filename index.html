@@ -10019,6 +10019,33 @@ window.addEventListener("DOMContentLoaded", showCliviaGroupJoinButton);
     "noopener,noreferrer"
   );
 }   
+
+async function approveCliviaGroupMember(memberId){
+
+  if(!window.selectedCliviaGroupId){
+    alert("Please select your Clivia Group first.");
+    return;
+  }
+
+  if(!confirm("Approve this member for your Clivia Group?")){
+    return;
+  }
+
+  const { error } = await cliviaSupabase.rpc(
+    "approve_clivia_group_member",
+    { p_member_id: memberId }
+  );
+
+  if(error){
+    alert("Approval failed: " + error.message);
+    return;
+  }
+
+  alert("Group member approved successfully!");
+
+  await loadCliviaGroupMembers();
+}
+      
   function openCliviaGroupMembers(){
 
   const groupId = window.selectedCliviaGroupId;
