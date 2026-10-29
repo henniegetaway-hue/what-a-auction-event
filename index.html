@@ -10232,6 +10232,14 @@ loadCliviaGroupMembers();
   return;
 }
 
+  const { data: authData, error: authError } =
+    await cliviaSupabase.auth.getUser();
+
+  if(authError || !authData?.user){
+    alert("Please sign in to your Clivia Dreamers account.");
+    return;
+  }
+
   const { data: groups, error } =
     await cliviaSupabase
       .from("clivia_groups")
