@@ -10123,7 +10123,9 @@ async function approveCliviaGroupMember(memberId){
   title.textContent = "🌸 " + groupName;
 
   panel.style.display = "block";
-
+        
+loadCliviaGroupMembers();
+        
   panel.scrollIntoView({
     behavior: "smooth",
     block: "start"
