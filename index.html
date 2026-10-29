@@ -9871,7 +9871,7 @@ if(myGroupsBtn){
   myGroupsBtn.style.color = "#000";
 }          
 } 
-   function openCliviaGroupMembers(){
+  function openCliviaGroupMembers(){
 
   const groupId = window.selectedCliviaGroupId;
   const groupName = window.selectedCliviaGroupName;
@@ -9881,12 +9881,23 @@ if(myGroupsBtn){
     return;
   }
 
-  alert(
-    "GROUP MEMBERS & INVITATIONS\n\n" +
-    "Group: " + groupName +
-    "\n\nMember management will be connected next."
-  );
-}   
+  const panel = document.getElementById("cliviaGroupMembersPanel");
+  const title = document.getElementById("groupMembersGroupName");
+
+  if(!panel || !title){
+    alert("Group Members panel not found.");
+    return;
+  }
+
+  title.textContent = "🌸 " + groupName;
+
+  panel.style.display = "block";
+
+  panel.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+}
    async function openMyCliviaGroups(){
 
   const button = document.getElementById("myCliviaGroupsBtn");
