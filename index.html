@@ -10189,14 +10189,6 @@ loadCliviaGroupMembers();
   return;
 }
 
-  const { data: authData, error: authError } =
-    await cliviaSupabase.auth.getUser();
-
-  if(authError || !authData?.user){
-    alert("Please sign in to your Group President account.");
-    return;
-  }
-
   const { data: groups, error } =
     await cliviaSupabase
       .from("clivia_groups")
