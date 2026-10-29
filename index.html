@@ -12586,6 +12586,29 @@ ${lot.trophy ? `
 <div class="small" style="margin-top:4px;font-weight:bold;">
   Time Left: ${timeLeftText}
 </div>
+${lot.acceptPreBids === true &&
+  auction?.auctionDate &&
+  (auction?.auctionTime || auction?.preferredAuctionTime) &&
+  new Date(
+    auction.auctionDate + "T" +
+    (auction.auctionTime || auction.preferredAuctionTime)
+  ) > new Date()
+  ? `
+    <div style="
+      background:#163b1c;
+      color:#b6ff80;
+      border:2px solid #9acd32;
+      border-radius:8px;
+      padding:10px;
+      margin:10px 0;
+      text-align:center;
+      font-weight:bold;
+      font-size:14px;
+    ">
+      🔔 PRE-BIDS REQUESTED — NOT YET ACTIVE
+    </div>
+  `
+  : ""}
 ${lot.exportEligible ? `
   <div class="notice" style="margin:8px 0;">
     🌍 INTERNATIONAL / EXPORT ELIGIBLE
