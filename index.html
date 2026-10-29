@@ -10020,6 +10020,62 @@ window.addEventListener("DOMContentLoaded", showCliviaGroupJoinButton);
   );
 }   
 
+async function loadCliviaGroupMembers(){
+
+  const groupId = window.selectedCliviaGroupId;
+  const list = document.getElementById("cliviaGroupMembersList");
+
+  if(!groupId || !list) return;
+
+  list.textContent = "Loading group members...";
+
+  const { data, error } = await cliviaSupabase
+    .from("clivia_group_members")
+    .select("id, member_user_id, status")
+    .eq("group_id", groupId)
+    .order("created_at", { ascending: true });
+
+  if(error){
+    list.textContent = "Error: " + error.message;
+    return;
+  }
+
+  list.replaceChildren();
+
+  if(!data || data.length === 0){
+    list.textContent = "No membership requests yet.";
+    return;
+  }
+
+  data.forEach(member => {
+
+    const card = document.createElement("div");
+    card.style.cssText =
+      "padding:12px;margin:10px 0;border:1px solid #9acd32;border-radius:8px;";
+
+    const details = document.createElement("p");
+    details.textContent =
+      "Member: " + member.member_user_id +
+      " | Status: " + member.status;
+
+    card.appendChild(details);
+
+    if(member.status === "PENDING"){
+
+      const button = document.createElement("button");
+      button.className = "goldBtn";
+      button.textContent = "APPROVE MEMBER";
+
+      button.onclick = () =>
+        approveCliviaGroupMember(member.id);
+
+      card.appendChild(button);
+    }
+
+    list.appendChild(card);
+  });
+}
+
 async function approveCliviaGroupMember(memberId){
 
   if(!window.selectedCliviaGroupId){
