@@ -7998,8 +7998,9 @@ exporterApproved:false,
     // Optional Retail Voucher, Money Transfer payment methods
     acceptRetailPayments: acceptRetailPayments,
     retailPaymentServices: acceptRetailPayments
-      ? retailPaymentServices
-    auth_user_id: user.id,
+  ? retailPaymentServices
+  : [],
+auth_user_id: user.id,
     name: seller.name,
     phone: seller.phone,
     email: seller.email,
@@ -11672,14 +11673,18 @@ function refreshLotCategorySelect(){
 async function openSellerLoadFromBidder(){
   await openSellerSpaces();
 }
-  function isCategoryFull(auction,category){
-  const count=(state.lots||[]).filter(lot=>lot.auctionId===auction.id && lot.category===category).length;
-  return count >= (auction.categoryCapacity||12);
+ function isCategoryFull(auction,category){
+  const count=(state.lots||[]).filter(lot=>
+    lot.auctionId===auction.id &&
+    lot.startRow===category
+  ).length;
+
+  return count>=12;
 }
 function isAuctionFull(auction){
   if(!auction || !auction.categories || auction.categories.length===0) return false;
 const totalLots=(state.lots||[]).filter(lot=>lot.auctionId===auction.id).length;
-if(totalLots>=48) return true;
+if(totalLots>=72) return true;
   return auction.categories.every(category=>
     isCategoryFull(auction,category)
   );
@@ -11856,7 +11861,7 @@ function fileToDataURL(file){
     lot.startRow===rowKey
   );
 
-  const maxPerRow=8;
+  const maxPerRow=12;
   return Math.max(0,maxPerRow-lots.length);
 }
       function updateLotStartBidOptions(){
@@ -12083,6 +12088,7 @@ if(selectedRowCount>=8){
  // CLIVIA SELLER LIMIT — NEW LOADS ONLY
 
 const upcomingAuctions = (state.auctions || [])
+  .filter(a => a.type === "CLIVIA")
   .filter(a => {
     if (!a.auctionDate) return true;
 
@@ -13405,11 +13411,17 @@ function getNextAuction(currentAuction){
       existing.rolledFromLotId === lot.id
     )) continue;
 
-    const nextAuction = nextAuctions.find(a =>
-      state.lots.filter(l => l.auctionId === a.id).length < 48
-    );
+ const nextAuction = nextAuctions.find(a =>
+  !isAuctionFull(a) &&
+  Array.isArray(a.categories) &&
+  a.categories.includes(lot.startRow) &&
+  !isCategoryFull(a, lot.startRow)
+);
 
-    if (!nextAuction) continue;
+    if (!nextAuction) {
+  lot.rolloverPending = true;
+  continue;
+}
 
     const newLot = {
       ...lot,
@@ -13430,7 +13442,8 @@ function getNextAuction(currentAuction){
   }
 
   save();
-}    
+}  
+     
 function setAuctionOpen(open){
   if(!open){
     const confirmed=confirm(
@@ -13452,12 +13465,27 @@ function setAuctionOpen(open){
   new Date(lot.extendedCloseUntil).getTime()>Date.now()
 );
     if(!hotLot){
-  createInvoices();
-
   const currentAuction=(state.auctions||[]).find(
     a=>a.id===state.selectedAuctionId
   );
-  rolloverUnsoldLots(currentAuction);        
+
+  if(!currentAuction){
+    alert("Auction not found. Closing cancelled.");
+    state.settings.open=true;
+    return;
+  }
+
+  if(currentAuction.status==="COMPLETED"){
+    alert("This auction has already been completed.");
+    state.settings.open=true;
+    return;
+  }
+
+  createInvoices();
+
+ rolloverUnsoldLots(currentAuction);
+currentAuction.status="COMPLETED";
+currentAuction.completedAt=new Date().toISOString();    
 }
 
 if(hotLot){
