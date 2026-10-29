@@ -42,7 +42,7 @@
   --red:#963737;
 }
 
-/* HIDE LEFT AND RIGHT ARROWS ON 2PHONES */
+/* HIDE LEFT AND RIGHT ARROWS ON PHONES */
 @media (max-width:600px) {
   .auctionScrollArrow {
     display:none !important;
@@ -7998,9 +7998,31 @@ exporterApproved:false,
     // Optional Retail Voucher, Money Transfer payment methods
     acceptRetailPayments: acceptRetailPayments,
     retailPaymentServices: acceptRetailPayments
-  ? retailPaymentServices
-  : [],
-auth_user_id: user.id,
+      ? retailPaymentServices
+      : "",
+    retailPaymentInstructions: acceptRetailPayments
+      ? retailPaymentInstructions
+      : "",
+    retailPaymentConfirmed: acceptRetailPayments
+      ? retailPaymentConfirmed
+      : false,
+
+    completedSales:0,
+
+totalSalesValue:0,
+happyBuyers:0,
+    bankChangePending:false,
+    rulesAccepted:rulesAccepted,
+rulesAcceptedDate:new Date().toISOString(),
+notifyNextAuction:state.sellerNotifyChoice || "none",
+selectedNotificationAuctions:[],  
+  };
+
+const { error: sellerError } = await cliviaSupabase
+  .from("sellers")
+  .insert({
+    id: seller.id,
+    auth_user_id: user.id,
     name: seller.name,
     phone: seller.phone,
     email: seller.email,
@@ -9008,7 +9030,14 @@ window.addEventListener("DOMContentLoaded", renderMyAuctionPlants);
       changes[field] = answer.trim();
     }
   }
- 
+  const preBidAnswer = confirm(
+    "ACCEPT PRE-BIDS BEFORE THE LIVE AUCTION?\n\n" +
+    "OK = YES, accept pre-bids\n" +
+    "Cancel = NO, do not accept pre-bids\n\n" +
+    "Pre-bidding will only become available after the auction date and time are confirmed."
+  );
+
+  changes.acceptPreBids = preBidAnswer;
   if(!confirm("Save changes to " + lot.name + "?")) return;
 
   Object.assign(lot, changes);
@@ -11673,18 +11702,14 @@ function refreshLotCategorySelect(){
 async function openSellerLoadFromBidder(){
   await openSellerSpaces();
 }
- function isCategoryFull(auction,category){
-  const count=(state.lots||[]).filter(lot=>
-    lot.auctionId===auction.id &&
-    lot.startRow===category
-  ).length;
-
-  return count>=12;
+  function isCategoryFull(auction,category){
+  const count=(state.lots||[]).filter(lot=>lot.auctionId===auction.id && lot.category===category).length;
+  return count >= (auction.categoryCapacity||12);
 }
 function isAuctionFull(auction){
   if(!auction || !auction.categories || auction.categories.length===0) return false;
 const totalLots=(state.lots||[]).filter(lot=>lot.auctionId===auction.id).length;
-if(totalLots>=72) return true;
+if(totalLots>=48) return true;
   return auction.categories.every(category=>
     isCategoryFull(auction,category)
   );
@@ -11861,7 +11886,7 @@ function fileToDataURL(file){
     lot.startRow===rowKey
   );
 
-  const maxPerRow=12;
+  const maxPerRow=8;
   return Math.max(0,maxPerRow-lots.length);
 }
       function updateLotStartBidOptions(){
@@ -12088,7 +12113,6 @@ if(selectedRowCount>=8){
  // CLIVIA SELLER LIMIT — NEW LOADS ONLY
 
 const upcomingAuctions = (state.auctions || [])
-  .filter(a => a.type === "CLIVIA")
   .filter(a => {
     if (!a.auctionDate) return true;
 
@@ -12111,8 +12135,7 @@ const sellerNewLotsInRow = (state.lots || []).filter(lot =>
   lot.auctionId === auction.id &&
   lot.sellerId === sellerId &&
   lot.startRow === startRow &&
-  lot.auctionAppearances === 1 &&
-lot.isRolledOver !== true
+  lot.auctionAppearances === 1
 ).length;
 
 if (sellerNewLotsInRow >= maxNewLots) {
@@ -13375,75 +13398,6 @@ function getNextAuction(currentAuction){
   )[0] || null;
 }
 
-
-  function rolloverUnsoldLots(currentAuction) {
-  if (!currentAuction || currentAuction.type !== "CLIVIA") return;
-
-  state.lots = state.lots || [];
-  state.auctions = state.auctions || [];
-
-  const auctionStart = a =>
-    new Date(a.auctionDate + "T" + a.auctionTime + ":00+02:00").getTime();
-
-  const nextAuctions = state.auctions
-    .filter(a =>
-      a.id !== currentAuction.id &&
-      a.type === currentAuction.type &&
-      a.auctionDate &&
-      a.auctionTime &&
-      auctionStart(a) > auctionStart(currentAuction) &&
-      auctionStart(a) > Date.now()
-    )
-    .sort((a, b) => auctionStart(a) - auctionStart(b));
-
-  const unsoldLots = state.lots.filter(lot =>
-    lot.auctionId === currentAuction.id &&
-    (!lot.bids || lot.bids.length === 0)
-  );
-
-  for (const lot of unsoldLots) {
-    const previous = Number(lot.rolloverCount || 0);
-    if (previous >= 3) continue;
-
-    const originalId = lot.originalLotId || lot.id;
-
-    if (state.lots.some(existing =>
-      existing.rolledFromLotId === lot.id
-    )) continue;
-
- const nextAuction = nextAuctions.find(a =>
-  !isAuctionFull(a) &&
-  Array.isArray(a.categories) &&
-  a.categories.includes(lot.startRow) &&
-  !isCategoryFull(a, lot.startRow)
-);
-
-    if (!nextAuction) {
-  lot.rolloverPending = true;
-  continue;
-}
-
-    const newLot = {
-      ...lot,
-      id: "L-ROLLOVER-" + crypto.randomUUID(),
-      auctionId: nextAuction.id,
-      originalLotId: originalId,
-      rolledFromLotId: lot.id,
-      rolloverCount: previous + 1,
-      auctionAppearances: Number(lot.auctionAppearances || 1) + 1,
-      isRolledOver: true,
-      bids: [],
-      extendedCloseUntil: null
-    };
-
-    state.lots.push(newLot);
-    nextAuction.lots = nextAuction.lots || [];
-    nextAuction.lots.push(newLot);
-  }
-
-  save();
-}  
-     
 function setAuctionOpen(open){
   if(!open){
     const confirmed=confirm(
@@ -13465,27 +13419,12 @@ function setAuctionOpen(open){
   new Date(lot.extendedCloseUntil).getTime()>Date.now()
 );
     if(!hotLot){
+  createInvoices();
+
   const currentAuction=(state.auctions||[]).find(
     a=>a.id===state.selectedAuctionId
   );
-
-  if(!currentAuction){
-    alert("Auction not found. Closing cancelled.");
-    state.settings.open=true;
-    return;
-  }
-
-  if(currentAuction.status==="COMPLETED"){
-    alert("This auction has already been completed.");
-    state.settings.open=true;
-    return;
-  }
-
-  createInvoices();
-
- rolloverUnsoldLots(currentAuction);
-currentAuction.status="COMPLETED";
-currentAuction.completedAt=new Date().toISOString();    
+  rolloverUnsoldLots(currentAuction);        
 }
 
 if(hotLot){
@@ -14166,46 +14105,15 @@ function renderSiteErrorLog(){
   save();
   renderSiteErrorLog();
 }   
-
 function deleteLot(id){
-  const lot=(state.lots||[]).find(lot=>lot.id===id);
-
-  if(!lot){
-    alert("Plant not found.");
-    return;
-  }
-
-  // Protect plants with existing bids.
-  const hasBids=
-    (Array.isArray(lot.bids) && lot.bids.length>0) ||
-    Number(lot.currentBid||0)>Number(lot.startBid||0);
-
-  if(hasBids){
-    alert(
-      "This plant has bids and cannot be deleted yet. " +
-      "Commission must first be calculated on the highest bid " +
-      "and recorded before the plant can be withdrawn."
-    );
-    return;
-  }
-
-  if(!confirm("Delete this plant? This cannot be undone.")){
-    return;
-  }
-
   state.lots=state.lots.filter(lot=>lot.id!==id);
-
   (state.auctions||[]).forEach(auction=>{
-    auction.lots=(auction.lots||[]).filter(
-      lot=>(typeof lot==="object" ? lot.id : lot)!==id
-    );
+    auction.lots=(auction.lots||[]).filter(lot=>(typeof lot==="object" ? lot.id : lot)!==id);
   });
-
   save();
   renderAdminLots();
   renderLots();
 }
-
     function confirmSecurityProof(){
   const bidder=(state.bidders||[]).find(b=>b.securityProofStatus==="PENDING_AI");
 
