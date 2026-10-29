@@ -9755,7 +9755,9 @@ function unlockBidderAccount(){
     alert("You are not authorised to manage this group.");
     return;
   }
-
+// Remember the selected Clivia Group
+window.selectedCliviaGroupId = group.id;
+window.selectedCliviaGroupName = group.group_name;
   document.getElementById("sellerLoadGrid").style.display = "none";
   document.getElementById("groupAuctionPanel").style.display = "block";
 
