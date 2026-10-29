@@ -11878,11 +11878,7 @@ const viewerBidder=(state.bidders||[]).find(
 const upcomingSellerAuctions=(state.auctions||[])
   .filter(a=>
     a.auctionDate &&
-    a.status!=="CLOSED"47,#ff8c00,#e66a00);
-      color:#111;
-      padding:6px 9px;
-      border-radius:8px;
-      font-size:11px;
+    a.status!=="CLOSED"
   )
   .sort((a,b)=>{
     const aDate=new Date(
