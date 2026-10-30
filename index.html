@@ -13132,14 +13132,10 @@ if(!bidder.isOwnerTest){
       .eq("auth_user_id", user.id)
       .maybeSingle();
 
-  if(bankError || bankDetails?.bank_confirmed !== true){
-    alert(
-      "Your bank account has not yet been verified.\n\n" +
-      "Administrator approval is required before bidding."
-    );
-    showPage("register");
-    return;
-  }
+ if(bankError || bankDetails?.bank_confirmed !== true){
+  showBankVerificationPopup();
+  return;
+}
 }
 
   if(!bidder.isOwnerTest && bidder.paymentHold){
