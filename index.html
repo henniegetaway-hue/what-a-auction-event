@@ -13068,10 +13068,6 @@ if(activeHotBidding || state.settings.open){
  
 
 async function placeBid(lotId){
-  alert("Bidding is temporarily disabled while we prepare the auctions.");
-return;    
-        alert("Bidding is temporarily disabled while we prepare the auctions.");
-  return;
   const auction=(state.auctions||[]).find(a=>a.id===state.selectedAuctionId);
 const currencySymbol=auction && auction.currency==="EUR" ? "€" : "R";
   if(!state.settings.open){
