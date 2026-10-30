@@ -9759,6 +9759,64 @@ async function saveCliviaNewPassword(){
       .classList.add("hidden");
   }, 1500);
 }
+   async function uploadBankVerificationDocument(){
+  const input = document.getElementById("bankVerificationFile");
+  const msg = document.getElementById("bankVerificationMessage");
+  const file = input?.files?.[0];
+
+  if(!file){
+    msg.textContent = "Please select a bank document.";
+    return;
+  }
+
+  const allowed = [
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "application/pdf"
+  ];
+
+  if(!allowed.includes(file.type) || file.size > 5 * 1024 * 1024){
+    msg.textContent = "Please select a JPG, PNG, WebP or PDF under 5 MB.";
+    return;
+  }
+
+  const { data: { user }, error: authError } =
+    await cliviaSupabase.auth.getUser();
+
+  if(authError || !user || !user.email_confirmed_at){
+    msg.textContent = "Please sign in with your verified email.";
+    return;
+  }
+
+  const extension = {
+    "image/jpeg": "jpg",
+    "image/png": "png",
+    "image/webp": "webp",
+    "application/pdf": "pdf"
+  }[file.type];
+
+  const path = user.id + "/" +
+    crypto.randomUUID() + "." + extension;
+
+  msg.textContent = "Uploading securely...";
+
+  const { error } = await cliviaSupabase.storage
+    .from("bank-verification")
+    .upload(path, file, {
+      contentType: file.type,
+      upsert: false
+    });
+
+  if(error){
+    msg.textContent = "Upload failed: " + error.message;
+    return;
+  }
+
+  input.value = "";
+  msg.textContent =
+    "Document uploaded securely. Verification is pending. Bidding remains locked.";
+}   
   function showBankVerificationPopup(){
   const popup = document.getElementById("bankVerificationPopup");
 
