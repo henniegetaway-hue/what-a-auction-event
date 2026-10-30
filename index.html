@@ -9823,6 +9823,20 @@ if(existingBank){
     "Banking details already registered. Verification is still required.";
   return;
 }
+    const { error: bankSaveError } = await cliviaSupabase
+  .from("bidder_bank_details")
+  .insert({
+    auth_user_id: user.id,
+    account_number: accountNumber,
+    default_number: null,
+    bank_confirmed: false
+  });
+
+if(bankSaveError){
+  msg.textContent =
+    "Could not register your bank account. Please try again.";
+  return;
+}     
   const extension = {
     "image/jpeg": "jpg",
     "image/png": "png",
