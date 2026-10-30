@@ -9819,8 +9819,16 @@ if(bankLookupError){
 }
 
 if(existingBank){
-  msg.textContent =
-    "Checking your registered bank account...";
+  const registeredNumber =
+    String(existingBank.account_number || "")
+      .replace(/\s+/g, "")
+      .toUpperCase();
+
+  if(accountNumber.toUpperCase() !== registeredNumber){
+    msg.textContent =
+      "This number does not match your registered bank account.";
+    return;
+  }
 }
   const extension = {
     "image/jpeg": "jpg",
