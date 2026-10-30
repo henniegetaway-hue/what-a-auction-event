@@ -9774,6 +9774,11 @@ async function saveCliviaNewPassword(){
 if(!accountNumber){
   msg.textContent = "Please enter your Bank Account / IBAN Number.";
   return;
+}   
+  if(!/^[A-Za-z0-9]+$/.test(accountNumber)){
+  msg.textContent =
+    "Please enter a valid Bank Account / IBAN Number using letters and numbers only.";
+  return;
 }       
   const file = input?.files?.[0];
 
