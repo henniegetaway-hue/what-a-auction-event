@@ -3233,11 +3233,32 @@ nav > button,
     white-space:normal !important;
   }
 
-  #navOwnAuction,
+   #navOwnAuction,
   #navOwnBest10 {
     min-width:0 !important;
   }
-}     
+}
+
+/* PHONE REGISTRATION BUTTON FIX */
+@media (max-width:600px) {
+  #registrationButtonRow {
+    flex-wrap:wrap !important;
+    gap:12px !important;
+  }
+
+  #registrationButtonRow > div {
+    flex-shrink:1 !important;
+  }
+
+  #registrationButtonRow #newBidderBtn,
+  #registrationButtonRow #accountDetailsBtn {
+    width:150px !important;
+    max-width:100% !important;
+    font-size:12px !important;
+    padding:10px 8px !important;
+    box-sizing:border-box !important;
+  }
+}
 </style>   
   <!-- CLIVIA MEMBERS CHAT PAGE -->
 <section id="pageCliviaChat" class="page hidden">
