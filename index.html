@@ -9769,7 +9769,7 @@ async function saveCliviaNewPassword(){
   const msg = document.getElementById("bankVerificationMessage");
   const accountNumber = document
   .getElementById("bankVerificationAccountNumber")
-  ?.value.trim();
+  ?.value.replace(/\s+/g, "").trim();
 
 if(!accountNumber){
   msg.textContent = "Please enter your Bank Account / IBAN Number.";
