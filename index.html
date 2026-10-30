@@ -9767,6 +9767,14 @@ async function saveCliviaNewPassword(){
    async function uploadBankVerificationDocument(){
   const input = document.getElementById("bankVerificationFile");
   const msg = document.getElementById("bankVerificationMessage");
+  const accountNumber = document
+  .getElementById("bankVerificationAccountNumber")
+  ?.value.trim();
+
+if(!accountNumber){
+  msg.textContent = "Please enter your Bank Account / IBAN Number.";
+  return;
+}       
   const file = input?.files?.[0];
 
   if(!file){
