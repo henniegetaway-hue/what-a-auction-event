@@ -9820,8 +9820,7 @@ if(bankLookupError){
 
 if(existingBank){
   msg.textContent =
-    "Banking details already registered. Verification is still required.";
-  return;
+    "Checking your registered bank account...";
 }
   const extension = {
     "image/jpeg": "jpg",
@@ -9846,6 +9845,7 @@ if(existingBank){
     msg.textContent = "Upload failed: " + error.message;
     return;
   }
+ if(!existingBank){        
 const { error: bankSaveError } = await cliviaSupabase
   .from("bidder_bank_details")
   .insert({
@@ -9860,6 +9860,7 @@ if(bankSaveError){
     "Document uploaded, but bank registration failed. Please contact support.";
   return;
 }
+ }      
   input.value = "";
   msg.textContent =
     "Document uploaded securely. Verification is pending. Bidding remains locked.";
