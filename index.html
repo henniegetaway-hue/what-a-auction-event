@@ -9806,7 +9806,23 @@ if(!accountNumber){
     msg.textContent = "Please sign in with your verified email.";
     return;
   }
+const { data: existingBank, error: bankLookupError } =
+  await cliviaSupabase
+    .from("bidder_bank_details")
+    .select("auth_user_id")
+    .eq("auth_user_id", user.id)
+    .maybeSingle();
 
+if(bankLookupError){
+  msg.textContent = "Unable to check your bank registration. Please try again.";
+  return;
+}
+
+if(existingBank){
+  msg.textContent =
+    "Banking details already registered. Verification is still required.";
+  return;
+}
   const extension = {
     "image/jpeg": "jpg",
     "image/png": "png",
