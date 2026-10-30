@@ -9806,7 +9806,20 @@ if(!accountNumber){
     msg.textContent = "Please sign in with your verified email.";
     return;
   }
-const { data: existingBank, error: bankLookupError } =
+const { data: registeredBidder, error: bidderError } =
+  await cliviaSupabase
+    .from("bidders")
+    .select("id")
+    .eq("auth_user_id", user.id)
+    .eq("email_verified", true)
+    .maybeSingle();
+
+if(bidderError || !registeredBidder){
+  msg.textContent =
+    "Please complete and verify your bidder registration first.";
+  return;
+}
+         const { data: existingBank, error: bankLookupError } =
   await cliviaSupabase
     .from("bidder_bank_details")
     .select("auth_user_id, account_number")
