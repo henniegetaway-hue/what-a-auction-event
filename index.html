@@ -9758,13 +9758,12 @@ async function saveCliviaNewPassword(){
   }, 1500);
 }
   function showBankVerificationPopup(){
-  alert(
-    "BANK ACCOUNT VERIFICATION\n\n" +
-    "Upload your bank statement or bank confirmation.\n\n" +
-    "FREE BIDDING UP TO R2,000 IN TOTAL.\n\n" +
-    "Verification is required before bidding."
-  );
-}    
+  const popup = document.getElementById("bankVerificationPopup");
+
+  if(popup){
+    popup.style.display = "block";
+  }
+}
    async function saveCliviaBankDetails(){
   const msg = document.getElementById("cliviaBankDetailsMsg");
   const accountInput = document.getElementById("cliviaBankAccountNumber");
