@@ -9846,7 +9846,20 @@ if(existingBank){
     msg.textContent = "Upload failed: " + error.message;
     return;
   }
+const { error: bankSaveError } = await cliviaSupabase
+  .from("bidder_bank_details")
+  .insert({
+    auth_user_id: user.id,
+    account_number: accountNumber,
+    default_number: null,
+    bank_confirmed: false
+  });
 
+if(bankSaveError){
+  msg.textContent =
+    "Document uploaded, but bank registration failed. Please contact support.";
+  return;
+}
   input.value = "";
   msg.textContent =
     "Document uploaded securely. Verification is pending. Bidding remains locked.";
