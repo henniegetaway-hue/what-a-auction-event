@@ -9898,8 +9898,13 @@ const { error: bankSaveError } = await cliviaSupabase
   });
 
 if(bankSaveError){
+  console.error("Bank registration error:", bankSaveError);
+
   msg.textContent =
-    "Bank registration failed. Bidding remains locked. Please contact support.";
+    "Bank registration failed. Error code: " +
+    (bankSaveError.code || "unknown") +
+    ". Bidding remains locked.";
+
   return;
 }
  }      
