@@ -12620,7 +12620,49 @@ function scrollAuctionRow(button,direction){
     "noopener,noreferrer"
   );
 }
- function shareLotFacebook(id){
+ 
+function shareLotFacebook(id){
+  const lot = (state.lots || []).find(
+    l => String(l.id) === String(id)
+  );
+
+  if(!lot) return;
+
+  const auction = (state.auctions || []).find(
+    a => String(a.id) === String(lot.auctionId)
+  );
+
+  const symbol = auction?.currency === "EUR" ? "€" : "R";
+
+  const price = typeof currentBid === "function"
+    ? currentBid(lot)
+    : lot.startBid;
+
+  const lotNumber = "LOT-" +
+    String(lot.lotNumber || 1).padStart(3, "0");
+
+  const lotUrl =
+    window.location.origin +
+    window.location.pathname +
+    "#lot-" + encodeURIComponent(id);
+
+  const shareUrl =
+    "https://mynwscjggvhjrtprogmq.supabase.co/functions/v1/lot-share" +
+    "?title=" + encodeURIComponent(lot.name || "Clivia Auction Lot") +
+    "&image=" + encodeURIComponent(lot.flower || "") +
+    "&description=" + encodeURIComponent(
+      lotNumber + " | Current bid: " + symbol + price
+    ) +
+    "&url=" + encodeURIComponent(lotUrl);
+
+  window.open(
+    "https://www.facebook.com/sharer/sharer.php?u=" +
+      encodeURIComponent(shareUrl),
+    "_blank",
+    "noopener,noreferrer"
+  );
+}
+
   const lot=(state.lots||[]).find(l=>l.id===id);
   if(!lot) return;
 
