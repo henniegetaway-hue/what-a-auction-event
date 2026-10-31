@@ -14599,34 +14599,37 @@ if(state.selectedSellerId){
 }      
 
 if(state.selectedBidderId){
-  showPage("register");
 
-  const bidder=(state.bidders||[]).find(
-    b=>b.id===state.selectedBidderId
+  const bidder = (state.bidders || []).find(
+    b => b.id === state.selectedBidderId
   );
 
   if(bidder){
 
- if(bidder.isOwnerTest){
-  localStorage.setItem("cliviaBidderUnlocked",bidder.id);
-}
+    if(bidder.isOwnerTest){
+      localStorage.setItem("cliviaBidderUnlocked", bidder.id);
+    }
 
-  const passwordInput=document.getElementById("returningBidderPassword");
-    const unlockNotice=document.getElementById("bidderUnlockNotice");
+    const passwordInput =
+      document.getElementById("returningBidderPassword");
+
+    const unlockNotice =
+      document.getElementById("bidderUnlockNotice");
 
     if(passwordInput){
-      passwordInput.value="";
+      passwordInput.value = "";
     }
 
     if(unlockNotice){
-      unlockNotice.textContent=
-        "Welcome back, "+bidder.name+". Enter your password before placing a bid.";
+      unlockNotice.textContent =
+        "Welcome back, " + bidder.name +
+        ". Enter your password before placing a bid.";
     }
   }
-
-}else{
-  showPage("register");
 }
+
+// OPEN CLIVIA AUCTIONS AS THE DEFAULT LANDING PAGE
+showPage("live");
    setTimeout(()=>{
   const hash = window.location.hash;
 
