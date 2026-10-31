@@ -18124,11 +18124,39 @@ options.forEach(([label, targetId]) => {
   const accountSection =
     document.getElementById("registeredBidderSection");
 
-  if (accountSection) {
-    accountSection.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
+  if (!accountSection) {
+    alert("Account login is unavailable.");
+    return;
+  }
+
+  accountSection.style.display = "block";
+
+  // Keep the existing login and password verification.
+  accountSection.style.position = "fixed";
+  accountSection.style.top = "50%";
+  accountSection.style.left = "50%";
+  accountSection.style.transform = "translate(-50%, -50%)";
+  accountSection.style.width = "calc(100% - 24px)";
+  accountSection.style.maxWidth = "400px";
+  accountSection.style.maxHeight = "85vh";
+  accountSection.style.overflowY = "auto";
+  accountSection.style.zIndex = "10001";
+  accountSection.style.background = "#ffffff";
+  accountSection.style.color = "#000000";
+  accountSection.style.borderRadius = "12px";
+  accountSection.style.padding = "20px";
+
+  if (!document.getElementById("closeAccountLogin")) {
+    const closeButton = document.createElement("button");
+    closeButton.id = "closeAccountLogin";
+    closeButton.type = "button";
+    closeButton.textContent = "CLOSE";
+
+    closeButton.onclick = function () {
+      accountSection.style.display = "none";
+    };
+
+    accountSection.prepend(closeButton);
   }
 
   return;
