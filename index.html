@@ -18095,11 +18095,11 @@ borderRadius: "0",
   });
 
   const options = [
+    ["REGISTER / NEW ACCOUNT", null],
     ["CLIVIA AUCTIONS", "navLive"],
   ["GROUP AUCTIONS", null],
   ["LOAD FOR NEXT AUCTION", "navCliviaLoad"],
   ["MY ACCOUNT", null],
-["REGISTER / NEW ACCOUNT", null],
   ["CREATE YOUR OWN EVENT", "navOwnEvent"],
   ["INVOICES", "navInvoices"],
   ["RULES & TERMS", "navRules"],
@@ -18111,15 +18111,16 @@ options.forEach(([label, targetId]) => {
   const button = document.createElement("button");
   button.type = "button";
   button.textContent = label;
+    const isRegister = label === "REGISTER / NEW ACCOUNT";  
 
   Object.assign(button.style, {
     display: "block",
     width: "100%",
     padding: "12px",
     marginBottom: "5px",
-    background: "#ffffff",
-    color: "#111111",
-    border: "1px solid #dddddd",
+   background: isRegister ? "#FFD19A" : "#ffffff",
+color: "#111111",
+border: isRegister ? "2px solid #E5A45A" : "1px solid #dddddd",
     borderRadius: "6px",
     textAlign: "left",
     cursor: "pointer"
