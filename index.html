@@ -13556,7 +13556,7 @@ if(!securityProofPending && totalExposureAfterBid>=secondWarningLevel && totalEx
   currencySymbol+maxBidCapacity.toLocaleString()+" bidding limit. Pay the "+
   currencySymbol+securityFeeAmount+" security fee now to avoid bidding being interrupted.");
 }
-if(securityFeeNeeded && !bidder.isOwnerTest){
+if(false && securityFeeNeeded && !bidder.isOwnerTest){
   alert(securityProofPending
   ? "BIDDING PAUSED: Your "+currencySymbol+securityFeeAmount+" payment proof is waiting for verification. Your next "+currencySymbol+securityBracketSize.toLocaleString()+" bidding bracket will unlock after confirmation."
   : "BIDDING PAUSED: Your "+currencySymbol+maxBidCapacity.toLocaleString()+" total bidding capacity has been reached. Pay the "+currencySymbol+securityFeeAmount+" security fee and upload proof of payment to unlock the next "+currencySymbol+securityBracketSize.toLocaleString()+" bidding bracket.");
