@@ -18111,6 +18111,11 @@ options.forEach(([label, targetId]) => {
   const button = document.createElement("button");
   button.type = "button";
   button.textContent = label;
+     if(label === "REGISTER / NEW ACCOUNT"){
+  button.style.setProperty("white-space", "nowrap");
+  button.style.setProperty("font-size", "12px");
+  button.style.setProperty("letter-spacing", "-0.3px");
+} 
     const isRegister = label === "REGISTER / NEW ACCOUNT";  
 
   Object.assign(button.style, {
