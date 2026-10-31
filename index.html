@@ -18043,6 +18043,21 @@ function toggleCliviaNavigation() {
     };
 
     menu.appendChild(button);
+    setTimeout(() => {
+  document.addEventListener("click", function closeCliviaMenu(event) {
+    const currentMenu = document.getElementById("cliviaNavigationMenu");
+
+    if (!currentMenu) {
+      document.removeEventListener("click", closeCliviaMenu);
+      return;
+    }
+
+    if (!currentMenu.contains(event.target)) {
+      currentMenu.remove();
+      document.removeEventListener("click", closeCliviaMenu);
+    }
+  });
+}, 0);    
   });
 
   document.body.appendChild(menu);
