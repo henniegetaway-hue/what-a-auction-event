@@ -1897,6 +1897,10 @@ window.addEventListener("load", function(){
 
 </div>
 <style>
+  /* Hide registration panel on home screen */
+body:not(.showRegistration) #pageRegister {
+  display: none !important;
+}    
 @media (max-width: 600px) {
 
   #mainCliviaNavigation {
