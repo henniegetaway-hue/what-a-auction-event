@@ -1755,13 +1755,14 @@ window.addEventListener("load", function(){
 
 </div>     
 
-<div class="top">
-<div class="siteLogoWrap">
+
+<div class="siteLogoWrap" style="margin-left:15mm;">
   <img id="siteLogo"
        class="logo"
        src="new logo.png"
        alt="Clivia Dreamers logo">
 </div>
+
 
 <div class="brand" style="margin-left:15mm;">
   <h1 id="siteBrandName">Clivia Dreamers Auction</h1>
@@ -13336,12 +13337,31 @@ ${
     <span style="color:#d8ff9b;font-weight:bold;">
       Default bid increase:
       R${sellerAuction?.increment || state.settings.increment || 50}
+   
     </span>
   </div>
+
+  <!-- LOAD BUTTON ON RIGHT SIDE -->
+  <button type="button"
+    onclick="openSellerSpaces()"
+    style="
+      margin-left:auto;
+      background:#263b2b;
+      color:white;
+      border:1px solid #405c43;
+      border-radius:8px;
+      padding:14px 20px;
+      font-size:15px;
+      font-weight:bold;
+      cursor:pointer;
+    ">
+    LOAD FOR THE NEXT AUCTION
+  </button>
 
 </div>
 
 ${auctionRowsHtml}
+
 
 </div>
 `;       
