@@ -18118,8 +18118,7 @@ options.forEach(([label, targetId]) => {
       return;
     }
 
-   if (label === "MY ACCOUNT") {
-   alert("MY ACCOUNT BUTTON WORKING");      
+   if (label === "MY ACCOUNT") {   
   showPage("register");
 
   const accountSection =
@@ -18129,7 +18128,7 @@ options.forEach(([label, targetId]) => {
     alert("Account login is unavailable.");
     return;
   }
-
+accountSection.classList.remove("hidden");
   accountSection.style.display = "block";
 
   // Keep the existing login and password verification.
