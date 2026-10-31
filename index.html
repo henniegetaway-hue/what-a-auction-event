@@ -18022,15 +18022,63 @@ borderRadius: "0",
   menu.appendChild(heading);
 
   const options = [
-  "CLIVIA AUCTIONS",
-  "GROUP AUCTIONS",
-  "LOAD FOR NEXT AUCTION",
-  "MY ACCOUNT",
-  "CREATE YOUR OWN EVENT",
-  "INVOICES",
-  "RULES & TERMS",
-  "BEST 10",
-  "ADMIN"
+  
+const options = [
+  ["CLIVIA AUCTIONS", "navLive"],
+  ["GROUP AUCTIONS", null],
+  ["LOAD FOR NEXT AUCTION", "navCliviaLoad"],
+  ["MY ACCOUNT", null],
+  ["CREATE YOUR OWN EVENT", "navOwnEvent"],
+  ["INVOICES", "navInvoices"],
+  ["RULES & TERMS", "navRules"],
+  ["BEST 10", "navOwnBest10"],
+  ["ADMIN", "navAdmin"]
+];
+
+options.forEach(([label, targetId]) => {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.textContent = label;
+
+  Object.assign(button.style, {
+    display: "block",
+    width: "100%",
+    padding: "12px",
+    marginBottom: "5px",
+    background: "#ffffff",
+    color: "#111111",
+    border: "1px solid #dddddd",
+    borderRadius: "6px",
+    textAlign: "left",
+    cursor: "pointer"
+  });
+
+  button.onclick = () => {
+    menu.remove();
+
+    if (label === "BEST 10") {
+      showOwnBest10Page();
+      return;
+    }
+
+    if (label === "GROUP AUCTIONS" ||
+        label === "MY ACCOUNT") {
+      alert("This navigation link still needs to be connected.");
+      return;
+    }
+
+    const target = document.getElementById(targetId);
+
+    if (target) {
+      target.click();
+    } else {
+      alert("This page is currently unavailable.");
+    }
+  };
+
+  menu.appendChild(button);
+});
+
 ];
 
   options.forEach(label => {
