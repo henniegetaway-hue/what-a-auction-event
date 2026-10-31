@@ -18077,49 +18077,6 @@ options.forEach(([label, targetId]) => {
   menu.appendChild(button);
 });
 
-];
-
-  options.forEach(label => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.textContent = label;
-
-    Object.assign(button.style, {
-      display: "block",
-      width: "100%",
-      padding: "12px",
-      marginBottom: "5px",
-      background: "#ffffff",
-      color: "#111111",
-      border: "1px solid #dddddd",
-      borderRadius: "6px",
-      textAlign: "left",
-      cursor: "pointer"
-    });
-
-    button.onclick = () => {
-      menu.remove();
-      // Existing website page links will be connected next.
-    };
-
-    menu.appendChild(button);
-    setTimeout(() => {
-  document.addEventListener("click", function closeCliviaMenu(event) {
-    const currentMenu = document.getElementById("cliviaNavigationMenu");
-
-    if (!currentMenu) {
-      document.removeEventListener("click", closeCliviaMenu);
-      return;
-    }
-
-    if (!currentMenu.contains(event.target)) {
-      currentMenu.remove();
-      document.removeEventListener("click", closeCliviaMenu);
-    }
-  });
-}, 0);    
-  });
-
   document.body.appendChild(menu);
 }
      
