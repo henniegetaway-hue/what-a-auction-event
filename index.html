@@ -13540,6 +13540,19 @@ const currentWinningExposure=(state.lots||[]).reduce((total,otherLot)=>{
 },0);
   const securityFeeNeeded=(currentWinningExposure+amount)>maxBidCapacity;
   const totalExposureAfterBid=currentWinningExposure+amount;
+   // ADMIN ALERT ONLY — DO NOT BLOCK BIDDING
+const adminAlertThreshold = 5000;
+
+const adminBidAlert =
+  auction?.currency === "ZAR" &&
+  totalExposureAfterBid > adminAlertThreshold;
+
+if(adminBidAlert){
+  console.log(
+    "ADMIN RED ALERT: Highest bids total R" +
+    totalExposureAfterBid.toLocaleString()
+  );
+}   
   const firstWarningLevel=maxBidCapacity-(auction.currency==="EUR" ? 120 : 2000);
 const secondWarningLevel=maxBidCapacity-(auction.currency==="EUR" ? 60 : 1000);
   const securityProofPending=
