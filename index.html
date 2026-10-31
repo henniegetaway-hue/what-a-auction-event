@@ -9935,7 +9935,7 @@ if(!accountNumber){
 const { data: registeredBidder, error: bidderError } =
   await cliviaSupabase
     .from("bidders")
-    .select("id")
+.select("id, full_name")
     .eq("auth_user_id", user.id)
     .eq("email_verified", true)
     .maybeSingle();
