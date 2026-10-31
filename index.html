@@ -18118,57 +18118,79 @@ options.forEach(([label, targetId]) => {
       return;
     }
 
-   if (label === "MY ACCOUNT") { 
-    menu.remove();
+   
+if (label === "MY ACCOUNT") {
+  menu.remove();
 
-setTimeout(() => {
-  const accountSection =
-    document.getElementById("registeredBidderSection");
+  const loginBox = document.getElementById("bidderLoginBox");
 
-  if (accountSection) {
-    accountSection.classList.remove("hidden");
-    accountSection.style.setProperty("display", "block", "important");
-  }
-}, 200);     
-  showPage("register");
-
-  const accountSection =
-    document.getElementById("registeredBidderSection");
-
-  if (!accountSection) {
+  if (!loginBox) {
     alert("Account login is unavailable.");
     return;
   }
-accountSection.classList.remove("hidden");
-  accountSection.style.display = "block";
 
-  // Keep the existing login and password verification.
-  accountSection.style.position = "fixed";
-  accountSection.style.top = "50%";
-  accountSection.style.left = "50%";
-  accountSection.style.transform = "translate(-50%, -50%)";
-  accountSection.style.width = "calc(100% - 24px)";
-  accountSection.style.maxWidth = "400px";
-  accountSection.style.maxHeight = "85vh";
-  accountSection.style.overflowY = "auto";
-  accountSection.style.zIndex = "10001";
-  accountSection.style.background = "#ffffff";
-  accountSection.style.color = "#000000";
-  accountSection.style.borderRadius = "12px";
-  accountSection.style.padding = "20px";
+  // Keep the original location for restoration.
+  if (!loginBox.dataset.originalParent) {
+    loginBox.dataset.originalParent = "registration";
+  }
 
-  if (!document.getElementById("closeAccountLogin")) {
+  // Create a separate popup, outside the registration page.
+  let overlay = document.getElementById("cliviaAccountOverlay");
+
+  if (!overlay) {
+    overlay = document.createElement("div");
+    overlay.id = "cliviaAccountOverlay";
+
+    Object.assign(overlay.style, {
+      position: "fixed",
+      inset: "0",
+      background: "rgba(0,0,0,0.65)",
+      zIndex: "2147483647",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "12px"
+    });
+
+    const popup = document.createElement("div");
+    popup.id = "cliviaAccountPopup";
+
+    Object.assign(popup.style, {
+      background: "#ffffff",
+      color: "#111111",
+      width: "100%",
+      maxWidth: "400px",
+      maxHeight: "85vh",
+      overflowY: "auto",
+      padding: "20px",
+      borderRadius: "12px",
+      boxSizing: "border-box"
+    });
+
     const closeButton = document.createElement("button");
-    closeButton.id = "closeAccountLogin";
     closeButton.type = "button";
-    closeButton.textContent = "CLOSE";
+    closeButton.textContent = "✕ CLOSE";
+    closeButton.style.cssText =
+      "display:block;margin:0 0 12px auto;padding:8px 14px;cursor:pointer;";
 
-    closeButton.onclick = function () {
-      accountSection.style.display = "none";
+    closeButton.onclick = () => {
+      overlay.style.display = "none";
     };
 
-    accountSection.prepend(closeButton);
+    popup.appendChild(closeButton);
+    overlay.appendChild(popup);
+    document.body.appendChild(overlay);
   }
+
+  const popup = document.getElementById("cliviaAccountPopup");
+
+  popup.appendChild(loginBox);
+
+  loginBox.style.setProperty("display", "block", "important");
+  loginBox.style.maxWidth = "100%";
+  loginBox.style.margin = "0";
+
+  overlay.style.display = "flex";
 
   return;
 }
