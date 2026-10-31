@@ -18118,7 +18118,18 @@ options.forEach(([label, targetId]) => {
       return;
     }
 
-   if (label === "MY ACCOUNT") {   
+   if (label === "MY ACCOUNT") { 
+    menu.remove();
+
+setTimeout(() => {
+  const accountSection =
+    document.getElementById("registeredBidderSection");
+
+  if (accountSection) {
+    accountSection.classList.remove("hidden");
+    accountSection.style.setProperty("display", "block", "important");
+  }
+}, 200);     
   showPage("register");
 
   const accountSection =
