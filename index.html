@@ -16634,6 +16634,31 @@ async function openAdmin(){
   renderPaymentVerification();
 }    
 }
+async function saveCliviaAuctionToSupabase(auction){
+
+  const { data, error } = await cliviaSupabase
+    .from("auctions")
+    .upsert({
+      legacy_auction_id: auction.id,
+      auction_name: auction.name,
+      auction_date: auction.auctionDate || null,
+      start_time: auction.auctionTime || null,
+      close_time: auction.closeTime || auction.auctionCloseTime || null,
+      currency: auction.currency || "ZAR",
+      status: auction.status || "LOADING"
+    }, {
+      onConflict: "legacy_auction_id"
+    })
+    .select("id")
+    .single();
+
+  if(error){
+    console.error("Clivia auction Supabase save failed:", error);
+    return null;
+  }
+
+  return data.id;
+}      
 function createAuction(){
 
   const date = document.getElementById("newAuctionDate")?.value || "";
