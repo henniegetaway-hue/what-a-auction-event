@@ -9945,6 +9945,11 @@ if(bidderError || !registeredBidder){
     "Please complete and verify your bidder registration first.";
   return;
 }
+ if(!registeredBidder.full_name?.trim()){
+  msg.textContent =
+    "Your registered full name is missing. Please update your account before bank verification.";
+  return;
+}        
          const { data: existingBank, error: bankLookupError } =
   await cliviaSupabase
     .from("bidder_bank_details")
