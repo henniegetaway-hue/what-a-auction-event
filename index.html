@@ -17977,6 +17977,77 @@ if (name !== chatProfile.chat_name) {
 document.addEventListener("DOMContentLoaded", () => {
   loadCliviaChatMessages();
 });
+ 
+function toggleCliviaNavigation() {
+  let menu = document.getElementById("cliviaNavigationMenu");
+
+  if (menu) {
+    menu.remove();
+    return;
+  }
+
+  menu = document.createElement("div");
+  menu.id = "cliviaNavigationMenu";
+
+  Object.assign(menu.style, {
+    position: "fixed",
+    top: "80px",
+    left: "12px",
+    width: "260px",
+    maxWidth: "calc(100vw - 24px)",
+    background: "#ffffff",
+    color: "#111111",
+    border: "1px solid #cccccc",
+    borderRadius: "10px",
+    padding: "10px",
+    zIndex: "99999",
+    boxShadow: "0 8px 24px rgba(0,0,0,.35)"
+  });
+
+  const heading = document.createElement("strong");
+  heading.textContent = "CLIVIA NAVIGATION";
+  heading.style.display = "block";
+  heading.style.padding = "10px";
+  menu.appendChild(heading);
+
+  const options = [
+    "CLIVIA AUCTIONS",
+    "GROUP AUCTIONS",
+    "MY ACCOUNT",
+    "SELL A PLANT",
+    "BANK VERIFICATION",
+    "RULES & TERMS"
+  ];
+
+  options.forEach(label => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = label;
+
+    Object.assign(button.style, {
+      display: "block",
+      width: "100%",
+      padding: "12px",
+      marginBottom: "5px",
+      background: "#ffffff",
+      color: "#111111",
+      border: "1px solid #dddddd",
+      borderRadius: "6px",
+      textAlign: "left",
+      cursor: "pointer"
+    });
+
+    button.onclick = () => {
+      menu.remove();
+      // Existing website page links will be connected next.
+    };
+
+    menu.appendChild(button);
+  });
+
+  document.body.appendChild(menu);
+}
+     
 </script>
 
 </body>
