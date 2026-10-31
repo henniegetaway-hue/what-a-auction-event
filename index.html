@@ -18109,25 +18109,17 @@ borderRadius: "0",
 options.forEach(([label, targetId]) => {
   const button = document.createElement("button");
   button.type = "button";
- if (label === "CLIVIA AUCTIONS") {
-  button.innerHTML = `
-    <span>CLIVIA AUCTIONS</span>
-    <span style="font-size:22px;margin-left:10px;white-space:nowrap;">
-      🌺🌼🌸
-    </span>
-  `;
-} else {
-  button.textContent = label;
-}
-  button.innerHTML = `
-    <img src="new logo.png"
-         alt="Clivia Dreamers"
-         style="width:32px;height:32px;object-fit:contain;vertical-align:middle;margin-right:10px;">
-    <span style="vertical-align:middle;">CLIVIA AUCTIONS</span>
-  `;
-} else {
-  button.textContent = label;
-}
+
+  if (label === "CLIVIA AUCTIONS") {
+    button.innerHTML = `
+      <span>CLIVIA AUCTIONS</span>
+      <span style="font-size:22px;margin-left:10px;white-space:nowrap;">
+        🌺🌼🌸
+      </span>
+    `;
+  } else {
+    button.textContent = label;
+  }
     if(label === "REGISTER - MY ACCOUNT"){
   button.style.setProperty("white-space", "nowrap");
   button.style.setProperty("font-size", "12px");
