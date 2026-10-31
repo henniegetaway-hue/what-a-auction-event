@@ -18059,11 +18059,26 @@ options.forEach(([label, targetId]) => {
       return;
     }
 
-    if (label === "GROUP AUCTIONS" ||
-        label === "MY ACCOUNT") {
-      alert("This navigation link still needs to be connected.");
-      return;
-    }
+   if (label === "MY ACCOUNT") {
+  showPage("register");
+
+  const accountSection =
+    document.getElementById("registeredBidderSection");
+
+  if (accountSection) {
+    accountSection.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }
+
+  return;
+}
+
+if (label === "GROUP AUCTIONS") {
+  alert("Group Auctions navigation still needs to be connected.");
+  return;
+}
 
     const target = document.getElementById(targetId);
 
