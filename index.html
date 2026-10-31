@@ -13221,10 +13221,44 @@ ${
 
 </div>
 
-    ${auctionRowsHtml}
+<!-- CLIVIA MEMBER NAVIGATION -->
+<div style="display:flex;gap:8px;margin:10px 0;align-items:stretch;">
 
-  </div>
-`;           
+  <button type="button"
+    onclick="toggleCliviaNavigation()"
+    style="
+      width:52px;
+      min-width:52px;
+      background:#263c17;
+      color:white;
+      border:1px solid #9acd32;
+      border-radius:10px;
+      font-size:26px;
+      cursor:pointer;
+    ">
+    &#8942;
+  </button>
+
+  <button type="button"
+    style="
+      flex:1;
+      min-width:0;
+      background:#263c17;
+      color:white;
+      border:1px solid #9acd32;
+      border-radius:10px;
+      padding:14px 8px;
+      font-weight:bold;
+    ">
+    LOAD FOR NEXT AUCTION
+  </button>
+
+</div>
+
+${auctionRowsHtml}
+
+</div>
+`;       
 
 const sharedLotId=window.location.hash.replace("#lot=","");
 const sharedLotData=state.lots.find(lot=>lot.id===sharedLotId);
