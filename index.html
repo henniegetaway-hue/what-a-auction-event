@@ -3216,6 +3216,14 @@ nav:has(#navRegister) .ownEventTabGroup button {
     overflow-wrap:anywhere !important;
   }
 }
+/* PHONE — HIDE OLD NAVIGATION AND EMPTY BORDERS */
+@media (max-width:600px) {
+  #oldCliviaNavigation,
+  #oldCliviaNavigation .cliviaTabGroup,
+  #oldCliviaNavigation .ownEventTabGroup {
+    display:none !important;
+  }
+}      
 /* PHONE ONLY — FIX REGISTRATION BUTTONS */
 @media (max-width:600px) {
 
