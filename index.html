@@ -184,9 +184,14 @@ nav{
   margin:15px 0;
   flex-wrap:wrap;
 }
-/* KEEP OLD NAVIGATION HIDDEN ON ALL SCREENS */
-#oldCliviaNavigation {
+/* HIDE OLD NAVIGATION AND ITS COLOURED BORDERS */
+#oldCliviaNavigation,
+#oldCliviaNavigation .cliviaTabGroup,
+#oldCliviaNavigation .ownEventTabGroup {
   display:none !important;
+  border:none !important;
+  margin:0 !important;
+  padding:0 !important;
 }
 
 /* KEEP NEW NAVIGATION VISIBLE */
