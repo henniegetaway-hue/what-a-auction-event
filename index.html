@@ -13564,7 +13564,7 @@ const secondWarningLevel=maxBidCapacity-(auction.currency==="EUR" ? 60 : 1000);
   currencySymbol+securityFeeAmount+" security fee to unlock the next "+
   currencySymbol+securityBracketSize.toLocaleString()+" bidding bracket.");
     }
-if(!securityProofPending && totalExposureAfterBid>=secondWarningLevel && totalExposureAfterBid<=maxBidCapacity){
+if(false && !securityProofPending && totalExposureAfterBid>=secondWarningLevel && totalExposureAfterBid<=maxBidCapacity){
   alert("URGENT SECURITY WARNING: You are very close to your "+
   currencySymbol+maxBidCapacity.toLocaleString()+" bidding limit. Pay the "+
   currencySymbol+securityFeeAmount+" security fee now to avoid bidding being interrupted.");
