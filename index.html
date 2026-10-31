@@ -18226,7 +18226,17 @@ if (label === "REGISTER - MY ACCOUNT") {
 }
 
 if (label === "GROUP AUCTIONS") {
-  alert("Group Auctions navigation still needs to be connected.");
+  showPage("sellerLoad");
+
+  const groupButton =
+    document.getElementById("groupCliviaLoadBtn");
+
+  if (groupButton) {
+    groupButton.click();
+  } else {
+    alert("Group Auctions section could not be found.");
+  }
+
   return;
 }
 
