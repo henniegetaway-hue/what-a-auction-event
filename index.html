@@ -1864,7 +1864,7 @@ window.addEventListener("load", function(){
 ">
 
   <button type="button"
-    onclick="toggleCliviaNavigation()"
+    onclick="event.stopPropagation(); toggleCliviaNavigation()"
     aria-label="Open navigation menu"
     style="
       width:44px;
