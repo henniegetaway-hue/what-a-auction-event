@@ -13545,7 +13545,7 @@ const secondWarningLevel=maxBidCapacity-(auction.currency==="EUR" ? 60 : 1000);
   const securityProofPending=
   bidder.securityProofStatus==="PENDING_AI" &&
   bidder.securityProofCurrency===(auction && auction.currency==="EUR" ? "EUR" : "ZAR");
- if(!securityProofPending && totalExposureAfterBid>=firstWarningLevel && totalExposureAfterBid<secondWarningLevel){
+ if(false && !securityProofPending && totalExposureAfterBid>=firstWarningLevel && totalExposureAfterBid<secondWarningLevel){
   alert("SECURITY WARNING: You are approaching your "+currencySymbol+
   maxBidCapacity.toLocaleString()+" bidding limit. Pay the next "+
   currencySymbol+securityFeeAmount+" security fee to unlock the next "+
