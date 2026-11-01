@@ -18321,6 +18321,14 @@ accountSection.style.setProperty(
 accountSection.style.setProperty(
   "box-sizing", "border-box", "important"
 );
+// Make text inside account boxes readable
+accountSection.querySelectorAll(
+  ".notice, .panel"
+).forEach(box => {
+  box.style.setProperty(
+    "color", "#ffffff", "important"
+  );
+});      
   // Never expose account details before password verification
   if(!bidderAccountUnlocked){
     accountSection.style.display = "none";
