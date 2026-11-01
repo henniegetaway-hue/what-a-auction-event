@@ -10038,11 +10038,23 @@ if(bankSaveError){
     "Document uploaded securely. Verification is pending. Bidding remains locked.";
 }   
   function showBankVerificationPopup(){
-  const popup = document.getElementById("bankVerificationPopup");
 
-  if(popup){
-    popup.style.display = "block";
+  const popup =
+    document.getElementById("bankVerificationPopup");
+
+  if(!popup){
+    alert("Bank verification window not found.");
+    return;
   }
+
+  if(!bidderAccountUnlocked){
+    alert("Please sign in to MY ACCOUNT first.");
+    return;
+  }
+
+  popup.style.setProperty("display", "block", "important");
+  popup.style.setProperty("z-index", "2147483647", "important");
+
 }
    async function saveCliviaBankDetails(){
   const msg = document.getElementById("cliviaBankDetailsMsg");
