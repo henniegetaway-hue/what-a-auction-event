@@ -18306,7 +18306,21 @@ const accountSection =
 
 if(accountSection){
   popup.appendChild(accountSection);
+accountSection.style.setProperty(
+  "background", "#ffffff", "important"
+);
 
+accountSection.style.setProperty(
+  "color", "#111111", "important"
+);
+
+accountSection.style.setProperty(
+  "width", "100%", "important"
+);
+
+accountSection.style.setProperty(
+  "box-sizing", "border-box", "important"
+);
   // Never expose account details before password verification
   if(!bidderAccountUnlocked){
     accountSection.style.display = "none";
