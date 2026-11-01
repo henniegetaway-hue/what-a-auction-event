@@ -18306,6 +18306,33 @@ const accountSection =
 
 if(accountSection){
   popup.appendChild(accountSection);
+  // Owner-only registration helper
+if (!document.getElementById("ownerRegistrationHelper")) {
+  const helper = document.createElement("button");
+  helper.id = "ownerRegistrationHelper";
+  helper.type = "button";
+  helper.textContent = "👤 HELP SOMEONE REGISTER — OPEN REGISTRATION FORM";
+
+  helper.style.cssText = `
+    display:none;
+    width:100%;
+    margin-top:20px;
+    padding:12px;
+    background:#e8f5e9;
+    color:#12351b;
+    border:1px solid #9acd32;
+    border-radius:8px;
+    font-weight:bold;
+    cursor:pointer;
+  `;
+
+  accountSection.appendChild(helper);
+   helper.onclick = () => {
+  alert(
+    "To protect your owner account, open a new InPrivate window (Ctrl + Shift + N), then open the Clivia Dreamers website and select NEW ACCOUNT. Do not register another person while signed in as the owner."
+  );
+};   
+}    
 accountSection.style.setProperty(
   "background", "#ffffff", "important"
 );
