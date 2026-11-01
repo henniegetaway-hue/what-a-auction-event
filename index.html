@@ -10042,6 +10042,9 @@ if(bankSaveError){
   const popup =
     document.getElementById("bankVerificationPopup");
 
+  const accountOverlay =
+    document.getElementById("cliviaAccountOverlay");
+
   if(!popup){
     alert("Bank verification window not found.");
     return;
@@ -10052,13 +10055,18 @@ if(bankSaveError){
     return;
   }
 
-  popup.style.setProperty("display", "block", "important");
-   // Move the verification window above all account popups
-document.body.appendChild(popup);
-popup.style.position = "fixed";
-popup.style.inset = "0";     
-  popup.style.setProperty("z-index", "2147483647", "important");
+  // Hide the account window temporarily
+  if(accountOverlay){
+    accountOverlay.style.display = "none";
+  }
 
+  // Show bank verification in front
+  document.body.appendChild(popup);
+
+  popup.style.setProperty("display", "block", "important");
+  popup.style.setProperty("position", "fixed", "important");
+  popup.style.setProperty("inset", "0", "important");
+  popup.style.setProperty("z-index", "2147483647", "important");
 }
    async function saveCliviaBankDetails(){
   const msg = document.getElementById("cliviaBankDetailsMsg");
