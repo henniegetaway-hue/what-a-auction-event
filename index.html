@@ -10476,6 +10476,9 @@ async function openCliviaGroupChat(groupId, groupName){
   document.getElementById("privateGroupChatTitle")
     .textContent = "💬 " + groupName + " — PRIVATE CHAT";
 
+document.getElementById("privateGroupChatTitle")
+  .style.setProperty("color", "#000000", "important");
+
   document.getElementById("privateGroupChatMessages")
     .textContent = "Loading messages...";
 
