@@ -10487,7 +10487,53 @@ async function openCliviaGroupChat(groupId, groupName){
 
   await loadCliviaGroupChatMessages(groupId);
 }
-    
+   
+async function sendCliviaGroupChatMessage(groupId){
+
+  const input = document.getElementById("privateGroupChatInput");
+  const button = document.getElementById("privateGroupChatSendBtn");
+  const message = input?.value.trim();
+
+  if(!message){
+    alert("Please type a message first.");
+    return;
+  }
+
+  if(button) button.disabled = true;
+
+  try {
+    const { data: authData, error: authError } =
+      await cliviaSupabase.auth.getUser();
+
+    if(authError || !authData?.user){
+      alert("Please sign in first.");
+      return;
+    }
+
+    const { error } = await cliviaSupabase
+      .from("clivia_group_chat_messages")
+      .insert({
+        group_id: groupId,
+        auth_user_id: authData.user.id,
+        message_text: message
+      });
+
+    if(error){
+      alert("Message not sent: " + error.message);
+      return;
+    }
+
+    input.value = "";
+    await loadCliviaGroupChatMessages(groupId);
+
+  } catch(error){
+    console.error("Group chat send error:", error);
+    alert("Unable to send message.");
+  } finally {
+    if(button) button.disabled = false;
+  }
+}
+ 
     async function requestToJoinCliviaGroup(){
 
   const groupId = getInvitedCliviaGroupId();
