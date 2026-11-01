@@ -10393,6 +10393,29 @@ if(title){
   title.textContent = "🌸 " + group.group_name;
 }
 
+let groupChatButton =
+  document.getElementById("openCliviaGroupChatBtn");
+
+if(!groupChatButton){
+  groupChatButton = document.createElement("button");
+  groupChatButton.id = "openCliviaGroupChatBtn";
+  groupChatButton.type = "button";
+  groupChatButton.className = "goldBtn";
+
+  title?.insertAdjacentElement("afterend", groupChatButton);
+}
+
+groupChatButton.textContent =
+  "💬 OPEN " + group.group_name + " CHAT";
+
+groupChatButton.style.cssText =
+  "display:block;width:100%;max-width:400px;" +
+  "margin:12px auto;padding:14px;";
+
+groupChatButton.onclick = function(){
+  openCliviaGroupChat(group.id, group.group_name);
+};
+
 management?.scrollIntoView({
   behavior: "smooth",
   block: "start"
