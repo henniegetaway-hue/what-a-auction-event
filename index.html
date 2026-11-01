@@ -7596,8 +7596,16 @@ if(selectedPage){
 
 // Show the Clivia-only carry-forward notice on Clivia pages, not Rules or creator pages.
 const carryForwardNotice = document.getElementById("cliviaCarryForwardFooter");
+
 if(carryForwardNotice){
-  carryForwardNotice.style.display = page === "rules" ? "none" : "block";
+  const groupAuctionActive =
+    page === "sellerLoad" &&
+    document.getElementById("groupAuctionPanel")?.style.display === "block";
+
+  carryForwardNotice.style.display =
+    groupAuctionActive || page === "rules" || page === "cliviaChat"
+      ? "none"
+      : "block";
 }
 
 
