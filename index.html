@@ -426,29 +426,7 @@ justify-content:center;
     <option value="">-- Select account --</option>
   </select>
 
-  <label style="margin-top:12px;">
-  ENTER YOUR REGISTERED PASSWORD TO OPEN MY ACCOUNT
-</label>
-  <input id="bidderLoginPassword"
-         type="password"
-         placeholder="Enter your account password">
-
-  <label style="display:flex;align-items:center;gap:8px;margin-top:8px;">
-    <input type="checkbox"
-           style="width:auto;"
-           onchange="document.getElementById('bidderLoginPassword').type=this.checked?'text':'password';">
-    Show password
-  </label>
-
-  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
-
-    <button type="button"
-            class="greenBtn"
-             onclick="showRegisteredBidder()">
-      OPEN MY ACCOUNT
-    </button>
-
-    <button type="button"
+     <button type="button"
             class="accountBtn"
             onclick="showBidderForgotPassword()">
       FORGOT PASSWORD
