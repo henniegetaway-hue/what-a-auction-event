@@ -18354,6 +18354,29 @@ if (!document.getElementById("ownerRegistrationHelper")) {
   `;
 
   accountSection.appendChild(helper);
+     (async () => {
+  try {
+    const { data: sessionData } =
+      await auctionSupabase.auth.getSession();
+
+    const user = sessionData?.session?.user;
+
+    if (!user || !bidderAccountUnlocked) return;
+
+    const { data: roleData, error } =
+      await auctionSupabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+    if (!error && roleData?.role === "OWNER" && bidderAccountUnlocked) {
+      helper.style.display = "block";
+    }
+  } catch (error) {
+    console.error("Registration helper check:", error);
+  }
+})(); 
    helper.onclick = () => {
   alert(
     "To protect your owner account, open a new InPrivate window (Ctrl + Shift + N), then open the Clivia Dreamers website and select NEW ACCOUNT. Do not register another person while signed in as the owner."
