@@ -10534,6 +10534,68 @@ async function sendCliviaGroupChatMessage(groupId){
   }
 }
  
+async function loadCliviaGroupChatMessages(groupId){
+
+  const box = document.getElementById(
+    "privateGroupChatMessages"
+  );
+
+  if(!box) return;
+
+  const { data, error } = await cliviaSupabase
+    .from("clivia_group_chat_messages")
+    .select("id, auth_user_id, message_text, created_at")
+    .eq("group_id", groupId)
+    .order("created_at", { ascending: true })
+    .limit(200);
+
+  if(error){
+    box.textContent = "Unable to load messages: " + error.message;
+    return;
+  }
+
+  box.replaceChildren();
+
+  if(!data || data.length === 0){
+    box.textContent = "No messages yet. Start the conversation!";
+    return;
+  }
+
+  const { data: authData } =
+    await cliviaSupabase.auth.getUser();
+
+  const currentUserId = authData?.user?.id;
+
+  for(const message of data){
+
+    const item = document.createElement("div");
+
+    item.style.cssText =
+      "padding:10px;margin:8px 0;" +
+      "background:#FFF3E2;border-radius:8px;";
+
+    const sender = document.createElement("strong");
+
+    sender.textContent =
+      message.auth_user_id === currentUserId
+        ? "YOU"
+        : "GROUP MEMBER";
+
+    const body = document.createElement("div");
+    body.textContent = message.message_text;
+
+    const time = document.createElement("small");
+    time.textContent = new Date(
+      message.created_at
+    ).toLocaleString();
+
+    item.append(sender, body, time);
+    box.appendChild(item);
+  }
+
+  box.scrollTop = box.scrollHeight;
+}
+
     async function requestToJoinCliviaGroup(){
 
   const groupId = getInvitedCliviaGroupId();
