@@ -7537,6 +7537,12 @@ if(document.getElementById("registrationMode")?.value === "CREATOR"){
 
     const account =
       document.getElementById("registeredBidderSection");
+        const accountPopup =
+  document.getElementById("cliviaAccountPopup");
+
+if(accountPopup && account){
+  accountPopup.appendChild(account);
+}
 
     
 if(!error && user?.email_confirmed_at && bidder){
