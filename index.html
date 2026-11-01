@@ -11087,6 +11087,22 @@ save();
 
 unlockBidderAccount();
 await checkCliviaGroupPresident();
+ // Show the verified member's account information
+const memberInfo =
+  document.getElementById("registeredBidderInfo");
+
+if(memberInfo){
+  memberInfo.textContent =
+    "ACCOUNT OPEN — " + (bidder.fullName || bidder.name || loginData.user.email);
+}
+
+// Show bank verification only after password login
+const bankBox =
+  document.getElementById("cliviaBankDetailsBox");
+
+if(bankBox){
+  bankBox.style.display = "block";
+}     
   
 localStorage.setItem(
   "cliviaRememberedEmail",
