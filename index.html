@@ -10035,10 +10035,33 @@ if(bankSaveError){
   return;
 }
  }      
+
+  msg.textContent = "Recording bank verification request...";
+
+  const { data: verificationData, error: verificationError } =
+    await cliviaSupabase.functions.invoke(
+      "submit-bank-verification",
+      {
+        body: {
+          documentPath: path
+        }
+      }
+    );
+
+  if (verificationError) {
+    console.error("Verification request error:", verificationError);
+    msg.textContent =
+      "Document uploaded, but verification request failed. Bidding remains locked.";
+    return;
+  }
+
   input.value = "";
+
   msg.textContent =
-    "Document uploaded securely. Verification is pending. Bidding remains locked.";
-}   
+    verificationData?.message ||
+    "Verification request submitted. Bidding remains locked.";
+}
+
   function showBankVerificationPopup(){
 
   const popup =
