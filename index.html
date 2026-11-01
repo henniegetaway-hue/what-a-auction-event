@@ -3559,6 +3559,79 @@ async function shareCliviaCommunity(){
 </style>
 
 <script>
+ 
+async function loadRegisteredCliviaChatGroups() {
+  const list = document.getElementById("cliviaGroupsList");
+  if (!list) return;
+
+  list.textContent = "Loading your Clivia Groups...";
+
+  try {
+    const { data: authData, error: authError } =
+      await cliviaSupabase.auth.getUser();
+
+    const user = authData?.user;
+
+    if (authError || !user) {
+      list.textContent = "Please sign in to view your groups.";
+      return;
+    }
+
+    const { data: owned, error: ownedError } =
+      await cliviaSupabase
+        .from("clivia_groups")
+        .select("id, group_name")
+        .eq("president_user_id", user.id);
+
+    const { data: memberships, error: memberError } =
+      await cliviaSupabase
+        .from("clivia_group_members")
+        .select("group_id, clivia_groups(id, group_name)")
+        .eq("member_user_id", user.id)
+        .eq("status", "APPROVED");
+
+    if (ownedError || memberError) {
+      list.textContent = "Unable to load your groups.";
+      console.error(ownedError || memberError);
+      return;
+    }
+
+    const groups = new Map();
+
+    for (const group of owned || []) {
+      groups.set(String(group.id), group);
+    }
+
+    for (const member of memberships || []) {
+      const group = member.clivia_groups;
+      if (group?.id != null) {
+        groups.set(String(group.id), group);
+      }
+    }
+
+    list.replaceChildren();
+
+    if (!groups.size) {
+      list.textContent = "No registered groups yet.";
+      return;
+    }
+
+    for (const group of groups.values()) {
+      const item = document.createElement("div");
+      item.textContent = "🌸 " + group.group_name;
+      item.style.cssText =
+        "padding:12px;margin:8px 0;background:#fff;" +
+        "border:1px solid #D99A50;border-radius:8px;" +
+        "font-weight:bold;color:#000;";
+
+      list.appendChild(item);
+    }
+  } catch (error) {
+    console.error("Clivia Chats groups:", error);
+    list.textContent = "Unable to load your groups.";
+  }
+}
+     
 function showCliviaChatSection(section) {
   document.querySelectorAll(
     "#cliviaChatTabs .cliviaChatTab"
