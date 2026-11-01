@@ -10053,6 +10053,10 @@ if(bankSaveError){
   }
 
   popup.style.setProperty("display", "block", "important");
+   // Move the verification window above all account popups
+document.body.appendChild(popup);
+popup.style.position = "fixed";
+popup.style.inset = "0";     
   popup.style.setProperty("z-index", "2147483647", "important");
 
 }
