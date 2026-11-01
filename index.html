@@ -3581,7 +3581,8 @@ if (friendsPanel) {
 if (groupsPanel) {
   groupsPanel.style.display =
     section === "GROUPS" ? "block" : "none";
-}     
+} 
+ if (section === "GROUPS") loadRegisteredCliviaChatGroups();     
   const messages =
     document.getElementById("cliviaChatMessages");
 
