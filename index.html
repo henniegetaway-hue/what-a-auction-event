@@ -7569,10 +7569,17 @@ if(account){
    
 }else{
   if(registration) registration.style.display = "none";
-  if(account){
-    account.style.display = "none";
-    account.classList.add("hidden");
+ if(account){
+  const popup =
+    document.getElementById("cliviaAccountPopup");
+
+  if(popup){
+    popup.appendChild(account);
   }
+
+  account.classList.remove("hidden");
+  account.style.setProperty("display", "block", "important");
+}
 }
 
    }).catch(error=>{
