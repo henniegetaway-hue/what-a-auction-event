@@ -10440,6 +10440,54 @@ if(myGroupsBtn){
   myGroupsBtn.style.color = "#000";
 }          
 } 
+  
+async function openCliviaGroupChat(groupId, groupName){
+
+  let panel = document.getElementById("cliviaPrivateGroupChat");
+
+  if(!panel){
+    panel = document.createElement("div");
+    panel.id = "cliviaPrivateGroupChat";
+    panel.style.cssText =
+      "background:#fff;color:#000;padding:15px;" +
+      "border:2px solid #9acd32;border-radius:10px;" +
+      "margin:15px 0;";
+
+    panel.innerHTML = `
+      <h3 id="privateGroupChatTitle"></h3>
+      <div id="privateGroupChatMessages"
+        style="height:250px;overflow-y:auto;
+        border:1px solid #ccc;padding:10px;margin-bottom:12px;">
+      </div>
+      <textarea id="privateGroupChatInput"
+        maxlength="2000"
+        placeholder="Type your group message..."
+        style="width:100%;min-height:80px;"></textarea>
+      <button type="button" class="goldBtn"
+        id="privateGroupChatSendBtn">
+        SEND MESSAGE
+      </button>
+    `;
+
+    document.getElementById("cliviaGroupManagement")
+      ?.appendChild(panel);
+  }
+
+  document.getElementById("privateGroupChatTitle")
+    .textContent = "💬 " + groupName + " — PRIVATE CHAT";
+
+  document.getElementById("privateGroupChatMessages")
+    .textContent = "Loading messages...";
+
+  document.getElementById("privateGroupChatSendBtn")
+    .onclick = () => sendCliviaGroupChatMessage(groupId);
+
+  panel.style.display = "block";
+  panel.scrollIntoView({behavior:"smooth",block:"start"});
+
+  await loadCliviaGroupChatMessages(groupId);
+}
+    
     async function requestToJoinCliviaGroup(){
 
   const groupId = getInvitedCliviaGroupId();
