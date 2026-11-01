@@ -18300,7 +18300,19 @@ if (label === "REGISTER - MY ACCOUNT") {
   const popup = document.getElementById("cliviaAccountPopup");
 
   popup.appendChild(loginBox);
+// Keep both login and account details inside the popup
+const accountSection =
+  document.getElementById("registeredBidderSection");
 
+if(accountSection){
+  popup.appendChild(accountSection);
+
+  // Never expose account details before password verification
+  if(!bidderAccountUnlocked){
+    accountSection.style.display = "none";
+    accountSection.classList.add("hidden");
+  }
+}
   loginBox.style.setProperty("display", "block", "important");
   loginBox.style.maxWidth = "100%";
   loginBox.style.margin = "0";
