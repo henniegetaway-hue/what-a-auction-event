@@ -13933,12 +13933,8 @@ onmouseleave="this.src=this.dataset.flower;this.dataset.view='flower'"
   ${currencySymbol}${Number(lot.currentBid || lot.startBid || 0).toLocaleString()}
 </div>
 
-${lot.acceptPreBids === true &&
-  auction?.auctionDate &&
-  auction?.auctionTime &&
-  Date.now() < new Date(
-    auction.auctionDate + "T" + auction.auctionTime + ":00+02:00"
-  ).getTime()
+
+${lot.acceptPreBids === true
   ? `
     <div style="
       font-size:10px;
@@ -13949,9 +13945,10 @@ ${lot.acceptPreBids === true &&
     ">
       OPEN FOR PRE-BID
     </div>
-   `
+  `
   : ""
 }
+
 
   </div>
 
