@@ -6788,20 +6788,26 @@ background:linear-gradient(90deg,#a0ff80,#39e52d);
        placeholder="Enter your bank account number"
        autocomplete="off"
        style="width:100%;margin-bottom:12px;">
-    <label>Bank Statement / Bank Confirmation</label>
+   
+<div id="bankNumberMismatchWarning"
+     style="display:none;
+            background:#FFD9A8;
+            color:#000;
+            padding:6px 10px;
+            border-radius:4px;
+            font-size:12px;
+            margin-bottom:10px;">
+  Your bank account number does not match your registered bank details.
+</div>
+
+        <label>Bank Statement / Bank Confirmation</label>
 
     <input type="file"
            id="bankVerificationFile"
            accept=".pdf,.jpg,.jpeg,.png,.webp">
 
     <p id="bankVerificationMessage"></p>
-
-<button type="button"
-        class="goldBtn"
-        onclick="checkExistingBankVerification()">
-  CHECK MY EXISTING DOCUMENT
-</button>
-
+        
    <button type="button"
         class="goldBtn"
         onclick="uploadBankVerificationDocument()">
