@@ -17225,6 +17225,30 @@ async function checkOwnerRegistrationHelp(){
 
   button.style.display = "block";
 }
+
+async function resetOwnerPassword(){
+  const { data, error } =
+    await auctionSupabase.auth.getUser();
+
+  const email = data?.user?.email;
+
+  if(error || !email){
+    alert("Please sign in to your registered account first to reset your password.");
+    return;
+  }
+
+  const { error: resetError } =
+    await auctionSupabase.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + window.location.pathname
+    });
+
+  if(resetError){
+    alert("Unable to send password reset email. Please try again.");
+    return;
+  }
+
+  alert("If this account is eligible, a password reset link will be sent to its registered email address. Please check your inbox.");
+}
    
 async function openOwner(){
    const passwordInput =
