@@ -17256,9 +17256,10 @@ async function resetOwnerPassword(){
     });
 
   if(resetError){
-    alert("Unable to send password reset email. Please try again.");
-    return;
-  }
+  console.error("Password reset error:", resetError);
+  alert("Password reset error: " + resetError.message);
+  return;
+}
 
   alert("If this account is eligible, a password reset link will be sent to its registered email address. Please check your inbox.");
 }
