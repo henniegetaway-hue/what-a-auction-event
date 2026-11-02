@@ -6010,6 +6010,110 @@ container.appendChild(block);
 
 </div>
 <!-- END CLIVIA CHAT REGISTRATION --> 
+ 
+<script>
+/* OFFICIAL CLIVIA SHOWS — SUPABASE CONNECTION */
+
+async function loadOfficialCliviaShows() {
+  const upcomingBox =
+    document.getElementById("officialCliviaShowsList");
+
+  const previousBox =
+    document.getElementById("officialPreviousCliviaShowsList");
+
+  const winnersBox =
+    document.getElementById("officialCliviaWinnersList");
+
+  const loading =
+    document.getElementById("cliviaShowsLoading");
+
+  if (!upcomingBox || !previousBox) return;
+
+  function showCard(show) {
+    const card = document.createElement("div");
+
+    card.style.cssText =
+      "background:#111;border:1px solid #9acd32;" +
+      "border-radius:8px;padding:12px;margin-bottom:10px;";
+
+    const title = document.createElement("strong");
+    title.style.color = "#b6ff80";
+    title.textContent = show.club || "Clivia Show";
+
+    const details = document.createElement("p");
+    details.style.whiteSpace = "pre-line";
+    details.textContent =
+      "📅 " + (show.date || "") + "\n" +
+      "📍 " + (show.venue || "") + "\n" +
+      "🌍 " + (show.country || "");
+
+    card.appendChild(title);
+    card.appendChild(details);
+
+    return card;
+  }
+
+  try {
+    const { data, error } =
+      await cliviaSupabase.functions.invoke(
+        "clivia-shows-updates",
+        { body: {} }
+      );
+
+    if (error) throw error;
+    if (!data?.success) {
+      throw new Error(data?.error || "Unable to load shows");
+    }
+
+    upcomingBox.replaceChildren();
+    previousBox.replaceChildren();
+
+    const upcoming = data.upcoming_shows || [];
+    const previous = data.previous_shows || [];
+
+    if (upcoming.length) {
+      upcoming.forEach(show =>
+        upcomingBox.appendChild(showCard(show))
+      );
+    } else {
+      upcomingBox.textContent =
+        "No upcoming official Clivia shows announced yet.";
+    }
+
+    if (previous.length) {
+      previous.forEach(show =>
+        previousBox.appendChild(showCard(show))
+      );
+    } else {
+      previousBox.textContent =
+        "No previous Clivia shows available.";
+    }
+
+    if (winnersBox) {
+      winnersBox.textContent =
+        "🏆 Confirmed show winners will appear here when available.";
+    }
+
+    if (loading) loading.style.display = "none";
+
+  } catch (error) {
+    console.error("Clivia Shows error:", error);
+
+    upcomingBox.textContent =
+      "Clivia show information is temporarily unavailable.";
+
+    previousBox.textContent =
+      "Previous show information is temporarily unavailable.";
+
+    if (loading) loading.style.display = "none";
+  }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+  loadOfficialCliviaShows();
+});
+</script>
+       
 <div class="notice" style="
   border:2px solid #9acd32;
   border-radius:10px;
