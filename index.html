@@ -14466,6 +14466,32 @@ if(activeHotBidding || state.settings.open){
 }
  
 
+function testOwnerBid(lotId) {
+  const lot = (state.lots || []).find(
+    l => String(l.id) === String(lotId)
+  );
+
+  if (!lot) {
+    alert("Test plant not found.");
+    return;
+  }
+
+  const current = Number(
+    lot.currentBid || lot.startBid || 0
+  );
+
+  const testAmount = current + 50;
+
+  alert(
+    "OWNER TEST ONLY — NOT A REAL BID\n\n" +
+    "Plant: " + lot.name + "\n" +
+    "Current displayed amount: R" + current + "\n" +
+    "Simulated next bid: R" + testAmount + "\n\n" +
+    "No bid has been placed.\n" +
+    "No auction price has changed."
+  );
+}
+
 async function placeBid(lotId){
   const auction=(state.auctions||[]).find(a=>a.id===state.selectedAuctionId);
 const currencySymbol=auction && auction.currency==="EUR" ? "€" : "R";
