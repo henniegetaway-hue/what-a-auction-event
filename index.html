@@ -14482,6 +14482,7 @@ if(activeHotBidding || state.settings.open){
 }
  
 
+
 function testOwnerBid(lotId) {
   const lot = (state.lots || []).find(
     l => String(l.id) === String(lotId)
@@ -14492,19 +14493,35 @@ function testOwnerBid(lotId) {
     return;
   }
 
-  const current = Number(
-    lot.currentBid || lot.startBid || 0
+  const auction = (state.auctions || []).find(
+    a => String(a.id) === String(lot.auctionId)
   );
 
-  const testAmount = current + 50;
+  const currencySymbol = auction?.currency === "EUR" ? "€" : "R";
+  const increment = auction?.currency === "EUR" ? 5 : 50;
+
+  window.ownerTestBids = window.ownerTestBids || {};
+
+  const current = window.ownerTestBids[lotId] ??
+    Number(lot.currentBid || lot.startBid || 0);
+
+  const next = current + increment;
+
+  if (!confirm(
+    "TEST BID ONLY\n\n" +
+    "Plant: " + lot.name + "\n" +
+    "Current test amount: " + currencySymbol + current + "\n" +
+    "Next test bid: " + currencySymbol + next + "\n\n" +
+    "Confirm test bid?"
+  )) return;
+
+  window.ownerTestBids[lotId] = next;
 
   alert(
-    "OWNER TEST ONLY — NOT A REAL BID\n\n" +
-    "Plant: " + lot.name + "\n" +
-    "Current displayed amount: R" + current + "\n" +
-    "Simulated next bid: R" + testAmount + "\n\n" +
-    "No bid has been placed.\n" +
-    "No auction price has changed."
+    "TEST BID ACCEPTED\n\n" +
+    lot.name + "\n" +
+    "Test current bid: " + currencySymbol + next + "\n\n" +
+    "Real auction price remains unchanged."
   );
 }
 
