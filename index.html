@@ -14273,7 +14273,6 @@ if(auction && auction.auctionDate && auction.auctionCloseTime && lot){
 
 if (
   ownPlantSeller &&
-  !bidder?.isOwnerTest &&
   (
     (ownPlantSeller.authUserId &&
      ownPlantSeller.authUserId === bidder?.authUserId) ||
@@ -17630,6 +17629,7 @@ if(date && closeTime){
   const auction = {
     id: "AUC-" + Date.now(),
     name: name,
+    testOnly: false,
     auctionDate: date,
     auctionTime: startTime,
     closeTime: closeTime,
