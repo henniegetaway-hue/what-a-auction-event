@@ -1760,8 +1760,9 @@ window.addEventListener("load", function(){
   <p id="siteBrandTagline">Rare • Exquisite • Timeless</p>
 </div>
 
+
 <style>
-/* ALL GROUP NAMES — PHONE HEADER */
+/* PHONE HEADER — CLIVIA DREAMERS AND GROUP NAMES */
 @media (max-width:600px) {
 
   .top .brand {
@@ -1770,18 +1771,29 @@ window.addEventListener("load", function(){
     margin-left:5px !important;
   }
 
+  /* NORMAL CLIVIA DREAMERS HEADING */
   #siteBrandName {
-    font-size:clamp(9px, 2.5vw, 14px) !important;
-    white-space:nowrap !important;
-    letter-spacing:-0.5px !important;
-    line-height:1.2 !important;
-    overflow:hidden !important;
-    text-overflow:ellipsis !important;
+    font-size:16px !important;
+    white-space:normal !important;
+    letter-spacing:0 !important;
+    line-height:1.15 !important;
+    overflow:visible !important;
+    text-overflow:clip !important;
+    overflow-wrap:normal !important;
     max-width:100% !important;
   }
 
+  /* LONG GROUP NAMES */
+  #siteBrandName.groupNameActive {
+    font-size:clamp(11px, 3vw, 15px) !important;
+    white-space:nowrap !important;
+    letter-spacing:-0.4px !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
   #siteBrandTagline {
-    font-size:9px !important;
+    font-size:10px !important;
   }
 
 }
