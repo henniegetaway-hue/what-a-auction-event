@@ -14235,8 +14235,32 @@ if(
   ).toISOString();
 }
 
+ 
+  // Record high-bid warning after accepting the bid
+  if(adminBidAlert && !bidder.isOwnerTest){
+    state.highBidWarnings = state.highBidWarnings || [];
+
+    const existingWarning = state.highBidWarnings.find(w =>
+      w.auctionId === state.selectedAuctionId &&
+      w.bidderId === bidder.id
+    );
+
+    if(!existingWarning){
+      state.highBidWarnings.push({
+        auctionId: state.selectedAuctionId,
+        bidderId: bidder.id,
+        bidderName: bidder.name,
+        amount: totalExposureAfterBid,
+        createdAt: new Date().toISOString(),
+        status: "NEW"
+      });
+    }
+  }
+
   save();
   renderLots();
+}
+
 }
    function selectSellerAuction(auctionId){
   const auction=(state.auctions||[]).find(
