@@ -5112,8 +5112,10 @@ document.getElementById('siteBrandName').textContent =
         grid-template-columns:1fr;
       }
     }
-  </style>
-      <style>
+ 
+<style>
+/* GROUP AUCTION — DESKTOP */
+
 #groupAuctionPanel h2 {
   font-size:26px !important;
 }
@@ -5135,7 +5137,34 @@ document.getElementById('siteBrandName').textContent =
   font-size:16px !important;
   min-height:42px;
 }
-</style> 
+
+/* GROUP AUCTION — PHONE ONLY */
+
+@media (max-width:600px) {
+
+  /* CLIVIA GROUP AUCTIONS */
+  #groupPresidentLeft > h2 {
+    font-size:16px !important;
+    white-space:nowrap !important;
+    letter-spacing:-0.5px !important;
+    line-height:1.3 !important;
+    text-align:center !important;
+  }
+
+  /* REGISTER YOUR CLIVIA GROUP */
+  #groupPresidentRegistration > h3 {
+    font-size:14px !important;
+    white-space:nowrap !important;
+    letter-spacing:-0.5px !important;
+    line-height:1.3 !important;
+    text-align:center !important;
+  }
+
+}
+</style>
+
+<!-- GROUP AUCTION TWO-COLUMN LAYOUT -->
+
 <!-- GROUP AUCTION TWO-COLUMN LAYOUT -->
 <div id="groupAuctionLayout">
 
