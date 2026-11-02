@@ -12469,10 +12469,7 @@ securityProof:"",
   const auctionFirstBid=Number(auction?.firstBid)||0;
   const isEUR=auction && auction.currency==="EUR";
   const fee=isEUR ? 15 : 150;
-  const bracket=
-    auctionFirstBid>0
-      ? auctionFirstBid
-      : (isEUR ? 350 : 5000);
+  const bracket = isEUR ? 100 : 2000;
 
   const paidSteps=Math.floor(
     Number(
