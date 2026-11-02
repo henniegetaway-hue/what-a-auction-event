@@ -6852,6 +6852,74 @@ function isHotDeal(lot){
   return bidCount >= 5;
 }
 
+/* CHECK EXISTING BANK VERIFICATION DOCUMENT */
+
+async function checkExistingBankVerification() {
+
+  const msg = document.getElementById(
+    "bankVerificationMessage"
+  );
+
+  if (msg) {
+    msg.textContent = "Checking your existing bank document...";
+  }
+
+  try {
+
+    // Check the member's existing login
+    const { data: sessionData, error: sessionError } =
+      await cliviaSupabase.auth.getSession();
+
+    const token = sessionData?.session?.access_token;
+
+    if (sessionError || !token) {
+      if (msg) {
+        msg.textContent =
+          "Please sign in to MY ACCOUNT first.";
+      }
+      return;
+    }
+
+    // Ask Supabase to process the previously uploaded document
+    const { data, error } =
+      await cliviaSupabase.functions.invoke(
+        "submit-bank-verification",
+        {
+          body: {},
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+    if (error) {
+      console.error("Bank verification error:", error);
+
+      if (msg) {
+        msg.textContent =
+          "Unable to check your existing document.";
+      }
+      return;
+    }
+
+    if (msg) {
+      msg.textContent =
+        data?.message || "Document check completed.";
+    }
+
+  } catch (error) {
+
+    console.error("Bank verification failed:", error);
+
+    if (msg) {
+      msg.textContent =
+        "Bank verification could not be completed.";
+    }
+  }
+}
+
+/* END CHECK EXISTING BANK VERIFICATION */
+
 const ACCOUNT_STORAGE_KEY="cliviaDreamersAccounts";     
 function save(){
   try{
