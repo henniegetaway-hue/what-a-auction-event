@@ -6874,7 +6874,15 @@ let ownerTestState = {
   lots: [],
   bids: [],
   selectedAuctionId: ""
-};    
+}; 
+ // OWNER TEST BIDS — SAFETY LOCK
+function placeOwnerTestBid(lotId, amount) {
+  alert(
+    "Owner Test bidding is not activated yet. " +
+    "Owner verification and a protected TEST ONLY auction are required."
+  );
+  return;
+}     
 let state = {
   settings:{
     auctionName:"Clivia Dreamers Live Auction",
