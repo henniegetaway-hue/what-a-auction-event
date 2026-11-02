@@ -13499,21 +13499,55 @@ onmouseleave="this.src=this.dataset.flower;this.dataset.view='flower'"
 
 </div>
 <button
-  onclick="placeBid('${lot.id}')"
-  style="
-    width:100%;
-    margin:8px 0 0 0;
-    background:linear-gradient(135deg,#d8ffca 0%,#73ff63 30%,#0bd526 60%,#a8ff69 100%);
-    box-shadow:0 0 14px rgba(80,255,80,.75), inset 0 1px 0 rgba(255,255,255,.85);
+ 
+<div style="
+  display:flex;
+  align-items:center;
+  gap:8px;
+  width:100%;
+  margin-top:8px;
+  padding:7px;
+  background:linear-gradient(135deg,#baff9b,#36f532,#0bd526);
+  border:2px solid #a8ff80;
+  border-radius:14px;
+  box-shadow:0 0 12px rgba(80,255,80,.65);
+  box-sizing:border-box;
+">
+
+  <div style="
+    flex:1;
+    min-width:0;
+    text-align:center;
     color:#071407;
-    border:1px solid #8cff73;
-    border-radius:10px;
-    padding:11px 18px;
     font-weight:900;
-    cursor:pointer;
   ">
-  🔨 PLACE BID
-</button>
+    <div style="font-size:11px;">CURRENT BID</div>
+    <div style="font-size:clamp(16px,4vw,24px);">
+      ${currencySymbol}${Number(lot.currentBid || lot.startBid || 0).toLocaleString()}
+    </div>
+  </div>
+
+  <button
+    type="button"
+    onclick="placeBid('${lot.id}')"
+    style="
+      flex:0 0 43%;
+      min-width:0;
+      padding:12px 5px;
+      background:linear-gradient(135deg,#07582c,#002d19);
+      color:#ffd54a;
+      border:2px solid #ffd54a;
+      border-radius:50px;
+      font-size:18px;
+      font-weight:900;
+      cursor:pointer;
+      box-shadow:0 3px 8px rgba(0,0,0,.4);
+    ">
+    🔨 BID
+  </button>
+
+</div>
+
       <div class="lotBody">
   <div style="
     text-align:center;
