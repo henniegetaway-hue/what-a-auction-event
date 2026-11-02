@@ -6868,6 +6868,13 @@ const USER_LOGIN_KEY = "cliviaDreamersRecognisedUser";
 
 // SEPARATE OWNER TEST STORAGE
 const OWNER_TEST_STORAGE_KEY = "cliviaDreamersOwnerTestV1";
+  // OWNER TEST DATA — SEPARATE FROM REAL AUCTIONS
+let ownerTestState = {
+  auctions: [],
+  lots: [],
+  bids: [],
+  selectedAuctionId: ""
+};    
 let state = {
   settings:{
     auctionName:"Clivia Dreamers Live Auction",
