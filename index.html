@@ -14273,18 +14273,19 @@ if(auction && auction.auctionDate && auction.auctionCloseTime && lot){
 
 if (
   ownPlantSeller &&
+  !bidder?.isOwnerTest &&
   (
     (ownPlantSeller.authUserId &&
-     ownPlantSeller.authUserId === bidder.authUserId) ||
+     ownPlantSeller.authUserId === bidder?.authUserId) ||
     (ownPlantSeller.email &&
-     bidder.email &&
+     bidder?.email &&
      ownPlantSeller.email.trim().toLowerCase() ===
        bidder.email.trim().toLowerCase())
   )
 ) {
   alert("You cannot bid on your own plants.");
   return;
-}   
+}
   if(!bidder){
   alert("Please register or open your account first.");
   showPage("register");
