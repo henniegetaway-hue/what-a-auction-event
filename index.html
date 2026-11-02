@@ -14169,7 +14169,7 @@ const adminAlertThreshold = 5000;
 
 const adminBidAlert =
   auction?.currency === "ZAR" &&
-  totalExposureAfterBid > adminAlertThreshold;
+  totalExposureAfterBid >= adminAlertThreshold;
 
 if(adminBidAlert){
   console.log(
