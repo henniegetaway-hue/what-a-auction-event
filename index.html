@@ -10265,6 +10265,83 @@ async function updateRegistrationAccountButtons(){
     accountButton.style.display = "none";
   }
 }
+    
+async function viewOwnerOriginalRegistration(){
+
+  const ownerArea = document.getElementById("ownerArea");
+
+  if(!ownerArea || ownerArea.classList.contains("hidden")){
+    alert("Please open your Owner Account first.");
+    return;
+  }
+
+  const {data: ownerData, error: ownerError} =
+    await auctionSupabase.auth.getUser();
+
+  if(ownerError || !ownerData?.user){
+    alert("Owner authentication required.");
+    return;
+  }
+
+  const {data: role, error: roleError} =
+    await auctionSupabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", ownerData.user.id)
+      .maybeSingle();
+
+  if(roleError || role?.role !== "OWNER"){
+    alert("Owner access required.");
+    return;
+  }
+
+  const {data: memberData, error: memberError} =
+    await cliviaSupabase.auth.getUser();
+
+  if(memberError || !memberData?.user){
+    alert("Please sign in to your Clivia Dreamers account.");
+    return;
+  }
+
+  const bidder = (state.bidders || []).find(
+    b => b.authUserId === memberData.user.id
+  );
+
+  if(!bidder){
+    alert("Your saved registration was not found on this device.");
+    return;
+  }
+
+  const safeDetails = Object.entries(bidder)
+    .filter(([key]) =>
+      !/password|token|secret|otp|hash|bank|accountnumber|iban/i.test(key)
+    );
+
+  const viewer = document.createElement("div");
+  viewer.className = "panel";
+
+  const heading = document.createElement("h2");
+  heading.textContent = "MY ORIGINAL REGISTRATION";
+  viewer.appendChild(heading);
+
+  safeDetails.forEach(([key,value]) => {
+    if(value === null || typeof value === "object") return;
+
+    const line = document.createElement("p");
+    line.textContent = key + ": " + String(value);
+    viewer.appendChild(line);
+  });
+
+  const closeButton = document.createElement("button");
+  closeButton.type = "button";
+  closeButton.textContent = "CLOSE";
+  closeButton.onclick = () => viewer.remove();
+  viewer.appendChild(closeButton);
+
+  ownerArea.prepend(viewer);
+  viewer.scrollIntoView({behavior:"smooth",block:"start"});
+}
+  
   function showNewBidderRegistration(){
    
   const mode =
