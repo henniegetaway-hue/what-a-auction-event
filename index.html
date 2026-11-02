@@ -9827,14 +9827,27 @@ window.addEventListener("DOMContentLoaded", renderMyAuctionPlants);
   );
   return;
 }        
-  const preBidAnswer = confirm(
-    "ACCEPT PRE-BIDS BEFORE THE LIVE AUCTION?\n\n" +
-    "OK = YES, accept pre-bids\n" +
-    "Cancel = NO, do not accept pre-bids\n\n" +
-    "Pre-bidding will only become available after the auction date and time are confirmed."
-  );
+ 
+const preBidAnswer = prompt(
+  "ACCEPT PRE-BIDS BEFORE THE LIVE AUCTION?\n\n" +
+  "Type YES to accept pre-bids.\n" +
+  "Type NO to refuse pre-bids.\n\n" +
+  "Enter YES or NO:"
+);
 
-  changes.acceptPreBids = preBidAnswer;
+if(preBidAnswer === null){
+  return;
+}
+
+const preBidChoice = preBidAnswer.trim().toUpperCase();
+
+if(preBidChoice !== "YES" && preBidChoice !== "NO"){
+  alert("Please enter YES or NO.");
+  return;
+}
+
+changes.acceptPreBids = preBidChoice === "YES";
+
   if(!confirm("Save changes to " + lot.name + "?")) return;
 
   Object.assign(lot, changes);
