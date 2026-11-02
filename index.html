@@ -12529,9 +12529,7 @@ securityProof:"",
   const isEUR=auction && auction.currency==="EUR";
 
   const fee=isEUR ? 15 : 150;
-  const bracket=auction && Number(auction.firstBid)>0
-    ? Number(auction.firstBid)
-    : (isEUR ? 350 : 5000);
+  const bracket = isEUR ? 100 : 2000;
 
   const currentPaid=isEUR
     ? Number(bidder.securityFeesPaidEUR||0)
