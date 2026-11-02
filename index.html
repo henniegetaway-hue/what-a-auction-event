@@ -1760,6 +1760,33 @@ window.addEventListener("load", function(){
   <p id="siteBrandTagline">Rare • Exquisite • Timeless</p>
 </div>
 
+<style>
+/* ALL GROUP NAMES — PHONE HEADER */
+@media (max-width:600px) {
+
+  .top .brand {
+    min-width:0 !important;
+    flex:1 1 0 !important;
+    margin-left:5px !important;
+  }
+
+  #siteBrandName {
+    font-size:clamp(9px, 2.5vw, 14px) !important;
+    white-space:nowrap !important;
+    letter-spacing:-0.5px !important;
+    line-height:1.2 !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+    max-width:100% !important;
+  }
+
+  #siteBrandTagline {
+    font-size:9px !important;
+  }
+
+}
+</style>
+
   <div class="status">
     <span class="statusBadge" id="auctionStatus">VIEWING &amp; SELLER LOADING OPEN</span>
     <div id="auctionTitleTop" style="margin-top:7px">Clivia Dreamers Live Auction</div>
