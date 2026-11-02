@@ -715,11 +715,21 @@ th,td{
   padding-bottom:10px;
 }
 
+
 .auctionRowScroll .lotCard{
   min-width:0;
   width:100%;
-  max-width:none;
+  max-width:100%;
+  box-sizing:border-box;
+  overflow:hidden;
 }
+
+.auctionRowScroll .lotCard > *{
+  min-width:0;
+  max-width:100%;
+  box-sizing:border-box;
+}
+
 
 .lotCard:target{
   outline:3px solid gold;
