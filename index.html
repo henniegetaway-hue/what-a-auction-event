@@ -9755,6 +9755,14 @@ function renderMyAuctionPlants(){
           <b>Starting Bid:</b> ${symbol}${lot.startBid}<br>
           <b>Current Bid:</b> ${symbol}${current}<br>
          <b>Status:</b> ${escapeHtml(auction?.status||"Scheduled")}
+         <br>
+<b>PRE-BIDS:</b> ${
+  lot.acceptPreBids === true
+    ? "✅ YES"
+    : lot.acceptPreBids === false
+      ? "❌ NO"
+      : "NOT RECORDED"
+}
         </div>
 
         <button type="button"
@@ -9811,6 +9819,14 @@ window.addEventListener("DOMContentLoaded", renderMyAuctionPlants);
       changes[field] = answer.trim();
     }
   }
+  if(Array.isArray(lot.bids) && lot.bids.length > 0){
+  alert(
+    "PRE-BID SETTINGS LOCKED.\n\n" +
+    "This plant already has a bid. " +
+    "The PRE-BID YES/NO selection cannot be changed."
+  );
+  return;
+}        
   const preBidAnswer = confirm(
     "ACCEPT PRE-BIDS BEFORE THE LIVE AUCTION?\n\n" +
     "OK = YES, accept pre-bids\n" +
