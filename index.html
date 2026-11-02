@@ -11044,6 +11044,34 @@ async function loadCliviaGroupChatMessages(groupId){
     return;
   }
 
+const warning = document.getElementById("bankNumberMismatchWarning");
+
+const { data: savedBank, error: bankError } =
+  await cliviaSupabase
+    .from("bidder_bank_details")
+    .select("account_number")
+    .eq("auth_user_id", user.id)
+    .maybeSingle();
+
+if(bankError){
+  msg.textContent = "Unable to check your registered bank details.";
+  return;
+}
+
+const registeredNumber = String(
+  savedBank?.account_number || ""
+).replace(/\s+/g, "").toUpperCase();
+
+if(!registeredNumber ||
+   accountNumber.toUpperCase() !== registeredNumber){
+
+  if(warning) warning.style.display = "block";
+  msg.textContent = "";
+  return;
+}
+
+if(warning) warning.style.display = "none";
+
   const { data: existing, error: checkError } =
     await cliviaSupabase
       .from("clivia_group_members")
