@@ -17185,6 +17185,34 @@ async function saveNewRecoveryPassword(){
       "Password changed successfully.";
   }
 }
+   
+async function checkOwnerRegistrationHelp(){
+  const button = document.getElementById("ownerRegistrationHelp");
+  if(!button) return;
+
+  button.style.display = "none";
+
+  const { data: authData, error: authError } =
+    await auctionSupabase.auth.getUser();
+
+  if(authError || !authData?.user) return;
+
+  const user = authData.user;
+
+  if(!user.email_confirmed_at) return;
+
+  const { data: roleData, error: roleError } =
+    await auctionSupabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+  if(roleError || roleData?.role !== "OWNER") return;
+
+  button.style.display = "block";
+}
+   
 async function openOwner(){
    const passwordInput =
     document.getElementById("ownerAccessPassword");
