@@ -14223,6 +14223,24 @@ if(auction && auction.auctionDate && auction.auctionCloseTime && lot){
   }
 }
   const bidder=state.bidders.find(b=>b.id===state.selectedBidderId);
+   const ownPlantSeller = (state.sellers || []).find(
+  s => String(s.id) === String(lot.sellerId)
+);
+
+if (
+  ownPlantSeller &&
+  (
+    (ownPlantSeller.authUserId &&
+     ownPlantSeller.authUserId === bidder.authUserId) ||
+    (ownPlantSeller.email &&
+     bidder.email &&
+     ownPlantSeller.email.trim().toLowerCase() ===
+       bidder.email.trim().toLowerCase())
+  )
+) {
+  alert("You cannot bid on your own plants.");
+  return;
+}   
   if(!bidder){
   alert("Please register or open your account first.");
   showPage("register");
