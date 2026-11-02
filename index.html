@@ -10446,10 +10446,29 @@ if(bankSaveError){
     return;
   }
 
-  if(!bidderAccountUnlocked){
-    alert("Please sign in to MY ACCOUNT first.");
-    return;
-  }
+ // Bank verification access is checked against
+// the authenticated Supabase user.
+const { data: authData, error: authError } =
+  await cliviaSupabase.auth.getUser();
+
+const signedInUser = authData?.user;
+
+if(authError || !signedInUser || !signedInUser.email_confirmed_at){
+  alert("Please sign in to your verified account first.");
+  showPage("register");
+  return;
+}
+
+const selectedBidder = (state.bidders || []).find(
+  b => b.id === state.selectedBidderId
+);
+
+if(!selectedBidder ||
+   selectedBidder.authUserId !== signedInUser.id){
+  alert("Please open your registered account first.");
+  showPage("register");
+  return;
+}
 
   // Hide the account window temporarily
   if(accountOverlay){
