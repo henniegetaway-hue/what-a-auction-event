@@ -13915,10 +13915,31 @@ onmouseleave="this.src=this.dataset.flower;this.dataset.view='flower'"
     font-weight:900;
   ">
     <div style="font-size:11px;">CURRENT BID</div>
-    <div style="font-size:clamp(16px,4vw,24px);">
-      ${currencySymbol}${Number(lot.currentBid || lot.startBid || 0).toLocaleString()}
+   
+<div style="font-size:clamp(16px,4vw,24px);">
+  ${currencySymbol}${Number(lot.currentBid || lot.startBid || 0).toLocaleString()}
+</div>
+
+${lot.acceptPreBids === true &&
+  auction?.auctionDate &&
+  auction?.auctionTime &&
+  Date.now() < new Date(
+    auction.auctionDate + "T" + auction.auctionTime + ":00+02:00"
+  ).getTime()
+  ? `
+    <div style="
+      font-size:10px;
+      font-weight:900;
+      color:#07582c;
+      margin-top:3px;
+      white-space:nowrap;
+    ">
+      OPEN FOR PRE-BID
     </div>
-  </div>
+  `
+  : ""
+}
+
 
   <button
     type="button"
