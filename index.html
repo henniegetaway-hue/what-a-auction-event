@@ -10470,6 +10470,30 @@ if(!selectedBidder ||
   return;
 }
 
+  // Load the signed-in member's saved bank details
+  const { data: savedBank, error: savedBankError } =
+    await cliviaSupabase
+      .from("bidder_bank_details")
+      .select("account_number, bank_confirmed")
+      .eq("auth_user_id", signedInUser.id)
+      .maybeSingle();
+
+  if(savedBankError){
+    console.error("Unable to load bank details:", savedBankError);
+  }
+
+  const popupAccountInput =
+    popup.querySelector('input[id="bankVerificationAccountNumber"]');
+
+  if(popupAccountInput && savedBank?.account_number){
+    popupAccountInput.value = savedBank.account_number;
+  }
+
+  if(savedBank?.bank_confirmed === true){
+    alert("Your bank account is already verified.");
+    return;
+  }
+
   // Hide the account window temporarily
   if(accountOverlay){
     accountOverlay.style.display = "none";
