@@ -3990,6 +3990,59 @@ border:1px solid #D99A50;
   <div id="ownerLoginMsg" class="small" style="margin-top:8px"></div>
 </div>
 <div id="ownerArea" class="hidden">
+      
+<div class="panel" id="ownerVisitorStats"
+     style="border:2px solid #9acd32;margin-bottom:18px;">
+
+  <h2 style="text-align:center;color:#9acd32;">
+    WEBSITE VISITOR STATISTICS
+  </h2>
+
+  <label>Select Website</label>
+  <select id="visitorStatsPlatform">
+    <option value="ALL">BOTH WEBSITES</option>
+    <option value="CLIVIA">CLIVIA DREAMERS AUCTION</option>
+    <option value="EVENT">WHAT A AUCTION EVENT</option>
+  </select>
+
+  <h3>DAILY VISITORS</h3>
+  <p>Today's Visits: <b id="visitorToday">—</b></p>
+  <p>Unique Visitors Today: <b id="visitorTodayUnique">—</b></p>
+
+  <hr>
+
+  <h3>MONTHLY VISITORS</h3>
+  <p>Total Visits This Month: <b id="visitorMonth">—</b></p>
+  <p>Unique Visitors This Month: <b id="visitorMonthUnique">—</b></p>
+  <p>Returning Registered Members:
+    <b id="visitorReturningMembers">—</b>
+  </p>
+  <p>New Member Registrations:
+    <b id="visitorNewMembers">—</b>
+  </p>
+
+  <hr>
+
+  <h3>YEARLY VISITORS</h3>
+  <p>Total Visits This Year: <b id="visitorYear">—</b></p>
+
+  <hr>
+
+  <h3>END-OF-MONTH REPORT</h3>
+  <label>Select Month</label>
+  <input type="month" id="visitorReportMonth">
+
+  <div id="visitorMonthlyReport">
+    Monthly visitor report not connected yet.
+  </div>
+
+  <p class="small">
+    Visitor tracking will be connected to Supabase.
+    Statistics are visible to the authorised Owner only.
+  </p>
+
+</div>
+
   <div class="panel">
     <h2>Clivia Dreamers Owner Control</h2>
     <p><b>OWNER ONLY</b> — Private Clivia Dreamers settings and payment information.</p>
