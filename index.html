@@ -13903,17 +13903,39 @@ return `
 </div>
 
       <div class="flowerWrap">
- <img
+
+<img
   id="lotPhoto_${lot.id}"
   src="${lot.flower}"
   alt="${escapeHtml(lot.name)} flower"
- onmouseenter="if(this.dataset.plant){this.src=this.dataset.plant;this.dataset.view='plant'}"
-onmouseleave="this.src=this.dataset.flower;this.dataset.view='flower'"
-  onclick="flipLotPhoto('${lot.id}')"
   data-flower="${lot.flower}"
   data-plant="${lot.plant || ''}"
-  style="cursor:pointer;"
+  style="cursor:default;"
 >
+
+<div style="
+  position:absolute;
+  right:5px;
+  bottom:5px;
+  display:flex;
+  gap:4px;
+  z-index:5;
+">
+  <button type="button"
+    onclick="event.stopPropagation();document.getElementById('lotPhoto_${lot.id}').src=document.getElementById('lotPhoto_${lot.id}').dataset.flower;"
+    style="width:20px;height:20px;border-radius:50%;background:white;color:black;border:1px solid #888;padding:0;font-size:11px;font-weight:bold;cursor:pointer;">
+    1
+  </button>
+
+  ${lot.plant ? `
+  <button type="button"
+    onclick="event.stopPropagation();document.getElementById('lotPhoto_${lot.id}').src=document.getElementById('lotPhoto_${lot.id}').dataset.plant;"
+    style="width:20px;height:20px;border-radius:50%;background:white;color:black;border:1px solid #888;padding:0;font-size:11px;font-weight:bold;cursor:pointer;">
+    2
+  </button>
+  ` : ""}
+</div>
+
 
   ${hotBidding ? `
     <div style="
