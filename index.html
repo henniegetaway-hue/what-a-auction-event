@@ -8303,125 +8303,7 @@ function selectCliviaTab(selected){
     selected === "load" ? "#ffcc80" : "#111",
     "important"
   );
-
-  live.style.setProperty(
-    "background",
-    selected === "live" ? "#9acd32" : "#111",
-    "important"
-  );
-
-  load.style.setProperty("color",
-    selected === "load" ? "#111" : "#fff", "important");
-
-  live.style.setProperty("color",
-    selected === "live" ? "#111" : "#fff", "important");
-
-}   
-async function openGroupPlantLoading(auctionNumber, lotPosition){
-
-  const groupId = window.selectedCliviaGroupId;
-
-  if(!groupId){
-    alert("Please select your Clivia Group first.");
-    return;
-  }
-
-  const { data: authData, error: authError } =
-    await cliviaSupabase.auth.getUser();
-
-  if(authError || !authData?.user){
-    alert("Please sign in first.");
-    return;
-  }
-
-  const userId = authData.user.id;
-
-  const { data: group, error: groupError } =
-    await cliviaSupabase
-      .from("clivia_groups")
-      .select("president_user_id")
-      .eq("id", groupId)
-      .maybeSingle();
-
-  if(groupError || !group){
-    alert("Unable to verify Group access.");
-    return;
-  }
-
-  if(group.president_user_id !== userId){
-
-    const { data: membership, error: memberError } =
-      await cliviaSupabase
-        .from("clivia_group_members")
-        .select("status, can_load_plants")
-        .eq("group_id", groupId)
-        .eq("member_user_id", userId)
-        .maybeSingle();
-
-    if(
-      memberError ||
-      !membership ||
-      membership.status !== "APPROVED" ||
-      membership.can_load_plants !== true
-    ){
-      alert("You are not authorised to load plants for this Group.");
-      return;
-    }
-  }
-
-  const number = Number(auctionNumber);
-  const position = Number(lotPosition);
-
-  if(
-    !Number.isInteger(number) || number < 1 || number > 5 ||
-    !Number.isInteger(position) || position < 1 || position > 24
-  ){
-    alert("Invalid Group Auction plant space.");
-    return;
-  }
-
-  window.selectedGroupAuctionNumber = number;
-  window.selectedGroupLotPosition = position;
-
-  alert(
-    "Group Auction " + number +
-    "\nPlant Space " + position +
-    "\n\nGroup plant loading is being prepared."
-  );
-}      
-async function openSellerSpaces(){
-
-  ensureAutomaticCliviaAuction();
-
-  showPage("sellerLoad");
-
-  // Highlight LOAD and deactivate Clivia Auctions
-  const loadBtn = document.getElementById("navCliviaLoad");
-  const liveBtn = document.getElementById("navLive");
-
-  if(loadBtn){
-    loadBtn.style.setProperty("background", "#ffcc80", "important");
-    loadBtn.style.setProperty("color", "#111", "important");
-    loadBtn.style.setProperty("border", "2px solid #ffd700", "important");
-  }
-
-  if(liveBtn){
-    liveBtn.style.setProperty("background", "#111", "important");
-    liveBtn.style.setProperty("color", "#fff", "important");
-    liveBtn.style.setProperty("border", "2px solid #ffd700", "important");
-  }
-
-  if(typeof showSellerLotForm === "function"){
-    showSellerLotForm();
-  }
-
-  const form = document.getElementById("sellerLotForm");
-
-  if(form){
-    form.style.display = "block";
-
-    setTimeout(() => {
-      form.scrollIntoView({
+ 
         behavior: "smooth",
         block: "start"
       });
@@ -9632,26 +9514,77 @@ if(typeof getStartRowSpacesLeft === "function"){
     if(msg) msg.innerHTML = "<b>Please accept the Rules & Terms.</b>";
     return;
   }
-   const photoPath = "lots/" + Date.now() + "-" + photo1.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+ // COMPRESS AND UPLOAD BOTH PLANT PHOTOS
+async function uploadPlantPhoto(file, photoNumber) {
+  if (!file) return "";
 
-const { error: photoUploadError } =
-  await auctionSupabase.storage
-    .from("lot-photos")
-    .upload(photoPath, photo1);
+  if (!file.type.startsWith("image/")) {
+    throw new Error("Please select a valid image.");
+  }
 
-if(photoUploadError){
-  if(msg) msg.innerHTML =
-    "<b>Main Photo could not be uploaded:</b> " + photoUploadError.message;
-  return;
+  const image = await createImageBitmap(file);
+
+  try {
+    const maxSize = 1200;
+    const scale = Math.min(
+      1,
+      maxSize / Math.max(image.width, image.height)
+    );
+
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(image.width * scale));
+    canvas.height = Math.max(1, Math.round(image.height * scale));
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) throw new Error("Image processing unavailable.");
+
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+    const compressed = await new Promise((resolve, reject) => {
+      canvas.toBlob(
+        blob => blob ? resolve(blob) : reject(
+          new Error("Photo compression failed.")
+        ),
+        "image/jpeg",
+        0.75
+      );
+    });
+
+    const path =
+      "lots/" +
+      crypto.randomUUID() +
+      "-photo" + photoNumber + ".jpg";
+
+    const { error } = await auctionSupabase.storage
+      .from("lot-photos")
+      .upload(path, compressed, {
+        contentType: "image/jpeg"
+      });
+
+    if (error) throw error;
+
+    const { data } = auctionSupabase.storage
+      .from("lot-photos")
+      .getPublicUrl(path);
+
+    return data.publicUrl;
+  } finally {
+    image.close();
+  }
 }
 
-const { data: photoPublicData } =
-  auctionSupabase.storage
-    .from("lot-photos")
-    .getPublicUrl(photoPath);
+let flower = "";
+let plant = "";
 
-const flower = photoPublicData.publicUrl;
-const plant = photo2 ? await fileToDataURL(photo2) : "";    
+try {
+  flower = await uploadPlantPhoto(photo1, 1);
+  plant = await uploadPlantPhoto(photo2, 2);
+} catch (error) {
+  if (msg) {
+    msg.textContent = "Photo upload failed: " + error.message;
+  }
+  return;
+}    
 
  const exportEligible = seller.exporterApproved === true;
 
