@@ -9516,6 +9516,7 @@ if(typeof getStartRowSpacesLeft === "function"){
   }
  // COMPRESS AND UPLOAD BOTH PLANT PHOTOS
 async function uploadPlantPhoto(file, photoNumber) {
+ 
   if (!file) return "";
 
   if (!file.type.startsWith("image/")) {
