@@ -9176,7 +9176,19 @@ function showSellerLotForm(){
           date + " — " + time + " — Available";
 
         auctionSelect.appendChild(option);
-      });
+          });
+
+    // Automatically select the next loading auction
+    const nextAuction = (state.auctions || []).find(a =>
+      a.type === "CLIVIA" &&
+      ["LOADING", "SCHEDULING", "UPCOMING"].includes(
+        String(a.status || "").toUpperCase()
+      )
+    );
+
+    if(nextAuction){
+      auctionSelect.value = String(nextAuction.id);
+    }
    }
 
   const categorySelect =
