@@ -9146,6 +9146,7 @@ function showSellerLotForm(){
       const auctionSelect =
   document.getElementById("sellerLotAuction");
   if(auctionSelect){
+        console.log("AVAILABLE AUCTIONS:", state.auctions);
     auctionSelect.innerHTML =
       '<option value="">-- SELECT UPCOMING AUCTION --</option>';
 
