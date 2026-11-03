@@ -1598,6 +1598,21 @@ body:has(#cliviaCarryForwardFooter) {
 
 }
 
+/* SMALLER BID BUTTON ON PHONES ONLY */
+@media screen and (max-width: 600px) {
+
+  .lotCard button[onclick^="placeBid("] {
+    flex: 0 0 auto !important;
+    width: 65px !important;
+    height: 42px !important;
+    padding: 4px !important;
+    font-size: 12px !important;
+    border-radius: 25px !important;
+    white-space: nowrap !important;
+  }
+
+}
+
   </style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
  <script>
