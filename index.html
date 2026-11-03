@@ -15873,6 +15873,8 @@ if(data && data.length > 0){
     name: record.name,
     breeding: record.breeding || "",
     breeder: record.breeder || "",
+     leaves: Number(record.leaves) || 0,
+offsets: Number(record.offsets) || 0,   
     startBid: Number(record.starting_bid),
     increment: Number(record.minimum_increment),
     flower: record.flower_image_url,
