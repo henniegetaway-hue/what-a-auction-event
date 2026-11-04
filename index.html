@@ -9010,7 +9010,11 @@ async function openGroupPlantLoading(auctionNumber, lotPosition){
     "\n\nGroup plant loading is being prepared."
   );
 }      
+async function openSellerLoadFromLot(auctionId, rowKey){
 
+  await openSellerSpaces();
+
+}
 async function openSellerSpaces(){
 
   // Require authenticated and email-confirmed account
