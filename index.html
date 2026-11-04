@@ -1715,7 +1715,621 @@ function closePlantPreview(){
   document.getElementById("sellerLivePreviewPanel")
     ?.classList.remove("plantPreviewOpen");
 }
-</script>   
+</script>  
+   <!--
+============================================================
+CLIVIA DREAMERS + WHAT A AUCTION EVENT
+BIDDING, INVOICING AND PAYMENT MASTER RECORD
+LAST REVIEWED: 4 NOVEMBER 2026
+============================================================
+
+PURPOSE
+-------
+This is a technical reference for future website maintenance.
+
+Before changing bidding, invoicing, payments, registration
+or auction scheduling, read this record and inspect the
+current website code and Supabase database functions.
+
+Update this record after each VERIFIED change.
+Do not assume planned features are already operational.
+
+============================================================
+1. PLATFORM ARCHITECTURE
+============================================================
+
+PLATFORM A:
+Clivia Dreamers Auction
+
+Supabase project:
+mynwscjggvhjrtprogmq
+
+PLATFORM B:
+What A Auction Event
+
+Supabase project:
+ruxczyuohyegyubvtttr
+
+Both Supabase clients are present in index.html.
+
+IMPORTANT:
+These are separate Supabase projects.
+
+The intended registration and bidding identity is shared,
+but full backend identity integration is NOT verified.
+
+Do not assume authentication user IDs are identical.
+
+Cross-platform combined bidding capacity is NOT completed.
+
+============================================================
+2. BIDDER REGISTRATION
+============================================================
+
+A bidder must:
+
+- Be signed in.
+- Have a confirmed email address.
+- Have a valid registered bidder identity.
+- Pass the required bank verification checks.
+- Meet applicable registration fee requirements.
+- Have permission to bid on the selected lot.
+- Have sufficient remaining combined bidding capacity.
+
+The authenticated user's ID must match the registered
+bidder's auth_user_id.
+
+These conditions must be enforced on the SERVER,
+not only by buttons or frontend JavaScript.
+
+Sellers and event creators must NEVER bid or pre-bid
+on their own lots.
+
+Use verified account identity, not names alone.
+
+============================================================
+3. BANK ACCOUNT VERIFICATION
+============================================================
+
+The bidder enters a bank account or IBAN number.
+
+The bidder uploads a bank confirmation or statement.
+
+Accepted document formats:
+JPG, PNG, WebP and PDF.
+
+Maximum document size:
+5 MB.
+
+The verification process compares:
+
+1. Bank account number on the document.
+2. Registered bank account number.
+3. Account holder name on the document.
+4. Registered account holder name.
+
+Both account number and account holder must match.
+
+A mismatch or unreadable document remains unverified
+and must be flagged for administrator review.
+
+Automatic bank-document approval is restricted to the
+approved HIGH BID CAPACITY process of R5,000 or above.
+
+An administrator notification is required when automatic
+approval is permitted.
+
+Uploaded bank documents must be deleted after 24 hours.
+The verification result must be retained.
+
+Bank-document verification does NOT confirm that a
+commission or registration invoice has been paid.
+
+Fee payments are checked separately against bank records.
+
+IMPORTANT:
+These are intended verification requirements.
+Do not assume the complete automated document-reading
+workflow has been implemented and tested.
+
+============================================================
+4. INTERNATIONAL BIDDERS
+============================================================
+
+International bidders must pay the R2,000 registration
+fee before bidding.
+
+They may view all auction lots.
+
+They may bid only on export-eligible plants.
+
+Only approved exporters may publish plants as
+export-eligible.
+
+The server must enforce these restrictions.
+
+============================================================
+5. COMBINED BIDDING CAPACITY
+============================================================
+
+STANDARD VERIFIED BIDDER:
+R2,000 total combined bidding capacity.
+
+APPROVED HIGH CAPACITY:
+R5,000 or more, according to the approved amount.
+
+The R5,000 capacity replaces the R2,000 capacity.
+It is NOT R2,000 plus R5,000.
+
+No new automatic approval rule has been established
+for the R2,001 to R4,999 range.
+
+CAPACITY IS NOT PER PLANT.
+
+It applies to all active bidding commitments across
+all relevant lots and both auction platforms.
+
+EXAMPLE:
+
+Plant A: R500
+Plant B: R700
+Plant C: R300
+
+Combined commitment: R1,500
+Remaining standard capacity: R500
+
+Manual bids and automatic-bid maximums must be included.
+
+For each lot, use the greater applicable commitment
+without double-counting the same lot.
+
+The approved capacity is a limit on bidding commitments,
+NOT a maximum total purchase price or invoice amount.
+
+DATABASE FUNCTIONS IN CLIVIA DREAMERS:
+
+clivia_my_capacity_zar()
+
+clivia_my_combined_exposure_zar()
+
+clivia_my_remaining_capacity_zar()
+
+clivia_auto_limit_proposed_total_zar()
+
+clivia_real_bid_proposed_total_zar()
+
+The functions use ZAR-equivalent calculations.
+
+Foreign-currency conversion uses:
+clivia_amount_to_zar()
+
+Exchange rates must be sufficiently current.
+
+IMPORTANT:
+These calculations currently operate within
+Clivia Dreamers.
+
+Secure coordination with What A Auction Event
+remains unfinished.
+
+Do not activate bidding until the combined
+cross-platform capacity is enforced securely.
+
+============================================================
+6. REAL BIDDING
+============================================================
+
+DATABASE FUNCTION:
+
+place_clivia_bid_transaction(
+  p_auth_user_id,
+  p_lot_id,
+  p_amount
+)
+
+CURRENT VERIFIED PROTECTIONS:
+
+- Confirms authenticated user identity.
+- Checks bidder registration and email verification.
+- Checks bank verification.
+- Checks international bidder restrictions.
+- Prevents bidding on own lots.
+- Requires LIVE auction and OPEN lot.
+- Checks auction closing time.
+- Checks minimum bid and increments.
+- Locks bidder record before capacity calculation.
+- Locks the target lot during bid processing.
+- Checks proposed combined exposure against capacity.
+
+RELATED FUNCTION:
+
+clivia_lock_my_bidder()
+
+The bidder row lock helps prevent simultaneous
+transactions from bypassing capacity checks.
+
+CRITICAL SAFETY LOCK:
+
+The real-bidding transaction currently contains:
+
+RAISE EXCEPTION
+'Bidding activation pending final security checks';
+
+This intentionally prevents real bid completion.
+
+DO NOT REMOVE THIS LOCK until all required security
+work, cross-platform coordination and tests pass.
+
+Legacy place_bid access has also been restricted.
+
+============================================================
+7. AUTOMATIC BIDDING
+============================================================
+
+DATABASE TABLE:
+
+auto_bid_limits
+
+IMPORTANT FIELDS:
+
+lot_id
+bidder_id
+auth_user_id
+max_amount
+currency
+active
+warning_sent
+
+DATABASE FUNCTION:
+
+set_auto_bid_limit(
+  p_lot_id,
+  p_max_amount
+)
+
+CURRENT RULES:
+
+- Requires verified bidder identity.
+- Checks bank verification.
+- Checks auction and lot status.
+- Prevents sellers bidding on own lots.
+- Checks international export restrictions.
+- Checks proposed combined capacity.
+- Uses bidder locking.
+
+AUTOMATIC BID LIMITS ARE CURRENTLY SAVED
+WITH active = false.
+
+They must remain inactive.
+
+Ordinary authenticated users currently do not have
+direct EXECUTE access to the protected saving function.
+
+The automatic bidding execution process is NOT ready.
+
+Do not activate it before end-to-end testing.
+
+============================================================
+8. AUCTION CLOSING AND EXTENSIONS
+============================================================
+
+RELATED FUNCTIONS:
+
+clivia_lot_bidding_open()
+
+clivia_record_bid_extension()
+
+extend_clivia_lot_close()
+
+A valid bid during the final minute extends the
+closing time to one minute after that bid.
+
+Further qualifying bids may extend the time again.
+
+The closing extension must never shorten an
+already established closing time.
+
+Only LIVE auctions with OPEN lots may be extended.
+
+The updated database extension function includes
+locking and closing-time checks.
+
+============================================================
+9. PLATFORM INVOICES
+============================================================
+
+IMPORTANT BUSINESS RULE:
+
+PLATFORM INVOICES ARE ONLY FOR:
+
+1. COMMISSION FEES
+2. REGISTRATION FEES
+
+The purchase price of a winning plant is payable
+separately to the seller.
+
+Do not treat plant purchase prices as platform
+commission or registration invoices.
+
+DATABASE TABLE:
+
+public.invoices
+
+RELEVANT FIELDS:
+
+id
+invoice_number
+bidder_id
+fee_type
+auction_id
+total
+payment_status
+paid_at
+created_at
+
+fee_type values:
+
+COMMISSION
+REGISTRATION
+
+payment_status values:
+
+UNPAID
+PENDING
+PAID
+CANCELLED
+
+New invoices default to:
+
+payment_status = UNPAID
+
+Invoice number is required.
+
+The invoice ID is generated by the database identity
+mechanism, but an automatic invoice-number generator
+has NOT been confirmed.
+
+Inspect the website invoice code before adding a
+new numbering system.
+
+IMPORTANT:
+The database invoice table was empty when checked.
+
+The current website may contain separate browser-side
+invoice functionality.
+
+Do not assume frontend invoices are already securely
+recorded in Supabase.
+
+Inspect invoice_items and existing website code before
+reusing older buyer-invoice structures for platform fees.
+
+============================================================
+10. PAYMENT SLIP REVIEW
+============================================================
+
+DATABASE TABLE:
+
+public.payment_slip_reviews
+
+FIELDS INCLUDE:
+
+id
+bidder_id
+invoice_id
+invoice_number
+slip_storage_path
+review_status
+review_attempts
+review_notes
+created_at
+updated_at
+
+New review status defaults to:
+
+PENDING
+
+Review attempts default to:
+
+0
+
+RECOGNISED REVIEW STATUSES:
+
+PENDING
+CHECKING
+MATCHED
+ACCOUNTS_REVIEW
+REJECTED
+PAYMENT_CONFIRMED
+
+A submitted payment slip is NOT proof of payment.
+
+Do not mark an invoice PAID merely because a
+document was uploaded.
+
+Payment must be confirmed against bank records.
+
+Only authorised server-side processing or
+administrator actions may confirm payment.
+
+The payment-slip review table was empty when checked.
+
+A complete secure payment confirmation process
+has NOT yet been implemented and verified.
+
+============================================================
+11. UNPAID FEE RULE
+============================================================
+
+If a bidder has an unpaid commission or registration
+fee, bidding must be blocked in the NEXT real auction.
+
+DO NOT block bidding halfway through the current
+auction simply because a fee invoice was created.
+
+When payment is confirmed, eligibility for the next
+auction may be restored, subject to other requirements.
+
+The correct implementation must determine:
+
+- Which real auction generated the fee.
+- Which real auction is next.
+- Whether the fee remains unpaid.
+- Whether payment was verified.
+
+TEST auctions must not count as real auctions.
+
+NO SEPARATE PAYMENT-HOLD SYSTEM IS WANTED.
+
+LEGACY CODE STILL PRESENT:
+
+bidders.payment_hold
+
+clivia_bidder_on_payment_hold()
+
+Existing bid functions still reference this legacy
+payment-hold mechanism.
+
+Do not delete it abruptly.
+
+Replace it safely with the next-auction unpaid-fee
+rule after implementation and testing.
+
+============================================================
+12. CURRENT DATABASE STATUS
+============================================================
+
+CLIVIA DREAMERS:
+
+public.auctions previously contained:
+
+1. Clivia Dreamers Auction
+   Status: LOADING
+
+2. Clivia Security Test Auction
+   Status: TEST ONLY
+
+No live real auction was confirmed during the review.
+
+The invoices table was empty.
+
+The payment_slip_reviews table was empty.
+
+The bids table was empty.
+
+The auto_bid_limits table was empty.
+
+The test auction must remain separate from
+real auctions and financial transactions.
+
+These are observations from earlier SQL results.
+They must be checked again when needed.
+
+============================================================
+13. SECURITY AND DATABASE ACCESS
+============================================================
+
+Relevant bidding functions use SECURITY DEFINER
+and restricted EXECUTE permissions.
+
+Some tables have Row Level Security enabled.
+
+Do not assume that RLS alone guarantees security.
+
+Review server-side functions, service credentials,
+Edge Functions and frontend database calls.
+
+Never place secret service-role credentials inside
+index.html.
+
+The website may use public Supabase publishable keys,
+but privileged operations must remain server-side.
+
+============================================================
+14. UNFINISHED WORK
+============================================================
+
+1. Verify existing website invoice generation.
+
+2. Implement secure commission and registration
+   fee invoice creation.
+
+3. Implement verified payment confirmation.
+
+4. Enforce unpaid-fee restrictions in the
+   NEXT real auction only.
+
+5. Safely replace legacy payment-hold checks.
+
+6. Implement secure cross-platform combined
+   bidding capacity.
+
+7. Verify shared account identity across
+   both Supabase projects.
+
+8. Complete automatic-bidding execution.
+
+9. Test simultaneous bidding and capacity limits.
+
+10. Test auction closing extensions.
+
+11. Test international bidder restrictions.
+
+12. Test seller and creator bidding restrictions.
+
+13. Verify frontend and database security together.
+
+14. Complete end-to-end tests before activation.
+
+============================================================
+15. NON-NEGOTIABLE SAFETY RULES
+============================================================
+
+NEVER activate real bidding prematurely.
+
+NEVER activate automatic bidding prematurely.
+
+NEVER permit bidding above combined capacity.
+
+NEVER allow sellers or event creators to bid
+on their own lots.
+
+NEVER mark a payment as confirmed based solely
+on a submitted payment slip.
+
+NEVER confuse plant purchase prices with
+platform commission and registration fees.
+
+NEVER treat test auctions as real auctions.
+
+NEVER assume separate Supabase projects already
+share bidding exposure or authentication.
+
+NEVER remove existing safety protections without
+a tested replacement.
+
+============================================================
+16. MAINTENANCE INSTRUCTIONS
+============================================================
+
+Whenever the current index.html is supplied:
+
+1. Read this MASTER RECORD.
+2. Inspect relevant existing code.
+3. Compare recorded status with actual implementation.
+4. Do not assume documentation proves functionality.
+5. Make only the requested changes.
+6. Update this record after verified changes.
+7. Preserve all existing security locks unless
+   explicitly authorised after successful testing.
+
+Keep this document as a single master reference.
+Do not create duplicate master records.
+
+============================================================
+END OF BIDDING AND INVOICING MASTER RECORD
+============================================================
+-->   
 </head>
 
 <body id="siteBody">
