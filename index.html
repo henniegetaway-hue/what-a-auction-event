@@ -20134,7 +20134,7 @@ border: isRegister ? "2px solid #E5A45A" : "1px solid #dddddd",
    
 if (label === "REGISTER - MY ACCOUNT") {
   menu.remove();
-
+  window.openCliviaAccountPopup = () => {};
   const loginBox = document.getElementById("bidderLoginBox");
 
   if (!loginBox) {
@@ -20289,7 +20289,14 @@ accountSection.querySelectorAll(
   loginBox.style.margin = "0";
 
   overlay.style.display = "flex";
+window.openCliviaAccountPopup = () => {
+  const accountButton = [...document.querySelectorAll("button")]
+    .find(b => b.textContent.trim() === "REGISTER - MY ACCOUNT");
 
+  if(accountButton){
+    accountButton.click();
+  }
+};
   return;
 }
 
