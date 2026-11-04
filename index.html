@@ -13703,11 +13703,22 @@ function refreshLotCategorySelect(){
 
   const user = data?.user;
 
-  if(error || !user || !user.email_confirmed_at){
-    alert("Please sign in to your confirmed account first.");
-    showPage("register");
-    return;
+if(error || !user || !user.email_confirmed_at){
+
+  showPage("register");
+
+  if(!user){
+    // New visitor: open the existing registration form
+    if(typeof showNewBidderRegistration === "function"){
+      showNewBidderRegistration();
+    }
+  }else{
+    // Existing account: email confirmation required
+    alert("Please confirm your email address before loading plants.");
   }
+
+  return;
+}
 
   const account = (state.bidders || []).find(
     b => b.id === state.selectedBidderId &&
@@ -15554,112 +15565,7 @@ if(
   if(!auction){
     alert("That auction could not be found.");
     return;
-  }
-
-  state.selectedAuctionId=auction.id;
-  save();
-  updateHeader();
-  renderLots();
-
-  setTimeout(()=>{
-    const spaces=document.getElementById("availableAuctionSpaces");
-
-    if(spaces){
-      spaces.scrollIntoView({
-        behavior:"smooth",
-        block:"start"
-      });
-    }
-  },150);
-}   
-async function openSellerLoadFromLot(auctionId,rowKey){
-
-  const { data, error } =
-    await cliviaSupabase.auth.getUser();
-
-  const user = data?.user;
-
-  if(error || !user || !user.email_confirmed_at){
-    alert("Please sign in to your confirmed account first.");
-    showPage("register");
-    return;
-  }
-
-  const account = (state.bidders || []).find(
-    b => b.id === state.selectedBidderId &&
-         b.authUserId === user.id
-  );
-
-  if(!account){
-    alert("Please open your registered account first.");
-    showPage("register");
-    return;
-  }
-
-  const registeredSeller = (state.sellers || []).find(
-  s => s.authUserId === user.id ||
-       (
-         s.email?.trim().toLowerCase() ===
-         user.email?.trim().toLowerCase()
-       )
-);
-
-if(registeredSeller && registeredSeller.rulesAccepted === true){
-  state.selectedSellerId = registeredSeller.id;
-  save();
-}
-
-  // Open the plant-loading form
-  await openSellerSpaces();
-
-  setTimeout(() => {
-
-    const rowSelect =
-      document.getElementById("sellerLotStartRow");
-
-    if(rowSelect && rowKey){
-      rowSelect.value = rowKey;
-
-      if(typeof updateSellerLotStartBid === "function"){
-        updateSellerLotStartBid();
-      }
-    }
-
-    document.getElementById("sellerLotName")?.focus();
-
-  },200);
-}
-function showPlantPhoto(lotId){
-  const lot=state.lots.find(l=>l.id===lotId);
-  if(!lot || !lot.plant) return;
-
-  document.getElementById("modalTitle").textContent=lot.name+" — Actual Plant";
-  document.getElementById("modalImage").src=lot.plant;
-  document.getElementById("photoModal").classList.remove("hidden");
-}
-function flipLotPhoto(lotId){
-  const lot=(state.lots||[]).find(l=>l.id===lotId);
-  const img=document.getElementById("lotPhoto_"+lotId);
-
-  if(!lot || !img) return;
-
-if(!lot.plant){
-  alert("No second plant photo is saved for this lot.");
-  return;
-}
-
-  const showingFlower = img.src === lot.flower || img.dataset.view !== "plant";
-
-  if(showingFlower){
-    img.src=lot.plant;
-    img.dataset.view="plant";
-    img.alt=escapeHtml(lot.name)+" plant";
-  }else{
-    img.src=lot.flower;
-    img.dataset.view="flower";
-    img.alt=escapeHtml(lot.name)+" flower";
-  }
-}
+  } 
 function hidePhotoModal(){
   document.getElementById("photoModal").classList.add("hidden");
 }
