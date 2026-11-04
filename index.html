@@ -14788,7 +14788,10 @@ if(adminBidAlert){
     totalExposureAfterBid.toLocaleString()
   );
 }   
-  const firstWarningLevel=maxBidCapacity-(auction.currency==="EUR" ? 120 : 2000);
+ const firstWarningLevel =
+  auction.currency === "ZAR"
+    ? (maxBidCapacity === 5000 ? 4400 : maxBidCapacity * 0.90)
+    : maxBidCapacity * 0.90;
 const secondWarningLevel=maxBidCapacity-(auction.currency==="EUR" ? 60 : 1000);
   const securityProofPending=
   bidder.securityProofStatus==="PENDING_AI" &&
