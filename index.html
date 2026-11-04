@@ -12904,12 +12904,10 @@ const user = session?.user || null;
     console.error("Unable to check bank verification:", bankError.message);
   }
 
-  // LOAD APPROVED BIDDING CAPACITY
+    // LOAD APPROVED BIDDING CAPACITY SECURELY
   const { data: capacityRecord, error: capacityError } =
     await cliviaSupabase
-      .from("bidder_bidding_capacity")
-      .select("approved_capacity, approval_status")
-      .eq("bidder_id", account.id)
+      .rpc("get_my_bidding_capacity")
       .maybeSingle();
 
   if(capacityError){
