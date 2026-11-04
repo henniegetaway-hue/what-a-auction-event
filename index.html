@@ -9021,13 +9021,18 @@ async function openSellerSpaces(){
   const {data,error} = await cliviaSupabase.auth.getUser();
   const user = data?.user;
 
-  if(error || !user || !user.email_confirmed_at){
-    alert(
-      "Please register or sign in with your confirmed email before loading plants."
-    );
+ if(error || !user || !user.email_confirmed_at){
+
+  const overlay = document.getElementById("cliviaAccountOverlay");
+
+  if(overlay){
+    overlay.style.display = "flex";
+  } else {
     showPage("register");
-    return;
   }
+
+  return;
+}
 
   // Match registration to authenticated identity
   const account = (state.bidders || []).find(
