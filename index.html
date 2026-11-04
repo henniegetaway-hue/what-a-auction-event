@@ -4679,11 +4679,43 @@ border:1px solid #D99A50;
       
       
 <div class="panel" style="text-align:center;">
+
+  <h2>MEMBER REGISTRATION MANAGEMENT</h2>
+
+  <p>
+    Find existing registered members and help them
+    correct missing registration information.
+  </p>
+
   <button type="button"
           class="goldBtn"
-          onclick="viewOwnerOriginalRegistration()">
-    📋 VIEW MY ORIGINAL REGISTRATION
+          onclick="openMemberRegistrationManagement()">
+    📋 MANAGE MEMBER REGISTRATIONS
   </button>
+
+  <div id="memberRegistrationManagement"
+       style="display:none;margin-top:20px;">
+
+    <h3>FIND REGISTERED MEMBER</h3>
+
+    <input id="memberRegistrationSearch"
+           type="text"
+           placeholder="Enter name, telephone or member number">
+
+    <br><br>
+
+    <button type="button"
+            class="goldBtn"
+            onclick="searchMemberRegistration()">
+      SEARCH MEMBER
+    </button>
+
+    <div id="memberRegistrationResults"
+         style="margin-top:20px;text-align:left;">
+    </div>
+
+  </div>
+
 </div>
 
 <div class="panel" id="ownerVisitorStats"
