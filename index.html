@@ -12845,20 +12845,12 @@ securityProof:"",
 
   if(!ok) return;
 
-  if(isEUR){
-    bidder.securityFeesPaidEUR=currentPaid+fee;
-  }else{
-    bidder.securityFeesPaidZAR=currentPaid+fee;
-  }
-
-  save();
-  refreshBidderSelect();
-
-  alert(
-    "Bidding capacity increased to "+
-    (isEUR ? "€" : "R")+nextCapacity+"."
+    alert(
+    "CAPACITY INCREASE PENDING\n\n"+
+    "Your request must be verified before your bidding capacity increases."
   );
-}     
+     return;
+}    
 async function refreshBidderSelect(){
   const select=document.getElementById("bidderSelect");
    const { data: { session }, error: authError } =
@@ -14796,7 +14788,7 @@ const secondWarningLevel=maxBidCapacity-(auction.currency==="EUR" ? 60 : 1000);
   const securityProofPending=
   bidder.securityProofStatus==="PENDING_AI" &&
   bidder.securityProofCurrency===(auction && auction.currency==="EUR" ? "EUR" : "ZAR");
- if(false && !securityProofPending && totalExposureAfterBid>=firstWarningLevel && totalExposureAfterBid<secondWarningLevel){
+ if(!securityProofPending && totalExposureAfterBid>=firstWarningLevel && totalExposureAfterBid<maxBidCapacity){
   alert("SECURITY WARNING: You are approaching your "+currencySymbol+
   maxBidCapacity.toLocaleString()+" bidding limit. Pay the next "+
   currencySymbol+securityFeeAmount+" security fee to unlock the next "+
@@ -14807,7 +14799,7 @@ if(false && !securityProofPending && totalExposureAfterBid>=secondWarningLevel &
   currencySymbol+maxBidCapacity.toLocaleString()+" bidding limit. Pay the "+
   currencySymbol+securityFeeAmount+" security fee now to avoid bidding being interrupted.");
 }
-if(false && securityFeeNeeded && !bidder.isOwnerTest){
+if(securityFeeNeeded && !bidder.isOwnerTest){
   alert(securityProofPending
   ? "BIDDING PAUSED: Your "+currencySymbol+securityFeeAmount+" payment proof is waiting for verification. Your next "+currencySymbol+securityBracketSize.toLocaleString()+" bidding bracket will unlock after confirmation."
   : "BIDDING PAUSED: Your "+currencySymbol+maxBidCapacity.toLocaleString()+" total bidding capacity has been reached. Pay the "+currencySymbol+securityFeeAmount+" security fee and upload proof of payment to unlock the next "+currencySymbol+securityBracketSize.toLocaleString()+" bidding bracket.");
@@ -15738,23 +15730,13 @@ function deleteLot(id){
   renderAdminLots();
   renderLots();
 }
-    function confirmSecurityProof(){
-  const bidder=(state.bidders||[]).find(b=>b.securityProofStatus==="PENDING_AI");
-
-  if(!bidder){
-    alert("No pending security payment proof found.");
-    return;
-  }
-    if(bidder.securityProofCurrency==="EUR"){
-  bidder.securityFeesPaidEUR=Number(bidder.securityFeesPaidEUR||0)+Number(bidder.securityProofAmount||15);
-}else{
-bidder.securityFeesPaidZAR=Number(bidder.securityFeesPaidZAR||0)+Number(bidder.securityProofAmount||150);
-}
-bidder.securityProofStatus="CONFIRMED";
-bidder.securityProof="";
-save();  
-    selectedBidderNotice();
-alert("Security payment confirmed and bidding capacity updated.");  
+  function confirmSecurityProof(){
+  alert(
+    "SECURITY PAYMENT PENDING\n\n"+
+    "Bidding capacity cannot increase until "+
+    "the payment has been securely verified."
+  );
+  return;
 }
  async function submitSecurityProof(){
     const bidder=(state.bidders||[]).find(b=>b.id===state.selectedBidderId);
