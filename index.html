@@ -14856,7 +14856,11 @@ if(amount<required){
   alert("Minimum valid bid is "+currencySymbol+required);
   return;
 }
-
+  // TEMPORARY SAFETY LOCK
+  // Keep bidding disabled until server-side
+  // capacity, currency and ownership checks are complete.
+  alert("Bidding activation pending final security checks.");
+  return;
   lot.bids=lot.bids||[];
   lot.bids.push({
     bidderId:bidder.id,
