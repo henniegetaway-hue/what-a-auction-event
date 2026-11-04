@@ -12896,9 +12896,30 @@ const user = session?.user || null;
       .eq("auth_user_id", user.id)
       .maybeSingle();
 
-  if(bankError){
+    if(bankError){
     console.error("Unable to check bank verification:", bankError.message);
   }
+
+  // LOAD APPROVED BIDDING CAPACITY
+  const { data: capacityRecord, error: capacityError } =
+    await cliviaSupabase
+      .from("bidder_bidding_capacity")
+      .select("approved_capacity, approval_status")
+      .eq("bidder_id", account.id)
+      .maybeSingle();
+
+  if(capacityError){
+    console.error(
+      "Unable to load bidding capacity:",
+      capacityError.message
+    );
+  }
+
+  const approvedBidCapacity =
+    !capacityError &&
+    capacityRecord?.approval_status === "APPROVED"
+      ? Number(capacityRecord.approved_capacity || 0)
+      : 0;
 
   const bidder = {
 
