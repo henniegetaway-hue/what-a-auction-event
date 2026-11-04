@@ -12787,8 +12787,12 @@ securityProof:"",
     ) / fee
   );
 
-  const capacity=
-  bracket + (paidSteps * bracket);
+   const capacity = isEUR
+    ? bracket + (paidSteps * bracket)
+    : Math.max(
+        2000,
+        Number(bidder.approvedBidCapacity || 0)
+      );
 
   if(capacityControl){
     capacityControl.style.display="block";
@@ -14795,7 +14799,10 @@ const paidSecurityFees=Number(
     ? bidder.securityFeesPaidEUR||0
     : bidder.securityFeesPaidZAR||0
 );
-const maxBidCapacity=securityBracketSize + Math.floor(paidSecurityFees/securityFeeAmount)*securityBracketSize;
+const maxBidCapacity =
+  bidder.approvedBidCapacity >= 5000
+    ? bidder.approvedBidCapacity
+    : 2000;
 const currentWinningExposure=(state.lots||[]).reduce((total,otherLot)=>{
   if(otherLot.id===lotId || otherLot.auctionId!==state.selectedAuctionId) return total;
   const highest=(otherLot.bids||[]).slice().sort((a,b)=>Number(b.amount)-Number(a.amount))[0];
