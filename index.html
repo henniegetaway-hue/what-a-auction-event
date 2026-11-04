@@ -414,13 +414,23 @@ justify-content:center;
   gap:16px;
   }    
   
-/* LIVE AUCTION — 4 LOTS PER ROW */
-.lotsGrid{
-  display:grid;
-  grid-template-columns:repeat(4, minmax(0, 1fr));
-  gap:16px;
-  width:100%;
+
+/* LIVE AUCTION — FULL WIDTH ROWS */
+#lotsGrid{
+  display:block !important;
+  width:100% !important;
+  max-width:100% !important;
+  min-width:0 !important;
 }
+
+/* FOUR AUCTION CARDS PER ROW */
+#lotsGrid .auctionRowScroll{
+  display:grid !important;
+  grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+  gap:16px !important;
+  width:100% !important;
+}
+
  @media (max-width:900px){
   #sellerLoadGrid{
     grid-template-columns:minmax(0,1.5fr) minmax(250px,1fr) !important;
