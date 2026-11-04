@@ -9019,59 +9019,187 @@ async function openSellerLoadFromLot(auctionId, rowKey){
   await openSellerSpaces();
 
 }
-async function openSellerSpaces(){
 
-  // Require authenticated and email-confirmed account
-  const {data,error} = await cliviaSupabase.auth.getUser();
-  const user = data?.user;
+async function openSellerLoadFromLot(auctionId, rowKey){
+  await openSellerSpaces();
+}
 
-if(error || !user || !user.email_confirmed_at){
+// OPEN EXISTING REGISTRATION FORM FOR VISITORS
+function openCliviaVisitorRegistration(){
 
-  // Open the existing registration page
   showPage("register");
 
-  // Show registration options
-  const newAccountBtn = document.getElementById("newBidderBtn");
-  if(newAccountBtn){
-    newAccountBtn.style.display = "block";
+  const form =
+    document.getElementById("newBidderRegistration");
+
+  if(!form){
+    alert("Registration form could not be found.");
+    return;
   }
 
-  const loginBox = document.getElementById("bidderLoginBox");
-  if(loginBox){
-    loginBox.style.display = "block";
+  let marker =
+    document.getElementById("cliviaVisitorFormMarker");
+
+  if(!marker){
+    marker = document.createElement("span");
+    marker.id = "cliviaVisitorFormMarker";
+    marker.style.display = "none";
+    form.parentNode.insertBefore(marker, form);
   }
 
-  document.getElementById("registrationMainPanel")
-    ?.scrollIntoView({behavior:"smooth",block:"start"});
+  let overlay =
+    document.getElementById("cliviaVisitorRegistrationOverlay");
 
-  return;
+  if(!overlay){
+
+    overlay = document.createElement("div");
+    overlay.id = "cliviaVisitorRegistrationOverlay";
+
+    overlay.style.cssText = `
+      position:fixed;
+      inset:0;
+      z-index:2147483646;
+      background:rgba(0,0,0,.82);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:12px;
+    `;
+
+    const panel = document.createElement("div");
+    panel.id = "cliviaVisitorRegistrationPanel";
+
+    panel.style.cssText = `
+      width:100%;
+      max-width:580px;
+      max-height:92dvh;
+      overflow-y:auto;
+      background:#101912;
+      color:white;
+      border:2px solid #9acd32;
+      border-radius:12px;
+      padding:15px;
+      box-sizing:border-box;
+    `;
+
+    const close = document.createElement("button");
+    close.type = "button";
+    close.textContent = "✕ CLOSE";
+
+    close.style.cssText = `
+      display:block;
+      margin:0 0 12px auto;
+      padding:8px 12px;
+      cursor:pointer;
+    `;
+
+    close.onclick = () => {
+
+      const original =
+        document.getElementById("cliviaVisitorFormMarker");
+
+      const registration =
+        document.getElementById("newBidderRegistration");
+
+      if(original && registration){
+        original.parentNode.insertBefore(
+          registration,
+          original.nextSibling
+        );
+      }
+
+      overlay.style.display = "none";
+    };
+
+    panel.appendChild(close);
+
+    const heading = document.createElement("h2");
+    heading.textContent = "CLIVIA DREAMERS — NEW ACCOUNT";
+    panel.appendChild(heading);
+
+    const signIn = document.createElement("button");
+    signIn.type = "button";
+    signIn.textContent = "ALREADY REGISTERED? SIGN IN";
+    signIn.className = "accountBtn";
+    signIn.style.cssText = "width:100%;margin:8px 0 15px;";
+
+    signIn.onclick = () => {
+
+      close.click();
+
+      const login =
+        document.getElementById("bidderLoginBox");
+
+      if(login){
+        login.style.display = "block";
+        login.scrollIntoView({
+          behavior:"smooth",
+          block:"center"
+        });
+      }
+    };
+
+    panel.appendChild(signIn);
+    overlay.appendChild(panel);
+    document.body.appendChild(overlay);
+  }
+
+  const panel =
+    document.getElementById("cliviaVisitorRegistrationPanel");
+
+  panel.appendChild(form);
+
+  form.style.display = "block";
+  overlay.style.display = "flex";
+
+  panel.scrollTop = 0;
 }
 
-  const overlay = document.getElementById("cliviaAccountOverlay");
+// CHECK ACCOUNT BEFORE OPENING PLANT LOADING
+async function openSellerSpaces(){
 
-  if(overlay){
-    overlay.style.display = "flex";
-  } else {
-    showPage("register");
+  let user;
+
+  try {
+
+    const {data,error} =
+      await cliviaSupabase.auth.getUser();
+
+    if(error) throw error;
+
+    user = data?.user;
+
+  } catch(error){
+
+    console.error("Account check failed:",error);
+    openCliviaVisitorRegistration();
+    return;
   }
 
-  return;
-}
+  // VISITOR OR UNCONFIRMED EMAIL
+  if(!user || !user.email_confirmed_at){
+    openCliviaVisitorRegistration();
+    return;
+  }
 
-  // Match registration to authenticated identity
+  // CHECK REGISTERED ACCOUNT
   const account = (state.bidders || []).find(
     b => b.authUserId === user.id
   );
 
   if(!account){
-    alert(
-      "Your registered account could not be found. Please complete your registration first."
-    );
+
     showPage("register");
+
+    alert(
+      "Your registered account could not be found. " +
+      "Please complete or recover your existing registration."
+    );
+
     return;
   }
 
-  // Find seller using authenticated identity only
+  // FIND SELLER BY AUTHENTICATED ID
   const seller = (state.sellers || []).find(
     s => s.authUserId === user.id
   );
@@ -9085,32 +9213,48 @@ if(error || !user || !user.email_confirmed_at){
 
   showPage("sellerLoad");
 
-  // Highlight LOAD and deactivate Clivia Auctions
-  const loadBtn = document.getElementById("navCliviaLoad");
-  const liveBtn = document.getElementById("navLive");
+  const loadBtn =
+    document.getElementById("navCliviaLoad");
+
+  const liveBtn =
+    document.getElementById("navLive");
 
   if(loadBtn){
-    loadBtn.style.setProperty("background","#ffcc80","important");
-    loadBtn.style.setProperty("color","#111","important");
-    loadBtn.style.setProperty("border","2px solid #ffd700","important");
+    loadBtn.style.setProperty(
+      "background","#ffcc80","important"
+    );
+    loadBtn.style.setProperty(
+      "color","#111","important"
+    );
+    loadBtn.style.setProperty(
+      "border","2px solid #ffd700","important"
+    );
   }
 
   if(liveBtn){
-    liveBtn.style.setProperty("background","#111","important");
-    liveBtn.style.setProperty("color","#fff","important");
-    liveBtn.style.setProperty("border","2px solid #ffd700","important");
+    liveBtn.style.setProperty(
+      "background","#111","important"
+    );
+    liveBtn.style.setProperty(
+      "color","#fff","important"
+    );
+    liveBtn.style.setProperty(
+      "border","2px solid #ffd700","important"
+    );
   }
 
   if(typeof showSellerLotForm === "function"){
     showSellerLotForm();
   }
 
-  const form = document.getElementById("sellerLotForm");
+  const form =
+    document.getElementById("sellerLotForm");
 
   if(form){
+
     form.style.display = "block";
 
-    setTimeout(()=>{
+    setTimeout(() => {
       form.scrollIntoView({
         behavior:"smooth",
         block:"start"
@@ -9118,6 +9262,7 @@ if(error || !user || !user.email_confirmed_at){
     },150);
   }
 }
+
 
 function showSellerBankPhoneChange(){
   const seller=(state.sellers||[]).find(
