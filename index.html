@@ -9021,7 +9021,27 @@ async function openSellerSpaces(){
   const {data,error} = await cliviaSupabase.auth.getUser();
   const user = data?.user;
 
- if(error || !user || !user.email_confirmed_at){
+if(error || !user || !user.email_confirmed_at){
+
+  // Open the existing registration page
+  showPage("register");
+
+  // Show registration options
+  const newAccountBtn = document.getElementById("newBidderBtn");
+  if(newAccountBtn){
+    newAccountBtn.style.display = "block";
+  }
+
+  const loginBox = document.getElementById("bidderLoginBox");
+  if(loginBox){
+    loginBox.style.display = "block";
+  }
+
+  document.getElementById("registrationMainPanel")
+    ?.scrollIntoView({behavior:"smooth",block:"start"});
+
+  return;
+}
 
   const overlay = document.getElementById("cliviaAccountOverlay");
 
