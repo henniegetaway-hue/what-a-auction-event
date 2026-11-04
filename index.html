@@ -15521,10 +15521,12 @@ if(
     a=>a.id===auctionId
   );
 
-  if(!auction){
-    alert("That auction could not be found.");
-    return;
-  } 
+ if(!auction){
+  alert("That auction could not be found.");
+  return;
+}
+}
+
 function hidePhotoModal(){
   document.getElementById("photoModal").classList.add("hidden");
 }
