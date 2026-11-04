@@ -8862,18 +8862,22 @@ if(account){
 
    
 }else{
-  if(registration) registration.style.display = "none";
- if(account){
-  const popup =
-    document.getElementById("cliviaAccountPopup");
 
-  if(popup){
-    popup.appendChild(account);
+  // Visitor or unverified account:
+  // Never display private account details.
+  if(account){
+    account.style.display = "none";
+    account.classList.add("hidden");
   }
 
-  account.classList.remove("hidden");
-  account.style.setProperty("display", "block", "important");
-}
+  // Keep the registration and sign-in options available.
+  const loginBox =
+    document.getElementById("bidderLoginBox");
+
+  if(loginBox){
+    loginBox.style.display = "block";
+  }
+
 }
 
    }).catch(error=>{
