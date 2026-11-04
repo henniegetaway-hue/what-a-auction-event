@@ -12934,7 +12934,8 @@ const user = session?.user || null;
         country: account.country || "",
         companyName: account.company_name || "",
         businessPhone: account.business_whatsapp || "",
-       bankConfirmed: !bankError && bankDetails?.bank_confirmed === true
+            bankConfirmed: !bankError && bankDetails?.bank_confirmed === true,
+       approvedBidCapacity: approvedBidCapacity
       };
 
       state.bidders = [bidder];
