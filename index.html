@@ -9010,7 +9010,43 @@ async function openGroupPlantLoading(auctionNumber, lotPosition){
     "\n\nGroup plant loading is being prepared."
   );
 }      
+
 async function openSellerSpaces(){
+
+  // Require authenticated and email-confirmed account
+  const {data,error} = await cliviaSupabase.auth.getUser();
+  const user = data?.user;
+
+  if(error || !user || !user.email_confirmed_at){
+    alert(
+      "Please register or sign in with your confirmed email before loading plants."
+    );
+    showPage("register");
+    return;
+  }
+
+  // Match registration to authenticated identity
+  const account = (state.bidders || []).find(
+    b => b.authUserId === user.id
+  );
+
+  if(!account){
+    alert(
+      "Your registered account could not be found. Please complete your registration first."
+    );
+    showPage("register");
+    return;
+  }
+
+  // Find seller using authenticated identity only
+  const seller = (state.sellers || []).find(
+    s => s.authUserId === user.id
+  );
+
+  if(seller){
+    state.selectedSellerId = seller.id;
+    save();
+  }
 
   ensureAutomaticCliviaAuction();
 
@@ -9021,15 +9057,15 @@ async function openSellerSpaces(){
   const liveBtn = document.getElementById("navLive");
 
   if(loadBtn){
-    loadBtn.style.setProperty("background", "#ffcc80", "important");
-    loadBtn.style.setProperty("color", "#111", "important");
-    loadBtn.style.setProperty("border", "2px solid #ffd700", "important");
+    loadBtn.style.setProperty("background","#ffcc80","important");
+    loadBtn.style.setProperty("color","#111","important");
+    loadBtn.style.setProperty("border","2px solid #ffd700","important");
   }
 
   if(liveBtn){
-    liveBtn.style.setProperty("background", "#111", "important");
-    liveBtn.style.setProperty("color", "#fff", "important");
-    liveBtn.style.setProperty("border", "2px solid #ffd700", "important");
+    liveBtn.style.setProperty("background","#111","important");
+    liveBtn.style.setProperty("color","#fff","important");
+    liveBtn.style.setProperty("border","2px solid #ffd700","important");
   }
 
   if(typeof showSellerLotForm === "function"){
@@ -9041,12 +9077,12 @@ async function openSellerSpaces(){
   if(form){
     form.style.display = "block";
 
-    setTimeout(() => {
+    setTimeout(()=>{
       form.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
+        behavior:"smooth",
+        block:"start"
       });
-    }, 150);
+    },150);
   }
 }
 
