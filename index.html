@@ -20515,8 +20515,107 @@ if (label === "GROUP AUCTIONS") {
      
 </script>
 
+
 <script>
 function previewNewMemberRegistration(){
+  const form = document.getElementById("newBidderRegistration");
+  const ownerArea = document.getElementById("ownerArea");
+
+  if(!form || !ownerArea || ownerArea.classList.contains("hidden")){
+    alert("Registration preview is unavailable.");
+    return;
+  }
+
+  document.getElementById("ownerRegistrationPreview")?.remove();
+
+  const preview = document.createElement("div");
+  preview.id = "ownerRegistrationPreview";
+  preview.style.cssText =
+    "position:fixed;inset:0;z-index:2147483647;" +
+    "background:#101a12;color:white;overflow:auto;padding:16px;";
+
+  const heading = document.createElement("h2");
+  heading.textContent = "NEW MEMBER REGISTRATION — PREVIEW ONLY";
+  preview.appendChild(heading);
+
+  const close = document.createElement("button");
+  close.type = "button";
+  close.textContent = "CLOSE PREVIEW";
+  close.onclick = () => preview.remove();
+  preview.appendChild(close);
+
+  const copy = form.cloneNode(true);
+  copy.removeAttribute("id");
+  copy.style.display = "block";
+
+  // Remove IDs from the copy to avoid conflicts with the real form.
+  copy.querySelectorAll("[id]").forEach(el=>{
+    el.dataset.previewField = el.id;
+    el.removeAttribute("id");
+  });
+
+  // Disable all submission and account-changing controls.
+  copy.querySelectorAll("input,select,textarea,button").forEach(el=>{
+    el.disabled = true;
+    el.removeAttribute("onchange");
+    el.removeAttribute("onclick");
+    el.removeAttribute("oninput");
+    el.removeAttribute("onsubmit");
+  });
+
+  copy.querySelectorAll("form").forEach(el=>{
+    el.onsubmit = e => e.preventDefault();
+  });
+
+  // Show fields normally revealed by registration choices.
+  copy.querySelectorAll(
+    '[data-preview-field="bidderPrivateFields"],' +
+    '[data-preview-field="bidderCommonFields"]'
+  ).forEach(el=>{
+    el.style.display = "block";
+  });
+
+  const companyFields =
+    copy.querySelector('[data-preview-field="bidderCompanyFields"]');
+
+  const choice = document.createElement("select");
+  choice.style.cssText =
+    "display:block;margin:15px 0;padding:12px;width:100%;max-width:400px;";
+
+  choice.innerHTML =
+    '<option value="PRIVATE">PRIVATE REGISTRATION</option>' +
+    '<option value="COMPANY">COMPANY / CC REGISTRATION</option>';
+
+  const privateFields =
+    copy.querySelector('[data-preview-field="bidderPrivateFields"]');
+
+  function updatePreview(){
+    if(privateFields){
+      privateFields.style.display =
+        choice.value === "PRIVATE" ? "block" : "none";
+    }
+
+    if(companyFields){
+      companyFields.style.display =
+        choice.value === "COMPANY" ? "block" : "none";
+    }
+  }
+
+  choice.onchange = updatePreview;
+
+  const note = document.createElement("p");
+  note.textContent =
+    "Inspection only. No registration information can be submitted or saved.";
+
+  preview.appendChild(choice);
+  preview.appendChild(note);
+  preview.appendChild(copy);
+  document.body.appendChild(preview);
+
+  updatePreview();
+}
+</script>
+
   const form = document.getElementById("newBidderRegistration");
   const ownerArea = document.getElementById("ownerArea");
 
