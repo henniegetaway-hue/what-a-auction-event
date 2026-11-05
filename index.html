@@ -1,4 +1,4 @@
-<head> 
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title id="seoTitle">Clivia Dreamers Auction</title>
@@ -11863,10 +11863,15 @@ function unlockBidderAccount(){
   const { data: authData, error: authError } =
     await cliviaSupabase.auth.getUser();
 
-  if(authError || !authData?.user){
-    alert("Please sign in first.");
-    return;
-  }
+if(authError || !authData?.user){
+  openCliviaVisitorRegistration();
+  return;
+}
+
+if(!authData.user.email_confirmed_at){
+  alert("Please confirm your email before loading plants.");
+  return;
+}
 
   const { data: group, error } =
     await cliviaSupabase
