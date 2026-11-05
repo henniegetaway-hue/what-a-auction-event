@@ -11536,6 +11536,88 @@ async function saveCliviaNewPassword(){
     message.textContent = verificationMessage.textContent;
   }
 } 
+  
+let bankDocumentSubmissionRunning = false;
+
+async function submitBankDocumentFromMyAccount(){
+
+  const source = document.getElementById("bidderBankStatement");
+  const target = document.getElementById("bankVerificationFile");
+  const accountInput = document.getElementById("bankVerificationAccountNumber");
+  const accountMsg = document.getElementById("bidderBankStatementMsg");
+  const verificationMsg = document.getElementById("bankVerificationMessage");
+
+  if(bankDocumentSubmissionRunning) return;
+
+  if(!source?.files?.length){
+    if(accountMsg) accountMsg.textContent =
+      "Please select your bank document first.";
+    return;
+  }
+
+  if(!target || !accountInput || !verificationMsg){
+    if(accountMsg) accountMsg.textContent =
+      "Bank verification form not found.";
+    return;
+  }
+
+  bankDocumentSubmissionRunning = true;
+
+  try {
+    const { data: authData, error: authError } =
+      await cliviaSupabase.auth.getUser();
+
+    const user = authData?.user;
+
+    if(authError || !user || !user.email_confirmed_at){
+      if(accountMsg) accountMsg.textContent =
+        "Please sign in with your confirmed email.";
+      return;
+    }
+
+    const { data: bank, error: bankError } =
+      await cliviaSupabase
+        .from("bidder_bank_details")
+        .select("account_number")
+        .eq("auth_user_id", user.id)
+        .maybeSingle();
+
+    if(bankError || !bank?.account_number){
+      if(accountMsg) accountMsg.textContent =
+        "Please register your bank account number first.";
+      return;
+    }
+
+    accountInput.value = bank.account_number;
+
+    const transfer = new DataTransfer();
+    transfer.items.add(source.files[0]);
+    target.files = transfer.files;
+
+    if(accountMsg) accountMsg.textContent =
+      "Submitting bank document...";
+
+    await uploadBankVerificationDocument();
+
+    if(accountMsg){
+      accountMsg.textContent = verificationMsg.textContent;
+    }
+
+    if(!target.files.length){
+      source.value = "";
+    }
+
+  } catch(error){
+    console.error("Bank verification error:", error);
+
+    if(accountMsg) accountMsg.textContent =
+      "Unable to submit your document. Please try again.";
+
+  } finally {
+    bankDocumentSubmissionRunning = false;
+  }
+}
+    
    async function uploadBankVerificationDocument(){
   const input = document.getElementById("bankVerificationFile");
   const msg = document.getElementById("bankVerificationMessage");
