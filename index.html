@@ -11181,24 +11181,31 @@ async function viewOwnerOriginalRegistration(){
   showOrHide("registeredBidderSection", "none");
   showOrHide("bidderForgotChoiceRow", "none");
   showOrHide("bidderForgotPasswordBox", "none");
-  showOrHide("bidderAddressFields", "none");
-  showOrHide("bidderPrivateFields", "none");
+
+  // Automatically open PRIVATE registration
+  showOrHide("bidderAddressFields", "block");
+  showOrHide("bidderPrivateFields", "block");
   showOrHide("bidderBusinessFields", "none");
-  showOrHide("bidderCommonFields", "none");
+  showOrHide("bidderCommonFields", "block");
 
   const entityType = document.getElementById("regEntityType");
-  if(entityType) entityType.value = "";
+  if(entityType) entityType.value = "PRIVATE";
 
-  document.querySelectorAll(
-    'input[name="bidderEntityChoice"]'
-  ).forEach(radio => {
-    radio.checked = false;
-  });
+  const privateRadio = document.querySelector(
+    'input[name="bidderEntityChoice"][value="PRIVATE"]'
+  );
+
+  if(privateRadio){
+    privateRadio.checked = true;
+    privateRadio.dispatchEvent(
+      new Event("change", {bubbles:true})
+    );
+  }
 
   document.getElementById("newBidderRegistration")
     ?.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
+      behavior:"smooth",
+      block:"start"
     });
 }
       function startBidderPasswordReset(){
