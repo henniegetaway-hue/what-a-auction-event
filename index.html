@@ -20570,7 +20570,8 @@ function previewNewMemberRegistration(){
   // Show fields normally revealed by registration choices.
   copy.querySelectorAll(
     '[data-preview-field="bidderPrivateFields"],' +
-    '[data-preview-field="bidderCommonFields"]'
+    '[data-preview-field="bidderCommonFields"],' +
+'[data-preview-field="bidderAddressFields"]'
   ).forEach(el=>{
     el.style.display = "block";
   });
