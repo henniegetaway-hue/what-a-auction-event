@@ -465,12 +465,31 @@ justify-content:center;
     box-sizing:border-box !important;
   }
 }
-/* FOUR AUCTION CARDS PER ROW */
+/* CLIVIA AUCTION — COMPUTER: 4 CARDS PER ROW */
 #lotsGrid .auctionRowScroll{
   display:grid !important;
   grid-template-columns:repeat(4,minmax(0,1fr)) !important;
   gap:16px !important;
   width:100% !important;
+}
+
+/* CLIVIA AUCTION — PHONE: 2 CARDS PER ROW */
+@media screen and (max-width:600px){
+
+  #pageLive #lotsGrid .auctionRowScroll{
+    display:grid !important;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:8px !important;
+    width:100% !important;
+  }
+
+  #pageLive #lotsGrid .auctionRowScroll > *{
+    width:100% !important;
+    min-width:0 !important;
+    max-width:100% !important;
+    box-sizing:border-box !important;
+  }
+
 }
 
  @media (max-width:900px){
