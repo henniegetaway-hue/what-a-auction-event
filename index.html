@@ -8760,9 +8760,12 @@ if(carryForwardNotice){
     document.getElementById("groupAuctionPanel")?.style.display === "block";
 
   carryForwardNotice.style.display =
-    groupAuctionActive || page === "rules" || page === "cliviaChat"
-      ? "none"
-      : "block";
+  groupAuctionActive ||
+  page === "register" ||
+  page === "rules" ||
+  page === "cliviaChat"
+    ? "none"
+    : "block";
 }
 
 
