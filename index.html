@@ -20496,42 +20496,5 @@ function previewNewMemberRegistration(){
 }
 </script>
 
-  const form = document.getElementById("newBidderRegistration");
-  const ownerArea = document.getElementById("ownerArea");
-
-  if(!form || !ownerArea || ownerArea.classList.contains("hidden")){
-    alert("Registration preview is unavailable.");
-    return;
-  }
-
-  const preview = document.createElement("div");
-  preview.style.cssText =
-    "position:fixed;inset:0;z-index:2147483647;" +
-    "background:#101a12;color:white;overflow:auto;padding:20px;";
-
-  const heading = document.createElement("h2");
-  heading.textContent = "NEW MEMBER REGISTRATION — PREVIEW ONLY";
-  preview.appendChild(heading);
-
-  const close = document.createElement("button");
-  close.type = "button";
-  close.textContent = "CLOSE PREVIEW";
-  close.onclick = () => preview.remove();
-  preview.appendChild(close);
-
-  const copy = form.cloneNode(true);
-  copy.removeAttribute("id");
-  copy.style.display = "block";
-
-  // Preview must never submit or change real registration data.
-  copy.querySelectorAll("input,select,textarea,button").forEach(el=>{
-    el.disabled = true;
-  });
-
-  preview.appendChild(copy);
-  document.body.appendChild(preview);
-}
-</script>
-
 </body>
 </html>
