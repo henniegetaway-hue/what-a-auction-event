@@ -11480,62 +11480,7 @@ async function saveCliviaNewPassword(){
     document.getElementById("cliviaPasswordRecoveryBox")
       .classList.add("hidden");
   }, 1500);
-}
-     async function submitBankDocumentFromMyAccount() {
-  const source = document.getElementById("bidderBankStatement");
-  const target = document.getElementById("bankVerificationFile");
-  const accountInput = document.getElementById("bankVerificationAccountNumber");
-  const message = document.getElementById("bidderBankStatementMsg");
-  const verificationMessage = document.getElementById("bankVerificationMessage");
-
-  if (!source?.files?.length) {
-    if (message) message.textContent = "Please select a bank document first.";
-    return;
-  }
-
-  if (!target || !accountInput || !verificationMessage) {
-    if (message) message.textContent = "Bank verification form not found.";
-    return;
-  }
-
-  const { data: authData, error: authError } =
-    await cliviaSupabase.auth.getUser();
-
-  const user = authData?.user;
-
-  if (authError || !user || !user.email_confirmed_at) {
-    if (message) message.textContent = "Please sign in with your confirmed email.";
-    return;
-  }
-
-  const { data: bank, error: bankError } =
-    await cliviaSupabase
-      .from("bidder_bank_details")
-      .select("account_number")
-      .eq("auth_user_id", user.id)
-      .maybeSingle();
-
-  if (bankError || !bank?.account_number) {
-    if (message) message.textContent =
-      "Please register your bank account number first.";
-    return;
-  }
-
-  accountInput.value = bank.account_number;
-
-  const transfer = new DataTransfer();
-  transfer.items.add(source.files[0]);
-  target.files = transfer.files;
-
-  verificationMessage.textContent = "Preparing verification...";
-  if (message) message.textContent = "Submitting bank document...";
-
-  await uploadBankVerificationDocument();
-
-  if (message) {
-    message.textContent = verificationMessage.textContent;
-  }
-} 
+}   
   
 let bankDocumentSubmissionRunning = false;
 
