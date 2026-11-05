@@ -14696,7 +14696,7 @@ if(window.publicTestLot){
     });
   }
 }
-  
+  window.lotPhotoSelections = window.lotPhotoSelections || {};
  const renderedLots=displayLots.map((lot,i)=>{
   const seller=(state.sellers||[]).find(s=>s.id===lot.sellerId);
     const high=currentBid(lot);
@@ -14778,7 +14778,7 @@ return `
         cursor:pointer;
         z-index:10;
       "
-    >1</button>
+    >${window.lotPhotoSelections[lot.id] === 2 && lot.plant ? '2' : '1'}</button>
   ` : ""}
 
   ${hotBidding ? `
