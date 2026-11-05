@@ -13496,78 +13496,7 @@ alert(
 
 window.turnstile?.reset("#cliviaTurnstile");
 return;
-  );
-}       
- const bidder={
-    id:"B"+Date.now(),
-name: bidderName,
-chatName: chatName,
-phone: bidderPhone,
-entityType,
-    businessName,
-    companyName,
-businessPhone,
-companyReg,
-vatNumber,
-    country:country,
-isInternational:isInternational,
-internationalRegistrationFee:isInternational ? 2000 : 0,
-    internationalRegistrationPaid:!isInternational,
-    email:document.getElementById("regEmail").value.trim(),
-    town:document.getElementById("regTown")?.value.trim() || "",
-    province:document.getElementById("regProvince")?.value || "",
-    address:document.getElementById("regAddress").value.trim(),
-suburb:document.getElementById("regSuburb").value.trim(),
-postal:document.getElementById("regPostal").value.trim(),
-country:document.getElementById("regCountry").value.trim(),
-accountNumber:"",
-defaultNumber:"",
-    bankConfirmed:false,
-   approvedPaymentAccounts:[],
-paymentHold:false,
-paymentHoldReason:"",
-        isExporter:false,
-exporterApproved:false,
-exporterDocsSubmitted:false,
-exporterRulesAccepted:false,
-completedSales:0,
-totalSalesValue:0,
-happyBuyers:0,
-    rulesAccepted:true,
-rulesAcceptedDate:new Date().toISOString(),
-    notifyNextAuction:notifyChoice,
-    selectedNotificationAuctions:Array.from(document.getElementById("bidderSelectedAuctions").selectedOptions).map(o=>o.value),
-   securityFeesPaidZAR:0,
-securityFeesPaidEUR:0,
-    securityProofStatus:"NONE",
-    isOwnerTest:false,
-securityProofCurrency:"",
-    securityProofAmount:0,
-securityProof:"",
-  };
-  // Save registration details temporarily until email verification.
-  // Do not activate bidding or selling yet.
-  const pendingRegistration = {
-    authUserId: signUpData.user.id,
-    bidder
-  };
-
-  sessionStorage.setItem(
-    "cliviaPendingRegistration",
-    JSON.stringify(pendingRegistration)
-  );
-
-  document.getElementById("regMsg").textContent =
-    "Please check your email and confirm your registration. " +
-    "Your account will not be active until verification is complete.";
-
-  alert(
-    "PLEASE CONFIRM YOUR EMAIL\n\n" +
-    "We have sent a confirmation link to:\n" +
-    bidderEmail +
-    "\n\nOpen your email and click the confirmation link."
-  );
-}
+  
  function selectedBidderNotice(){
   const bidder=(state.bidders||[]).find(
     b=>b.id===state.selectedBidderId
