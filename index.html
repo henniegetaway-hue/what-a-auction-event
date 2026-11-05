@@ -8750,7 +8750,14 @@ const selectedButton = document.getElementById(map[page][1]);
 if(selectedPage){
   selectedPage.classList.remove("hidden");
 }
+// Hide the main footer on Clivia Registration
+const mainAuctionFooter =
+  document.getElementById("mainAuctionFooter");
 
+if(mainAuctionFooter){
+  mainAuctionFooter.style.display =
+    page === "register" ? "none" : "";
+}
 // Show the Clivia-only carry-forward notice on Clivia pages, not Rules or creator pages.
 const carryForwardNotice = document.getElementById("cliviaCarryForwardFooter");
 
