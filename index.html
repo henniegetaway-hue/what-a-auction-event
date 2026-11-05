@@ -357,7 +357,21 @@ button{
   cursor:pointer;
 }
 /* HIDE REGISTRATION TOP HEADING AND BUTTONS */
-#pageRegister #registrationMainPanel h2,
+/* REMOVE EMPTY TOP PANEL AND CLOSE GAP */
+#pageRegister #registrationMainPanel {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+}
+
+#pageRegister #registerPageGrid {
+  align-items: start !important;
+  row-gap: 0 !important;
+}
 #pageRegister #registrationButtonRow,
 #pageRegister #registrationButtonRow button {
   display:none !important;
