@@ -13496,8 +13496,9 @@ alert(
 
 window.turnstile?.reset("#cliviaTurnstile");
 return;
-  
- function selectedBidderNotice(){
+}
+
+function selectedBidderNotice(){
   const bidder=(state.bidders||[]).find(
     b=>b.id===state.selectedBidderId
   );
