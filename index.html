@@ -9006,134 +9006,34 @@ async function openSellerLoadFromLot(auctionId, rowKey){
 // OPEN EXISTING REGISTRATION FORM FOR VISITORS
 function openCliviaVisitorRegistration(){
 
+  // Open the normal registration page
   showPage("register");
 
-  const form =
-    document.getElementById("newBidderRegistration");
+  // Select Clivia Dreamers registration
+  const mode = document.getElementById("registrationMode");
+  if(mode) mode.value = "CLIVIA";
 
-  if(!form){
-    alert("Registration form could not be found.");
-    return;
+  // Restore the correct heading
+  const heading = document.querySelector(
+    "#registrationMainPanel h2"
+  );
+
+  if(heading){
+    heading.textContent = "Clivia Dreamers Registration";
   }
 
-  let marker =
-    document.getElementById("cliviaVisitorFormMarker");
+  // Open the new account form
+  showNewBidderRegistration();
 
-  if(!marker){
-    marker = document.createElement("span");
-    marker.id = "cliviaVisitorFormMarker";
-    marker.style.display = "none";
-    form.parentNode.insertBefore(marker, form);
-  }
-
-  let overlay =
-    document.getElementById("cliviaVisitorRegistrationOverlay");
-
-  if(!overlay){
-
-    overlay = document.createElement("div");
-    overlay.id = "cliviaVisitorRegistrationOverlay";
-
-    overlay.style.cssText = `
-      position:fixed;
-      inset:0;
-      z-index:2147483646;
-      background:rgba(0,0,0,.82);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:12px;
-    `;
-
-    const panel = document.createElement("div");
-    panel.id = "cliviaVisitorRegistrationPanel";
-
-    panel.style.cssText = `
-      width:100%;
-      max-width:580px;
-      max-height:92dvh;
-      overflow-y:auto;
-      background:#101912;
-      color:white;
-      border:2px solid #9acd32;
-      border-radius:12px;
-      padding:15px;
-      box-sizing:border-box;
-    `;
-
-    const close = document.createElement("button");
-    close.type = "button";
-    close.textContent = "✕ CLOSE";
-
-    close.style.cssText = `
-      display:block;
-      margin:0 0 12px auto;
-      padding:8px 12px;
-      cursor:pointer;
-    `;
-
-    close.onclick = () => {
-
-      const original =
-        document.getElementById("cliviaVisitorFormMarker");
-
-      const registration =
-        document.getElementById("newBidderRegistration");
-
-      if(original && registration){
-        original.parentNode.insertBefore(
-          registration,
-          original.nextSibling
-        );
-      }
-
-      overlay.style.display = "none";
-    };
-
-    panel.appendChild(close);
-
-    const heading = document.createElement("h2");
-    heading.textContent = "CLIVIA DREAMERS — NEW ACCOUNT";
-    panel.appendChild(heading);
-
-    const signIn = document.createElement("button");
-    signIn.type = "button";
-    signIn.textContent = "ALREADY REGISTERED? SIGN IN";
-    signIn.className = "accountBtn";
-    signIn.style.cssText = "width:100%;margin:8px 0 15px;";
-
-    signIn.onclick = () => {
-
-      close.click();
-
-      const login =
-        document.getElementById("bidderLoginBox");
-
-      if(login){
-        login.style.display = "block";
-        login.scrollIntoView({
-          behavior:"smooth",
-          block:"center"
-        });
-      }
-    };
-
-    panel.appendChild(signIn);
-    overlay.appendChild(panel);
-    document.body.appendChild(overlay);
-  }
-
-  const panel =
-    document.getElementById("cliviaVisitorRegistrationPanel");
-
-  panel.appendChild(form);
-
-  form.style.display = "block";
-  overlay.style.display = "flex";
-
-  panel.scrollTop = 0;
+  // Scroll to the registration form
+  setTimeout(() => {
+    document.getElementById("registrationMainPanel")
+      ?.scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+      });
+  },100);
 }
-
 // CHECK ACCOUNT BEFORE OPENING PLANT LOADING
 async function openSellerSpaces(){
 
