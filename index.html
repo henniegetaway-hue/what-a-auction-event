@@ -449,21 +449,35 @@ justify-content:center;
   max-width:100% !important;
   min-width:0 !important;
 }
-/* CLIVIA AUCTION — EXACTLY 2 PLANT CARDS PER ROW ON PHONE */
+/* CLIVIA LIVE AUCTION — PHONE WIDTH CORRECTION */
 @media screen and (max-width:600px) {
+
+  /* Outer container must use full phone width */
   #pageLive #lotsGrid {
+    display:block !important;
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+  }
+
+  /* Plant cards: exactly 2 per row */
+  #pageLive #lotsGrid .auctionRowScroll {
     display:grid !important;
     grid-template-columns:repeat(2,minmax(0,1fr)) !important;
     gap:8px !important;
     width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
   }
 
-  #pageLive #lotsGrid > * {
+  /* Cards must fit inside their columns */
+  #pageLive #lotsGrid .auctionRowScroll > * {
     width:100% !important;
-    min-width:0 !important;
     max-width:100% !important;
+    min-width:0 !important;
     box-sizing:border-box !important;
   }
+
 }
 /* CLIVIA AUCTION — COMPUTER: 4 CARDS PER ROW */
 #lotsGrid .auctionRowScroll{
