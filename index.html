@@ -11149,7 +11149,7 @@ async function viewOwnerOriginalRegistration(){
 }
   
   function showNewBidderRegistration(){
-   
+
   const mode =
     document.getElementById("registrationMode")?.value || "CLIVIA";
 
@@ -11161,20 +11161,35 @@ async function viewOwnerOriginalRegistration(){
         el.id === "internationalBidderNotice" ? "none" : "block";
     });
   }
-     
-  document.getElementById("newBidderRegistration").style.display="block";
-  document.getElementById("registeredBidderSection").style.display="none";
-             document.getElementById("bidderForgotChoiceRow").style.display="none";
-document.getElementById("bidderForgotPasswordBox").style.display="none";
-    document.getElementById("bidderAddressFields").style.display="none";
-    document.getElementById("bidderPrivateFields").style.display="none";
-document.getElementById("bidderBusinessFields").style.display="none";
-   document.getElementById("bidderCommonFields").style.display="none";     
-   document.getElementById("regEntityType").value="";
-    document.querySelectorAll('input[name="bidderEntityChoice"]').forEach(radio=>{
-  radio.checked=false;
-});    
-    document.getElementById("newBidderRegistration").scrollIntoView({behavior:"smooth",block:"start"});
+
+  const showOrHide = (id, display) => {
+    const element = document.getElementById(id);
+    if(element) element.style.display = display;
+  };
+
+  showOrHide("newBidderRegistration", "block");
+  showOrHide("registeredBidderSection", "none");
+  showOrHide("bidderForgotChoiceRow", "none");
+  showOrHide("bidderForgotPasswordBox", "none");
+  showOrHide("bidderAddressFields", "none");
+  showOrHide("bidderPrivateFields", "none");
+  showOrHide("bidderBusinessFields", "none");
+  showOrHide("bidderCommonFields", "none");
+
+  const entityType = document.getElementById("regEntityType");
+  if(entityType) entityType.value = "";
+
+  document.querySelectorAll(
+    'input[name="bidderEntityChoice"]'
+  ).forEach(radio => {
+    radio.checked = false;
+  });
+
+  document.getElementById("newBidderRegistration")
+    ?.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
 }
       function startBidderPasswordReset(){
   const box=document.getElementById("bidderPasswordResetBox");
