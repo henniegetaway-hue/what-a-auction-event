@@ -3677,17 +3677,6 @@ KEEP BUTTONS ALIGNED IN ONE HORIZONTAL ROW.
 </div>  <!-- closes registeredBidderSection -->
 
 </div>  <!-- closes registrationMainPanel / LEFT column -->
-
-<div id="cliviaEventsPanel" class="panel" style="display:block;">
-  <h2>🌱 Clivia Events & Shows</h2>
-
-  <div id="cliviaEventsList">
-    <div class="notice">
-      Upcoming Clivia shows and events will appear here.
-    </div>
-  </div>
-</div>
-
 </div>  <!-- closes registerPageGrid -->
 </section>
 
@@ -6857,16 +6846,6 @@ container.appendChild(block);
        type="text"
        placeholder="Breeder name"
              oninput="updateSellerAIKeywords(); document.getElementById('sellerPreviewBreeder').textContent = 'Breeder: ' + (this.value || '—');">
-
-<label>Description *</label>
-<textarea id="sellerLotDescription"
-          rows="4"
-          placeholder="Describe the flower, colour, throat, markings, breeding, plant condition and any special features."
-          oninput="
-            updateSellerAIKeywords();
-            document.getElementById('sellerPreviewDescription').textContent =
-              'Description: ' + (this.value || '—');
-          "></textarea>
 
 <!-- Keywords generated automatically in the background -->
 <textarea id="sellerLotKeywords"
