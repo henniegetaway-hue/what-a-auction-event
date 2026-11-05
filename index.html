@@ -14729,52 +14729,57 @@ return `
  <span>LOT-${String(lot.lotNumber || (i+1)).padStart(3,"0")}</span>
 </div>
 
-      <div class="flowerWrap">
+    <div class="flowerWrap">
 
-<img
-  id="lotPhoto_${lot.id}"
-  src="${lot.flower}"
-  alt="${escapeHtml(lot.name)} flower"
-  data-flower="${lot.flower}"
-  data-plant="${lot.plant || ''}"
-  style="cursor:default;"
->
-
-.flowerWrap .photoSwitchBtn {
-  position:absolute !important;
-  top:6px !important;
-  left:50% !important;
-  transform:translateX(-50%) !important;
-  width:30px !important;
-  height:30px !important;
-  border-radius:50% !important;
-  background:white !important;
-  color:black !important;
-  border:2px solid #9acd32 !important;
-  padding:0 !important;
-  font-size:14px !important;
-  font-weight:bold !important;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  z-index:10;
-}
-  <button type="button"
-    onclick="event.stopPropagation();document.getElementById('lotPhoto_${lot.id}').src=document.getElementById('lotPhoto_${lot.id}').dataset.flower;"
-    style="width:20px;height:20px;border-radius:50%;background:white;color:black;border:1px solid #888;padding:0;font-size:11px;font-weight:bold;cursor:pointer;">
-    1
-  </button>
+  <img
+    id="lotPhoto_${lot.id}"
+    src="${lot.flower}"
+    alt="${escapeHtml(lot.name)} flower"
+    data-flower="${lot.flower}"
+    data-plant="${lot.plant || ''}"
+    data-photo-number="1"
+    style="cursor:default;"
+  >
 
   ${lot.plant ? `
-  <button type="button"
-    onclick="event.stopPropagation();document.getElementById('lotPhoto_${lot.id}').src=document.getElementById('lotPhoto_${lot.id}').dataset.plant;"
-    style="width:20px;height:20px;border-radius:50%;background:white;color:black;border:1px solid #888;padding:0;font-size:11px;font-weight:bold;cursor:pointer;">
-    2
-  </button>
-  ` : ""}
-</div>
+    <button
+      type="button"
+      class="photoSwitchBtn"
+      onclick="
+        event.preventDefault();
+        event.stopPropagation();
 
+        const photo = document.getElementById('lotPhoto_${lot.id}');
+
+        if (photo.dataset.photoNumber === '1') {
+          photo.src = photo.dataset.plant;
+          photo.dataset.photoNumber = '2';
+          this.textContent = '2';
+        } else {
+          photo.src = photo.dataset.flower;
+          photo.dataset.photoNumber = '1';
+          this.textContent = '1';
+        }
+      "
+      style="
+        position:absolute;
+        top:6px;
+        left:50%;
+        transform:translateX(-50%);
+        width:30px;
+        height:30px;
+        border-radius:50%;
+        background:white;
+        color:black;
+        border:2px solid #9acd32;
+        padding:0;
+        font-size:14px;
+        font-weight:bold;
+        cursor:pointer;
+        z-index:10;
+      "
+    >1</button>
+  ` : ""}
 
   ${hotBidding ? `
     <div style="
