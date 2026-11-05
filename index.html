@@ -3359,8 +3359,12 @@ KEEP BUTTONS ALIGNED IN ONE HORIZONTAL ROW.
 <label>Postal / ZIP code *</label>
 <input id="regPostal">
 
-<label>Country *</label>
-<input id="regCountry" placeholder="e.g. South Africa, USA, UK, Australia" oninput="updateInternationalBidderNotice()">
+
+<div style="display:none;">
+  <label>Country</label>
+  <input id="regCountry" type="hidden" value="South Africa">
+</div>
+
 <div id="internationalBidderNotice" class="notice cliviaOnly" style="display:none;">
   <b>INTERNATIONAL BIDDER</b><br>
   Registration fee: <b>R2,000</b><br>
@@ -3378,7 +3382,21 @@ KEEP BUTTONS ALIGNED IN ONE HORIZONTAL ROW.
   </p>
 </div>
 
-<input id="regAccountNumber" type="hidden" value="">
+
+<label for="regAccountNumber">
+  BANK ACCOUNT / IBAN NUMBER *
+</label>
+
+<input
+  id="regAccountNumber"
+  type="text"
+  placeholder="Enter your bank account / IBAN number"
+  autocomplete="off"
+  inputmode="text"
+  maxlength="34"
+  required
+>
+
 <input id="regDefaultNumber" type="hidden" value="">
 
 <div class="notice cliviaOnly">
@@ -13401,6 +13419,12 @@ const isSouthAfrica=
 const isInternational=!isSouthAfrica;   
 const accountNumber =
   document.getElementById("regAccountNumber")?.value.trim() || "";
+
+if(!/^[A-Za-z0-9]{1,34}$/.test(accountNumber)){
+  document.getElementById("regMsg").textContent =
+    "BANK ACCOUNT / IBAN NUMBER IS COMPULSORY. Enter a valid account number using letters and numbers only.";
+  return;
+}
 
 const defaultNumber =
   document.getElementById("regDefaultNumber")?.value.trim() || "";
