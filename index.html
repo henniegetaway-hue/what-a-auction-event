@@ -8586,7 +8586,10 @@ function setCliviaSEO(){
 
  
 function showPage(page){
-
+  document.body.classList.toggle(
+    "showRegistration",
+    page === "register"
+  );
   if(page === "ownEvent"){
     alert(
       "🚧 CREATE YOUR OWN EVENT\n\n" +
