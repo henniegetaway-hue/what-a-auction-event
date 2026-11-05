@@ -2290,7 +2290,8 @@ Website and database implementation still to be verified.
 ============================================================
 END OF BIDDING AND INVOICING MASTER RECORD
 ============================================================
--->   
+-->  
+ <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>     
 </head>
 
 <body id="siteBody">
@@ -3430,7 +3431,20 @@ KEEP BUTTONS ALIGNED IN ONE HORIZONTAL ROW.
   <label>Select the auction(s) you want notifications for</label>
   <select id="bidderSelectedAuctions" multiple size="4"></select>
 </div>
-      <button class="goldBtn" onclick="registerBidder()">REGISTER ACCOUNT</button>
+      <!-- CLOUDFLARE REGISTRATION SECURITY -->
+<div
+  id="cliviaTurnstile"
+  class="cf-turnstile"
+  data-sitekey="YOUR_TURNSTILE_SITE_KEY"
+  data-theme="auto"
+  style="margin:15px 0;display:flex;justify-content:center;">
+</div>
+
+<button
+  class="goldBtn"
+  onclick="registerBidder()">
+  REGISTER ACCOUNT
+</button>
 <div id="regMsg" class="small" style="margin-top:10px"></div>
     
 </div>
@@ -13411,47 +13425,77 @@ if(duplicatePhoneUser){
     "This WhatsApp number is already associated with different registration details.";
   return;
 }
-   const { data: signUpData, error: signUpError } =
-  await cliviaSupabase.auth.signUp({
-    email: bidderEmail,
-    password: bidderPassword,
-    options: {
-  emailRedirectTo:
-    "https://henniegetaway-hue.github.io/what-a-auction-event/",
-  data: {
-  full_name: bidderName,
-  whatsapp: bidderPhone,
-  account_type: "CLIVIA_BIDDER",
-  entity_type: entityType,
-  company_name: companyName || "",
-  trading_name: businessName || "",
-  business_whatsapp: businessPhone || "",
-  company_registration_number: companyReg || "",
-  vat_number: vatNumber || "",
-  address: document.getElementById("regAddress").value.trim(),
-  suburb: document.getElementById("regSuburb").value.trim(),
-  postal_code: document.getElementById("regPostal").value.trim(),
-  country: document.getElementById("regCountry").value.trim(),
-  town: document.getElementById("regTown")?.value.trim() || "",
-  province: document.getElementById("regProvince")?.value || ""
-}
-}
-  });
+// SECURE CLIVIA DREAMERS REGISTRATION
+const regMsg = document.getElementById("regMsg");
 
-if(signUpError){
-  document.getElementById("regMsg").textContent =
-    "Registration failed: " + signUpError.message;
+regMsg.textContent = "Submitting registration...";
+
+let registrationResponse;
+
+try {
+  registrationResponse = await fetch(
+    CLIVIA_SUPABASE_URL +
+      "/functions/v1/register-member-securely",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": CLIVIA_SUPABASE_KEY
+      },
+      body: JSON.stringify({
+        email: bidderEmail,
+        password: bidderPassword,
+        full_name: bidderName,
+        whatsapp: bidderPhone,
+        account_number: accountNumber,
+        turnstile_token: turnstileToken,
+        entity_type: entityType,
+        company_name: companyName || "",
+        trading_name: businessName || "",
+        business_whatsapp: businessPhone || "",
+        company_registration_number: companyReg || "",
+        vat_number: vatNumber || "",
+        address: address,
+        suburb: suburb,
+        postal_code: postal,
+        country: country,
+        town:
+          document.getElementById("regTown")?.value.trim() || "",
+        province:
+          document.getElementById("regProvince")?.value || ""
+      })
+    }
+  );
+} catch (error) {
+  regMsg.textContent =
+    "Registration service unavailable. Please try again later.";
+  window.turnstile?.reset("#cliviaTurnstile");
   return;
 }
 
-if(!signUpData.user){
-  document.getElementById("regMsg").textContent =
-    "Unable to create account. Please try again.";
+const registrationResult =
+  await registrationResponse.json().catch(() => ({}));
+
+if (!registrationResponse.ok) {
+  regMsg.textContent =
+    registrationResult.message ||
+    "Registration could not be completed.";
+
+  window.turnstile?.reset("#cliviaTurnstile");
   return;
-}  
- if(!signUpData.session){
-  console.log(
-    "Clivia registration awaiting email confirmation."
+}
+
+regMsg.textContent =
+  "Registration received. Please check your email.";
+
+alert(
+  "PLEASE CONFIRM YOUR EMAIL\n\n" +
+  "A confirmation email has been requested for:\n" +
+  bidderEmail
+);
+
+window.turnstile?.reset("#cliviaTurnstile");
+return;
   );
 }       
  const bidder={
@@ -16996,7 +17040,16 @@ if(existingSessionData.session){
     creatorAuth = signInData;
 
   } else {
+const turnstileToken =
+  window.turnstile?.getResponse(
+    document.getElementById("cliviaTurnstile")
+  ) || "";
 
+if (!turnstileToken) {
+  document.getElementById("regMsg").textContent =
+    "Please complete the security verification before registering.";
+  return;
+}
     const { data: signUpData, error: signUpError } =
       await auctionSupabase.auth.signUp({
         email: creatorEmail,
