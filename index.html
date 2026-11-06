@@ -18732,13 +18732,43 @@ async function openAdmin(){
     return;
   }
 
-  const { data: isCorrect, error: verifyError } =
-    await auctionSupabase.rpc(
-      "verify_admin_password",
-      {
-        check_password: password
-      }
-    );
+  let isCorrect = false;
+let verifyError = null;
+
+// First check the existing Admin passwords.
+const adminResult = await auctionSupabase.rpc(
+  "verify_admin_password",
+  { check_password: password }
+);
+
+isCorrect = adminResult.data === true;
+verifyError = adminResult.error;
+
+// If neither Admin password matches,
+// check the existing Owner account password.
+if (!isCorrect) {
+  const { data: ownerResult, error: ownerError } =
+    await auctionSupabase.auth.signInWithPassword({
+      email: sessionData.session.user.email,
+      password: password
+    });
+
+  if (!ownerError && ownerResult?.user) {
+    const { data: ownerRole, error: roleError } =
+      await auctionSupabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", ownerResult.user.id)
+        .maybeSingle();
+
+    isCorrect =
+      !roleError &&
+      ownerResult.user.id === sessionData.session.user.id &&
+      ownerRole?.role === "OWNER";
+
+    if (isCorrect) verifyError = null;
+  }
+}
 
   if(verifyError || isCorrect !== true){
 
