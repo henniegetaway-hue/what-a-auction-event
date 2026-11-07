@@ -14920,7 +14920,9 @@ return `
 
   <img
     id="lotPhoto_${lot.id}"
-    src="${lot.flower}"
+    
+src="${window.lotPhotoSelections?.[lot.id] === 2 && lot.plant ? lot.plant : lot.flower}"
+
     alt="${escapeHtml(lot.name)} flower"
     data-flower="${lot.flower}"
     data-plant="${lot.plant || ''}"
