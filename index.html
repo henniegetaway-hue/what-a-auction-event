@@ -14937,7 +14937,7 @@ return `
         event.stopPropagation();
 
         const photo = document.getElementById('lotPhoto_${lot.id}');
-
+window.lotPhotoSelections = window.lotPhotoSelections || {};
         if (photo.dataset.photoNumber === '1') {
           photo.src = photo.dataset.plant;
           photo.dataset.photoNumber = '2';
