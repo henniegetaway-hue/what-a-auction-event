@@ -14926,7 +14926,9 @@ src="${window.lotPhotoSelections?.[lot.id] === 2 && lot.plant ? lot.plant : lot.
     alt="${escapeHtml(lot.name)} flower"
     data-flower="${lot.flower}"
     data-plant="${lot.plant || ''}"
-    data-photo-number="1"
+   
+data-photo-number="${window.lotPhotoSelections?.[lot.id] === 2 && lot.plant ? '2' : '1'}"
+
     style="cursor:default;"
   >
 
