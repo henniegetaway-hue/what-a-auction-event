@@ -7638,6 +7638,38 @@ background:linear-gradient(90deg,#a0ff80,#39e52d);
   Your bank account number does not match your registered bank details.
 </div>
 
+<div id="bankOwnershipDeclaration"
+     style="background:#f1f1f1;color:#000;
+            padding:12px;border-radius:8px;
+            margin:12px 0;">
+
+  <strong>FREE BANK OWNERSHIP CONFIRMATION</strong>
+
+  <p style="font-size:13px;">
+    For combined bidding up to R1,800,
+    no bank document is required.
+  </p>
+
+  <label style="display:flex;gap:10px;align-items:center;">
+    <input type="checkbox"
+           id="confirmBankOwnershipCheckbox"
+           style="width:20px;height:20px;flex-shrink:0;">
+
+    <span>
+      I confirm that the registered bank account
+      belongs to me.
+    </span>
+  </label>
+
+  <button type="button"
+          class="goldBtn"
+          style="margin-top:12px;"
+          onclick="submitBankOwnershipConfirmation()">
+    CONFIRM BANK OWNERSHIP
+  </button>
+
+</div>
+
         <label>Bank Statement / Bank Confirmation</label>
 
     <input type="file"
@@ -7727,6 +7759,56 @@ function isHotDeal(lot){
 }
 
 /* CHECK EXISTING BANK VERIFICATION DOCUMENT */
+
+async function submitBankOwnershipConfirmation() {
+  const checkbox = document.getElementById(
+    "confirmBankOwnershipCheckbox"
+  );
+  const msg = document.getElementById(
+    "bankVerificationMessage"
+  );
+
+  if (!msg) return;
+
+  if (!checkbox?.checked) {
+    msg.textContent =
+      "Please confirm that the registered bank account belongs to you.";
+    return;
+  }
+
+  msg.textContent = "Checking your account...";
+
+  try {
+    const { data: authData, error: authError } =
+      await cliviaSupabase.auth.getUser();
+
+    if (authError || !authData?.user?.email_confirmed_at) {
+      msg.textContent =
+        "Please sign in with your verified email.";
+      return;
+    }
+
+    const { data, error } = await cliviaSupabase.rpc(
+      "confirm_my_bank_ownership"
+    );
+
+    if (error || data !== true) {
+      msg.textContent =
+        error?.message || "Confirmation failed.";
+      return;
+    }
+
+    checkbox.checked = false;
+    msg.textContent =
+      "Bank ownership declaration recorded. " +
+      "This does not approve bank documents or activate bidding.";
+
+  } catch (error) {
+    console.error("Bank ownership confirmation:", error);
+    msg.textContent =
+      "Unable to confirm bank ownership. Please try again.";
+  }
+}
 
 async function checkExistingBankVerification() {
 
