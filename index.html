@@ -13774,6 +13774,16 @@ function selectedBidderNotice(){
         : " - 🔴 BANK ACCOUNT NOT CONFIRMED - BIDDING BLOCKED");
   }
 } 
+  
+function openCliviaBankOwnershipConfirmation() {
+  if (typeof showBankVerificationPopup !== "function") {
+    alert("Bank verification window is unavailable.");
+    return;
+  }
+
+  showBankVerificationPopup();
+}
+    
  function increaseBidderCapacity(){
   const bidder=(state.bidders||[]).find(
     b=>b.id===state.selectedBidderId
