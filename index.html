@@ -14928,66 +14928,56 @@ return `
     style="cursor:default;"
   >
 
-  ${lot.plant ? `
-    <button
-      type="button"
-      class="photoSwitchBtn"
-     
-onclick="
-  event.preventDefault();
-  event.stopPropagation();
+  
+${lot.plant ? `
+  <button
+    type="button"
+    class="photoSwitchBtn"
+    onclick="
+      event.preventDefault();
+      event.stopPropagation();
 
-  const photo = document.getElementById('lotPhoto_${lot.id}');
-  if (!photo) return false;
+      window.lotPhotoSelections =
+        window.lotPhotoSelections || {};
 
-  window.lotPhotoSelections = window.lotPhotoSelections || {};
+      const photo =
+        document.getElementById('lotPhoto_${lot.id}');
 
-  const nextPhoto =
-    photo.dataset.photoNumber === '1' ? 2 : 1;
+      if (photo) {
+        const nextPhoto =
+          photo.dataset.photoNumber === '1' ? 2 : 1;
 
-  photo.src = nextPhoto === 2
-    ? photo.dataset.plant
-    : photo.dataset.flower;
+        photo.src = nextPhoto === 2
+          ? photo.dataset.plant
+          : photo.dataset.flower;
 
-  photo.dataset.photoNumber = String(nextPhoto);
-  window.lotPhotoSelections[lot.id] = nextPhoto;
-  this.textContent = String(nextPhoto);
+        photo.dataset.photoNumber = String(nextPhoto);
+        window.lotPhotoSelections['${lot.id}'] = nextPhoto;
+        this.textContent = String(nextPhoto);
+      }
 
-  return false;
-"
+      return false;
+    "
+    style="
+      position:absolute;
+      top:6px;
+      left:50%;
+      transform:translateX(-50%);
+      width:30px;
+      height:30px;
+      border-radius:50%;
+      background:white;
+      color:black;
+      border:2px solid #9acd32;
+      padding:0;
+      font-size:14px;
+      font-weight:bold;
+      cursor:pointer;
+      z-index:10;
+    "
+  >1</button>
+` : ""}
 
-
-        const photo = document.getElementById('lotPhoto_${lot.id}');
-window.lotPhotoSelections = window.lotPhotoSelections || {};
-        if (photo.dataset.photoNumber === '1') {
-          photo.src = photo.dataset.plant;
-          photo.dataset.photoNumber = '2';
-          this.textContent = '2';
-        } else {
-          photo.src = photo.dataset.flower;
-          photo.dataset.photoNumber = '1';
-          this.textContent = '1';
-        }
-      "
-      style="
-        position:absolute;
-        top:6px;
-        left:50%;
-        transform:translateX(-50%);
-        width:30px;
-        height:30px;
-        border-radius:50%;
-        background:white;
-        color:black;
-        border:2px solid #9acd32;
-        padding:0;
-        font-size:14px;
-        font-weight:bold;
-        cursor:pointer;
-        z-index:10;
-      "
-   >1</button>
-  ` : ""}
 
   ${hotBidding ? `
     <div style="
