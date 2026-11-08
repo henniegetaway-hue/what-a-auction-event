@@ -10523,10 +10523,24 @@ if(typeof getStartRowSpacesLeft === "function"){
   }
    const photoPath = "lots/" + Date.now() + "-" + photo1.name.replace(/[^a-zA-Z0-9._-]/g, "_");
 
+
+const compressedPhotoData = await fileToDataURL(photo1);
+
+const compressedPhotoBlob = await (
+  await fetch(compressedPhotoData)
+).blob();
+
+const compressedPhotoPath =
+  photoPath.replace(/\.[^.]+$/, "") + ".jpg";
+
 const { error: photoUploadError } =
   await auctionSupabase.storage
     .from("lot-photos")
-    .upload(photoPath, photo1);
+    .upload(compressedPhotoPath, compressedPhotoBlob, {
+      contentType: "image/jpeg",
+      upsert: false
+    });
+
 
 if(photoUploadError){
   if(msg) msg.innerHTML =
