@@ -12586,6 +12586,109 @@ window.addEventListener("DOMContentLoaded", showCliviaGroupJoinButton);
   );
 }   
 
+async function loadCliviaGroupInternationalSetting(){
+
+  const groupId = window.selectedCliviaGroupId;
+  const toggle = document.getElementById(
+    "cliviaGroupInternationalToggle"
+  );
+  const status = document.getElementById(
+    "cliviaGroupInternationalStatus"
+  );
+
+  if(!toggle || !status) return;
+
+  toggle.disabled = true;
+  toggle.value = "NO";
+  status.textContent = "Checking Group President permissions...";
+
+  if(!groupId){
+    status.textContent = "Please select your Group first.";
+    return;
+  }
+
+  const { data: authData, error: authError } =
+    await cliviaSupabase.auth.getUser();
+
+  if(authError || !authData?.user){
+    status.textContent = "Please sign in first.";
+    return;
+  }
+
+  const userId = authData.user.id;
+
+  const { data: group, error } =
+    await cliviaSupabase
+      .from("clivia_groups")
+      .select("id, president_user_id, international_bidding")
+      .eq("id", groupId)
+      .maybeSingle();
+
+  if(error || !group){
+    status.textContent = "Unable to load Group settings.";
+    return;
+  }
+
+  if(String(window.selectedCliviaGroupId) !== String(group.id)){
+    status.textContent = "Group selection changed. Please reopen.";
+    return;
+  }
+
+  const enabled = group.international_bidding === true;
+  toggle.value = enabled ? "YES" : "NO";
+
+  if(group.president_user_id !== userId){
+    status.textContent = "Only the Group President may change this setting.";
+    return;
+  }
+
+  toggle.disabled = false;
+  status.textContent = enabled
+    ? "International membership applications allowed."
+    : "International bidding is OFF.";
+
+  toggle.onchange = async function(){
+
+    const newValue = toggle.value === "YES";
+    const oldValue = !newValue;
+
+    toggle.disabled = true;
+
+    const approved = confirm(
+      newValue
+        ? "Allow international membership applications for this Group?\n\nEach international member must still be approved individually.\n\nThis does NOT activate bidding."
+        : "Turn OFF international bidding for this Group?\n\nThis will prevent international bidding permission for this Group."
+    );
+
+    if(!approved){
+      toggle.value = oldValue ? "YES" : "NO";
+      toggle.disabled = false;
+      return;
+    }
+
+    status.textContent = "Saving Group setting...";
+
+    const { data: saved, error: saveError } =
+      await cliviaSupabase
+        .from("clivia_groups")
+        .update({
+          international_bidding: newValue
+        })
+        .eq("id", group.id)
+        .eq("president_user_id", userId)
+        .select("id, international_bidding")
+        .maybeSingle();
+
+    if(saveError || !saved){
+      alert("Setting could not be saved.");
+    } else {
+      alert("International bidding setting saved.");
+    }
+
+    await loadCliviaGroupInternationalSetting();
+  };
+}
+
 async function loadCliviaGroupMembers(){
 
   const groupId = window.selectedCliviaGroupId;
@@ -12689,7 +12792,7 @@ async function approveCliviaGroupMember(memberId){
   title.textContent = "🌸 " + groupName;
 
   panel.style.display = "block";
-        
+loadCliviaGroupInternationalSetting();        
 loadCliviaGroupMembers();
         
   panel.scrollIntoView({
