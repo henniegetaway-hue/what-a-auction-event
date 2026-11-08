@@ -10551,7 +10551,7 @@ if(photoUploadError){
 const { data: photoPublicData } =
   auctionSupabase.storage
     .from("lot-photos")
-    .getPublicUrl(photoPath);
+   .getPublicUrl(compressedPhotoPath);
 
 const flower = photoPublicData.publicUrl;
 const plant = photo2 ? await fileToDataURL(photo2) : "";    
