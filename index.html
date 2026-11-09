@@ -5281,7 +5281,48 @@ border:1px solid #D99A50;
   <div id="siteErrorLog">No site errors recorded.</div>
 </div>
   </div>
+<div class="panel" id="adminRegistrationFeesPanel">
+  <h2>REGISTRATION FEE SETTINGS</h2>
 
+  <p>First 50 verified registrations FREE</p>
+
+  <label>South African Registration Fee (R)</label>
+  <input
+    id="adminRegistrationFeeZar"
+    type="number"
+    min="0"
+    step="0.01"
+    value="50"
+  >
+
+  <label>International Registration Fee (€)</label>
+  <input
+    id="adminRegistrationFeeEur"
+    type="number"
+    min="0"
+    step="0.01"
+    value="5"
+  >
+
+  <p class="small">
+    Once-off registration fee per member.
+    Changes apply to future registrations only.
+    NO VAT.
+  </p>
+
+  <button
+    type="button"
+    class="goldBtn"
+    onclick="saveAdminRegistrationFees()"
+  >
+    SAVE REGISTRATION FEES
+  </button>
+
+  <div id="adminRegistrationFeesMessage"
+       class="small"
+       style="margin-top:10px;">
+  </div>
+</div>
 </div>  <!-- closes adminArea -->
 
 </section>  <!-- closes pageAdmin -->
@@ -9067,7 +9108,10 @@ if(account){
     updateRegistrationAccountButtons();
   });
 }   
- if(page==="admin") renderAdminLots();
+ if(page==="admin"){
+  renderAdminLots();
+  loadAdminRegistrationFees();
+}
 if(page==="invoices") renderInvoices();
 
 if(page==="cliviaChat"){
@@ -19083,7 +19127,27 @@ if (!isCorrect) {
   }
 
   adminLogin.classList.add("hidden");
-  adminArea.classList.remove("hidden");
+adminArea.classList.remove("hidden");
+
+const { data: cliviaOwnerData, error: cliviaOwnerError } =
+  await cliviaSupabase.auth.getUser();
+
+if (cliviaOwnerError || !cliviaOwnerData?.user) {
+  const feeMessage =
+    document.getElementById("adminRegistrationFeesMessage");
+
+  if (feeMessage) {
+    feeMessage.textContent =
+      "Sign in to your authorised Clivia Dreamers owner account to manage registration fees.";
+  }
+
+  const feePanel =
+    document.getElementById("adminRegistrationFeesPanel");
+
+  if (feePanel) feePanel.style.display = "none";
+} else {
+  loadAdminRegistrationFees();
+} 
 
   if(typeof renderAdminLots === "function"){
     renderAdminLots();
@@ -21002,5 +21066,113 @@ function previewNewMemberRegistration(){
 }
 </script>
 
+<script>
+async function saveAdminRegistrationFees() {
+  const message = document.getElementById(
+    "adminRegistrationFeesMessage"
+  );
+
+  const zar = Number(
+    document.getElementById("adminRegistrationFeeZar").value
+  );
+
+  const eur = Number(
+    document.getElementById("adminRegistrationFeeEur").value
+  );
+
+  if (
+    !Number.isFinite(zar) ||
+    !Number.isFinite(eur) ||
+    zar < 0 ||
+    eur < 0
+  ) {
+    message.textContent = "Please enter valid registration fees.";
+    return;
+  }
+
+  message.textContent = "Saving registration fees...";
+
+  const { data: sessionData, error: sessionError } =
+    await cliviaSupabase.auth.getUser();
+
+  if (sessionError || !sessionData?.user) {
+    message.textContent =
+      "Please sign in to your authorised Clivia owner account.";
+    return;
+  }
+
+  const { error } = await cliviaSupabase.rpc(
+    "clivia_update_registration_fees",
+    {
+      p_fee_zar: zar,
+      p_fee_eur: eur
+    }
+  );
+
+  if (error) {
+    message.textContent = "Unable to save: " + error.message;
+    return;
+  }
+
+  message.textContent = "Registration fees saved successfully.";
+}
+</script>
+<script>
+async function loadAdminRegistrationFees() {
+  const panel = document.getElementById(
+    "adminRegistrationFeesPanel"
+  );
+
+  const message = document.getElementById(
+    "adminRegistrationFeesMessage"
+  );
+
+  // Hide until Supabase confirms owner permission.
+  if (panel) panel.style.display = "none";
+
+  const { data: userData, error: userError } =
+    await cliviaSupabase.auth.getUser();
+
+  if (userError || !userData?.user) {
+    return;
+  }
+
+  const { data, error } = await cliviaSupabase.rpc(
+    "clivia_get_registration_fee_settings"
+  );
+
+  if (error) {
+    console.error(
+      "Registration fee access denied or unavailable:",
+      error.message
+    );
+    return;
+  }
+
+  const settings = Array.isArray(data) ? data[0] : data;
+
+  if (!settings) return;
+
+  const zarInput = document.getElementById(
+    "adminRegistrationFeeZar"
+  );
+
+  const eurInput = document.getElementById(
+    "adminRegistrationFeeEur"
+  );
+
+  if (!panel || !zarInput || !eurInput) return;
+
+  zarInput.value = settings.registration_fee_zar;
+  eurInput.value = settings.registration_fee_eur;
+
+  if (message) {
+    message.textContent = "Registration fees loaded.";
+  }
+
+  // Show only after successful owner-authorised response.
+  panel.style.display = "block";
+}
+</script>
 </body>
 </html>
