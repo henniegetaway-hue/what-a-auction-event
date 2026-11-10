@@ -13937,13 +13937,23 @@ function selectedBidderNotice(){
     }
   }
 
-  if(notice){
-    notice.textContent=
-      "Account: "+bidder.name+
-      (bidder.bankConfirmed
-        ? " - ✅ BANK ACCOUNT CONFIRMED - BIDDING ENABLED"
-        : " - 🔴 BANK ACCOUNT NOT CONFIRMED - BIDDING BLOCKED");
+ if(notice){
+  let bankStatus;
+
+  if(bidder.bankConfirmed){
+    bankStatus = " - ✅ BANK DOCUMENT VERIFIED";
+  } else if(bidder.bankOwnershipConfirmed){
+    bankStatus =
+      " - ✅ BANK OWNERSHIP CONFIRMED - R1,800 DOCUMENT EXEMPTION";
+  } else {
+    bankStatus =
+      " - 🔴 BANK OWNERSHIP NOT CONFIRMED";
   }
+
+  notice.textContent =
+    "Account: " + bidder.name + bankStatus +
+    " - LIVE BIDDING NOT YET ACTIVATED";
+}
 } 
   
 function openCliviaBankOwnershipConfirmation() {
