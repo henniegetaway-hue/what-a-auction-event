@@ -17837,7 +17837,10 @@ const selectedAuctionId =
 
 let savedAuction = null;
 let eventSaveError = null;
- function updateOwnEventAccentColor() {
+
+} // End of startOwnEventCreation
+
+function updateOwnEventAccentColor() {
   const color = document.getElementById("ownEventAccentColor")?.value || "#9acd32";
   const frame = document.getElementById("ownEventPreviewFrame");     
    const title = document.getElementById("previewEventName");  
