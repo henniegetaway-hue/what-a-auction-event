@@ -17832,17 +17832,140 @@ accentColor: document.getElementById("ownEventAccentColor")?.value || "#9acd32",
 
 };
 
+
 const selectedAuctionId =
   localStorage.getItem("selectedCreatorAuctionId");
 
 let savedAuction = null;
 let eventSaveError = null;
 
-} // End of startOwnEventCreation
+try {
+  if (selectedAuctionId) {
+    const { data: record, error: lookupError } =
+      await auctionSupabase
+        .from("auction_events")
+        .select("id, creator_id, event_data")
+        .eq("id", selectedAuctionId)
+        .eq("creator_id", creatorAuth.user.id)
+        .maybeSingle();
+
+    if (lookupError) throw lookupError;
+
+    if (!record) {
+      alert("Selected auction not found. Nothing was saved.");
+      return;
+    }
+
+    const previous = record.event_data || {};
+
+    const status = String(
+      previous.eventStatus || "DRAFT"
+    ).toUpperCase();
+
+    const hasBids = (previous.lots || []).some(lot =>
+      (Array.isArray(lot.bids) && lot.bids.length > 0) ||
+      Number(lot.highestBid || 0) > 0 ||
+      lot.sold === true
+    );
+
+    if (
+      status !== "DRAFT" ||
+      previous.liveEnabled === true ||
+      previous.permanentHistory?.completed === true ||
+      hasBids
+    ) {
+      alert(
+        "AUCTION PROTECTED\n\n" +
+        "Live, completed or bid-bearing auctions cannot be overwritten."
+      );
+      return;
+    }
+
+    const updatedEvent = {
+      ...previous,
+      ...newEvent,
+      id: previous.id,
+      creator: previous.creator,
+      permanentHistory: previous.permanentHistory,
+      activationInvoiceId: previous.activationInvoiceId ?? null,
+      activationPaymentStatus:
+        previous.activationPaymentStatus || "NOT_INVOICED",
+      activationApproved:
+        previous.activationApproved === true,
+      activationApprovedAt:
+        previous.activationApprovedAt || null,
+      eventStatus: "DRAFT",
+      liveEnabled: false
+    };
+
+    const { data: updated, error: updateError } =
+      await auctionSupabase
+        .from("auction_events")
+        .update({ event_data: updatedEvent })
+        .eq("id", record.id)
+        .eq("creator_id", creatorAuth.user.id)
+        .select("id");
+
+    if (updateError) throw updateError;
+
+    if (!updated?.length) {
+      throw new Error("Database did not confirm the update.");
+    }
+
+    savedAuction = updatedEvent;
+
+  } else {
+    const { data: inserted, error: insertError } =
+      await auctionSupabase
+        .from("auction_events")
+        .insert({
+          creator_id: creatorAuth.user.id,
+          event_data: newEvent
+        })
+        .select("id");
+
+    if (insertError) throw insertError;
+
+    if (!inserted?.length) {
+      throw new Error("Database did not confirm the new auction.");
+    }
+
+    localStorage.setItem(
+      "selectedCreatorAuctionId",
+      String(inserted[0].id)
+    );
+
+    savedAuction = newEvent;
+  }
+
+} catch (error) {
+  eventSaveError = error;
+}
+
+if (eventSaveError) {
+  console.error("Auction saving failed:", eventSaveError);
+  alert(
+    "AUCTION NOT SAVED\n\n" +
+    (eventSaveError.message || "Unknown database error.")
+  );
+  return;
+}
+
+alert(
+  "AUCTION DRAFT SAVED\n\n" +
+  "Your auction details have been saved.\n" +
+  "This auction is NOT live."
+);
+
+if (typeof loadMyAuctions === "function") {
+  await loadMyAuctions();
+}
+
+} // END OF CREATE YOUR OWN EVENT FUNCTION
 
 function updateOwnEventAccentColor() {
   const color = document.getElementById("ownEventAccentColor")?.value || "#9acd32";
-  const frame = document.getElementById("ownEventPreviewFrame");     
+  const frame = document.getElementById("ownEventPreviewFrame");    
    const title = document.getElementById("previewEventName");  
    const tagline = document.getElementById("previewEventTagline");          
 
