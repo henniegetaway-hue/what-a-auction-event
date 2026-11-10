@@ -8908,12 +8908,8 @@ function showPage(page){
     "showRegistration",
     page === "register"
   );
-  if(page === "ownEvent"){
-    alert(
-      "🚧 CREATE YOUR OWN EVENT\n\n" +
-      "UNDER CONSTRUCTION\n\n" +
-      "This service is coming soon. Please visit again."
-    );
+   if(page === "ownEvent"){
+    showOwnEventPage();
     return;
   }
 
