@@ -14142,7 +14142,13 @@ if(info){
     "Suburb: "+(bidder.suburb || "-")+"<br>"+
     "Postal Code: "+(bidder.postal || "-")+"<br>"+
     "Country: "+(bidder.country || "-")+"<br>"+
-    "Bank Status: "+(bidder.bankConfirmed ? "✅ CONFIRMED" : "🔴 NOT CONFIRMED");
+    "Bank Status: " + (
+  bidder.bankConfirmed
+    ? "✅ BANK DOCUMENT VERIFIED"
+    : bidder.bankOwnershipConfirmed
+      ? "✅ BANK OWNERSHIP CONFIRMED — R1,800 DOCUMENT EXEMPTION"
+      : "🔴 BANK OWNERSHIP NOT CONFIRMED"
+);
 }
   select.value=bidder.id;
 
