@@ -18795,30 +18795,40 @@ async function checkOwnerRegistrationHelp(){
 }
 
 async function resetOwnerPassword(){
-  const { data, error } =
+
+  const { data } =
     await auctionSupabase.auth.getUser();
 
-  const email = data?.user?.email;
+  let email = data?.user?.email;
 
-  if(error || !email){
-    alert("Please sign in to your registered account first to reset your password.");
+  if(!email){
+    email = prompt(
+      "Enter your existing registered Owner email address:"
+    );
+  }
+
+  if(!email || !email.trim()){
     return;
   }
 
-  const { error: resetError } =
+  email = email.trim();
+
+  const { error } =
     await auctionSupabase.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + window.location.pathname
+      redirectTo:
+        window.location.origin + window.location.pathname
     });
 
-  if(resetError){
-  console.error("Password reset error:", resetError);
-  alert("Password reset error: " + resetError.message);
-  return;
-}
+  if(error){
+    console.error("Owner password reset error:", error);
+    alert("Unable to send password reset request.");
+    return;
+  }
 
-  alert("If this account is eligible, a password reset link will be sent to its registered email address. Please check your inbox.");
+  alert(
+    "If this account is eligible, a password reset link will be sent to its registered email address. Please check your inbox."
+  );
 }
-   
 async function openOwner(){
    const passwordInput =
     document.getElementById("ownerAccessPassword");
