@@ -10592,7 +10592,7 @@ const compressedPhotoPath =
   photoPath.replace(/\.[^.]+$/, "") + ".jpg";
 
 const { error: photoUploadError } =
-  await auctionSupabase.storage
+  await cliviaSupabase.storage
     .from("lot-photos")
     .upload(compressedPhotoPath, compressedPhotoBlob, {
       contentType: "image/jpeg",
