@@ -2015,6 +2015,101 @@ DO NOT REMOVE THIS LOCK until all required security
 work, cross-platform coordination and tests pass.
 
 Legacy place_bid access has also been restricted.
+     ### COMBINED BIDDING CAPACITY — ADDITIONAL SECURITY REQUIREMENTS
+**Updated: 10 November 2026**
+
+Both Clivia Dreamers Auction and What A Auction Event must operate from **ONE shared central foundation** for:
+
+- Member registration and authentication.
+- Bank account registration and verification.
+- Real bidding and automatic bidding.
+- Combined bidding capacity.
+- Commission and registration invoices.
+- Payment verification and account holds.
+
+**CENTRAL DATABASE**
+
+Clivia Dreamers Supabase is the proposed central database because its bidding security functions are already established.
+
+What A Auction Event currently uses a separate Supabase project. Its existing auction records and creator accounts must be protected during integration.
+
+**CONFIRMED EXISTING DATA**
+
+What A Auction Event contains one identified auction:
+
+- Auction name: horse races
+- Auction ID: 1
+- Status: DRAFT
+- Live bidding: FALSE
+
+Do not delete this auction or disconnect its creator account during migration.
+
+**SHARED BIDDING CAPACITY**
+
+The R2,000 standard capacity must apply across BOTH auction platforms combined.
+
+Example:
+
+- Clivia Dreamers Plant A: R500
+- Clivia Dreamers Plant B: R600
+- What A Auction Event Lot C: R700
+- Total active bidding exposure: R1,800
+- Remaining capacity: R200
+
+A new R300 bid must be rejected unless the bidder has sufficient approved capacity.
+
+For approved R5,000 capacity, the R5,000 replaces the standard R2,000 limit; it is not added to it.
+
+Exposure must include active highest bids and applicable automatic bidding commitments without double-counting the same lot.
+
+**BANK OWNERSHIP EXEMPTION**
+
+For combined bidding exposure up to R1,800, the registered bidder may confirm ownership of their registered bank account without uploading a bank document.
+
+The declaration is stored as `ownership_confirmed = true`.
+
+This must not automatically change `bank_confirmed` to true.
+
+Above R1,800, bank-document verification is required under the currently implemented bidding rule.
+
+Payment holds, unpaid fees, verified identity and seller self-bidding restrictions remain enforced.
+
+**CROSS-PLATFORM SECURITY**
+
+The current Clivia Dreamers function `clivia_real_bid_proposed_total_zar()` calculates exposure using its own database tables.
+
+It does not yet include What A Auction Event bidding exposure.
+
+Before real bidding is activated, implement a central, transaction-safe mechanism that checks and reserves combined bidding exposure across both platforms.
+
+Simultaneous bids must not bypass the approved capacity.
+
+Both platforms must use the same verified member identity. Existing creator accounts and event ownership must be migrated or linked securely.
+
+**REAL BIDDING SAFETY**
+
+The Clivia Dreamers website and database currently contain deliberate real-bidding safety locks.
+
+Do not remove these locks until:
+
+1. Shared authentication and identity are verified.
+2. Combined capacity is securely enforced.
+3. Bank verification and payment holds are enforced.
+4. International restrictions are tested.
+5. Seller self-bidding is prevented.
+6. Invoices are coordinated centrally.
+7. Simultaneous bidding and auction closing are tested.
+8. Existing auction and creator data are protected.
+
+**BANK DOCUMENT RETENTION**
+
+Uploaded bank documents must be deleted after 24 hours.
+
+Retain the verification result and necessary audit records.
+
+Bank-document approval does not establish that a commission or registration fee has been paid. Fee payments require separate reconciliation.
+
+**CURRENT STATUS: REAL BIDDING NOT YET ACTIVATED.** 
 
 ============================================================
 7. AUTOMATIC BIDDING
@@ -17742,190 +17837,7 @@ const selectedAuctionId =
 
 let savedAuction = null;
 let eventSaveError = null;
-
-if(selectedAuctionId){
-
-  // EDIT: Find the existing auction first.
-  const { data: existingAuction, error: loadError } =
-    await auctionSupabase
-      .from("auction_events")
-      .select("id, event_data")
-      .eq("id", selectedAuctionId)
-      .eq("creator_id", creatorAuth.user.id)
-      .single();
-
-  if(loadError || !existingAuction){
-    alert(
-      "EXISTING AUCTION NOT FOUND\n\n" +
-      "Your changes were not saved."
-    );
-    return;
-  }
-
-  // Keep the original auction identity and status.
-  const original = existingAuction.event_data || {};
-
-  const updatedEvent = {
-  ...original,
-  ...newEvent,
-  id: original.id || newEvent.id,
-  deletionDate: original.deletionDate,
-    eventStatus: original.eventStatus || "DRAFT",
-    liveEnabled: original.liveEnabled || false,
-    lots:
-  original.liveEnabled === true ||
-  original.eventStatus !== "DRAFT"
-    ? original.lots
-    : newEvent.lots,    
-    permanentHistory: original.permanentHistory ||
-      newEvent.permanentHistory,
-    activationInvoiceId: original.activationInvoiceId || null,
-    activationPaymentStatus:
-      original.activationPaymentStatus || "NOT_INVOICED",
-    activationApproved: original.activationApproved || false,
-    activationApprovedAt: original.activationApprovedAt || null
-  };
-
-  const result = await auctionSupabase
-    .from("auction_events")
-    .update({ event_data: updatedEvent })
-    .eq("id", selectedAuctionId)
-    .eq("creator_id", creatorAuth.user.id)
-    .select("id")
-    .single();
-
-  savedAuction = result.data;
-  eventSaveError = result.error;
-
-} else {
-
-  // NEW: Create a separate auction.
-  const result = await auctionSupabase
-    .from("auction_events")
-    .insert({
-      creator_id: creatorAuth.user.id,
-      platform: "WHAT_A_AUCTION_EVENT",
-      event_data: newEvent
-    })
-    .select("id")
-    .single();
-
-  savedAuction = result.data;
-  eventSaveError = result.error;
-}
-
-
-if(eventSaveError){
-  alert(
-    "AUCTION SAVE ERROR\n\n" +
-    eventSaveError.message
-  );
-  return;
-}
- if(savedAuction?.id){
-  localStorage.setItem(
-    "selectedCreatorAuctionId",
-    String(savedAuction.id)
-  );
-}     
-window.createdOwnEvents.push(newEvent); 
-      
-  localStorage.setItem(
-  "createdOwnEvents",
-  JSON.stringify(window.createdOwnEvents)
-);    
-  alert(
-    "EVENT DETAILS ACCEPTED\n\n" +
-    "Event: " + eventName + "\n" +
-    "Type: " + eventType + "\n" +
-    "Rows: " + rows + "\n\n" +
-    "Your auction is ready for the next setup step."
-  );
-}      
-
-/* LIVE PREVIEW - CREATE YOUR OWN EVENT */
-function updateOwnEventPreview(){
-
-  const name = document.getElementById("ownEventName")?.value.trim();
-  const eventType =
-  document.getElementById("ownEventType")?.value.trim();    
-  const tagline = document.getElementById("ownEventTagline")?.value.trim();
-    const description = document.getElementById("ownEventDescription")?.value.trim();  
-      
-    if(name){
-  localStorage.setItem("ownEventName", name);
-    if(eventType){
-  localStorage.setItem("ownEventType", eventType);
-}      
-}
-localStorage.setItem("ownEventTagline", tagline || "");
-localStorage.setItem("ownEventDescription", description || "");  
-
-  const previewName = document.getElementById("previewEventName");
-  const previewTagline = document.getElementById("previewEventTagline");
-   const previewDescription = document.getElementById("previewEventDescription");   
-
-  if(previewName){
-    previewName.textContent = name || "YOUR AUCTION NAME";
-  }
-
-  if(previewTagline){
-    previewTagline.textContent =
-      tagline || "Your slogan will appear here";
-  }
-if(previewDescription){
-  previewDescription.textContent =
-    description || "Tell bidders about your auction, business or event.";
-}
-}
-    function updateOwnEventBackground(){
-
-  const color = document.getElementById("ownEventBgColor")?.value;
-  const frame = document.getElementById("ownEventPreviewFrame");
-
-  if(!frame || !color) return;
-
-  frame.style.background = color;
-}  
-   function resetOwnEventBackground(){
-
-  const picker = document.getElementById("ownEventBgColor");
-  const frame = document.getElementById("ownEventPreviewFrame");
-
-  if(picker){
-    picker.value = "#000000";
-  }
-
-  if(frame){
-    frame.style.background = "#000000";
-  }
-}   
-      function updateOwnEventTextColor(){
-
-  const color = document.getElementById("ownEventTextColor")?.value;
-  const frame = document.getElementById("ownEventPreviewFrame");
-
-  if(!frame || !color) return;
-
-  frame.style.color = color;
-}
-  function resetOwnEventTextColor(){
-
-  const picker = document.getElementById("ownEventTextColor");
-  const frame = document.getElementById("ownEventPreviewFrame");
-
-  if(picker){
-    picker.value = "#ffffff";
-  }
-
-  if(frame){
-    frame.style.color = "#ffffff";
-  }
-}    
-   function updateOwnEventAccentColor(){
-
-  const color = document.getElementById("ownEventAccentColor")?.value;
-  const frame = document.getElementById("ownEventPreviewFrame");
+            Frame");
    const title = document.getElementById("previewEventName");  
    const tagline = document.getElementById("previewEventTagline");          
 
