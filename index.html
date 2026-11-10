@@ -14027,7 +14027,7 @@ const user = session?.user || null;
   const { data: bankDetails, error: bankError } =
     await cliviaSupabase
       .from("bidder_bank_details")
-      .select("bank_confirmed")
+      .select("bank_confirmed, ownership_confirmed")
       .eq("auth_user_id", user.id)
       .maybeSingle();
 
