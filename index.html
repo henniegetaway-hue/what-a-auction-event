@@ -14068,6 +14068,7 @@ const user = session?.user || null;
         companyName: account.company_name || "",
         businessPhone: account.business_whatsapp || "",
             bankConfirmed: !bankError && bankDetails?.bank_confirmed === true,
+bankOwnershipConfirmed: !bankError && bankDetails?.ownership_confirmed === true,
        approvedBidCapacity: approvedBidCapacity
       };
 
