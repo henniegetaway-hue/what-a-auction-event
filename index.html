@@ -9243,42 +9243,25 @@ async function openSellerLoadFromLot(auctionId, rowKey){
 
   await openSellerSpaces();
 
-}
+  const auctionSelect =
+    document.getElementById("sellerLotAuction");
 
-async function openSellerLoadFromLot(auctionId, rowKey){
-  await openSellerSpaces();
-}
+  const rowSelect =
+    document.getElementById("sellerLotStartRow");
 
-// OPEN EXISTING REGISTRATION FORM FOR VISITORS
-function openCliviaVisitorRegistration(){
-
-  // Open the normal registration page
-  showPage("register");
-
-  // Select Clivia Dreamers registration
-  const mode = document.getElementById("registrationMode");
-  if(mode) mode.value = "CLIVIA";
-
-  // Restore the correct heading
-  const heading = document.querySelector(
-    "#registrationMainPanel h2"
-  );
-
-  if(heading){
-    heading.textContent = "Clivia Dreamers Registration";
+  if(auctionSelect && auctionId){
+    auctionSelect.value = auctionId;
   }
 
-  // Open the new account form
-  showNewBidderRegistration();
+  if(rowSelect && rowKey){
 
-  // Scroll to the registration form
-  setTimeout(() => {
-    document.getElementById("registrationMainPanel")
-      ?.scrollIntoView({
-        behavior:"smooth",
-        block:"start"
-      });
-  },100);
+    const row = String(rowKey).toUpperCase();
+
+    if(["ROW1","ROW2","ROW3","ROW4","ROW5","ROW6"].includes(row)){
+      rowSelect.value = row;
+      updateSellerLotStartBid();
+    }
+  }
 }
 // CHECK ACCOUNT BEFORE OPENING PLANT LOADING
 async function openSellerSpaces(){
