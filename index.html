@@ -15126,8 +15126,17 @@ src="${window.lotPhotoSelections?.[lot.id] === 2 && lot.plant ? lot.plant : lot.
    
 data-photo-number="${window.lotPhotoSelections?.[lot.id] === 2 && lot.plant ? '2' : '1'}"
 
-    style="cursor:default;"
+style="cursor:default;"
+    onerror="
+      this.style.display='none';
+      document.getElementById('photoError_${lot.id}').style.display='block';
+    "
   >
+
+  <div id="photoError_${lot.id}"
+       style="display:none;text-align:center;padding:20px;color:#ffcc80;">
+    PHOTO NOT AVAILABLE
+  </div>
 
   
 ${lot.plant ? `
