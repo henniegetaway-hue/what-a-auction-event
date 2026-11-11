@@ -5418,6 +5418,59 @@ border:1px solid #D99A50;
        style="margin-top:10px;">
   </div>
 </div>
+
+<!-- ADMIN INVOICES & PAYMENTS -->
+<div class="panel" id="adminInvoicesPanel">
+
+  <h2>INVOICES & PAYMENTS</h2>
+
+  <button class="goldBtn" type="button"
+          onclick="showAuctionInvoices()">
+    BUYER INVOICES
+  </button>
+
+  <button class="goldBtn" type="button"
+          onclick="showSellerPayments()">
+    SELLER PAYMENTS
+  </button>
+
+  <button class="goldBtn" type="button"
+          onclick="showWebsiteInvoices()">
+    WEBSITE INVOICES
+  </button>
+
+  <button class="goldBtn" type="button"
+          onclick="showBankReconciliation()">
+    BANK RECONCILIATION
+  </button>
+
+  <button class="goldBtn" type="button"
+          onclick="printInvoice()">
+    PRINT INVOICE
+  </button>
+
+  <button class="goldBtn" type="button"
+          onclick="downloadInvoicePDF()">
+    DOWNLOAD INVOICE PDF
+  </button>
+
+  <hr>
+
+  <h2>CREATOR AUCTION DOWNLOADS</h2>
+
+  <button class="goldBtn" type="button"
+          onclick="downloadAuctionBidItems()">
+    DOWNLOAD AUCTION & BID ITEMS
+  </button>
+
+  <button class="goldBtn" type="button"
+          onclick="downloadEventDatabase()">
+    DOWNLOAD EVENT DATABASE
+  </button>
+
+</div>
+<!-- END ADMIN INVOICES -->
+
 </div>  <!-- closes adminArea -->
 
 </section>  <!-- closes pageAdmin -->
