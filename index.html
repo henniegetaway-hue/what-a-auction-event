@@ -7007,7 +7007,47 @@ container.appendChild(block);
 <!-- END GROUP PRESIDENT MANAGEMENT -->
 </div>
 <!-- END LEFT COLUMN: GROUP PRESIDENT -->
+<style>
+.cliviaTrophyWinnersGrid {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+  margin-top:14px;
+}
 
+.cliviaTrophyWinnerCard {
+  background:#111;
+  border:1px solid #9acd32;
+  border-radius:10px;
+  padding:10px;
+}
+
+.cliviaTrophyWinnerCard img {
+  display:block;
+  width:100%;
+  aspect-ratio:4/3;
+  object-fit:cover;
+  border-radius:8px;
+  margin-bottom:10px;
+}
+
+.cliviaTrophyWinnerCard strong {
+  display:block;
+  color:#b6ff80;
+  margin-bottom:8px;
+}
+
+.cliviaTrophyWinnerCard p {
+  font-size:12px;
+  color:white;
+}
+
+@media(max-width:600px) {
+  .cliviaTrophyWinnersGrid {
+    grid-template-columns:1fr;
+  }
+}
+</style>
 <!-- RIGHT COLUMN: CLIVIA SHOWS -->
 <div id="cliviaShowsRight"
      style="background:#111;
@@ -7358,9 +7398,88 @@ async function loadOfficialCliviaShows() {
     }
 
     if (winnersBox) {
-      winnersBox.textContent =
-        "🏆 Confirmed show winners will appear here when available.";
-    }
+  winnersBox.replaceChildren();
+
+  const winners = Array.isArray(data.winners)
+    ? data.winners
+    : [];
+
+  const confirmed = winners.filter(w =>
+    w &&
+    (w.verified === true ||
+     w.status === "verified" ||
+     w.status === "published") &&
+    (w.winner_name || w.name)
+  );
+
+  if (!confirmed.length) {
+    winnersBox.textContent =
+      "🏆 Confirmed trophy winners and photographs will appear here when published.";
+  } else {
+    const gallery = document.createElement("div");
+    gallery.className = "cliviaTrophyWinnersGrid";
+
+    confirmed.forEach(w => {
+      const card = document.createElement("article");
+      card.className = "cliviaTrophyWinnerCard";
+
+      const photo = w.photo_url || w.image_url;
+
+      if (photo) {
+        try {
+          const url = new URL(photo, window.location.href);
+
+          if (url.protocol === "https:") {
+            const img = document.createElement("img");
+            img.src = url.href;
+            img.alt = "Trophy winner: " + (w.winner_name || w.name);
+            img.loading = "lazy";
+            card.appendChild(img);
+          }
+        } catch (error) {
+          console.warn("Invalid winner photo URL", error);
+        }
+      }
+
+      const title = document.createElement("strong");
+      title.textContent = w.winner_name || w.name;
+      card.appendChild(title);
+
+      [
+        w.award || w.trophy,
+        w.club,
+        w.show_date || w.date,
+        w.venue,
+        w.plant_name
+      ].filter(Boolean).forEach(value => {
+        const detail = document.createElement("p");
+        detail.textContent = value;
+        card.appendChild(detail);
+      });
+
+      if (w.source_url) {
+        try {
+          const source = new URL(w.source_url);
+
+          if (source.protocol === "https:") {
+            const link = document.createElement("a");
+            link.href = source.href;
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+            link.textContent = "View published result";
+            card.appendChild(link);
+          }
+        } catch (error) {
+          console.warn("Invalid winner source URL", error);
+        }
+      }
+
+      gallery.appendChild(card);
+    });
+
+    winnersBox.appendChild(gallery);
+  }
+}
 
     if (loading) loading.style.display = "none";
 
