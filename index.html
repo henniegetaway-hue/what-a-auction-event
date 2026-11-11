@@ -1677,8 +1677,58 @@ body:has(#cliviaCarryForwardFooter) {
 #auctionPromo {
   display: none !important;
 }
+ /* CREATE YOUR OWN EVENT LANDING PAGE */
+#pageOwnEvent.eventLanding .creatorPageLayout {
+  display:block !important;
+  width:100% !important;
+}
+
+#pageOwnEvent.eventLanding .creatorPageLayout > .panel:first-child {
+  display:none !important;
+}
+
+#pageOwnEvent.eventLanding #ownEventPreviewPanel {
+  display:block !important;
+  position:static !important;
+  width:100% !important;
+  max-width:100% !important;
+  height:auto !important;
+  overflow:visible !important;
+  margin:0 auto !important;
+}
+
+#pageOwnEvent.eventLanding #closeCreatorPreviewBtn {
+  display:none !important;
+}
+
+#pageOwnEvent:not(.eventLanding) #eventLandingMenu {
+  display:none !important;
+}
+
+#eventLandingMenu {
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-bottom:16px;
+}
+
+#eventLandingMenu button {
+  background:white !important;
+  color:black !important;
+  border:1px solid #9acd32;
+  border-radius:8px;
+  padding:10px 14px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+@media(max-width:600px) {
+  #eventLandingMenu button {
+    flex:1 1 45%;
+  }
+}
   </style>
- <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
+ <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>      
  <script>
       /* START AT TOP AFTER PAGE REFRESH */
 if ("scrollRestoration" in history) {
@@ -2708,6 +2758,11 @@ window.addEventListener("load", function(){
 <button id="navOwnEvent"
         class="ownEventTab"
         type="button"
+        onclick="showOwnEventPage()">
+  🚗 🐂 🐎 CREATE YOUR OWN EVENT
+</button>
+        class="ownEventTab"
+        type="button"
         onclick="showPage('ownEvent')">
   🚗 🐂 🐎 CREATE YOUR OWN EVENT
 </button>
@@ -3131,6 +3186,19 @@ By ticking “I ACCEPT THE EVENT RULES &amp; TERMS”, the Event Creator confirm
 
 <!-- RIGHT SIDE: LIVE AUCTION PAGE PREVIEW -->
 <div class="panel" id="ownEventPreviewPanel">
+<div id="eventLandingMenu">
+  <button type="button" onclick="openEventCreatorSetup()">
+    CREATE NEW AUCTION / LOAD ITEMS
+  </button>
+
+  <button type="button" onclick="showOwnAuctionPage()">
+    MY AUCTIONS
+  </button>
+
+  <button type="button" onclick="showOwnBest10Page()">
+    BEST 10
+  </button>
+</div>      
 
   <button type="button"
           id="closeCreatorPreviewBtn"
@@ -8413,9 +8481,24 @@ setOwnEventHeader();
   if(rulesCheckbox) rulesCheckbox.checked = false;
 }
 
-      
-async function showOwnEventPage(){
+function openEventCreatorSetup() {
+  const page = document.getElementById("pageOwnEvent");
+  if (!page) return;
 
+  page.classList.remove("eventLanding");
+
+  const setup = document.getElementById("ownEventSetup");
+
+  if (setup) {
+    setup.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }
+}      
+async function showOwnEventPage(){
+document.getElementById("pageOwnEvent")
+  ?.classList.add("eventLanding");
   setOwnEventSEO();
   sessionStorage.setItem("loadNowDestination", "CREATOR");    
   document.body.classList.add("ownEventMode");
