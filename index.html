@@ -219,7 +219,6 @@ nav button.active:hover{
 }
    /* RESTORE ADMIN, INVOICES AND RULES BUTTONS */
 #navAdmin,
-#navInvoices,
 #navRules {
   display:inline-flex !important;
   width:auto !important;
@@ -1025,12 +1024,11 @@ th,td{
 
   #navRegister{grid-column:1;grid-row:1;}
   #navAdmin{grid-column:2;grid-row:1;}
-  #navInvoices{grid-column:3;grid-row:1;}
-  #navRules{grid-column:4;grid-row:1;}
+ #navRules{grid-column:3;grid-row:1;}
 
   /* GREEN CLIVIA BUTTON — TOP ROW */
   #navLive{
-    grid-column:5;
+   grid-column:4 / 6;
     grid-row:1;
     font-size:10px !important;
   }
@@ -2705,7 +2703,6 @@ window.addEventListener("load", function(){
 </div>
 <button id="navAdmin" onclick="showPage('admin')">Admin</button>
 
-<button id="navInvoices" onclick="showPage('invoices')">Invoices</button>
  <button id="navRules" onclick="showPage('rules')">Rules & Terms</button>
 <div class="ownEventTabGroup">
 <button id="navOwnEvent" class="ownEventTab"
@@ -5463,12 +5460,12 @@ border:1px solid #D99A50;
   </button>
 
   <button class="goldBtn" type="button"
-          onclick="printInvoice()">
+         onclick="printAuctionInvoice()"
     PRINT INVOICE
   </button>
 
   <button class="goldBtn" type="button"
-          onclick="downloadInvoicePDF()">
+          onclick="printAuctionInvoice()"
     DOWNLOAD INVOICE PDF
   </button>
 
@@ -5487,6 +5484,20 @@ border:1px solid #D99A50;
   </button>
 
 </div>
+<div id="invoiceList" class="panel"
+     style="margin-top:16px;background:#fff;color:#000;">
+  Invoices will be created when the auction is closed.
+</div>
+
+<p class="small">
+  Auction records are available for 3 months after the auction closes.
+  Download and keep your records before the deletion date.
+</p>
+
+<div id="auctionDeletionNotice"
+     style="margin-top:15px;font-weight:bold;">
+  Deletion date: --
+</div>            
 <!-- END ADMIN INVOICES -->
 
 </div>  <!-- closes adminArea -->
@@ -7735,105 +7746,6 @@ background:linear-gradient(90deg,#a0ff80,#39e52d);
 
 </section>
 <!-- END SELLER PLANT LOADING PAGE -->
-     
-<section id="pageInvoices" class="page hidden">
-  <div class="panel">
-
-   <h2>Invoices &amp; Payments</h2>
-
-<p class="small">
-  Auction invoices are generated after the
-  auction closes. Winning bidders pay sellers
-  directly. Website fees are paid separately
-  to the platform.
-</p>
-
-<div style="
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin:15px 0;
-">
-
-  <button class="goldBtn"
-          onclick="showAuctionInvoices()">
-    BUYER INVOICES
-  </button>
-
-  <button class="goldBtn"
-          onclick="showSellerPayments()">
-    SELLER PAYMENTS
-  </button>
-
-  <button class="goldBtn"
-          onclick="showWebsiteInvoices()">
-    WEBSITE INVOICES
-  </button>
-
-  <button class="goldBtn"
-          onclick="showBankReconciliation()">
-    BANK RECONCILIATION
-  </button>
-
-</div>
-
-<div id="invoiceList">
-  Invoices will be created when the auction is closed.
-      
-</div>
-<div style="display:flex;gap:10px;flex-wrap:wrap;margin:15px 0;">
-
-  <button class="goldBtn"
-          type="button"
-          onclick="printAuctionInvoice()">
-    PRINT INVOICE
-  </button>
-
-  <button class="goldBtn"
-          type="button"
-          onclick="printAuctionInvoice()">
-    DOWNLOAD INVOICE PDF
-  </button>
-
-</div>
-    <hr style="margin:25px 0;">
-
-    <h3>Creator Auction Downloads</h3>
-
-    <p style="font-size:14px;">
-      Auction records are available for 3 months after the auction closes.
-      Download and keep your records before the deletion date.
-    </p>
-
-    <div style="
-      display:flex;
-      gap:12px;
-      flex-wrap:wrap;
-      margin-top:15px;
-    ">
-
-      <button class="goldBtn"
-              onclick="downloadAuctionBidItems()">
-        DOWNLOAD AUCTION &amp; BID ITEMS
-      </button>
-
-      <button class="goldBtn"
-              onclick="downloadEventDatabase()">
-        DOWNLOAD EVENT DATABASE
-      </button>
-
-    </div>
-
-    <div id="auctionDeletionNotice"
-         style="
-           margin-top:15px;
-           font-weight:bold;
-         ">
-      Deletion date: --
-    </div>
-
-  </div>
-</section>
 
 </div>
 <div id="bankVerificationPopup"
@@ -9128,7 +9040,6 @@ if(logo){
   cliviaChat:["pageCliviaChat","navCliviaChat"],
   rules:["pageRules","navRules"],
   admin:["pageAdmin","navAdmin"],
-  invoices:["pageInvoices","navInvoices"]
 };
 
   
@@ -19684,7 +19595,31 @@ async function loadCentralInvoices(){
     box.appendChild(panel);
   });
 }
+function printAuctionInvoice() {
+  const admin = document.getElementById("adminArea");
+  const box = document.getElementById("invoiceList");
 
+  if (!admin || admin.classList.contains("hidden") || !box) {
+    alert("Open Admin to print invoices.");
+    return;
+  }
+
+  window.print();
+}
+
+function showSellerPayments() {
+  const admin = document.getElementById("adminArea");
+  const box = document.getElementById("invoiceList");
+
+  if (!admin || admin.classList.contains("hidden") || !box) {
+    return;
+  }
+
+  box.innerHTML = `
+    <h3>Seller Payments</h3>
+    <p>No seller payment records displayed yet.</p>
+  `;
+}
 function showAuctionInvoices() {
   const box = document.getElementById("invoiceList");
   if (!box) return;
