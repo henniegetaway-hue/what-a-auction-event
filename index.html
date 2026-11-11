@@ -18941,8 +18941,13 @@ async function openOwner(){
     }
  return;
 }
-  const ownerArea =
-    document.getElementById("ownerArea");
+ 
+const ownerArea =
+  document.getElementById("ownerArea");
+
+if(ownerLogin) ownerLogin.classList.add("hidden");
+if(ownerArea) ownerArea.classList.remove("hidden");
+
 
   if(ownerLogin) ownerLogin.classList.add("hidden");
   if(ownerArea) ownerArea.classList.remove("hidden");
@@ -19106,13 +19111,47 @@ async function openAdmin(){
   const { data: sessionData, error: sessionError } =
     await auctionSupabase.auth.getSession();
 
-  if(sessionError || !sessionData.session){
-    if(adminLoginMsg){
-      adminLoginMsg.textContent =
-        "Owner account is not signed in.";
-    }
-    return;
+  
+if(sessionError || !sessionData.session){
+  if(adminLoginMsg){
+    adminLoginMsg.textContent =
+      "Owner account is not signed in.";
   }
+  return;
+}
+
+// Verify the authenticated user.
+const { data: verifiedUser, error: verifiedUserError } =
+  await auctionSupabase.auth.getUser();
+
+if (
+  verifiedUserError ||
+  !verifiedUser?.user ||
+  verifiedUser.user.id !== sessionData.session.user.id
+) {
+  if(adminLoginMsg){
+    adminLoginMsg.textContent =
+      "Please sign in with your authorised Owner account.";
+  }
+  return;
+}
+
+// Check OWNER permission.
+const { data: adminRole, error: adminRoleError } =
+  await auctionSupabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", verifiedUser.user.id)
+    .maybeSingle();
+
+if(adminRoleError || adminRole?.role !== "OWNER"){
+  if(adminLoginMsg){
+    adminLoginMsg.textContent =
+      "ACCESS DENIED — Owner permission required.";
+  }
+  return;
+}
+
 
   let isCorrect = false;
 let verifyError = null;
