@@ -2706,7 +2706,12 @@ window.addEventListener("load", function(){
  <button id="navRules" onclick="showPage('rules')">Rules & Terms</button>
 <div class="ownEventTabGroup">
 <button id="navOwnEvent" class="ownEventTab"
-  onclick="showPage('ownEvent')">
+  onclick="showPage('ownEvent'); setTimeout(function(){
+    const preview = document.getElementById('ownEventPreviewPanel');
+    if(preview){
+      preview.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+  },500);">
   🚗 🐂 🐎 CREATE YOUR OWN EVENT
 </button>
 
