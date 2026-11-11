@@ -18903,7 +18903,8 @@ async function openOwner(){
       password: password
     });
 
-  if(signInError || !signInData.user){
+if(signInError || !signInData?.user || signInData.user.id !== user.id){
+
     if(ownerLoginMsg){
       ownerLoginMsg.textContent =
         "Incorrect Owner password.";
@@ -18942,15 +18943,16 @@ async function openOwner(){
  return;
 }
  
+
 const ownerArea =
   document.getElementById("ownerArea");
+
+const ownerLogin =
+  document.getElementById("ownerLogin");
 
 if(ownerLogin) ownerLogin.classList.add("hidden");
 if(ownerArea) ownerArea.classList.remove("hidden");
 
-
-  if(ownerLogin) ownerLogin.classList.add("hidden");
-  if(ownerArea) ownerArea.classList.remove("hidden");
   const { data: bankData, error: bankError } =
   await auctionSupabase
     .from("owner_bank_details")
