@@ -8489,8 +8489,9 @@ function openEventCreatorSetup() {
   });
 }
 async function showOwnEventPage(){
-document.getElementById("pageOwnEvent")
-  ?.classList.add("eventLanding");
+  document.getElementById("pageOwnEvent")
+    ?.classList.remove("eventLanding");
+
   setOwnEventSEO();
   sessionStorage.setItem("loadNowDestination", "CREATOR");    
   document.body.classList.add("ownEventMode");
