@@ -18757,39 +18757,85 @@ function restoreCreatorAuctionLots(savedLots){
   localStorage.setItem("ownEventLots", JSON.stringify(lots));
   return true;
 }
-   function shareCreatorPreviewLot(lotNumber){
+  
+async function shareCreatorPreviewLot(lotNumber){
 
-  const lot = document.querySelectorAll(
-    "#previewLotsGrid .previewSampleLot"
-  )[lotNumber - 1];
+  const auctionId =
+    localStorage.getItem("selectedCreatorAuctionId");
 
-  if(!lot) return;
+  if(!auctionId || !/^\d+$/.test(auctionId)){
+    alert("Save and select your auction before sharing.");
+    return;
+  }
 
-  const name =
-    lot.querySelector(".ownLotName")?.value.trim() || "Auction Item";
+  const { data: session } =
+    await auctionSupabase.auth.getUser();
 
-  const eventName =
-    document.getElementById("ownEventName")?.value.trim() || "Online Auction";
+  if(!session?.user){
+    alert("Sign in before sharing an auction.");
+    return;
+  }
+
+  const { data: record, error } =
+    await auctionSupabase
+      .from("auction_events")
+      .select("id, event_data")
+      .eq("id", auctionId)
+      .eq("creator_id", session.user.id)
+      .maybeSingle();
+
+  if(error || !record){
+    alert("Auction could not be verified.");
+    return;
+  }
+
+  const event = record.event_data || {};
+
+  if(
+    String(event.eventStatus || "").toUpperCase() !== "LIVE" ||
+    event.liveEnabled !== true ||
+    event.activationApproved !== true ||
+    String(event.access || "PUBLIC").toUpperCase() !== "PUBLIC"
+  ){
+    alert(
+      "This auction is not approved and LIVE yet. " +
+      "Draft auctions cannot be shared publicly."
+    );
+    return;
+  }
+
+  const lot = (event.lots || []).find(
+    item => Number(item.lotNumber) === Number(lotNumber)
+  );
+
+  if(!lot || !lot.name){
+    alert("Save this lot to the published auction before sharing.");
+    return;
+  }
+
+  const link = new URL(
+    window.location.pathname,
+    window.location.origin
+  );
+
+  link.searchParams.set("page", "event");
+  link.searchParams.set("auction", String(record.id));
+  link.searchParams.set("lot", String(lotNumber));
 
   const message =
-    eventName + "\n" +
+    (event.name || "Online Auction") + "\n" +
     "LOT-" + String(lotNumber).padStart(3, "0") + "\n" +
-    name + "\n\n" +
+    lot.name + "\n\n" +
     "View the auction:\n" +
-(() => {
-  const link = new URL(window.location.href);
-  link.search = "";
-  link.hash = "";
-  link.searchParams.set("openPage", "ownAuction");
-  return link.toString();
-})();
+    link.toString();
 
   window.open(
     "https://wa.me/?text=" + encodeURIComponent(message),
     "_blank",
     "noopener,noreferrer"
   );
-}   
+}
+
   updateOwnEventRowsPreview();    
 
  function previewCreatorLotPhoto(input, lotNumber, photoNumber){
