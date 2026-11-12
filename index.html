@@ -8475,20 +8475,19 @@ setOwnEventHeader();
 }
 
 function openEventCreatorSetup() {
+  showOwnEventPage();
+
   const page = document.getElementById("pageOwnEvent");
-  if (!page) return;
 
-  page.classList.remove("eventLanding");
-
-  const setup = document.getElementById("ownEventSetup");
-
-  if (setup) {
-    setup.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
+  if (page) {
+    page.classList.remove("eventLanding");
   }
-}      
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
 async function showOwnEventPage(){
 document.getElementById("pageOwnEvent")
   ?.classList.add("eventLanding");
