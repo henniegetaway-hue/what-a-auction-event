@@ -18776,7 +18776,13 @@ function restoreCreatorAuctionLots(savedLots){
     "LOT-" + String(lotNumber).padStart(3, "0") + "\n" +
     name + "\n\n" +
     "View the auction:\n" +
-    window.location.href;
+(() => {
+  const link = new URL(window.location.href);
+  link.search = "";
+  link.hash = "";
+  link.searchParams.set("openPage", "ownAuction");
+  return link.toString();
+})();
 
   window.open(
     "https://wa.me/?text=" + encodeURIComponent(message),
