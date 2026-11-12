@@ -9129,6 +9129,22 @@ function showPage(page){
     "showRegistration",
     page === "register"
   );
+  
+  if(page === "publicEvent"){
+    document.querySelectorAll(".page").forEach(function(section){
+      section.classList.add("hidden");
+    });
+
+    const publicPage = document.getElementById("pagePublicEvent");
+
+    if(publicPage){
+      publicPage.classList.remove("hidden");
+    }
+
+    document.body.classList.add("ownEventMode");
+    return;
+  }
+    
    if(page === "ownEvent"){
     showOwnEventPage();
     return;
