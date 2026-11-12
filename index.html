@@ -2876,7 +2876,40 @@ body:not(.showRegistration) #pageRegister {
 
 </section>
 <!-- END MESSAGES PAGE -->
-  <section id="pageOwnEvent" class="page hidden">
+ 
+<!-- PUBLIC WHAT A AUCTION EVENT VIEW -->
+<section id="pagePublicEvent"
+         class="page hidden ownEventWorld"
+         aria-live="polite">
+
+  <div class="panel"
+       style="max-width:1200px;margin:20px auto;">
+
+    <h2 id="publicEventName">
+      WHAT A AUCTION EVENT
+    </h2>
+
+    <p id="publicEventMessage" class="small">
+      Loading auction...
+    </p>
+
+    <p id="publicEventTagline"></p>
+
+    <div id="publicEventLots"
+         style="
+           display:grid;
+           grid-template-columns:
+             repeat(auto-fit,minmax(min(100%,230px),1fr));
+           gap:12px;
+         ">
+    </div>
+
+  </div>
+
+</section>
+<!-- END PUBLIC AUCTION VIEW -->
+
+      <section id="pageOwnEvent" class="page hidden">
 <div class="grid2 creatorPageLayout" style="grid-template-columns:minmax(280px,0.75fr) minmax(0,1.5fr);align-items:start;">
   <div class="panel">
     <h2>Create Your Own Event — See How It Works</h2>
@@ -17381,7 +17414,18 @@ if(state.selectedBidderId){
 }
 
 // OPEN CLIVIA AUCTIONS AS THE DEFAULT LANDING PAGE
-showPage("live");
+
+const publicEventQuery = new URLSearchParams(window.location.search);
+
+if (publicEventQuery.get("page") === "event") {
+  showPublicEventFromLink(
+    publicEventQuery.get("auction"),
+    publicEventQuery.get("lot")
+  );
+} else {
+  showPage("live");
+}
+
    setTimeout(()=>{
   const hash = window.location.hash;
 
@@ -21529,5 +21573,91 @@ async function loadAdminRegistrationFees() {
   panel.style.display = "block";
 }
 </script>
+
+<script>
+async function showPublicEventFromLink(auctionId, lotNumber) {
+
+  const page = document.getElementById("pagePublicEvent");
+  const name = document.getElementById("publicEventName");
+  const message = document.getElementById("publicEventMessage");
+  const tagline = document.getElementById("publicEventTagline");
+  const lotsBox = document.getElementById("publicEventLots");
+
+  if (!page || !name || !message || !tagline || !lotsBox) {
+    return;
+  }
+
+  showPage("publicEvent");
+
+  name.textContent = "WHAT A AUCTION EVENT";
+  message.textContent = "Loading auction...";
+  tagline.textContent = "";
+  lotsBox.replaceChildren();
+
+  if (!/^[1-9]\d*$/.test(String(auctionId || ""))) {
+    message.textContent = "Invalid auction link.";
+    return;
+  }
+
+  const { data, error } = await auctionSupabase.rpc(
+   "get_public_auction_event",
+    { p_auction_id: Number(auctionId) }
+  );
+
+  if (error || !data) {
+    message.textContent =
+      "This auction is not available to the public.";
+    return;
+  }
+
+  const event = Array.isArray(data) ? data[0] : data;
+
+  if (!event || !event.name) {
+    message.textContent = "Auction not found or not published.";
+    return;
+  }
+
+  name.textContent = event.name;
+  tagline.textContent = event.tagline || "";
+  message.textContent = "Published auction";
+
+  const lots = Array.isArray(event.lots) ? event.lots : [];
+
+  lots.forEach(function(lot, index) {
+    const card = document.createElement("div");
+    card.className = "panel";
+
+    const heading = document.createElement("h3");
+    heading.textContent =
+      "LOT-" + String(lot.lotNumber || index + 1).padStart(3, "0");
+
+    const title = document.createElement("p");
+    title.textContent = lot.name || "Auction lot";
+
+    const description = document.createElement("p");
+    description.textContent = lot.description || "";
+
+    const price = document.createElement("p");
+    price.textContent =
+      "Starting bid: " +
+      (event.currency || "ZAR") + " " +
+      (lot.startingBid ?? "Not specified");
+
+    card.append(heading, title, description, price);
+
+    if (String(lotNumber) === String(lot.lotNumber)) {
+      card.style.border = "3px solid #9acd32";
+      card.scrollIntoView({ block: "center" });
+    }
+
+    lotsBox.appendChild(card);
+  });
+
+  if (!lots.length) {
+    message.textContent = "No published lots available yet.";
+  }
+}
+</script>
+        
 </body>
 </html>
