@@ -17721,9 +17721,9 @@ function renderCreatorAuctionManagement(events) {
 
   grid.innerHTML = "";
 
-  const auctions = Array.isArray(events) ? events.slice(0, 5) : [];
+  const auctions = Array.isArray(events) ? events.slice(0, 4) : [];
 
-  for (let index = 0; index < 5; index++) {
+  for (let index = 0; index < 4; index++)
     const record = auctions[index] || null;
     const event = record?.event_data || {};
     const hasAuction = !!record;
