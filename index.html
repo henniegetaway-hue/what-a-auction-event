@@ -17823,12 +17823,23 @@ function renderCreatorAuctionManagement(events) {
 
     viewButton.onclick = openSavedAuction;
 
-    loadButton.onclick = function() {
-      if (openSavedAuction()) {
-        document.getElementById("previewLotsGrid")
-          ?.scrollIntoView({behavior:"smooth",block:"start"});
+   loadButton.onclick = function() {
+  if (openSavedAuction()) {
+    showOwnEventPage();
+
+    setTimeout(function() {
+      const loadingCards =
+        document.getElementById("previewLotsGrid");
+
+      if (loadingCards) {
+        loadingCards.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
       }
-    };
+    }, 300);
+  }
+};
 
     card.append(heading, name, status, loadButton, viewButton);
     grid.appendChild(card);
