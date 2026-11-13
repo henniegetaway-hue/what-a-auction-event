@@ -17738,7 +17738,9 @@ function markExpiredOwnEvents(){
  markExpiredOwnEvents();   
 
 function renderCreatorAuctionManagement(events) {
-  const grid = document.getElementById("creatorAuctionManagementGrid");
+  const grid =
+  document.getElementById("creatorDashboardAuctionGrid") ||
+  document.getElementById("creatorAuctionManagementGrid");
   if (!grid) return;
 
   grid.innerHTML = "";
