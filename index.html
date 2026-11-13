@@ -18653,10 +18653,11 @@ const rows = select && select.value
   ? parseInt(select.value, 10)
   : 4;
 
-  const totalLots = rows * 4;
+  // Maximum auction capacity: 4 lots per selected row
+const totalLots = rows * 4;
 
-  const existingLots = grid.querySelectorAll(".previewSampleLot").length;
-
+// Keep track of completed lots separately from the loading card
+const existingLots = grid.querySelectorAll(".previewSampleLot").length;
    while(grid.children.length > totalLots){
   grid.removeChild(grid.lastElementChild);
 }     
