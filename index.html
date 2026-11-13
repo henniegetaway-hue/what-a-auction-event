@@ -17823,24 +17823,26 @@ function renderCreatorAuctionManagement(events) {
 
     viewButton.onclick = openSavedAuction;
 
-   loadButton.onclick = function() {
-  if (openSavedAuction()) {
-    showOwnEventPage();
+   loadButton.onclick = async function() {
+  if (!openSavedAuction()) return;
 
-    setTimeout(function() {
-      const loadingCards =
-        document.getElementById("previewLotsGrid");
+  await showOwnEventPage();
 
-      if (loadingCards) {
-        loadingCards.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
-      }
-    }, 300);
-  }
+  setTimeout(function() {
+    const loadingCards =
+      document.getElementById("previewLotsGrid");
+
+    if (!loadingCards) {
+      alert("Loading cards section not found.");
+      return;
+    }
+
+    loadingCards.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }, 400);
 };
-
     card.append(heading, name, status, loadButton, viewButton);
     grid.appendChild(card);
   }
