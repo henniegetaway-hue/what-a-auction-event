@@ -3152,133 +3152,6 @@ body:not(.showRegistration) #pageRegister {
         ">
   RESET ACCENT TO GREEN
 </button>
-<!-- WHAT A AUCTION EVENT - CREATOR DASHBOARD -->
-<div id="ownEventCreatorDashboard" style="
-  margin:16px 0;
-  padding:14px 10px;
-  background:#101010;
-  border:1px solid #ffd700;
-  border-radius:9px;
-  color:#fff;
-  box-sizing:border-box;
-">
-
-  <h3 style="
-    text-align:center;
-    color:#d4ff70;
-    margin:4px 0 8px;
-  ">
-    👑 AUCTION CREATOR DASHBOARD
-  </h3>
-
-  <p style="
-    text-align:center;
-    font-size:12px;
-    margin-bottom:18px;
-  ">
-    Manage Your WHAT A AUCTION EVENT Auctions
-  </p>
-
-  
-<div style="
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:14px 8px;
-">
-
-  <button type="button"
-    onclick="loadMyAuctions()"
-    class="creatorRoundBtn">
-    <span class="creatorCircle">📋</span>
-    <span>MY AUCTIONS</span>
-  </button>
-
-  <button type="button"
-    onclick="alert('Complete the current draft before starting another auction.')"
-    class="creatorRoundBtn">
-    <span class="creatorCircle">➕</span>
-    <span>NEW AUCTION</span>
-  </button>
-
-  <button type="button"
-    onclick="loadMyAuctions()"
-    class="creatorRoundBtn">
-    <span class="creatorCircle">✏️</span>
-    <span>EDIT AUCTION</span>
-  </button>
-
-  <button type="button"
-    onclick="document.getElementById('previewLotsGrid')?.scrollIntoView({behavior:'smooth',block:'start'})"
-    class="creatorRoundBtn">
-    <span class="creatorCircle">📷</span>
-    <span>LOAD LOTS</span>
-  </button>
-
-  <button type="button"
-    onclick="document.getElementById('ownEventDate')?.scrollIntoView({behavior:'smooth',block:'center'})"
-    class="creatorRoundBtn">
-    <span class="creatorCircle">📅</span>
-    <span>AUCTION DATES</span>
-  </button>
-
-  <button type="button"
-    onclick="alert('Auction activation and payment details will be available after account verification.')"
-    class="creatorRoundBtn">
-    <span class="creatorCircle">💳</span>
-    <span>PAYMENTS</span>
-  </button>
-
-</div>
-
-<style>
-#ownEventCreatorDashboard .creatorRoundBtn {
-  display:flex;
-  align-items:center;
-  gap:7px;
-  width:100%;
-  min-width:0;
-  padding:0;
-  background:transparent;
-  border:none;
-  color:white;
-  font-size:10px;
-  font-weight:bold;
-  text-align:left;
-  cursor:pointer;
-}
-
-#ownEventCreatorDashboard .creatorCircle {
-  display:flex;
-  align-items:center;
-  justify-content:center;
- flex:0 0 28px;
-width:28px;
-height:28px;
-  border-radius:50%;
-  background:#d4ff70;
-  border:2px solid #fff;
-  color:#111;
-  font-size:17px;
-  box-sizing:border-box;
-}
-
-#ownEventCreatorDashboard .creatorRoundBtn:hover
-.creatorCircle {
-  background:#ffd700;
-}
-</style>
-
-  <p style="
-    margin:16px 0 0;
-    text-align:center;
-    color:#d4ff70;
-    font-size:11px;
-  ">
-    Only your registered creator auctions may be managed.
-  </p>
-
-</div>
-<!-- END CREATOR DASHBOARD -->
 
    <div style="
   margin:14px 0;
@@ -3544,6 +3417,148 @@ color:#fff;
   "></div>
 </div>
 
+
+<!-- WHAT A AUCTION EVENT - CREATOR DASHBOARD -->
+<div id="ownEventCreatorDashboard" style="
+  margin:16px 0;
+  padding:14px;
+  background:#101010;
+  border:1px solid #ffd700;
+  border-radius:10px;
+  color:#fff;
+  box-sizing:border-box;
+">
+
+  <h3 style="
+    text-align:center;
+    color:#d4ff70;
+    margin:4px 0 8px;
+  ">
+    👑 AUCTION CREATOR DASHBOARD
+  </h3>
+
+  <p style="
+    text-align:center;
+    font-size:12px;
+    margin-bottom:18px;
+  ">
+    Manage Your WHAT A AUCTION EVENT Auctions
+  </p>
+
+  <div style="
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:14px 10px;
+  ">
+
+    <button type="button"
+      onclick="loadMyAuctions()"
+      class="creatorRoundBtn">
+      <span class="creatorCircle">📋</span>
+      <span>MY AUCTIONS</span>
+    </button>
+
+    <button type="button"
+      onclick="alert('Complete the current draft before starting another auction.')"
+      class="creatorRoundBtn">
+      <span class="creatorCircle">➕</span>
+      <span>NEW AUCTION</span>
+    </button>
+
+    <button type="button"
+      onclick="loadMyAuctions()"
+      class="creatorRoundBtn">
+      <span class="creatorCircle">✏️</span>
+      <span>EDIT AUCTION</span>
+    </button>
+
+    <button type="button"
+      onclick="document.getElementById('previewLotsGrid')?.scrollIntoView({behavior:'smooth',block:'start'})"
+      class="creatorRoundBtn">
+      <span class="creatorCircle">📷</span>
+      <span>LOAD LOTS</span>
+    </button>
+
+    <button type="button"
+      onclick="document.getElementById('ownEventDate')?.scrollIntoView({behavior:'smooth',block:'center'})"
+      class="creatorRoundBtn">
+      <span class="creatorCircle">📅</span>
+      <span>AUCTION DATES</span>
+    </button>
+
+    <button type="button"
+      onclick="alert('Auction activation and payment details will be available after account verification.')"
+      class="creatorRoundBtn">
+      <span class="creatorCircle">💳</span>
+      <span>PAYMENTS</span>
+    </button>
+
+  </div>
+
+  <style>
+    #ownEventCreatorDashboard .creatorRoundBtn {
+      display:flex;
+      align-items:center;
+      gap:9px;
+      width:100%;
+      min-width:0;
+      padding:6px 2px;
+      background:transparent;
+      border:none;
+      color:white;
+      font-size:11px;
+      font-weight:bold;
+      text-align:left;
+      cursor:pointer;
+    }
+
+    #ownEventCreatorDashboard .creatorCircle {
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex:0 0 36px;
+      width:36px;
+      height:36px;
+      border-radius:50%;
+      background:#d4ff70;
+      border:2px solid #fff;
+      color:#111;
+      font-size:18px;
+      box-sizing:border-box;
+    }
+
+    #ownEventCreatorDashboard .creatorRoundBtn:hover .creatorCircle {
+      background:#ffd700;
+    }
+
+    @media(max-width:600px) {
+      #ownEventCreatorDashboard .creatorRoundBtn {
+        font-size:10px;
+        gap:5px;
+      }
+
+      #ownEventCreatorDashboard .creatorCircle {
+        flex-basis:30px;
+        width:30px;
+        height:30px;
+        font-size:15px;
+      }
+    }
+  </style>
+
+  <p style="
+    margin:16px 0 0;
+    text-align:center;
+    color:#d4ff70;
+    font-size:11px;
+  ">
+    Only your registered creator auctions may be managed.
+  </p>
+
+</div>
+<!-- END CREATOR DASHBOARD -->
+
+      
 </section>
 <!-- CREATE YOUR OWN EVENT — LIVE AUCTION PAGE -->
 <section id="pageOwnAuction" class="page hidden ownEventWorld">
