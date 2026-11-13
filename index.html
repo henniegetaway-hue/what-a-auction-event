@@ -19125,7 +19125,17 @@ function restoreCreatorAuctionLots(savedLots){
 }
      
   function saveOwnEventLots(){
+  const selectedAuctionId = Number(
+    localStorage.getItem("selectedCreatorAuctionId")
+  );
 
+  if (!Number.isSafeInteger(selectedAuctionId) || selectedAuctionId <= 0) {
+    alert(
+      "NO AUCTION SELECTED\n\n" +
+      "Please open or save your auction before loading lots."
+    );
+    return false;
+  }
   const grid = document.getElementById("previewLotsGrid");
   if(!grid) return false;
 
