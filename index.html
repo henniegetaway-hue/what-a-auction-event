@@ -3179,11 +3179,95 @@ body:not(.showRegistration) #pageRegister {
     Manage Your WHAT A AUCTION EVENT Auctions
   </p>
 
-  <div style="
-    display:grid;
-    grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:12px 8px;
-  ">
+  
+<div style="
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px 8px;
+">
+
+  <button type="button"
+    onclick="loadMyAuctions()"
+    class="creatorRoundBtn">
+    <span class="creatorCircle">📋</span>
+    <span>MY AUCTIONS</span>
+  </button>
+
+  <button type="button"
+    onclick="alert('Complete the current draft before starting another auction.')"
+    class="creatorRoundBtn">
+    <span class="creatorCircle">➕</span>
+    <span>NEW AUCTION</span>
+  </button>
+
+  <button type="button"
+    onclick="loadMyAuctions()"
+    class="creatorRoundBtn">
+    <span class="creatorCircle">✏️</span>
+    <span>EDIT AUCTION</span>
+  </button>
+
+  <button type="button"
+    onclick="document.getElementById('previewLotsGrid')?.scrollIntoView({behavior:'smooth',block:'start'})"
+    class="creatorRoundBtn">
+    <span class="creatorCircle">📷</span>
+    <span>LOAD LOTS</span>
+  </button>
+
+  <button type="button"
+    onclick="document.getElementById('ownEventDate')?.scrollIntoView({behavior:'smooth',block:'center'})"
+    class="creatorRoundBtn">
+    <span class="creatorCircle">📅</span>
+    <span>AUCTION DATES</span>
+  </button>
+
+  <button type="button"
+    onclick="alert('Auction activation and payment details will be available after account verification.')"
+    class="creatorRoundBtn">
+    <span class="creatorCircle">💳</span>
+    <span>PAYMENTS</span>
+  </button>
+
+</div>
+
+<style>
+#ownEventCreatorDashboard .creatorRoundBtn {
+  display:flex;
+  align-items:center;
+  gap:7px;
+  width:100%;
+  min-width:0;
+  padding:0;
+  background:transparent;
+  border:none;
+  color:white;
+  font-size:10px;
+  font-weight:bold;
+  text-align:left;
+  cursor:pointer;
+}
+
+#ownEventCreatorDashboard .creatorCircle {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 34px;
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  background:#d4ff70;
+  border:2px solid #fff;
+  color:#111;
+  font-size:17px;
+  box-sizing:border-box;
+}
+
+#ownEventCreatorDashboard .creatorRoundBtn:hover
+.creatorCircle {
+  background:#ffd700;
+}
+</style>
+
 
     <button type="button"
       onclick="loadMyAuctions()">
