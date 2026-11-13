@@ -3152,6 +3152,83 @@ body:not(.showRegistration) #pageRegister {
   RESET ACCENT TO GREEN
 </button>
 
+<!-- WHAT A AUCTION EVENT - CREATOR DASHBOARD -->
+<div id="ownEventCreatorDashboard" style="
+  margin:16px 0;
+  padding:14px 10px;
+  background:#101010;
+  border:1px solid #ffd700;
+  border-radius:9px;
+  color:#fff;
+  box-sizing:border-box;
+">
+
+  <h3 style="
+    text-align:center;
+    color:#d4ff70;
+    margin:4px 0 8px;
+  ">
+    👑 AUCTION CREATOR DASHBOARD
+  </h3>
+
+  <p style="
+    text-align:center;
+    font-size:12px;
+    margin-bottom:18px;
+  ">
+    Manage Your WHAT A AUCTION EVENT Auctions
+  </p>
+
+  <div style="
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:12px 8px;
+  ">
+
+    <button type="button"
+      onclick="loadMyAuctions()">
+      📋 MY AUCTIONS
+    </button>
+
+    <button type="button"
+      onclick="alert('Complete the current draft before starting another auction.')">
+      ➕ NEW AUCTION
+    </button>
+
+    <button type="button"
+      onclick="loadMyAuctions()">
+      ✏️ EDIT AUCTION
+    </button>
+
+    <button type="button"
+      onclick="document.getElementById('previewLotsGrid')?.scrollIntoView({behavior:'smooth',block:'start'})">
+      📷 LOAD LOTS
+    </button>
+
+    <button type="button"
+      onclick="document.getElementById('ownEventDate')?.scrollIntoView({behavior:'smooth',block:'center'})">
+      📅 AUCTION DATES
+    </button>
+
+    <button type="button"
+      onclick="alert('Auction activation and payment details will be available after account verification.')">
+      💳 PAYMENTS
+    </button>
+
+  </div>
+
+  <p style="
+    margin:16px 0 0;
+    text-align:center;
+    color:#d4ff70;
+    font-size:11px;
+  ">
+    Only your registered creator auctions may be managed.
+  </p>
+
+</div>
+<!-- END CREATOR DASHBOARD -->
+
    <div style="
   margin:14px 0;
   padding:12px;
