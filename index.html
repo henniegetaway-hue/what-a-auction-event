@@ -17712,51 +17712,70 @@ function markExpiredOwnEvents(){
   }
 }      
  markExpiredOwnEvents();   
- function renderCreatorAuctionManagement(events){
 
+function renderCreatorAuctionManagement(events) {
   const grid = document.getElementById("creatorAuctionManagementGrid");
-  if(!grid) return;
+  if (!grid) return;
 
   grid.innerHTML = "";
 
-  if(!events.length){
-    grid.textContent = "No saved auctions yet.";
-    return;
-  }
+  const auctions = Array.isArray(events) ? events.slice(0, 5) : [];
 
-  events.slice(0,5).forEach((record,index)=>{
-
-    const event = record.event_data || {};
+  for (let index = 0; index < 5; index++) {
+    const record = auctions[index] || null;
+    const event = record?.event_data || {};
+    const hasAuction = !!record;
 
     const card = document.createElement("div");
     card.style.cssText =
-  "background:#07180b;border:1px solid #9acd32;" +
-  "border-radius:8px;padding:12px;min-width:0;" +
-  "min-height:110px;box-sizing:border-box;";
+      "background:#101010;border:1px solid #ffd700;" +
+      "border-radius:8px;padding:10px;min-width:125px;" +
+      "box-sizing:border-box;text-align:center;";
 
     const heading = document.createElement("div");
     heading.style.cssText =
-      "color:#9acd32;font-size:11px;font-weight:bold;";
-    heading.textContent = "AUCTION " + (index + 1);
+      "color:#fff;font-size:11px;font-weight:bold;margin-bottom:12px;";
+    heading.textContent = "🌸 AUCTION " + (index + 1);
 
     const name = document.createElement("div");
     name.style.cssText =
-      "color:white;font-size:10px;overflow-wrap:anywhere;";
-    name.textContent = event.name || "Unnamed Auction";
+      "color:#d4ff70;font-size:12px;font-weight:bold;" +
+      "overflow-wrap:anywhere;min-height:32px;";
+    name.textContent = hasAuction
+      ? (event.name || "Unnamed Auction")
+      : "EMPTY SPACE";
 
     const status = document.createElement("div");
-    status.style.cssText = "color:#fff;font-size:9px;";
-    status.textContent = event.eventStatus || "DRAFT";
+    status.style.cssText =
+      "color:white;font-size:10px;margin:8px 0;";
+    status.textContent = hasAuction
+      ? (event.eventStatus || "DRAFT")
+      : "NOT CREATED";
 
-    const button = document.createElement("button");
-    button.type = "button";
-    button.textContent = "OPEN / EDIT";
-    button.style.cssText =
-      "background:#9acd32;color:#07180b;border:none;" +
-      "border-radius:4px;padding:6px 3px;margin-top:6px;" +
-      "width:100%;font-size:9px;cursor:pointer;";
+    const loadButton = document.createElement("button");
+    loadButton.type = "button";
+    loadButton.textContent = "LOAD LOTS";
+    loadButton.style.cssText =
+      "background:#ffd700;color:#111;border:none;" +
+      "border-radius:5px;padding:10px 4px;" +
+      "width:100%;font-size:11px;font-weight:bold;" +
+      "cursor:pointer;margin-bottom:6px;";
 
-    button.onclick = function(){
+    const viewButton = document.createElement("button");
+    viewButton.type = "button";
+    viewButton.textContent = "VIEW / EDIT";
+    viewButton.style.cssText =
+      "background:#a3ff50;color:#111;border:none;" +
+      "border-radius:5px;padding:10px 4px;" +
+      "width:100%;font-size:11px;font-weight:bold;" +
+      "cursor:pointer;";
+
+    function openSavedAuction() {
+      if (!hasAuction) {
+        alert("This auction space is empty. Create and save an auction first.");
+        return false;
+      }
+
       const existingButton = [
         ...document.querySelectorAll("#ownEventManagementList button")
       ].find(btn => {
@@ -17765,17 +17784,29 @@ function markExpiredOwnEvents(){
           (event.name || "Unnamed Auction");
       });
 
-      if(existingButton){
+      if (existingButton) {
         existingButton.click();
-      } else {
-        alert("Open this auction from MY AUCTIONS.");
+        return true;
+      }
+
+      alert("Open this auction from MY AUCTIONS.");
+      return false;
+    }
+
+    viewButton.onclick = openSavedAuction;
+
+    loadButton.onclick = function() {
+      if (openSavedAuction()) {
+        document.getElementById("previewLotsGrid")
+          ?.scrollIntoView({behavior:"smooth",block:"start"});
       }
     };
 
-    card.append(heading,name,status,button);
+    card.append(heading, name, status, loadButton, viewButton);
     grid.appendChild(card);
-  });
-}  
+  }
+}
+
 async function loadMyAuctions(){
 
  const display =
