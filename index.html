@@ -3586,6 +3586,26 @@ color:#fff;
 </p>
 
     <div id="ownAuctionDisplay"></div>
+
+<div id="creatorDashboardAuctionCards" style="
+  margin-top:15px;
+  padding:12px;
+  background:#07180b;
+  border:1px solid #9acd32;
+  border-radius:10px;
+">
+  <h3 style="color:#9acd32;text-align:center;">
+    MY 4 AUCTIONS
+  </h3>
+
+  <div id="creatorDashboardAuctionGrid" style="
+    display:grid;
+    grid-template-columns:repeat(4,minmax(125px,1fr));
+    gap:8px;
+    overflow-x:auto;
+  "></div>
+</div>
+
   </div>
 
 </section>
@@ -8841,8 +8861,8 @@ if(auctionTagline){
 });
       
 renderOwnEventAuction();
-      
-  const page = document.getElementById("pageOwnAuction");
+
+const page = document.getElementById("pageOwnAuction");
   const btn = document.getElementById("navOwnAuction");
 
   if(page) page.classList.remove("hidden");
