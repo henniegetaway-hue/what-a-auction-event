@@ -17703,7 +17703,69 @@ function markExpiredOwnEvents(){
   }
 }      
  markExpiredOwnEvents();   
-   
+ function renderCreatorAuctionManagement(events){
+
+  const grid = document.getElementById("creatorAuctionManagementGrid");
+  if(!grid) return;
+
+  grid.innerHTML = "";
+
+  if(!events.length){
+    grid.textContent = "No saved auctions yet.";
+    return;
+  }
+
+  events.slice(0,5).forEach((record,index)=>{
+
+    const event = record.event_data || {};
+
+    const card = document.createElement("div");
+    card.style.cssText =
+      "background:#07180b;border:1px solid #9acd32;" +
+      "border-radius:6px;padding:6px;min-width:0;";
+
+    const heading = document.createElement("div");
+    heading.style.cssText =
+      "color:#9acd32;font-size:11px;font-weight:bold;";
+    heading.textContent = "AUCTION " + (index + 1);
+
+    const name = document.createElement("div");
+    name.style.cssText =
+      "color:white;font-size:10px;overflow-wrap:anywhere;";
+    name.textContent = event.name || "Unnamed Auction";
+
+    const status = document.createElement("div");
+    status.style.cssText = "color:#fff;font-size:9px;";
+    status.textContent = event.eventStatus || "DRAFT";
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = "OPEN / EDIT";
+    button.style.cssText =
+      "background:#9acd32;color:#07180b;border:none;" +
+      "border-radius:4px;padding:6px 3px;margin-top:6px;" +
+      "width:100%;font-size:9px;cursor:pointer;";
+
+    button.onclick = function(){
+      const existingButton = [
+        ...document.querySelectorAll("#ownEventManagementList button")
+      ].find(btn => {
+        const item = btn.parentElement;
+        return item?.querySelector("strong")?.textContent ===
+          (event.name || "Unnamed Auction");
+      });
+
+      if(existingButton){
+        existingButton.click();
+      } else {
+        alert("Open this auction from MY AUCTIONS.");
+      }
+    };
+
+    card.append(heading,name,status,button);
+    grid.appendChild(card);
+  });
+}  
 async function loadMyAuctions(){
 
   const display =
