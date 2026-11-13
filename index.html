@@ -17768,10 +17768,13 @@ function markExpiredOwnEvents(){
 }  
 async function loadMyAuctions(){
 
-  const display =
-    document.getElementById("ownEventManagementList");
+ const display =
+  document.getElementById("ownEventManagementList");
 
-  if(!display) return;
+const managementGrid =
+  document.getElementById("creatorAuctionManagementGrid");
+
+if(!display && !managementGrid) return;
 
   const { data: userData, error: userError } =
     await auctionSupabase.auth.getUser();
