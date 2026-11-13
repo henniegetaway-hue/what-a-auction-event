@@ -3152,13 +3152,6 @@ body:not(.showRegistration) #pageRegister {
         ">
   RESET ACCENT TO GREEN
 </button>
-<!-- CREATOR DASHBOARD TWO-COLUMN LAYOUT -->
-<div id="creatorDashboardTwoColumns" style="
-  display:grid;
- grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);
-  gap:12px;
-  align-items:start;
-">
 <!-- WHAT A AUCTION EVENT - CREATOR DASHBOARD -->
 <div id="ownEventCreatorDashboard" style="
   margin:16px 0;
@@ -3402,6 +3395,27 @@ By ticking “I ACCEPT THE EVENT RULES &amp; TERMS”, the Event Creator confirm
 
 <!-- RIGHT SIDE: LIVE AUCTION PAGE PREVIEW -->
 <div class="panel" id="ownEventPreviewPanel">
+
+<!-- MY AUCTIONS MANAGEMENT PANEL -->
+<div id="creatorAuctionManagement" style="
+  margin:12px 0;
+  padding:12px;
+  background:#07180b;
+  border:1px solid #9acd32;
+  border-radius:10px;
+  box-sizing:border-box;
+">
+  <h3 style="color:#9acd32;text-align:center;margin:0 0 12px;">
+    MY 5 AUCTIONS
+  </h3>
+
+  <div id="creatorAuctionManagementGrid" style="
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:8px;
+  "></div>
+</div>
+
 <div id="eventLandingMenu">
   <button type="button" onclick="openEventCreatorSetup()">
     CREATE NEW AUCTION / LOAD ITEMS
