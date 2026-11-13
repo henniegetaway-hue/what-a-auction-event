@@ -3278,6 +3278,25 @@ body:not(.showRegistration) #pageRegister {
   </p>
 
 </div>
+ <!-- MY AUCTIONS MANAGEMENT PANEL -->
+<div id="creatorAuctionManagement" style="
+  margin:12px 0;
+  padding:12px;
+  background:#07180b;
+  border:1px solid #9acd32;
+  border-radius:10px;
+  box-sizing:border-box;
+">
+  <h3 style="color:#9acd32;text-align:center;margin:0 0 12px;">
+    MY 5 AUCTIONS
+  </h3>
+
+  <div id="creatorAuctionManagementGrid" style="
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:6px;
+  "></div>
+</div>     
 <!-- END CREATOR DASHBOARD -->
 
    <div style="
@@ -3436,30 +3455,6 @@ By ticking “I ACCEPT THE EVENT RULES &amp; TERMS”, the Event Creator confirm
   ">
 
         <div style="position:relative;z-index:2;">
-             <!-- CREATOR AUCTION MANAGEMENT -->
-<div id="creatorAuctionManagement"
-     style="
-       background:#07180b;
-       border:1px solid #9acd32;
-       border-radius:10px;
-       padding:12px;
-       margin-bottom:20px;
-       text-align:center;
-     ">
-
-  <h3 style="color:#9acd32;margin:0 0 12px;">
-    MY 5 AUCTIONS
-  </h3>
-
-  <div id="creatorAuctionManagementGrid"
-       style="
-         display:grid;
-         grid-template-columns:repeat(5,minmax(0,1fr));
-         gap:5px;
-       ">
-  </div>
-
-</div> 
 <div style="text-align:left;margin-bottom:10px;position:absolute;left:0;top:0;">
  <img id="previewEventLogo"
      src="HORSE%20AUCTION%20LOGO.png"
