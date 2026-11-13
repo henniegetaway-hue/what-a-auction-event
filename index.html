@@ -17723,7 +17723,7 @@ function renderCreatorAuctionManagement(events) {
 
   const auctions = Array.isArray(events) ? events.slice(0, 4) : [];
 
-  for (let index = 0; index < 4; index++)
+ for (let index = 0; index < 4; index++) {
     const record = auctions[index] || null;
     const event = record?.event_data || {};
     const hasAuction = !!record;
@@ -19182,7 +19182,16 @@ function restoreCreatorAuctionLots(savedLots){
       name,
       startingBid: lot.querySelector(".ownLotStartingBid")?.value || "",
       increment: lot.querySelector(".ownLotMinimumIncrement")?.value || "",
-      description,.from("auction_events")
+           description,
+      link: ""
+    });
+  }
+
+  localStorage.setItem("ownEventLots", JSON.stringify(lots));
+  return true;
+}
+
+async function shareCreatorPreviewLot(lotNumber){
   if(!validPasswordRecovery){
     alert(
       "ACCESS DENIED\n\n" +
