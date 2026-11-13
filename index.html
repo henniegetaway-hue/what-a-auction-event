@@ -18905,9 +18905,19 @@ if(startingBidInput && startingBidDisplay){
 }
   }
 
-  updateOwnEventCurrency();
+   updateOwnEventCurrency();
+
+  // Show only the first empty loading card.
+  // Keep other cards and their data intact.
+  const loadingCards = [
+    ...grid.querySelectorAll(".previewSampleLot")
+  ];
+
+  loadingCards.forEach((card, index) => {
+    card.style.display = index === 0 ? "flex" : "none";
+  });
 }
- 
+
 function restoreCreatorAuctionLots(savedLots){
 
   if(!Array.isArray(savedLots)) return;
