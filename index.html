@@ -17760,24 +17760,29 @@ if(!creatorEmail){
   return;
 }
 
-if(!creatorPassword){
-  alert("Please create a Password.");
-  return;
-}
-
-if(creatorPassword.length < 6){
-  alert("Your password must be at least 6 characters.");
-  return;
-}
-
-if(creatorPassword !== creatorPasswordConfirm){
-  alert("The passwords do not match. Please check them.");
-  return;
-}  
- let creatorAuth;
 
 const { data: existingSessionData } =
   await auctionSupabase.auth.getSession();
+
+if(!existingSessionData?.session){
+
+  if(!creatorPassword){
+    alert("Please enter your creator account password.");
+    return;
+  }
+
+  if(creatorPassword.length < 6){
+    alert("Your password must be at least 6 characters.");
+    return;
+  }
+
+  if(creatorPassword !== creatorPasswordConfirm){
+    alert("The passwords do not match. Please check them.");
+    return;
+  }
+}
+
+let creatorAuth;
 
 if(existingSessionData.session){
    if(
