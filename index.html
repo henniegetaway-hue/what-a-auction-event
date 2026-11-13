@@ -17815,7 +17815,21 @@ if(existingSessionData.session){
 
     creatorAuth = signInData;
 
-  } else {
+ } else {
+
+  const { data: cliviaSessionData } =
+    await cliviaSupabase.auth.getSession();
+
+  if (cliviaSessionData?.session) {
+    alert(
+      "YOUR CLIVIA ACCOUNT IS RECOGNISED\n\n" +
+      "Your existing account must first be securely connected " +
+      "to WHAT A AUCTION EVENT.\n\n" +
+      "Please do not register a second account."
+    );
+    return;
+  }
+
 const turnstileToken =
   window.turnstile?.getResponse(
     document.getElementById("cliviaTurnstile")
