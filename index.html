@@ -1781,6 +1781,42 @@ const cliviaSupabase = supabase.createClient(
     }, 100);
   }
 });
+ 
+async function verifySharedAuctionAccount() {
+  const { data: cliviaData, error: cliviaError } =
+    await cliviaSupabase.auth.getSession();
+
+  const { data: eventData, error: eventError } =
+    await auctionSupabase.auth.getSession();
+
+  if (
+    cliviaError ||
+    eventError ||
+    !cliviaData.session ||
+    !eventData.session
+  ) {
+    return false;
+  }
+
+  const { data, error } =
+    await auctionSupabase.functions.invoke(
+      "verify-shared-account",
+      {
+        body: {
+          cliviaAccessToken:
+            cliviaData.session.access_token
+        }
+      }
+    );
+
+  if (error) {
+    console.error("Shared account verification failed.");
+    return false;
+  }
+
+  return data?.verified === true;
+}
+      
 let validPasswordRecovery = false;
 
 auctionSupabase.auth.onAuthStateChange((event, session) => {
