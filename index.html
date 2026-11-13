@@ -17779,29 +17779,51 @@ if(!display && !managementGrid) return;
   const { data: userData, error: userError } =
     await auctionSupabase.auth.getUser();
 
-  if(userError || !userData?.user){
+ if(userError || !userData?.user){
+  if(display){
     display.textContent = "Sign in to view your auctions.";
-    return;
   }
+  if(managementGrid){
+    managementGrid.textContent = "Sign in to view your auctions.";
+  }
+  return;
+}
 
+if(display){
   display.textContent = "Loading your auctions...";
+}
+if(managementGrid){
+  managementGrid.textContent = "Loading your auctions...";
+}
 
-  const { data: events, error } = await auctionSupabase
-   .from("auction_events")
-.select("id, event_data")
-.eq("creator_id", userData.user.id);
-  if(error){
-    display.textContent =
-      "Unable to load auctions: " + error.message;
-    return;
-  }
+const { data: events, error } = await auctionSupabase
+  .from("auction_events")
+  .select("id, event_data")
+  .eq("creator_id", userData.user.id);
 
+if(error){
+  const message = "Unable to load auctions: " + error.message;
+
+  if(display) display.textContent = message;
+  if(managementGrid) managementGrid.textContent = message;
+  return;
+}
+
+if(display){
   display.innerHTML = "";
+}
 
-  if(!events?.length){
+// Display the creator's real saved auctions on the right
+if(managementGrid){
+  renderCreatorAuctionManagement(events || []);
+}
+
+if(!events?.length){
+  if(display){
     display.textContent = "No auctions created yet.";
-    return;
   }
+  return;
+}
 
   events.forEach(record => {
 
