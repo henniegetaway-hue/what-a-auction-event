@@ -17798,9 +17798,13 @@ function renderCreatorAuctionManagement(events) {
       "width:100%;font-size:11px;font-weight:bold;" +
       "cursor:pointer;";
 
-   function openSavedAuction() {
+  async function openSavedAuction(destination) {
   if (!hasAuction || !record?.id) {
-    alert("This auction space is empty. Create and save an auction first.");
+    if (destination === "create") {
+      await window.openCreatorRoute("create");
+    } else {
+      alert("This auction space is empty. Create and save an auction first.");
+    }
     return false;
   }
 
@@ -17809,44 +17813,37 @@ function renderCreatorAuctionManagement(events) {
     String(record.id)
   );
 
-  const existingButton = [
-    ...document.querySelectorAll("#ownEventManagementList button")
-  ].find(btn => {
-    const item = btn.parentElement;
-    return item?.querySelector("strong")?.textContent ===
-      (event.name || "Unnamed Auction");
-  });
+  await window.openCreatorRoute(destination);
 
-  if (existingButton) {
-    existingButton.click();
-    return true;
+  const managementList =
+    document.getElementById("ownEventManagementList");
+
+  const matchingItem = [
+    ...(managementList?.children || [])
+  ].find(item =>
+    item.querySelector("strong")?.textContent ===
+    (event.name || "Unnamed Auction")
+  );
+
+  const editButton = matchingItem?.querySelector("button");
+
+  if (editButton) {
+    editButton.click();
   }
 
-  alert("Saved auction could not be found. Please reload the page.");
-  return false;
+  if (destination === "load-lots") {
+    window.scrollToCreatorLots();
+  }
+
+  return true;
 }
 
-    viewButton.onclick = openSavedAuction;
+viewButton.onclick = function() {
+  openSavedAuction("create");
+};
 
-   loadButton.onclick = async function() {
-  if (!openSavedAuction()) return;
-
-  await showOwnEventPage();
-
-  setTimeout(function() {
-    const loadingCards =
-      document.getElementById("previewLotsGrid");
-
-    if (!loadingCards) {
-      alert("Loading cards section not found.");
-      return;
-    }
-
-    loadingCards.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
-  }, 400);
+loadButton.onclick = function() {
+  openSavedAuction(hasAuction ? "load-lots" : "create");
 };
     card.append(heading, name, status, loadButton, viewButton);
     grid.appendChild(card);
