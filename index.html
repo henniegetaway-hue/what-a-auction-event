@@ -21400,7 +21400,10 @@ border: isRegister ? "2px solid #E5A45A" : "1px solid #dddddd",
 
  button.onclick = () => {
   menu.remove();
-
+if (label === "CLIVIA CHATS") {
+  openCliviaMembersChat();
+  return;
+}
     if (label === "BEST 10") {
       showOwnBest10Page();
       return;
