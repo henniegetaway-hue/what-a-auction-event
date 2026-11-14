@@ -11054,8 +11054,13 @@ async function getSharedAuctionMember() {
 async function saveCliviaPlantToSupabase(plant) {
   const member = await getSharedAuctionMember();
 
-  if (!plant || !plant.name) {
+   if (!plant || !plant.name) {
     throw new Error("Plant name is required.");
+  }
+
+  if (!Number.isInteger(Number(plant.lotNumber)) ||
+      Number(plant.lotNumber) < 1) {
+    throw new Error("A valid lot number is required.");
   }
 
   const { data, error } = await cliviaSupabase
