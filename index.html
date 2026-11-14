@@ -11261,7 +11261,50 @@ const { data: photoPublicData } =
     .getPublicUrl(compressedPhotoPath);
 
 const flower = photoPublicData.publicUrl;
-const plant = photo2 ? await fileToDataURL(photo2) : "";    
+
+/* UPLOAD ACTUAL PLANT PHOTO TO SUPABASE */
+
+let plant = "";
+
+if (photo2) {
+  const plantPhotoData = await fileToDataURL(photo2);
+
+  const plantPhotoBlob = await (
+    await fetch(plantPhotoData)
+  ).blob();
+
+  const plantPhotoPath =
+    "lots/" +
+    Date.now() +
+    "-plant-" +
+    Math.random().toString(36).slice(2) +
+    ".jpg";
+
+  const { error: plantPhotoError } =
+    await cliviaSupabase.storage
+      .from("lot-photos")
+      .upload(plantPhotoPath, plantPhotoBlob, {
+        contentType: "image/jpeg",
+        upsert: false
+      });
+
+  if (plantPhotoError) {
+    if (msg) {
+      msg.textContent =
+        "Actual plant photo upload failed: " +
+        plantPhotoError.message;
+    }
+    return;
+  }
+
+  const { data: plantPhotoPublicData } =
+    cliviaSupabase.storage
+      .from("lot-photos")
+      .getPublicUrl(plantPhotoPath);
+
+  plant = plantPhotoPublicData.publicUrl;
+}
+  
 
  const exportEligible = seller.exporterApproved === true;
 
