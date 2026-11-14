@@ -11075,7 +11075,8 @@ async function saveCliviaPlantToSupabase(plant) {
       starting_bid: Number(plant.startBid || 0),
       start_row: plant.startRow || null,
       export_eligible: Boolean(plant.exportEligible),
-      status: "TEST"
+            status: "TEST",
+      listing_fee: 0
     })
     .select()
     .single();
