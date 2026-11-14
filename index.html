@@ -13290,7 +13290,31 @@ async function loadCliviaGroupMembers(){
 
   if(!groupId || !list) return;
 
-  list.textContent = "Loading group members...";
+list.textContent = "Checking Group President access...";
+
+const { data: authData, error: authError } =
+  await cliviaSupabase.auth.getUser();
+
+if(authError || !authData?.user){
+  list.textContent = "Please sign in first.";
+  return;
+}
+
+const { data: presidentGroup, error: presidentError } =
+  await cliviaSupabase
+    .from("clivia_groups")
+    .select("id")
+    .eq("id", groupId)
+    .eq("president_user_id", authData.user.id)
+    .maybeSingle();
+
+if(presidentError || !presidentGroup){
+  list.textContent =
+    "Only the Group President may manage membership requests.";
+  return;
+}
+
+list.textContent = "Loading group members...";
 
   const { data, error } = await cliviaSupabase
     .from("clivia_group_members")
@@ -21335,11 +21359,11 @@ if (label === "CLIVIA AUCTIONS") {
   `;
 } else {
   button.textContent = flowers ? `${label} ${flowers}` : label;
-  if (label === "GROUP AUCTIONS") {
-  button.style.fontSize = "10px";
+ if (label === "GROUP AUCTIONS") {
+  button.style.fontSize = "12px";
   button.style.whiteSpace = "nowrap";
-  button.style.padding = "8px 4px";
-}    
+  button.style.padding = "8px 3px";
+  button.style.letterSpacing = "-0.3px";
 }
     if(label === "REGISTER - MY ACCOUNT"){
   button.style.setProperty("white-space", "nowrap");
