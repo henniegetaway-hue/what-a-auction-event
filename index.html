@@ -11078,6 +11078,35 @@ const seller = (state.sellers || []).find(
   s => s.id === activeSellerId
 );
 
+if (!seller) {
+  if (msg) msg.textContent = "Please select your registered seller account.";
+  return;
+}
+
+const { data: sellerAuthData, error: sellerAuthError } =
+  await cliviaSupabase.auth.getUser();
+
+const signedInSeller = sellerAuthData?.user;
+
+if (
+  sellerAuthError ||
+  !signedInSeller ||
+  !signedInSeller.email_confirmed_at
+) {
+  if (msg) msg.textContent =
+    "Please sign in with your confirmed Clivia account before loading plants.";
+  return;
+}
+
+if (
+  !seller.authUserId ||
+  String(seller.authUserId) !== String(signedInSeller.id)
+) {
+  if (msg) msg.textContent =
+    "This seller account does not belong to the signed-in member.";
+  return;
+}
+
     if(!startRow){
   if(msg) msg.innerHTML = "<b>Please select a Starting Bid Row.</b>";
   return;
