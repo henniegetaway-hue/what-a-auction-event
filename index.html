@@ -5432,7 +5432,38 @@ border:1px solid #D99A50;
     white-space:nowrap !important;
   }
 }
-     
+ /* MY 4 AUCTIONS - FIT ALL CARDS */
+
+#creatorAuctionManagement {
+  max-width:100%;
+  min-width:0;
+  box-sizing:border-box;
+}
+
+#creatorAuctionManagementGrid > * {
+  min-width:0 !important;
+  width:100% !important;
+  box-sizing:border-box !important;
+  padding:6px 3px !important;
+}
+
+#creatorAuctionManagementGrid button {
+  width:100% !important;
+  max-width:100% !important;
+  min-width:0 !important;
+  padding:8px 2px !important;
+  font-size:10px !important;
+  box-sizing:border-box !important;
+  white-space:normal !important;
+  overflow-wrap:anywhere;
+}
+
+@media (max-width:600px) {
+  #creatorAuctionManagementGrid {
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:6px !important;
+  }
+}    
 </style>
   
 </div>
