@@ -8552,7 +8552,7 @@ function save(){
   save();
 
   console.log(
-    "Expired auctions deleted:",
+   "Expired auctions marked for retention review:",
     expiredAuctionIds
   );
 }
@@ -9887,7 +9887,16 @@ async function openSellerSpaces(){
     save();
   }
 
-  ensureAutomaticCliviaAuction();
+   const auctionConnected =
+    await connectExistingCliviaAuction();
+
+  if(!auctionConnected){
+    alert(
+      "Unable to find the active Clivia auction. " +
+      "Please try again later."
+    );
+    return;
+  }
 
   showPage("sellerLoad");
 
@@ -10405,9 +10414,15 @@ refreshSellerSelect();
    save();
   refreshSellerSelect();
 
-  ensureAutomaticCliviaAuction();
-  showPage("sellerLoad");
+   const auctionConnected =
+    await connectExistingCliviaAuction();
 
+  if(!auctionConnected){
+    alert("Unable to find the active Clivia auction. Please try again later.");
+    return;
+  }
+
+  showPage("sellerLoad");
   setTimeout(()=>{
     const form=document.getElementById("sellerLotForm");
     if(form){
@@ -10466,7 +10481,14 @@ refreshSellerSelect();
   save();
   refreshSellerSelect();
 
-  ensureAutomaticCliviaAuction();
+   const auctionConnectedNewSeller =
+    await connectExistingCliviaAuction();
+
+  if(!auctionConnectedNewSeller){
+    alert("Unable to find the active Clivia auction. Please try again later.");
+    return;
+  }
+
   showPage("sellerLoad");
 
 setTimeout(()=>{
@@ -11051,32 +11073,95 @@ async function getSharedAuctionMember() {
   
 /* CENTRAL CLIVIA PLANT SAVING */
 
+
+/* CENTRAL CLIVIA PLANT SAVING */
+
 async function saveCliviaPlantToSupabase(plant) {
   const member = await getSharedAuctionMember();
 
-   if (!plant || !plant.name) {
-    throw new Error("Plant name is required.");
+  if (!plant?.id || !plant?.name) {
+    throw new Error("Plant ID and name are required.");
   }
 
-  if (!Number.isInteger(Number(plant.lotNumber)) ||
-      Number(plant.lotNumber) < 1) {
+  if (!plant.auctionId || !plant.sellerId) {
+    throw new Error("Auction or seller is missing.");
+  }
+
+  const lotNumber = Number(plant.lotNumber);
+
+  if (!Number.isInteger(lotNumber) || lotNumber < 1) {
     throw new Error("A valid lot number is required.");
+  }
+
+  const { data: seller, error: sellerError } =
+    await cliviaSupabase
+      .from("sellers")
+      .select("id")
+      .eq("id", String(plant.sellerId))
+      .eq("auth_user_id", member.id)
+      .maybeSingle();
+
+  if (sellerError || !seller) {
+    throw new Error(
+      "Seller does not belong to the signed-in member."
+    );
+  }
+
+  const { data: auction, error: auctionError } =
+    await cliviaSupabase
+      .from("auctions")
+      .select("id, status")
+      .eq("legacy_auction_id", String(plant.auctionId))
+      .maybeSingle();
+
+  if (auctionError || !auction) {
+    throw new Error("Auction not found in Supabase.");
+  }
+
+  if (!["LOADING", "PREBID"].includes(auction.status)) {
+    throw new Error("Auction is not accepting plants.");
+  }
+
+  const { data: existing, error: lookupError } =
+    await cliviaSupabase
+      .from("lots")
+      .select("id")
+      .eq("website_lot_id", String(plant.id))
+      .maybeSingle();
+
+  if (lookupError) {
+    throw new Error(lookupError.message);
+  }
+
+  if (existing) {
+    throw new Error("This plant is already registered.");
   }
 
   const { data, error } = await cliviaSupabase
     .from("lots")
     .insert({
-         website_lot_id: plant.id,
-      lot_number: Number(plant.lotNumber),
+      website_lot_id: String(plant.id),
+      live_auction_id: auction.id,
+      seller_id: seller.id,
+      lot_number: lotNumber,
       name: plant.name,
       description: plant.description || "",
+      breeding: plant.breeding || "",
+breeder: plant.breeder || "",
+leaves: plant.leaves ?? null,
+offsets: plant.offsets ?? null,
+keywords: plant.keywords || "",
+category: plant.category || "",
+auction_appearances: plant.auctionAppearances ?? 1,    
       flower_image_url: plant.flower || null,
       plant_image_url: plant.plant || null,
-      starting_bid: Number(plant.startBid || 0),
+      starting_bid: Number(plant.startBid),
+      minimum_increment: 100,
       start_row: plant.startRow || null,
-      export_eligible: Boolean(plant.exportEligible),
+      export_eligible: plant.exportEligible === true,
       status: "PREBID",
-      listing_fee: 0
+      listing_fee: Number(plant.listingFee || 0),
+      listing_currency: plant.listingCurrency || "ZAR"
     })
     .select()
     .single();
@@ -11089,6 +11174,7 @@ async function saveCliviaPlantToSupabase(plant) {
 
   return data;
 }
+
     
  async function publishSellerLot(){
 
@@ -11165,12 +11251,21 @@ if (
   return;
 }
 
-if (
-  !seller.authUserId ||
-  String(seller.authUserId) !== String(signedInSeller.id)
-) {
-  if (msg) msg.textContent =
-    "This seller account does not belong to the signed-in member.";
+/* VERIFY SELLER AGAINST SUPABASE */
+
+const { data: verifiedSeller, error: verifySellerError } =
+  await cliviaSupabase
+    .from("sellers")
+    .select("id, auth_user_id")
+    .eq("id", activeSellerId)
+    .eq("auth_user_id", signedInSeller.id)
+    .maybeSingle();
+
+if (verifySellerError || !verifiedSeller) {
+  if (msg) {
+    msg.textContent =
+      "Seller verification failed. Please sign in with your registered seller account.";
+  }
   return;
 }
 
@@ -11228,6 +11323,36 @@ if(typeof getStartRowSpacesLeft === "function"){
     if(msg) msg.innerHTML = "<b>Please accept the Rules & Terms.</b>";
     return;
   }
+    
+/* VERIFY SELECTED AUCTION IN SUPABASE */
+
+const { data: databaseAuction, error: auctionLookupError } =
+  await cliviaSupabase
+    .from("auctions")
+    .select("id, legacy_auction_id, status")
+    .eq("legacy_auction_id", String(selectedAuction.id))
+    .maybeSingle();
+
+if (auctionLookupError || !databaseAuction) {
+  if (msg) {
+    msg.textContent =
+      "This auction is not connected to Supabase yet. " +
+      "Plant publishing has been stopped to protect your records.";
+  }
+  return;
+}
+
+if (
+  databaseAuction.status !== "LOADING" &&
+  databaseAuction.status !== "PREBID"
+) {
+  if (msg) {
+    msg.textContent =
+      "This auction is not accepting new plants.";
+  }
+  return;
+}
+   
    const photoPath = "lots/" + Date.now() + "-" + photo1.name.replace(/[^a-zA-Z0-9._-]/g, "_");
 
 
@@ -11325,10 +11450,14 @@ const newLot = {
   listingCurrency: listingCurrency,
 
   lotNumber:
-    Math.max(
-      0,
-      ...(state.lots || []).map(l => Number(l.lotNumber) || 0)
-    ) + 1,
+  Math.max(
+    0,
+    ...(state.lots || [])
+      .filter(l =>
+        String(l.auctionId) === String(selectedAuction.id)
+      )
+      .map(l => Number(l.lotNumber) || 0)
+  ) + 1,
 
    name: name,
   breeding: breeding,
@@ -11343,18 +11472,44 @@ category: category,
   startBid: start,
 
   increment:
-    selectedAuction.currency === "EUR" ? 5 : 50,
+  selectedAuction.currency === "EUR" ? 5 : 100,
 
     flower: flower,
   plant: plant,
 
-  acceptPreBids:
-    document.getElementById("sellerAcceptPreBids")?.checked === true,
+ // Every published plant accepts pre-bids
+acceptPreBids: true,
 
   bids: [],
   auctionAppearances: 1
 };
 
+// SAVE PLANT TO SUPABASE FIRST
+try {
+const savedLot = await saveCliviaPlantToSupabase(newLot);
+
+const confirmedLotNumber = Number(savedLot?.lot_number);
+
+if (!Number.isInteger(confirmedLotNumber) || confirmedLotNumber < 1) {
+  throw new Error(
+    "Supabase saved the plant, but its lot number could not be confirmed. Contact the administrator before trying again."
+  );
+}
+
+newLot.lotNumber = confirmedLotNumber;
+} catch (error) {
+  console.error("Clivia plant publishing failed:", error);
+
+  if (msg) {
+    msg.textContent =
+      "Plant not published: " +
+      (error?.message || "Database save failed.");
+  }
+
+  return;
+}
+
+// ONLY ADD THE PLANT AFTER SUPABASE CONFIRMS SUCCESS
 state.lots = state.lots || [];
 state.lots.push(newLot);
 
@@ -11402,7 +11557,40 @@ if(msg){
   msg.innerHTML = "<b>Plant published successfully.</b>";
 }
 }   
+/* LOAD PUBLISHED SELLER PLANTS FROM CLIVIA SUPABASE */
+async function fetchMyCliviaPlantsFromSupabase() {
+  const { data: authData, error: authError } =
+    await cliviaSupabase.auth.getUser();
 
+  const user = authData?.user;
+
+  if (authError || !user || !user.email_confirmed_at) {
+    throw new Error("Please sign in with your confirmed account.");
+  }
+
+  const { data: sellers, error: sellerError } =
+    await cliviaSupabase
+      .from("sellers")
+      .select("id")
+      .eq("auth_user_id", user.id);
+
+  if (sellerError) throw sellerError;
+
+  const sellerIds = (sellers || []).map(s => s.id);
+
+  if (!sellerIds.length) return [];
+
+  const { data: lots, error: lotsError } =
+    await cliviaSupabase
+      .from("lots")
+      .select("*")
+      .in("seller_id", sellerIds)
+      .order("id", { ascending: true });
+
+  if (lotsError) throw lotsError;
+
+  return lots || [];
+}      
 function renderMyAuctionPlants(){
   const box=document.getElementById("myAuctionPlantsGrid");
   if(!box) return;
@@ -19923,29 +20111,52 @@ if (cliviaOwnerError || !cliviaOwnerData?.user) {
 }
 async function saveCliviaAuctionToSupabase(auction){
 
+  if(!auction || auction.type !== "CLIVIA"){
+    console.error("Only Clivia auctions may be saved here.");
+    return null;
+  }
+
+  const { data: existing, error: lookupError } =
+    await cliviaSupabase
+      .from("auctions")
+      .select("id")
+      .eq("legacy_auction_id", String(auction.id))
+      .maybeSingle();
+
+  if(lookupError){
+    console.error("Auction lookup failed:", lookupError);
+    return null;
+  }
+
+  // Never overwrite an existing auction here.
+  if(existing){
+    return existing.id;
+  }
+
   const { data, error } = await cliviaSupabase
     .from("auctions")
-    .upsert({
-      legacy_auction_id: auction.id,
+    .insert({
+      legacy_auction_id: String(auction.id),
       auction_name: auction.name,
       auction_date: auction.auctionDate || null,
       start_time: auction.auctionTime || null,
-      close_time: auction.closeTime || auction.auctionCloseTime || null,
+      close_time:
+        auction.closeTime ||
+        auction.auctionCloseTime ||
+        null,
       currency: auction.currency || "ZAR",
       status: auction.status || "LOADING"
-    }, {
-      onConflict: "legacy_auction_id"
     })
     .select("id")
     .single();
 
   if(error){
-    console.error("Clivia auction Supabase save failed:", error);
+    console.error("Clivia auction creation failed:", error);
     return null;
   }
 
   return data.id;
-}      
+}
 function createAuction(){
 
   const date = document.getElementById("newAuctionDate")?.value || "";
@@ -20026,13 +20237,79 @@ if(date && closeTime){
   }
 }
 /* AUTOMATIC CLIVIA AUCTION CREATION */
+/* FIND EXISTING CLIVIA AUCTION IN SUPABASE */
+async function fetchActiveCliviaAuctionFromSupabase(){
+  try {
+  const { data, error } = await cliviaSupabase
+    .from("auctions")
+   .select("id, legacy_auction_id, auction_name, auction_date, start_time, close_time, currency, status")
+    .in("status", ["LOADING", "SCHEDULING", "PREBID"])
+    .order("id", { ascending: true })
+    .limit(1);
+
+  if(error){
+    console.error("Clivia auction lookup failed:", error);
+    return null;
+  }
+
+  return data && data.length ? data[0] : null;
+
+  } catch(error){
+    console.error("Supabase auction connection failed:", error);
+    return null;
+  }
+}
+/* CONNECT TO EXISTING CLIVIA SUPABASE AUCTION */
+async function connectExistingCliviaAuction(){
+
+  const dbAuction =
+    await fetchActiveCliviaAuctionFromSupabase();
+
+  if(!dbAuction || !dbAuction.legacy_auction_id){
+    console.warn("No active Clivia auction found in Supabase.");
+    return false;
+  }
+
+  const auctionId = String(dbAuction.legacy_auction_id);
+
+  state.auctions = state.auctions || [];
+
+  let auction = state.auctions.find(
+    a => String(a.id) === auctionId
+  );
+
+  if(!auction){
+    auction = {
+      id: auctionId,
+      name: dbAuction.auction_name || "Clivia Dreamers Auction",
+      type: "CLIVIA",
+      auctionDate: dbAuction.auction_date || "",
+      auctionTime: dbAuction.start_time || "",
+      closeTime: dbAuction.close_time || "",
+      status: dbAuction.status,
+      firstBid: 200,
+      categories: [
+        "ROW1", "ROW2", "ROW3",
+        "ROW4", "ROW5", "ROW6"
+      ],
+      lots: []
+    };
+
+    state.auctions.push(auction);
+  }
+
+  state.selectedAuctionId = auctionId;
+  save();
+
+  return true;
+}      
 function ensureAutomaticCliviaAuction(){
 
   state.auctions = state.auctions || [];
 
   const existingAuction = state.auctions.find(a =>
     a.type === "CLIVIA" &&
-    ["LOADING", "SCHEDULING"].includes(a.status)
+   ["LOADING", "SCHEDULING", "PREBID"].includes(a.status)
   );
 
  if(existingAuction){
