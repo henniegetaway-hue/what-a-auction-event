@@ -11023,6 +11023,32 @@ function closeSellerLotForm(){
       "<b>Draft saved successfully.</b> You can continue editing this plant before publishing.";
   }
 }     
+
+/* SHARED MEMBER AUTHENTICATION
+   CLIVIA DREAMERS + WHAT A AUCTION EVENT */
+
+async function getSharedAuctionMember() {
+  const { data, error } =
+    await cliviaSupabase.auth.getUser();
+
+  if (error || !data?.user) {
+    throw new Error(
+      "Please sign in to your registered auction account."
+    );
+  }
+
+  if (!data.user.email_confirmed_at) {
+    throw new Error(
+      "Please confirm your email address before continuing."
+    );
+  }
+
+  return {
+    id: data.user.id,
+    email: data.user.email
+  };
+}
+      
  async function publishSellerLot(){
 
   const auction = document.getElementById("sellerLotAuction")?.value || "";
