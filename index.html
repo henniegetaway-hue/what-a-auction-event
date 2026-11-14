@@ -3587,25 +3587,6 @@ color:#fff;
 
     <div id="ownAuctionDisplay"></div>
 
-<div id="creatorDashboardAuctionCards" style="
-  margin-top:15px;
-  padding:12px;
-  background:#07180b;
-  border:1px solid #9acd32;
-  border-radius:10px;
-">
-  <h3 style="color:#9acd32;text-align:center;">
-    MY 4 AUCTIONS
-  </h3>
-
-  <div id="creatorDashboardAuctionGrid" style="
-    display:grid;
-    grid-template-columns:repeat(4,minmax(125px,1fr));
-    gap:8px;
-    overflow-x:auto;
-  "></div>
-</div>
-
   </div>
 
 </section>
@@ -17740,9 +17721,7 @@ function markExpiredOwnEvents(){
  markExpiredOwnEvents();   
 
 function renderCreatorAuctionManagement(events) {
-  const grid =
-  document.getElementById("creatorDashboardAuctionGrid") ||
-  document.getElementById("creatorAuctionManagementGrid");
+  const grid = document.getElementById("creatorAuctionManagementGrid");
   if (!grid) return;
 
   grid.innerHTML = "";
