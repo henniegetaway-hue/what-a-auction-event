@@ -21289,9 +21289,9 @@ borderRadius: "0",
   ["CLIVIA CHATS", "navCliviaChats"]
 ];
 
-options.forEach(([label, targetId]) => {
+options.forEach(([label, targetId, flowers]) => {
   const button = document.createElement("button");
-button.type = "button";
+  button.type = "button";
 
 if (label === "CLIVIA AUCTIONS") {
   button.innerHTML = `
