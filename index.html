@@ -21335,6 +21335,11 @@ if (label === "CLIVIA AUCTIONS") {
   `;
 } else {
   button.textContent = flowers ? `${label} ${flowers}` : label;
+  if (label === "GROUP AUCTIONS") {
+  button.style.fontSize = "10px";
+  button.style.whiteSpace = "nowrap";
+  button.style.padding = "8px 4px";
+}    
 }
     if(label === "REGISTER - MY ACCOUNT"){
   button.style.setProperty("white-space", "nowrap");
