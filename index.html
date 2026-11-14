@@ -11061,7 +11061,8 @@ async function saveCliviaPlantToSupabase(plant) {
   const { data, error } = await cliviaSupabase
     .from("lots")
     .insert({
-      website_lot_id: plant.id,
+         website_lot_id: plant.id,
+      lot_number: Number(plant.lotNumber),
       name: plant.name,
       description: plant.description || "",
       flower_image_url: plant.flower || null,
