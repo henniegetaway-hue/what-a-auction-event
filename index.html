@@ -11048,7 +11048,41 @@ async function getSharedAuctionMember() {
     email: data.user.email
   };
 }
-      
+  
+/* CENTRAL CLIVIA PLANT SAVING */
+
+async function saveCliviaPlantToSupabase(plant) {
+  const member = await getSharedAuctionMember();
+
+  if (!plant || !plant.name) {
+    throw new Error("Plant name is required.");
+  }
+
+  const { data, error } = await cliviaSupabase
+    .from("lots")
+    .insert({
+      website_lot_id: plant.id,
+      name: plant.name,
+      description: plant.description || "",
+      flower_image_url: plant.flower || null,
+      plant_image_url: plant.plant || null,
+      starting_bid: Number(plant.startBid || 0),
+      start_row: plant.startRow || null,
+      export_eligible: Boolean(plant.exportEligible),
+      status: "TEST"
+    })
+    .select()
+    .single();
+
+  if (error) {
+    throw new Error(
+      "Plant could not be saved: " + error.message
+    );
+  }
+
+  return data;
+}
+    
  async function publishSellerLot(){
 
   const auction = document.getElementById("sellerLotAuction")?.value || "";
