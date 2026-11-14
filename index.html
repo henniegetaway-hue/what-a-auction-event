@@ -21301,7 +21301,7 @@ if (label === "CLIVIA AUCTIONS") {
     </span>
   `;
 } else {
-  button.textContent = label;
+  button.textContent = flowers ? `${label} ${flowers}` : label;
 }
     if(label === "REGISTER - MY ACCOUNT"){
   button.style.setProperty("white-space", "nowrap");
