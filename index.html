@@ -17798,28 +17798,33 @@ function renderCreatorAuctionManagement(events) {
       "width:100%;font-size:11px;font-weight:bold;" +
       "cursor:pointer;";
 
-    function openSavedAuction() {
-      if (!hasAuction) {
-        alert("This auction space is empty. Create and save an auction first.");
-        return false;
-      }
+   function openSavedAuction() {
+  if (!hasAuction || !record?.id) {
+    alert("This auction space is empty. Create and save an auction first.");
+    return false;
+  }
 
-      const existingButton = [
-        ...document.querySelectorAll("#ownEventManagementList button")
-      ].find(btn => {
-        const item = btn.parentElement;
-        return item?.querySelector("strong")?.textContent ===
-          (event.name || "Unnamed Auction");
-      });
+  localStorage.setItem(
+    "selectedCreatorAuctionId",
+    String(record.id)
+  );
 
-      if (existingButton) {
-        existingButton.click();
-        return true;
-      }
+  const existingButton = [
+    ...document.querySelectorAll("#ownEventManagementList button")
+  ].find(btn => {
+    const item = btn.parentElement;
+    return item?.querySelector("strong")?.textContent ===
+      (event.name || "Unnamed Auction");
+  });
 
-      alert("Open this auction from MY AUCTIONS.");
-      return false;
-    }
+  if (existingButton) {
+    existingButton.click();
+    return true;
+  }
+
+  alert("Saved auction could not be found. Please reload the page.");
+  return false;
+}
 
     viewButton.onclick = openSavedAuction;
 
