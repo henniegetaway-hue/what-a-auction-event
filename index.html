@@ -2957,6 +2957,9 @@ body:not(.showRegistration) #pageRegister {
 
       <section id="pageOwnEvent" class="page hidden">
 <div id="creatorLandingOverview" class="panel" aria-live="polite" style="margin:0 0 14px;">
+  <h2 style="margin-bottom:8px">MY AUCTION LANDING PAGE</h2>
+  <div id="creatorLandingContent">Checking your auctions...</div>
+</div>
 <div class="grid2 creatorPageLayout" style="grid-template-columns:minmax(280px,0.75fr) minmax(0,1.5fr);align-items:start;">
   <div class="panel">
     <h2>Create Your Own Event — See How It Works</h2>
@@ -8777,11 +8780,8 @@ function openEventCreatorSetup() {
   });
 }
 async function showOwnEventPage(){
-  
-async function showOwnEventPage(openLanding = false){
   document.getElementById("pageOwnEvent")
-    ?.classList.toggle("eventLanding", openLanding);
-
+    ?.classList.remove("eventLanding");
 
   setOwnEventSEO();
   sessionStorage.setItem("loadNowDestination", "CREATOR");    
@@ -9406,12 +9406,10 @@ function showPage(page){
     return;
   }
     
-   
-if(page === "ownEvent"){
-    showOwnEventPage(true);
+   if(page === "ownEvent"){
+    showOwnEventPage();
     return;
-}
-
+  }
 
   if(page === "sellerLoad"){
     renderMyAuctionPlants();
