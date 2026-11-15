@@ -9535,6 +9535,11 @@ function setCliviaSEO(){
 
  
 function showPage(page){
+     if (page === "live" && new URLSearchParams(location.search).get("page") === "event-demo") {
+    const cleanUrl = new URL(location.href);
+    cleanUrl.searchParams.delete("page");
+    history.replaceState(null, "", cleanUrl.pathname + cleanUrl.search + cleanUrl.hash);
+  }   
   document.body.classList.toggle(
     "showRegistration",
     page === "register"
@@ -18195,8 +18200,12 @@ if(state.selectedBidderId){
 const publicEventQuery = new URLSearchParams(window.location.search);
 
 if (publicEventQuery.get("page") === "event-demo") {
-  showEventSampleLanding();
-} else if (publicEventQuery.get("page") === "event") {
+  const cleanUrl = new URL(window.location.href);
+  cleanUrl.searchParams.delete("page");
+  history.replaceState(null, "", cleanUrl.pathname + cleanUrl.search + cleanUrl.hash);
+}
+
+if (publicEventQuery.get("page") === "event") {
   showPublicEventFromLink(
     publicEventQuery.get("auction"),
     publicEventQuery.get("lot")
