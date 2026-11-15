@@ -3416,11 +3416,11 @@ max-height:110px;
   Tell bidders about your auction, business or event.
 </div>
         <div id="previewLotsGrid" style="
-  display:grid;
- grid-template-columns:minmax(0,360px);
-justify-content:center;
-  gap:12px;
-  margin-top:18px;
+display:grid;
+grid-template-columns:repeat(4,minmax(0,1fr));
+justify-content:start;
+gap:12px;
+margin-top:15px;
   width:100%;
   opacity:1;
   align-items:start;
@@ -8268,12 +8268,94 @@ background:linear-gradient(90deg,#a0ff80,#39e52d);
 
 </div> <!-- closes sellerLoadGrid -->
 
+<style>
+/* PHONE: TWO PLANTS PER ROW */
+@media (max-width:700px) {
+  #myAuctionPlantsGrid {
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:8px !important;
+  }
+
+  #myAuctionPlantsGrid .lotCard {
+    min-width:0 !important;
+    width:100% !important;
+  }
+
+  #myAuctionPlantsGrid img {
+    max-width:100% !important;
+  }
+}
+</style>
+
+<style>
+#myAuctionPlantsSection {
+  width:calc(100% - 24px) !important;
+  max-width:1400px !important;
+  margin:16px auto !important;
+}
+
+#myAuctionPlantsGrid {
+  display:grid !important;
+  grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+  justify-content:start !important;
+  gap:10px !important;
+}
+
+#myAuctionPlantsGrid .lotCard {
+  width:100% !important;
+  min-width:0 !important;
+  padding:8px !important;
+}
+
+#myAuctionPlantsGrid img {
+  width:100% !important;
+  height:auto !important;
+}
+
+@media(max-width:700px) {
+  #myAuctionPlantsGrid {
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:8px !important;
+  }
+}
+</style>
+
+<style>
+/* Saved plants: four across on desktop, two on phones. */
+#pageSellerLoad #myAuctionPlantsSection {
+  width: min(1400px, calc(100vw - 24px)) !important;
+  max-width: none !important;
+  margin: 16px auto !important;
+}
+#pageSellerLoad #myAuctionPlantsGrid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0,1fr)) !important;
+  gap: 10px !important;
+  width: 100% !important;
+}
+#pageSellerLoad #myAuctionPlantsGrid > .lotCard {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  padding: 8px !important;
+}
+#pageSellerLoad #myAuctionPlantsGrid > .lotCard img {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+@media (max-width: 700px) {
+  #pageSellerLoad #myAuctionPlantsGrid {
+    grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+    gap: 8px !important;
+  }
+}
+</style>
 <!-- SELLER'S UPLOADED CLIVIA AUCTION PLANTS -->
 <div id="myAuctionPlantsSection"
      class="panel"
      style="
        width:calc(100% - 32px);
-       max-width:900px;
+       max-width:1400px;
        margin:20px auto;
        box-sizing:border-box;
        padding:16px;
@@ -8287,21 +8369,24 @@ background:linear-gradient(90deg,#a0ff80,#39e52d);
     Your uploaded Clivias and their scheduled auctions
   </p>
 
-  <div id="cliviaSyncPanel" class="panel" style="display:none;max-width:700px;margin:8px auto 16px;text-align:center">
+ 
+<div id="cliviaSyncPanel" class="panel" style="display:block;max-width:700px;margin:8px auto 16px;text-align:center">
     <strong>Saved plants on this computer</strong>
     <p class="small">These plants are not yet available on other devices. Publish them securely to your Clivia auction account.</p>
     <button class="goldBtn" type="button" onclick="publishMySavedCliviaPlants()">PUBLISH MY SAVED PLANTS TO ALL DEVICES</button>
     <p id="cliviaSyncMessage" role="status" style="white-space:pre-wrap"></p>
   </div>
-  <div id="myAuctionPlantsGrid"
-       style="
-         display:grid;
-        grid-template-columns:minmax(0,360px);
-justify-content:center;
-         gap:12px;
-         margin-top:15px;
-       ">
-  </div>
+<div id="myAuctionPlantsGrid"
+     style="
+       display:grid;
+       grid-template-columns:repeat(4,minmax(0,1fr));
+       justify-content:start;
+       gap:10px;
+       width:100%;
+       margin-top:15px;
+     ">
+</div>
+
 
 </div>
 
@@ -11704,7 +11789,6 @@ async function fetchMyCliviaPlantsFromSupabase() {
   return lots || [];
 }      
 function renderMyAuctionPlants(){
-  if(typeof updateCliviaSyncPanel === "function") updateCliviaSyncPanel();
   const box=document.getElementById("myAuctionPlantsGrid");
   if(!box) return;
 
@@ -15598,14 +15682,6 @@ function fileToDataURL(file){
   }
 }    
 async function addLot(){
-  // The retired loading form must never create browser-only auction listings.
-  // Direct sellers to the verified publishing form instead.
-  const msg = document.getElementById("lotMsg");
-  if(msg) msg.textContent = "Use LOAD FOR NEXT AUCTION to publish your plant securely.";
-  if(typeof showPage === "function") showPage("sellerLoad");
-  return;
-}
-async function retiredBrowserOnlyAddLot(){
    const account=(state.bidders||[]).find(
   b=>b.id===state.selectedBidderId
 );
@@ -16045,7 +16121,6 @@ function nextBid(lot){
   return currentBid(lot)+increment;
 }
       function renderLots(){
-  if(typeof updateCliviaSyncPanel === "function") updateCliviaSyncPanel();
   const box=document.getElementById("lotsGrid");
   let auction=(state.auctions||[]).find(a=>a.id===state.selectedAuctionId);
 const currencySymbol=auction && auction.currency==="EUR" ? "€" : "R";
@@ -22627,7 +22702,6 @@ async function showPublicEventFromLink(auctionId, lotNumber) {
 }
 </script>
         
-
 <script>
 /* Cross-device Clivia recovery: explicit authenticated action; never auto-publish drafts. */
 async function cliviaSharedPhotoUrl(value, lotId, kind){
@@ -22652,7 +22726,7 @@ function updateCliviaSyncPanel(){
   const pending=(state.lots||[]).filter(l =>
     l && !l.supabaseDisplayOnly && !l.sharedPublished &&
     /^AUC-/.test(String(l.auctionId||"")) && /^L/.test(String(l.id||"")));
-  panel.style.display=pending.length ? "block" : "none";
+  panel.style.display="block";
   const heading=panel.querySelector("strong");
   if(heading) heading.textContent=pending.length+" saved plant(s) awaiting shared publication";
 }
@@ -22712,6 +22786,5 @@ window.addEventListener("load",()=>{
   if(typeof refreshPublicCliviaLots==="function")refreshPublicCliviaLots();
 });
 </script>
-
 </body>
 </html>
