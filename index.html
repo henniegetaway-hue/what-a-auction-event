@@ -11884,27 +11884,12 @@ window.addEventListener("DOMContentLoaded", renderMyAuctionPlants);
     "The PRE-BID YES/NO selection cannot be changed."
   );
   return;
-}        
- 
-const preBidAnswer = prompt(
-  "ACCEPT PRE-BIDS BEFORE THE LIVE AUCTION?\n\n" +
-  "Type YES to accept pre-bids.\n" +
-  "Type NO to refuse pre-bids.\n\n" +
-  "Enter YES or NO:"
-);
 
-if(preBidAnswer === null){
-  return;
-}
+/* KEEP THE ORIGINAL PRE-BID SELECTION.
+   YES stays YES. NO stays NO.
+   Editing plant details must not change pre-bids.
+   Existing bids remain untouched. */
 
-const preBidChoice = preBidAnswer.trim().toUpperCase();
-
-if(preBidChoice !== "YES" && preBidChoice !== "NO"){
-  alert("Please enter YES or NO.");
-  return;
-}
-
-changes.acceptPreBids = preBidChoice === "YES";
 
   if(!confirm("Save changes to " + lot.name + "?")) return;
 
