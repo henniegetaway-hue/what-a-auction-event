@@ -8649,7 +8649,16 @@ function load(){
       state=JSON.parse(raw);
     }catch(e){}
   } 
- deleteExpiredAuctions();     
+ deleteExpiredAuctions();
+ // Repair an empty saved selection when another saved auction owns the plants.
+ if(Array.isArray(state.auctions) && Array.isArray(state.lots) && state.lots.length){
+   const selectedHasPlants = state.lots.some(l => String(l.auctionId) === String(state.selectedAuctionId));
+   if(!selectedHasPlants){
+     const withPlants = state.auctions.find(a => state.lots.some(l => String(l.auctionId) === String(a.id)));
+     if(withPlants) state.selectedAuctionId = withPlants.id;
+   }
+ }
+
  const savedAccounts=localStorage.getItem(ACCOUNT_STORAGE_KEY);
 
 if(savedAccounts){
@@ -20450,10 +20459,16 @@ if(date && closeTime){
     updateHeader();
   }
 }
-/* SHARED CLIVIA LOT DISPLAY — SUPABASE IS THE CROSS-DEVICE SOURCE.
-   This adds published records for display only. It never uploads browser data,
-   changes bids, or replaces the existing locally saved auction records. */
+/* Shared Clivia public lots. Preserve local unpublished lots and their auction selection.
+   Never publish browser-only records automatically or alter bid/payment records. */
 let cliviaPublicRefreshRunning = false;
+function cliviaLocalAuctionWithPlants(){
+  const lots = Array.isArray(state.lots) ? state.lots : [];
+  const auctions = Array.isArray(state.auctions) ? state.auctions : [];
+  const selected = auctions.find(a => String(a.id) === String(state.selectedAuctionId));
+  if(selected && lots.some(l => String(l.auctionId) === String(selected.id))) return selected;
+  return auctions.find(a => lots.some(l => String(l.auctionId) === String(a.id))) || null;
+}
 async function refreshPublicCliviaLots(){
   if(cliviaPublicRefreshRunning) return;
   cliviaPublicRefreshRunning = true;
@@ -20465,11 +20480,12 @@ async function refreshPublicCliviaLots(){
       .order("id",{ascending:false}).limit(20);
     if(auctionError) throw auctionError;
     if(!auctions?.length) return;
+    const localWithPlants = cliviaLocalAuctionWithPlants();
     const selected = auctions.find(a => String(a.legacy_auction_id) === String(state.selectedAuctionId))
       || auctions[0];
     if(!selected?.legacy_auction_id) return;
     const legacyId = String(selected.legacy_auction_id);
-    let auction = (state.auctions||[]).find(a => String(a.id)===legacyId);
+    let auction = (state.auctions||[]).find(a => String(a.id) === legacyId);
     if(!auction){
       auction={id:legacyId,name:selected.auction_name||"Clivia Dreamers Auction",type:"CLIVIA",
         auctionDate:selected.auction_date||"",auctionTime:selected.start_time||"",
@@ -20477,8 +20493,12 @@ async function refreshPublicCliviaLots(){
         status:selected.status,firstBid:200};
       state.auctions.push(auction);
     }
-    // A selected active auction from Supabase is shared across devices.
-    state.selectedAuctionId=legacyId;
+    // Keep the local auction with plants visible until those lots are safely published.
+    if(!localWithPlants) state.selectedAuctionId = legacyId;
+    else if(String(state.selectedAuctionId) !== String(localWithPlants.id)) {
+      state.selectedAuctionId = localWithPlants.id;
+      save();
+    }
     const {data: records,error:lotsError}=await cliviaSupabase.from("lots")
       .select("id,website_lot_id,live_auction_id,seller_id,lot_number,name,description,breeding,breeder,leaves,offsets,category,start_row,flower_image_url,plant_image_url,starting_bid,minimum_increment,export_eligible,status")
       .eq("live_auction_id",selected.id).order("lot_number",{ascending:true}).limit(500);
@@ -20495,7 +20515,6 @@ async function refreshPublicCliviaLots(){
         increment:Number(r.minimum_increment||100),exportEligible:r.export_eligible===true,
         sellerId:r.seller_id,bids:[],supabaseDisplayOnly:true});
     }
-    // Do not persist server-derived records to browser storage or overwrite local records.
     if(!document.getElementById("pageLive")?.classList.contains("hidden")) renderLots();
   } catch(error){
     console.error("Could not fetch shared auction lots. Check public SELECT/RLS policies:",error);
