@@ -1731,6 +1731,12 @@ body:has(#cliviaCarryForwardFooter) {
     flex:1 1 45%;
   }
 }
+  .creatorLandingCards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px}
+  .creatorLandingCard{background:#101912;border:1px solid #9acd32;border-radius:12px;padding:14px;min-width:0;overflow-wrap:anywhere}
+  .creatorLandingCard h3{font-size:17px;margin:0 0 8px}
+  .creatorLandingCard p{line-height:1.5}
+  .creatorLandingCard button{width:100%;min-height:44px}
+  @media(max-width:600px){.creatorLandingCards{grid-template-columns:minmax(0,1fr)}#creatorLandingOverview{padding:12px}}
   </style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>      
  <script>
@@ -2950,6 +2956,10 @@ body:not(.showRegistration) #pageRegister {
 <!-- END PUBLIC AUCTION VIEW -->
 
       <section id="pageOwnEvent" class="page hidden">
+<div id="creatorLandingOverview" class="panel" aria-live="polite" style="margin:0 0 14px;">
+  <h2 style="margin-bottom:8px">MY AUCTION LANDING PAGE</h2>
+  <div id="creatorLandingContent">Checking your auctions...</div>
+</div>
 <div class="grid2 creatorPageLayout" style="grid-template-columns:minmax(280px,0.75fr) minmax(0,1.5fr);align-items:start;">
   <div class="panel">
     <h2>Create Your Own Event — See How It Works</h2>
@@ -8818,7 +8828,8 @@ document.querySelectorAll("nav button").forEach(x=>{
     }
   });
 
-  await loadMyAuctions();;
+  await loadMyAuctions();
+  await renderCreatorLandingOverview();
 
   const selectedLot = Number(
     localStorage.getItem("selectedCreatorLot") || 0
@@ -18216,6 +18227,55 @@ loadButton.onclick = function() {
   }
 }
 
+// Read-only creator landing overview. Does not publish drafts or change auction records.
+async function renderCreatorLandingOverview(){
+  const target=document.getElementById("creatorLandingContent");
+  if(!target) return;
+  target.textContent="Loading your auctions...";
+  const {data:auth,error:authError}=await auctionSupabase.auth.getUser();
+  if(authError || !auth?.user){target.textContent="Sign in to view your auctions.";return;}
+  const {data:records,error}=await auctionSupabase.from("auction_events")
+    .select("id,event_data").eq("creator_id",auth.user.id);
+  if(error){target.textContent="Could not load your auctions: "+error.message;return;}
+  const auctions=(records||[]).filter(r=>{
+    const e=r.event_data||{};
+    return String(e.eventStatus||"").toUpperCase()!=="TEST ONLY" && e.testOnly!==true;
+  }).sort((a,b)=>{
+    const dateA=String(a.event_data?.auctionDate||"");
+    const dateB=String(b.event_data?.auctionDate||"");
+    return Number(Boolean(dateB))-Number(Boolean(dateA)) ||
+      dateB.localeCompare(dateA) || Number(b.id)-Number(a.id);
+  });
+  target.replaceChildren();
+  if(!auctions.length){target.textContent="No auctions created yet. Use Create Your Own Event to start.";return;}
+  const heading=document.createElement("p");
+  heading.textContent="Your latest scheduled auction is shown first. Draft auctions are private until activated.";
+  target.appendChild(heading);
+  const grid=document.createElement("div");
+  grid.className="creatorLandingCards";
+  auctions.forEach((record,index)=>{
+    const e=record.event_data||{};
+    const card=document.createElement("article");
+    card.className="creatorLandingCard";
+    const title=document.createElement("h3");
+    title.textContent=(index===0?"LATEST AUCTION — ":"")+(e.name||"Unnamed auction");
+    const details=document.createElement("p");
+    details.textContent=(e.auctionDate||"Date to be announced")+" • "+
+      (e.startTime||"Time to be announced")+" • "+(e.eventStatus||"DRAFT");
+    const btn=document.createElement("button");
+    btn.type="button";btn.className="goldBtn";btn.textContent="OPEN MY AUCTION";
+    btn.onclick=()=>{
+      const entries=Array.from(document.querySelectorAll("#ownEventManagementList > div"));
+      const matching=entries.find(item=>item.querySelector("strong")?.textContent===(e.name||"Unnamed Auction"));
+      const open=matching?.querySelector("button");
+      if(open){open.click();document.getElementById("ownEventSetup")?.scrollIntoView({behavior:"smooth",block:"start"});}
+      else {localStorage.setItem("selectedCreatorAuctionId",String(record.id));
+        document.getElementById("ownEventSetup")?.scrollIntoView({behavior:"smooth"});}
+    };
+    card.append(title,details,btn);grid.appendChild(card);
+  });
+  target.appendChild(grid);
+}
 async function loadMyAuctions(){
 
  const display =
