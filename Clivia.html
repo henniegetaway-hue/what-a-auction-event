@@ -4308,12 +4308,6 @@ KEEP BUTTONS ALIGNED IN ONE HORIZONTAL ROW.
     </div>
   </div>
 
-  <div id="cliviaSyncPanel" class="panel" style="display:none;max-width:700px;margin:8px auto 16px;text-align:center">
-    <strong>Saved plants on this computer</strong>
-    <p class="small">These plants are not yet available on other devices. Publish them securely to your Clivia auction account.</p>
-    <button class="goldBtn" type="button" onclick="publishMySavedCliviaPlants()">PUBLISH MY SAVED PLANTS TO ALL DEVICES</button>
-    <p id="cliviaSyncMessage" role="status" style="white-space:pre-wrap"></p>
-  </div>
   <div id="lotsGrid" class="lotsGrid" style="flex:1;min-width:0;"></div>
   <div id="oldLotLoadingForm" style="display:none;">    
  <label>Name / Cross</label>
@@ -8293,6 +8287,12 @@ background:linear-gradient(90deg,#a0ff80,#39e52d);
     Your uploaded Clivias and their scheduled auctions
   </p>
 
+  <div id="cliviaSyncPanel" class="panel" style="display:none;max-width:700px;margin:8px auto 16px;text-align:center">
+    <strong>Saved plants on this computer</strong>
+    <p class="small">These plants are not yet available on other devices. Publish them securely to your Clivia auction account.</p>
+    <button class="goldBtn" type="button" onclick="publishMySavedCliviaPlants()">PUBLISH MY SAVED PLANTS TO ALL DEVICES</button>
+    <p id="cliviaSyncMessage" role="status" style="white-space:pre-wrap"></p>
+  </div>
   <div id="myAuctionPlantsGrid"
        style="
          display:grid;
@@ -11704,6 +11704,7 @@ async function fetchMyCliviaPlantsFromSupabase() {
   return lots || [];
 }      
 function renderMyAuctionPlants(){
+  if(typeof updateCliviaSyncPanel === "function") updateCliviaSyncPanel();
   const box=document.getElementById("myAuctionPlantsGrid");
   if(!box) return;
 
@@ -22706,6 +22707,8 @@ async function publishMySavedCliviaPlants(){
 }
 window.addEventListener("load",()=>{
   updateCliviaSyncPanel();
+  const sellerPage=document.getElementById("pageSellerLoad");
+  if(sellerPage) new MutationObserver(()=>updateCliviaSyncPanel()).observe(sellerPage,{attributes:true,attributeFilter:["class"]});
   if(typeof refreshPublicCliviaLots==="function")refreshPublicCliviaLots();
 });
 </script>
