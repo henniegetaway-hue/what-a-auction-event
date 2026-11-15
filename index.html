@@ -3014,9 +3014,63 @@ function showEventSampleLanding(){
     <button type="button" class="accountBtn" onclick="showOwnAuctionPage()">MY AUCTIONS</button>
     <button type="button" class="accountBtn" onclick="showOwnBest10Page()">BEST 10</button>
   </div>
-</section>
 
-<section id="pageOwnEvent" class="page hidden">
+<style>
+/* LOAD HERE — SAMPLE AUCTION PICTURES */
+#pageEventSampleLanding .eventSampleCard {
+  position: relative;
+}
+
+#pageEventSampleLanding .samplePictureLink {
+  display: block;
+  position: relative;
+  cursor: pointer;
+}
+
+#pageEventSampleLanding .samplePictureLink img {
+  display: block;
+  width: 100%;
+}
+
+#pageEventSampleLanding .sampleLoadText {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.75);
+  color: #45baff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 22px;
+  font-weight: 900;
+  white-space: nowrap;
+  z-index: 2;
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(
+    "#pageEventSampleLanding .eventSampleCard img"
+  ).forEach(function (img) {
+
+    if (img.closest(".samplePictureLink")) return;
+
+    const link = document.createElement("a");
+    link.className = "samplePictureLink";
+    link.href = "?page=creator-load";
+
+    const label = document.createElement("span");
+    label.className = "sampleLoadText";
+    label.textContent = "LOAD HERE";
+
+    img.parentNode.insertBefore(link, img);
+    link.appendChild(img);
+    link.appendChild(label);
+  });
+});
+</script>
+
 <div id="creatorLandingOverview" class="panel" aria-live="polite" style="margin:0 0 14px;">
   <h2 style="margin-bottom:8px">MY AUCTION LANDING PAGE</h2>
   <div id="creatorLandingContent">Checking your auctions...</div>
