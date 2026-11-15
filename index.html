@@ -18353,6 +18353,14 @@ loadButton.onclick = function() {
 
 // Read-only creator landing overview. Does not publish drafts or change auction records.
 async function renderCreatorLandingOverview(){
+
+  const target = document.getElementById("creatorLandingOverview");
+  if (target) {
+    target.replaceChildren();
+    target.style.display = "none";
+  }
+  return;
+     
   const target=document.getElementById("creatorLandingContent");
   if(!target) return;
   target.textContent="Loading your auctions...";
