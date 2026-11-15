@@ -8887,18 +8887,37 @@ setOwnEventHeader();
 }
 
 function openEventCreatorSetup() {
-  showOwnEventPage();
-
   const page = document.getElementById("pageOwnEvent");
 
-  if (page) {
-    page.classList.remove("eventLanding");
+  if (!page) {
+    alert("Auction loading page not found.");
+    return;
   }
 
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
+  // Hide the sample auction and other pages.
+  document.querySelectorAll(".page").forEach(p => {
+    p.classList.add("hidden");
   });
+
+  // Open the actual creator loading page.
+  page.classList.remove("hidden", "eventLanding");
+
+  document.body.classList.add("ownEventMode");
+
+  if (typeof setOwnEventHeader === "function") {
+    setOwnEventHeader();
+  }
+
+  if (typeof setOwnEventSEO === "function") {
+    setOwnEventSEO();
+  }
+
+  window.scrollTo(0, 0);
+
+  // Load the creator's saved auctions.
+  if (typeof loadMyAuctions === "function") {
+    Promise.resolve(loadMyAuctions()).catch(console.error);
+  }
 }
 async function showOwnEventPage(){
   document.getElementById("pageOwnEvent")
