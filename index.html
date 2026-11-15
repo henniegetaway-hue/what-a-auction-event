@@ -8905,11 +8905,21 @@ async function showOwnEventPage(){
     ?.classList.remove("eventLanding");
 
   setOwnEventSEO();
-  sessionStorage.setItem("loadNowDestination", "CREATOR");    
+  sessionStorage.setItem("loadNowDestination", "CREATOR");
   document.body.classList.add("ownEventMode");
-   setOwnEventHeader();
-   const { data: sessionData } =
-  await auctionSupabase.auth.getSession();
+  setOwnEventHeader();
+
+  // Display the creator loading page immediately.
+  document.querySelectorAll(".page").forEach(page => {
+    page.classList.add("hidden");
+  });
+
+  document.getElementById("pageOwnEvent")
+    ?.classList.remove("hidden");
+
+  // Check the creator's session afterwards.
+  const { data: sessionData } =
+    await auctionSupabase.auth.getSession();
 
 if(sessionData.session?.user){
 
