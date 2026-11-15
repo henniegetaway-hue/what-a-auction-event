@@ -2969,6 +2969,7 @@ body:not(.showRegistration) #pageRegister {
 </style>
 <script>
 function showEventSampleLanding(){
+  window.__creatorNavigationToken = (window.__creatorNavigationToken || 0) + 1;
   document.querySelectorAll(".page").forEach(page=>page.classList.add("hidden"));
   document.querySelectorAll("nav button").forEach(btn=>btn.classList.remove("active"));
   document.body.classList.add("ownEventMode");
@@ -2981,21 +2982,38 @@ function showEventSampleLanding(){
 }
 </script>
 <!-- WHAT A AUCTION EVENT: PUBLIC SAMPLE LANDING (NOT THE CREATOR LOADING PAGE) -->
+<style>
+/* Sample landing: centred LOAD HERE links over each existing photograph */
+#pageEventSampleLanding .eventSamplePhoto{position:relative;display:block;overflow:hidden;}
+#pageEventSampleLanding .eventSamplePhoto img{display:block;width:100%;}
+#pageEventSampleLanding .eventSampleLoadLink{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2;background:rgba(3,21,12,.85);color:#a8edff;border:2px solid #a8edff;border-radius:8px;padding:12px 22px;font-size:clamp(17px,2vw,24px);font-weight:900;white-space:nowrap;text-decoration:none;text-align:center;box-shadow:0 2px 14px #000;}
+#pageEventSampleLanding .eventSampleLoadLink:hover,#pageEventSampleLanding .eventSampleLoadLink:focus-visible{background:#b5f4ff;color:#07150d;}
+</style>
 <section id="pageEventSampleLanding" class="page hidden" aria-label="What A Auction Event sample auction">
+  <div class="panel" style="max-width:1200px;margin:0 auto 18px;">
+    <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;">
+      <div>
+        <h2 style="margin:0 0 6px">WHAT A AUCTION EVENT</h2>
+        <p style="margin:0">See what your own auction can look like.</p>
+      </div>
+      <button type="button" class="goldBtn" onclick="openEventCreatorSetup()">CREATE YOUR AUCTION / LOAD LOTS</button>
+    </div>
+    <p style="margin:14px 0 0;color:#ffdf99;font-weight:bold">SAMPLE AUCTION — DEMONSTRATION ONLY. NOT FOR SALE. NO BIDDING.</p>
+  </div>
   <div class="eventSampleGrid">
     <article class="lotCard eventSampleCard">
       <div class="lotTop">SAMPLE LOT 1 <span>HORSES</span></div>
-      <img src="BEST-HORSE-SAMPLE.jpg.png" alt="Sample horse auction lot" loading="lazy">
+      <div class="eventSamplePhoto"><img src="BEST-HORSE-SAMPLE.jpg.png" alt="Sample horse auction lot" loading="lazy"><a class="eventSampleLoadLink" href="?page=creator-load" onclick="openEventCreatorSetup();return false;">LOAD HERE</a></div>
       <div class="lotBody"><h3>Horse Auction</h3><p>Example horse lot with photographs and details.</p><strong>SAMPLE ONLY — NOT FOR SALE</strong><button type="button" disabled>DEMO — BIDDING DISABLED</button></div>
     </article>
     <article class="lotCard eventSampleCard">
       <div class="lotTop">SAMPLE LOT 2 <span>VEHICLES</span></div>
-      <img src="BEST-VINTAGE-CAR-SAMPLE.jpg.jpg" alt="Sample vintage car auction lot" loading="lazy">
+      <div class="eventSamplePhoto"><img src="BEST-VINTAGE-CAR-SAMPLE.jpg.jpg" alt="Sample vintage car auction lot" loading="lazy"><a class="eventSampleLoadLink" href="?page=creator-load" onclick="openEventCreatorSetup();return false;">LOAD HERE</a></div>
       <div class="lotBody"><h3>Vintage Car Auction</h3><p>Example vehicle lot with photographs and details.</p><strong>SAMPLE ONLY — NOT FOR SALE</strong><button type="button" disabled>DEMO — BIDDING DISABLED</button></div>
     </article>
     <article class="lotCard eventSampleCard">
       <div class="lotTop">SAMPLE LOT 3 <span>MIXED GOODS</span></div>
-      <img src="mix auction lot .png" alt="Sample mixed goods auction lot" loading="lazy">
+      <div class="eventSamplePhoto"><img src="mix auction lot .png" alt="Sample mixed goods auction lot" loading="lazy"><a class="eventSampleLoadLink" href="?page=creator-load" onclick="openEventCreatorSetup();return false;">LOAD HERE</a></div>
       <div class="lotBody"><h3>General Auction</h3><p>Example lot for a mixed auction event.</p><strong>SAMPLE ONLY — NOT FOR SALE</strong><button type="button" disabled>DEMO — BIDDING DISABLED</button></div>
     </article>
   </div>
@@ -3004,63 +3022,9 @@ function showEventSampleLanding(){
     <button type="button" class="accountBtn" onclick="showOwnAuctionPage()">MY AUCTIONS</button>
     <button type="button" class="accountBtn" onclick="showOwnBest10Page()">BEST 10</button>
   </div>
+</section>
 
-<style>
-/* LOAD HERE — SAMPLE AUCTION PICTURES */
-#pageEventSampleLanding .eventSampleCard {
-  position: relative;
-}
-
-#pageEventSampleLanding .samplePictureLink {
-  display: block;
-  position: relative;
-  cursor: pointer;
-}
-
-#pageEventSampleLanding .samplePictureLink img {
-  display: block;
-  width: 100%;
-}
-
-#pageEventSampleLanding .sampleLoadText {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(0, 0, 0, 0.75);
-  color: #45baff;
-  padding: 12px 20px;
-  border-radius: 8px;
-  font-size: 22px;
-  font-weight: 900;
-  white-space: nowrap;
-  z-index: 2;
-}
-</style>
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  document.querySelectorAll(
-    "#pageEventSampleLanding .eventSampleCard img"
-  ).forEach(function (img) {
-
-    if (img.closest(".samplePictureLink")) return;
-
-    const link = document.createElement("a");
-    link.className = "samplePictureLink";
-    link.href = "?page=creator-load";
-
-    const label = document.createElement("span");
-    label.className = "sampleLoadText";
-    label.textContent = "LOAD HERE";
-
-    img.parentNode.insertBefore(link, img);
-    link.appendChild(img);
-    link.appendChild(label);
-  });
-});
-</script>
-
+<section id="pageOwnEvent" class="page hidden">
 <div id="creatorLandingOverview" class="panel" aria-live="polite" style="margin:0 0 14px;">
   <h2 style="margin-bottom:8px">MY AUCTION LANDING PAGE</h2>
   <div id="creatorLandingContent">Checking your auctions...</div>
@@ -7642,6 +7606,26 @@ container.appendChild(block);
   }
 
 }
+
+/* RESTORE CREATOR PREVIEW CARD ON PHONE AND DESKTOP */
+@media (max-width:600px){
+  #pageOwnEvent #ownEventPreviewPanel,
+  #pageOwnEvent #ownEventPreviewPanel.creatorPreviewOpen{
+    display:block !important;
+    position:static !important;
+    inset:auto !important;
+    width:100% !important;
+    height:auto !important;
+    max-width:100% !important;
+    max-height:none !important;
+    overflow:visible !important;
+    margin:12px 0 !important;
+    padding:15px !important;
+    z-index:auto !important;
+  }
+  #pageOwnEvent #openCreatorPreviewBtn,
+  #pageOwnEvent #closeCreatorPreviewBtn{display:none !important;}
+}
 </style>
 
 <!-- END CLIVIA CHAT REGISTRATION -->
@@ -8892,8 +8876,16 @@ async function showOwnEventPage(){
   sessionStorage.setItem("loadNowDestination", "CREATOR");    
   document.body.classList.add("ownEventMode");
    setOwnEventHeader();
-   const { data: sessionData } =
+   // Show the creator page before awaiting Supabase, so a late response
+  // cannot accidentally reveal it on top of the sample landing page.
+  document.querySelectorAll(".page").forEach(el=>el.classList.add("hidden"));
+  document.getElementById("pageOwnEvent")?.classList.remove("hidden");
+  const creatorNavigationToken = ++window.__creatorNavigationToken || (window.__creatorNavigationToken = 1);
+  const { data: sessionData } =
   await auctionSupabase.auth.getSession();
+
+if (creatorNavigationToken !== window.__creatorNavigationToken ||
+    new URLSearchParams(location.search).get("page") === "create-event") return;
 
 if(sessionData.session?.user){
 
@@ -18397,7 +18389,6 @@ loadButton.onclick = function() {
 
 // Read-only creator landing overview. Does not publish drafts or change auction records.
 async function renderCreatorLandingOverview(){
-     
   const target=document.getElementById("creatorLandingContent");
   if(!target) return;
   target.textContent="Loading your auctions...";
