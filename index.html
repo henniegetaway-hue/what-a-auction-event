@@ -8287,6 +8287,39 @@ background:linear-gradient(90deg,#a0ff80,#39e52d);
 }
 </style>
 
+<style>
+#myAuctionPlantsSection {
+  width:calc(100% - 24px) !important;
+  max-width:1400px !important;
+  margin:16px auto !important;
+}
+
+#myAuctionPlantsGrid {
+  display:grid !important;
+  grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+  justify-content:start !important;
+  gap:10px !important;
+}
+
+#myAuctionPlantsGrid .lotCard {
+  width:100% !important;
+  min-width:0 !important;
+  padding:8px !important;
+}
+
+#myAuctionPlantsGrid img {
+  width:100% !important;
+  height:auto !important;
+}
+
+@media(max-width:700px) {
+  #myAuctionPlantsGrid {
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:8px !important;
+  }
+}
+</style>
+
 <!-- SELLER'S UPLOADED CLIVIA AUCTION PLANTS -->
 <div id="myAuctionPlantsSection"
      class="panel"
@@ -8306,15 +8339,18 @@ background:linear-gradient(90deg,#a0ff80,#39e52d);
     Your uploaded Clivias and their scheduled auctions
   </p>
 
-  <div id="myAuctionPlantsGrid"
-       style="
-         display:grid;
-        grid-template-columns:minmax(0,360px);
-justify-content:center;
-         gap:12px;
-         margin-top:15px;
-       ">
-  </div>
+ 
+<div id="myAuctionPlantsGrid"
+     style="
+       display:grid;
+       grid-template-columns:repeat(4,minmax(0,1fr));
+       justify-content:start;
+       gap:10px;
+       width:100%;
+       margin-top:15px;
+     ">
+</div>
+
 
 </div>
 
