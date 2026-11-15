@@ -2802,7 +2802,7 @@ window.addEventListener("load", function(){
  <button id="navRules" onclick="showPage('rules')">Rules & Terms</button>
 <div class="ownEventTabGroup">
 
- <button id="navOwnEvent"
+  <button id="navOwnEvent"
         class="ownEventTab"
         type="button"
         onclick="showEventSampleLanding()">
@@ -2954,128 +2954,69 @@ body:not(.showRegistration) #pageRegister {
 
 </section>
 <!-- END PUBLIC AUCTION VIEW -->
-<style>
-.eventSampleGrid {
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:16px;
-  max-width:1200px;
-  margin:auto;
-}
-.eventSampleCard img {
-  width:100%;
-  aspect-ratio:4/3;
-  object-fit:cover;
-}
-.eventSampleCard .lotBody {
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-}
-.eventSampleCard button:disabled {
-  padding:12px;
-  background:#27312a;
-  color:white;
-}
-@media(max-width:800px){
-  .eventSampleGrid {grid-template-columns:repeat(2,1fr);}
-}
-@media(max-width:520px){
-  .eventSampleGrid {grid-template-columns:1fr;}
-}
-</style>
 
+      
+<style>
+.eventSampleGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;max-width:1200px;margin:auto}
+.eventSampleCard img{width:100%;aspect-ratio:4/3;object-fit:cover;background:#0b150e}
+.eventSampleCard .lotBody{display:flex;flex-direction:column;gap:12px;flex:1}
+.eventSampleCard .lotBody h3{margin:0}
+.eventSampleCard .lotBody p{margin:0;flex:1}
+.eventSampleCard .lotBody strong{color:#ffdf99}
+.eventSampleCard button:disabled{padding:12px;border-radius:9px;border:1px solid #536455;background:#27312a;color:#ddd;cursor:not-allowed}
+@media(max-width:800px){.eventSampleGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.eventSampleGrid{grid-template-columns:minmax(0,1fr)}#pageEventSampleLanding .panel{padding:12px}}
+</style>
 <script>
 function showEventSampleLanding(){
-  document.querySelectorAll(".page").forEach(
-    page => page.classList.add("hidden")
-  );
-
-  document.querySelectorAll("nav button").forEach(
-    button => button.classList.remove("active")
-  );
-
+  document.querySelectorAll(".page").forEach(page=>page.classList.add("hidden"));
+  document.querySelectorAll("nav button").forEach(btn=>btn.classList.remove("active"));
   document.body.classList.add("ownEventMode");
-
-  if(typeof setOwnEventHeader === "function")
-    setOwnEventHeader();
-
-  if(typeof setOwnEventSEO === "function")
-    setOwnEventSEO();
-
-  document.getElementById("pageEventSampleLanding")
-    ?.classList.remove("hidden");
-
-  document.getElementById("navOwnEvent")
-    ?.classList.add("active");
-
+  if(typeof setOwnEventHeader==="function") setOwnEventHeader();
+  if(typeof setOwnEventSEO==="function") setOwnEventSEO();
+  document.getElementById("pageEventSampleLanding")?.classList.remove("hidden");
+  document.getElementById("navOwnEvent")?.classList.add("active");
+  if (typeof auctionRouteUpdate === "function") auctionRouteUpdate("create-event");
   window.scrollTo(0,0);
 }
 </script>
-
-<section id="pageEventSampleLanding" class="page hidden">
-
-  <div class="panel">
-    <h2>WHAT A AUCTION EVENT</h2>
-    <p>See what your own auction can look like.</p>
-
-    <button class="goldBtn" onclick="openEventCreatorSetup()">
-      CREATE YOUR AUCTION / LOAD LOTS
-    </button>
-
-    <p style="color:#ffdf99;font-weight:bold">
-      SAMPLE AUCTION — NOT FOR SALE — NO BIDDING
-    </p>
+<!-- WHAT A AUCTION EVENT: PUBLIC SAMPLE LANDING (NOT THE CREATOR LOADING PAGE) -->
+<section id="pageEventSampleLanding" class="page hidden" aria-label="What A Auction Event sample auction">
+  <div class="panel" style="max-width:1200px;margin:0 auto 18px;">
+    <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;">
+      <div>
+        <h2 style="margin:0 0 6px">WHAT A AUCTION EVENT</h2>
+        <p style="margin:0">See what your own auction can look like.</p>
+      </div>
+      <button type="button" class="goldBtn" onclick="openEventCreatorSetup()">CREATE YOUR AUCTION / LOAD LOTS</button>
+    </div>
+    <p style="margin:14px 0 0;color:#ffdf99;font-weight:bold">SAMPLE AUCTION — DEMONSTRATION ONLY. NOT FOR SALE. NO BIDDING.</p>
   </div>
-
   <div class="eventSampleGrid">
-
     <article class="lotCard eventSampleCard">
-      <div class="lotTop">SAMPLE LOT 1 — HORSES</div>
-      <img src="BEST-HORSE-SAMPLE.jpg.png" alt="Horse">
-      <div class="lotBody">
-        <h3>Horse Auction</h3>
-        <p>Sample horse auction lot</p>
-        <button disabled>BIDDING DISABLED</button>
-      </div>
+      <div class="lotTop">SAMPLE LOT 1 <span>HORSES</span></div>
+      <img src="BEST-HORSE-SAMPLE.jpg.png" alt="Sample horse auction lot" loading="lazy">
+      <div class="lotBody"><h3>Horse Auction</h3><p>Example horse lot with photographs and details.</p><strong>SAMPLE ONLY — NOT FOR SALE</strong><button type="button" disabled>DEMO — BIDDING DISABLED</button></div>
     </article>
-
     <article class="lotCard eventSampleCard">
-      <div class="lotTop">SAMPLE LOT 2 — VEHICLES</div>
-      <img src="BEST-VINTAGE-CAR-SAMPLE.jpg.jpg" alt="Car">
-      <div class="lotBody">
-        <h3>Vintage Car Auction</h3>
-        <p>Sample vehicle auction lot</p>
-        <button disabled>BIDDING DISABLED</button>
-      </div>
+      <div class="lotTop">SAMPLE LOT 2 <span>VEHICLES</span></div>
+      <img src="BEST-VINTAGE-CAR-SAMPLE.jpg.jpg" alt="Sample vintage car auction lot" loading="lazy">
+      <div class="lotBody"><h3>Vintage Car Auction</h3><p>Example vehicle lot with photographs and details.</p><strong>SAMPLE ONLY — NOT FOR SALE</strong><button type="button" disabled>DEMO — BIDDING DISABLED</button></div>
     </article>
-
     <article class="lotCard eventSampleCard">
-      <div class="lotTop">SAMPLE LOT 3 — MIXED GOODS</div>
-      <img src="mix auction lot .png" alt="Mixed goods">
-      <div class="lotBody">
-        <h3>General Auction</h3>
-        <p>Sample mixed auction lot</p>
-        <button disabled>BIDDING DISABLED</button>
-      </div>
+      <div class="lotTop">SAMPLE LOT 3 <span>MIXED GOODS</span></div>
+      <img src="mix auction lot .png" alt="Sample mixed goods auction lot" loading="lazy">
+      <div class="lotBody"><h3>General Auction</h3><p>Example lot for a mixed auction event.</p><strong>SAMPLE ONLY — NOT FOR SALE</strong><button type="button" disabled>DEMO — BIDDING DISABLED</button></div>
     </article>
-
   </div>
-
-  <div class="panel" style="margin-top:18px">
-    <button class="goldBtn" onclick="openEventCreatorSetup()">
-      CREATE NEW AUCTION / LOAD ITEMS
-    </button>
-    <button class="accountBtn" onclick="showOwnAuctionPage()">
-      MY AUCTIONS
-    </button>
-    <button class="accountBtn" onclick="showOwnBest10Page()">
-      BEST 10
-    </button>
+  <div class="panel" style="max-width:1200px;margin:18px auto;">
+    <button type="button" class="goldBtn" onclick="openEventCreatorSetup()">CREATE NEW AUCTION / LOAD ITEMS</button>
+    <button type="button" class="accountBtn" onclick="showOwnAuctionPage()">MY AUCTIONS</button>
+    <button type="button" class="accountBtn" onclick="showOwnBest10Page()">BEST 10</button>
   </div>
-
 </section>
-      <section id="pageOwnEvent" class="page hidden">
+
+<section id="pageOwnEvent" class="page hidden">
 <div id="creatorLandingOverview" class="panel" aria-live="polite" style="margin:0 0 14px;">
   <h2 style="margin-bottom:8px">MY AUCTION LANDING PAGE</h2>
   <div id="creatorLandingContent">Checking your auctions...</div>
@@ -8886,58 +8827,29 @@ setOwnEventHeader();
 }
 
 function openEventCreatorSetup() {
+  showOwnEventPage();
+
   const page = document.getElementById("pageOwnEvent");
 
-  if (!page) {
-    alert("Auction loading page not found.");
-    return;
+  if (page) {
+    page.classList.remove("eventLanding");
   }
 
-  // Hide the sample auction and other pages.
-  document.querySelectorAll(".page").forEach(p => {
-    p.classList.add("hidden");
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
   });
-
-  // Open the actual creator loading page.
-  page.classList.remove("hidden", "eventLanding");
-
-  document.body.classList.add("ownEventMode");
-
-  if (typeof setOwnEventHeader === "function") {
-    setOwnEventHeader();
-  }
-
-  if (typeof setOwnEventSEO === "function") {
-    setOwnEventSEO();
-  }
-
-  window.scrollTo(0, 0);
-
-  // Load the creator's saved auctions.
-  if (typeof loadMyAuctions === "function") {
-    Promise.resolve(loadMyAuctions()).catch(console.error);
-  }
 }
 async function showOwnEventPage(){
   document.getElementById("pageOwnEvent")
     ?.classList.remove("eventLanding");
 
   setOwnEventSEO();
-  sessionStorage.setItem("loadNowDestination", "CREATOR");
+  sessionStorage.setItem("loadNowDestination", "CREATOR");    
   document.body.classList.add("ownEventMode");
-  setOwnEventHeader();
-
-  // Display the creator loading page immediately.
-  document.querySelectorAll(".page").forEach(page => {
-    page.classList.add("hidden");
-  });
-
-  document.getElementById("pageOwnEvent")
-    ?.classList.remove("hidden");
-
-  // Check the creator's session afterwards.
-  const { data: sessionData } =
-    await auctionSupabase.auth.getSession();
+   setOwnEventHeader();
+   const { data: sessionData } =
+  await auctionSupabase.auth.getSession();
 
 if(sessionData.session?.user){
 
@@ -9535,11 +9447,6 @@ function setCliviaSEO(){
 
  
 function showPage(page){
-     if (page === "live" && new URLSearchParams(location.search).get("page") === "event-demo") {
-    const cleanUrl = new URL(location.href);
-    cleanUrl.searchParams.delete("page");
-    history.replaceState(null, "", cleanUrl.pathname + cleanUrl.search + cleanUrl.hash);
-  }   
   document.body.classList.toggle(
     "showRegistration",
     page === "register"
@@ -18195,22 +18102,81 @@ if(state.selectedBidderId){
   }
 }
 
-// OPEN CLIVIA AUCTIONS AS THE DEFAULT LANDING PAGE
-
-
-const publicEventQuery = new URLSearchParams(window.location.search);
-
-if (publicEventQuery.get("page") === "event-demo") {
-  showEventSampleLanding();
-} else if (publicEventQuery.get("page") === "event") {
-  showPublicEventFromLink(
-    publicEventQuery.get("auction"),
-    publicEventQuery.get("lot")
-  );
-} else {
-  showPage("live");
+// DIRECT PAGE URL ROUTING — preserves existing public auction URLs
+const AUCTION_ROUTE_MAP = Object.freeze({
+  clivia: () => showPage("live"),
+  register: () => showPage("register"),
+  account: () => showPage("register"),
+  "clivia-load": () => showPage("sellerLoad"),
+  chats: () => showPage("cliviaChat"),
+  rules: () => showPage("rules"),
+  admin: () => showPage("admin"),
+  "create-event": () => showEventSampleLanding(),
+  "event-demo": () => showEventSampleLanding(),
+  "creator-load": () => openEventCreatorSetup(),
+  "my-auction": () => showOwnAuctionPage(),
+  best10: () => showOwnBest10Page(),
+  groups: () => showCliviaEvents(),
+  messages: () => auctionShowStandalone("pageMessages"),
+  seller: () => auctionShowStandalone("pageSeller"),
+  owner: () => { showPage("admin"); },
+  event: () => {
+    const params = new URLSearchParams(location.search);
+    showPublicEventFromLink(params.get("auction"), params.get("lot"));
+  }
+});
+let auctionRouteRestoring = false;
+function auctionRouteUpdate(slug, replace=false){
+  if(auctionRouteRestoring) return;
+  const url=new URL(location.href);
+  if(url.searchParams.get("page")===slug) return;
+  url.searchParams.set("page",slug);
+  url.searchParams.delete("auction");
+  url.searchParams.delete("lot");
+  history[replace?"replaceState":"pushState"]({page:slug},"",url.pathname+url.search+url.hash);
 }
-
+function auctionShowStandalone(id){
+  document.querySelectorAll(".page").forEach(el=>el.classList.add("hidden"));
+  document.getElementById(id)?.classList.remove("hidden");
+}
+function auctionRouteOpen(slug){
+  auctionRouteRestoring=true;
+  try { (AUCTION_ROUTE_MAP[slug] || AUCTION_ROUTE_MAP.clivia)(); }
+  finally { auctionRouteRestoring=false; }
+}
+const auctionOriginalShowPage=showPage;
+showPage=function(page){
+  const result=auctionOriginalShowPage.apply(this,arguments);
+  const routes={live:"clivia",register:"register",sellerLoad:"clivia-load",cliviaChat:"chats",rules:"rules",admin:"admin",ownEvent:"create-event"};
+  if(routes[page]) auctionRouteUpdate(routes[page]);
+  return result;
+};
+const auctionOriginalCreator=openEventCreatorSetup;
+openEventCreatorSetup=function(){
+  const result=auctionOriginalCreator.apply(this,arguments);
+  auctionRouteUpdate("creator-load");
+  return result;
+};
+const auctionOriginalOwnAuction=showOwnAuctionPage;
+showOwnAuctionPage=function(){
+  const result=auctionOriginalOwnAuction.apply(this,arguments);
+  auctionRouteUpdate("my-auction");
+  return result;
+};
+const auctionOriginalBest10=showOwnBest10Page;
+showOwnBest10Page=function(){
+  const result=auctionOriginalBest10.apply(this,arguments);
+  auctionRouteUpdate("best10");
+  return result;
+};
+const auctionOriginalGroups=showCliviaEvents;
+showCliviaEvents=function(){
+  const result=auctionOriginalGroups.apply(this,arguments);
+  auctionRouteUpdate("groups");
+  return result;
+};
+window.addEventListener("popstate",()=>auctionRouteOpen(new URLSearchParams(location.search).get("page")||"clivia"));
+auctionRouteOpen(new URLSearchParams(location.search).get("page")||"clivia");
 
    setTimeout(()=>{
   const hash = window.location.hash;
