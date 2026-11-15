@@ -8268,64 +8268,12 @@ background:linear-gradient(90deg,#a0ff80,#39e52d);
 
 </div> <!-- closes sellerLoadGrid -->
 
-<style>
-/* PHONE: TWO PLANTS PER ROW */
-@media (max-width:700px) {
-  #myAuctionPlantsGrid {
-    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
-    gap:8px !important;
-  }
-
-  #myAuctionPlantsGrid .lotCard {
-    min-width:0 !important;
-    width:100% !important;
-  }
-
-  #myAuctionPlantsGrid img {
-    max-width:100% !important;
-  }
-}
-</style>
-
-<style>
-#myAuctionPlantsSection {
-  width:calc(100% - 24px) !important;
-  max-width:1400px !important;
-  margin:16px auto !important;
-}
-
-#myAuctionPlantsGrid {
-  display:grid !important;
-  grid-template-columns:repeat(4,minmax(0,1fr)) !important;
-  justify-content:start !important;
-  gap:10px !important;
-}
-
-#myAuctionPlantsGrid .lotCard {
-  width:100% !important;
-  min-width:0 !important;
-  padding:8px !important;
-}
-
-#myAuctionPlantsGrid img {
-  width:100% !important;
-  height:auto !important;
-}
-
-@media(max-width:700px) {
-  #myAuctionPlantsGrid {
-    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
-    gap:8px !important;
-  }
-}
-</style>
-
 <!-- SELLER'S UPLOADED CLIVIA AUCTION PLANTS -->
 <div id="myAuctionPlantsSection"
      class="panel"
      style="
        width:calc(100% - 32px);
-       max-width:1400px;
+       max-width:900px;
        margin:20px auto;
        box-sizing:border-box;
        padding:16px;
@@ -8339,18 +8287,15 @@ background:linear-gradient(90deg,#a0ff80,#39e52d);
     Your uploaded Clivias and their scheduled auctions
   </p>
 
- 
-<div id="myAuctionPlantsGrid"
-     style="
-       display:grid;
-       grid-template-columns:repeat(4,minmax(0,1fr));
-       justify-content:start;
-       gap:10px;
-       width:100%;
-       margin-top:15px;
-     ">
-</div>
-
+  <div id="myAuctionPlantsGrid"
+       style="
+         display:grid;
+        grid-template-columns:minmax(0,360px);
+justify-content:center;
+         gap:12px;
+         margin-top:15px;
+       ">
+  </div>
 
 </div>
 
@@ -11884,12 +11829,27 @@ window.addEventListener("DOMContentLoaded", renderMyAuctionPlants);
     "The PRE-BID YES/NO selection cannot be changed."
   );
   return;
+}        
+ 
+const preBidAnswer = prompt(
+  "ACCEPT PRE-BIDS BEFORE THE LIVE AUCTION?\n\n" +
+  "Type YES to accept pre-bids.\n" +
+  "Type NO to refuse pre-bids.\n\n" +
+  "Enter YES or NO:"
+);
 
-/* KEEP THE ORIGINAL PRE-BID SELECTION.
-   YES stays YES. NO stays NO.
-   Editing plant details must not change pre-bids.
-   Existing bids remain untouched. */
+if(preBidAnswer === null){
+  return;
+}
 
+const preBidChoice = preBidAnswer.trim().toUpperCase();
+
+if(preBidChoice !== "YES" && preBidChoice !== "NO"){
+  alert("Please enter YES or NO.");
+  return;
+}
+
+changes.acceptPreBids = preBidChoice === "YES";
 
   if(!confirm("Save changes to " + lot.name + "?")) return;
 
