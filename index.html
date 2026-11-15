@@ -8777,8 +8777,11 @@ function openEventCreatorSetup() {
   });
 }
 async function showOwnEventPage(){
+  
+async function showOwnEventPage(openLanding = false){
   document.getElementById("pageOwnEvent")
-    ?.classList.remove("eventLanding");
+    ?.classList.toggle("eventLanding", openLanding);
+
 
   setOwnEventSEO();
   sessionStorage.setItem("loadNowDestination", "CREATOR");    
@@ -9403,10 +9406,12 @@ function showPage(page){
     return;
   }
     
-   if(page === "ownEvent"){
-    showOwnEventPage();
+   
+if(page === "ownEvent"){
+    showOwnEventPage(true);
     return;
-  }
+}
+
 
   if(page === "sellerLoad"){
     renderMyAuctionPlants();
