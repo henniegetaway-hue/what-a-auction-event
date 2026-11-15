@@ -8268,12 +8268,31 @@ background:linear-gradient(90deg,#a0ff80,#39e52d);
 
 </div> <!-- closes sellerLoadGrid -->
 
+<style>
+/* PHONE: TWO PLANTS PER ROW */
+@media (max-width:700px) {
+  #myAuctionPlantsGrid {
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:8px !important;
+  }
+
+  #myAuctionPlantsGrid .lotCard {
+    min-width:0 !important;
+    width:100% !important;
+  }
+
+  #myAuctionPlantsGrid img {
+    max-width:100% !important;
+  }
+}
+</style>
+
 <!-- SELLER'S UPLOADED CLIVIA AUCTION PLANTS -->
 <div id="myAuctionPlantsSection"
      class="panel"
      style="
        width:calc(100% - 32px);
-       max-width:900px;
+       max-width:1400px;
        margin:20px auto;
        box-sizing:border-box;
        padding:16px;
