@@ -1737,7 +1737,13 @@ body:has(#cliviaCarryForwardFooter) {
   .creatorLandingCard p{line-height:1.5}
   .creatorLandingCard button{width:100%;min-height:44px}
   @media(max-width:600px){.creatorLandingCards{grid-template-columns:minmax(0,1fr)}#creatorLandingOverview{padding:12px}}
-  </style>
+  @media(max-width:600px){
+  #bidderLoginBox{width:calc(100% - 20px)!important;max-width:420px!important;margin:12px auto!important;box-sizing:border-box!important;}
+  #bidderLoginBox input{width:100%!important;box-sizing:border-box!important;min-height:44px!important;}
+  #bidderLoginBox button{min-height:44px!important;}
+  #bidderLoginMessage{overflow-wrap:anywhere;white-space:normal;}
+}
+</style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>      
  <script>
       /* START AT TOP AFTER PAGE REFRESH */
@@ -14299,6 +14305,10 @@ setInterval(() => {
 
 async function signInCliviaBidder(){
 
+  const signInButton = document.querySelector('#bidderLoginBox button[onclick="signInCliviaBidder()"]');
+  if(signInButton?.disabled) return;
+  if(signInButton) signInButton.disabled = true;
+  try {
   const password =
     document.getElementById("bidderLoginPassword")?.value || "";
 
@@ -14309,28 +14319,17 @@ async function signInCliviaBidder(){
     if(msg) msg.textContent = "Please enter your password.";
     return;
   }
+  if(msg) msg.textContent = "Checking your Clivia Dreamers account…";
 
   
-let data;
-
-try {
-  const result = await cliviaSupabase.auth.getUser();
-  data = result.data;
-} catch(error) {
-  console.error("Clivia sign-in error:", error);
-
-  if(msg){
-    msg.textContent =
-      "Unable to connect to your account. Please try again.";
-  }
-
-  return;
-}
-
-
-let email = (document.getElementById("bidderLoginEmail")?.value ||
-  data?.user?.email || localStorage.getItem("cliviaRememberedEmail") || "")
+const emailField = document.getElementById("bidderLoginEmail");
+let email = (emailField?.value || localStorage.getItem("cliviaRememberedEmail") || "")
   .trim().toLowerCase();
+if(!email){
+  const sessionResult = await cliviaSupabase.auth.getSession();
+  email = (sessionResult.data?.session?.user?.email || "").trim().toLowerCase();
+  if(emailField && email) emailField.value = email;
+}
 
 if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
   if(msg) msg.textContent = "Enter your registered email address above, then sign in.";
@@ -14359,6 +14358,7 @@ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
     return;
   }
 
+  if(msg) msg.textContent = "Signed in. Checking your registered member record…";
   await refreshBidderSelect();
 
   const bidder = (state.bidders || []).find(
@@ -14366,7 +14366,7 @@ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
   );
 
   if(!bidder){
-    if(msg) msg.textContent = "Registered bidder record not found.";
+    if(msg) msg.textContent = "Password accepted, but no bidder registration is linked to this Clivia account. Contact the site owner; do not create a duplicate registration.";
     return;
   }
 
@@ -14426,15 +14426,20 @@ if(newAccountButton){
 
 await updateRegistrationAccountButtons();
 
-if(msg) msg.textContent = "";
+if(msg) msg.textContent = "Signed in successfully to Clivia Dreamers.";
 
   account?.scrollIntoView({
     behavior: "smooth",
     block: "start"
   });
+} catch (error) {
+    console.error("Clivia mobile sign-in failed:", error);
+    if(msg) msg.textContent = "Sign-in could not finish: " + (error?.message || "connection error");
+  } finally {
+    if(signInButton) signInButton.disabled = false;
+  }
 }
 
-  
 async function showRegisteredBidder(){
 
   const loginBox =
