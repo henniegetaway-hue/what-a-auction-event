@@ -9980,8 +9980,10 @@ async function openSellerLoadFromLot(auctionId, rowKey){
   const rowSelect =
     document.getElementById("sellerLotStartRow");
 
-  if(auctionSelect && auctionId){
+  if(auctionSelect && auctionId &&
+     Array.from(auctionSelect.options).some(o=>String(o.value)===String(auctionId))){
     auctionSelect.value = auctionId;
+    state.selectedAuctionId=auctionId;
   }
 
   if(rowSelect && rowKey){
@@ -10021,31 +10023,33 @@ async function openSellerSpaces(){
     return;
   }
 
-  // CHECK REGISTERED ACCOUNT
-  const account = (state.bidders || []).find(
-    b => b.authUserId === user.id
-  );
-
-  if(!account){
-
-    showPage("register");
-
-    alert(
-      "Your registered account could not be found. " +
-      "Please complete or recover your existing registration."
-    );
-
+  // Resolve registration from the shared database, not browser-only state.
+  const [bidderResult, sellerResult] = await Promise.all([
+    cliviaSupabase.from("bidders").select("id,auth_user_id,email").eq("auth_user_id",user.id).limit(1),
+    cliviaSupabase.from("sellers").select("id,auth_user_id,name,email").eq("auth_user_id",user.id).limit(1)
+  ]);
+  if(bidderResult.error || sellerResult.error){
+    alert("Could not verify your Clivia account: " +
+      (bidderResult.error || sellerResult.error).message);
     return;
   }
-
-  // FIND SELLER BY AUTHENTICATED ID
-  const seller = (state.sellers || []).find(
-    s => s.authUserId === user.id
-  );
-
-  if(seller){
-    state.selectedSellerId = seller.id;
+  const registeredBidder=bidderResult.data?.[0];
+  const registeredSeller=sellerResult.data?.[0];
+  if(!registeredBidder && !registeredSeller){
+    alert("Your signed-in account has no linked Clivia registration. Please contact the administrator; do not register again.");
+    return;
+  }
+  if(registeredSeller){
+    state.sellers=state.sellers||[];
+    if(!state.sellers.some(s=>String(s.id)===String(registeredSeller.id))){
+      state.sellers.push({id:registeredSeller.id,authUserId:user.id,name:registeredSeller.name,email:registeredSeller.email});
+    }
+    state.selectedSellerId=registeredSeller.id;
     save();
+  } else {
+    alert("Your bidder account is recognised, but no seller account is linked. Please use the existing seller-registration option.");
+    showPage("register");
+    return;
   }
 
    const auctionConnected =
