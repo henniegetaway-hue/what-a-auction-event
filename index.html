@@ -10013,13 +10013,17 @@ async function openSellerSpaces(){
   } catch(error){
 
     console.error("Account check failed:",error);
-    openCliviaVisitorRegistration();
+    window.cliviaResumeSellerLoadAfterSignIn = true;
+    showPage("register");
+    await showRegisteredBidder();
     return;
   }
 
   // VISITOR OR UNCONFIRMED EMAIL
   if(!user || !user.email_confirmed_at){
-    openCliviaVisitorRegistration();
+    window.cliviaResumeSellerLoadAfterSignIn = true;
+    showPage("register");
+    await showRegisteredBidder();
     return;
   }
 
@@ -14377,7 +14381,10 @@ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
     unlockBidderAccount();
     document.getElementById("bidderLoginBox").style.display = "none";
     await updateRegistrationAccountButtons();
-    document.getElementById("pageSellerLoad")?.scrollIntoView({block:"start"});
+    if(window.cliviaResumeSellerLoadAfterSignIn){
+      window.cliviaResumeSellerLoadAfterSignIn=false;
+      await openSellerSpaces();
+    }
     return;
   }
 
@@ -14436,6 +14443,12 @@ if(newAccountButton){
  if(loginBox) loginBox.style.display = "none";
 
 await updateRegistrationAccountButtons();
+
+if(window.cliviaResumeSellerLoadAfterSignIn){
+  window.cliviaResumeSellerLoadAfterSignIn=false;
+  await openSellerSpaces();
+  return;
+}
 
 if(msg) msg.textContent = "Signed in successfully to Clivia Dreamers.";
 
@@ -18135,7 +18148,6 @@ async function loadPublicTestLot(){
     .from("lots")
     .select("*")
     .eq("lot_number", 1)
-    .eq("status", "TEST ONLY")
     .eq("name", "Naudes 777")
     .limit(1);
 
@@ -22810,6 +22822,7 @@ window.addEventListener("DOMContentLoaded",()=>{
   });
 });
 async function cliviaShowSellerSignIn(){
+  showPage("register");
   if(typeof showRegisteredBidder === "function") await showRegisteredBidder();
   else document.getElementById("bidderLoginBox")?.scrollIntoView({block:"center"});
   cliviaPrefillRegisteredEmail();
