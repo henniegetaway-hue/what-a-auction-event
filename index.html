@@ -22768,7 +22768,12 @@ async function syncOneCliviaLocalLot(lot){
 async function syncMySavedCliviaPlants(){
   const msg=document.getElementById("cliviaSyncMessage");
   const {data:{user}}=await cliviaSupabase.auth.getUser();
-  if(!user){msg.textContent="Sign in to your Clivia account first";return;}
+  if(!user){
+    msg.textContent="Your Clivia session is not signed in. Open SIGN IN below, then return to SYNC.";
+    const btn=document.getElementById("cliviaSyncSignInButton");
+    if(btn) btn.hidden=false;
+    return;
+  }
   const candidates=(state.lots||[]).filter(l=>!l.supabaseDisplayOnly&&!l.sharedPublished&&
     (l.flower||l.plant)&&!String(l.id).startsWith("DB-")&&
     !/TEST ONLY/i.test(String(l.status||"")));
@@ -22780,13 +22785,36 @@ async function syncMySavedCliviaPlants(){
   msg.textContent=success+" plant(s) confirmed in Supabase. "+
     (fail.length?"Still stored on this computer: "+fail.join("; "):"No failed transfers.");
 }
+// Keep the registered email on this device; never remember a password.
+function cliviaPrefillRegisteredEmail(){
+  const field=document.getElementById("bidderLoginEmail");
+  if(!field || field.value.trim()) return;
+  try { field.value=localStorage.getItem("cliviaRememberedEmail")||""; }
+  catch(e) { /* Private browsing may disable storage. */ }
+}
+window.addEventListener("DOMContentLoaded",()=>{
+  cliviaPrefillRegisteredEmail();
+  const field=document.getElementById("bidderLoginEmail");
+  field?.addEventListener("change",()=>{
+    const email=field.value.trim().toLowerCase();
+    if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+      try {localStorage.setItem("cliviaRememberedEmail",email);}catch(e){}
+    }
+  });
+});
+async function cliviaShowSellerSignIn(){
+  if(typeof showRegisteredBidder === "function") await showRegisteredBidder();
+  else document.getElementById("bidderLoginBox")?.scrollIntoView({block:"center"});
+  cliviaPrefillRegisteredEmail();
+}
 window.addEventListener("DOMContentLoaded",()=>{
   const host=document.getElementById("pageSellerLoad");
   if(!host || document.getElementById("cliviaSyncSavedButton"))return;
   const box=document.createElement("div");box.className="panel";
-  box.innerHTML='<button type="button" class="goldBtn" id="cliviaSyncSavedButton">SYNC MY SAVED PLANTS TO AUCTION</button><p id="cliviaSyncMessage" role="status" class="small">Transfers previously saved plants without deleting the originals.</p>';
+  box.innerHTML='<button type="button" class="goldBtn" id="cliviaSyncSavedButton">SYNC MY SAVED PLANTS TO AUCTION</button><p id="cliviaSyncMessage" role="status" class="small">Transfers previously saved plants without deleting the originals.</p><button type="button" id="cliviaSyncSignInButton" class="goldBtn" hidden>SIGN IN TO CLIVIA DREAMERS</button>';
   host.appendChild(box);
-  box.querySelector("button").addEventListener("click",syncMySavedCliviaPlants);
+  box.querySelector("#cliviaSyncSavedButton").addEventListener("click",syncMySavedCliviaPlants);
+  box.querySelector("#cliviaSyncSignInButton").addEventListener("click",cliviaShowSellerSignIn);
 });
 </script>
 </body>
