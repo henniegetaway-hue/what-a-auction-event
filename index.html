@@ -14370,7 +14370,14 @@ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
   );
 
   if(!bidder){
-    if(msg) msg.textContent = "Password accepted, but no bidder registration is linked to this Clivia account. Contact the site owner; do not create a duplicate registration.";
+    // Authentication succeeded. Do not turn a missing bidder profile into a failed sign-in.
+    // Seller loading is authorized independently using the authenticated seller row.
+    if(msg) msg.textContent = "Signed in. Bidder profile not linked; seller loading can still be checked.";
+    try { localStorage.setItem("cliviaRememberedEmail", loginData.user.email.toLowerCase()); } catch(e) {}
+    unlockBidderAccount();
+    document.getElementById("bidderLoginBox").style.display = "none";
+    await updateRegistrationAccountButtons();
+    document.getElementById("pageSellerLoad")?.scrollIntoView({block:"start"});
     return;
   }
 
@@ -22704,7 +22711,7 @@ async function syncOneCliviaLocalLot(lot){
     .select("id,auth_user_id").eq("auth_user_id",user.id).limit(2);
   if(sellerError || !sellers?.length) throw new Error("No verified seller account found");
   const verifiedSeller=sellers.find(s=>String(s.id)===String(lot.supabaseSellerId||lot.sellerId))||
-    (sellers.length===1 && String(lot.sellerId)===String(state.selectedBidderId) ? sellers[0] : null);
+    (sellers.length===1 ? sellers[0] : null);
   if(!verifiedSeller) throw new Error("Cannot identify this plant's seller safely");
   const verifyExisting=async()=>{
     const {data:record,error}=await cliviaSupabase.from("lots")
