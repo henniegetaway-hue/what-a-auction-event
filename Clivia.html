@@ -20659,8 +20659,17 @@ async function connectExistingCliviaAuction(){
     state.auctions.push(auction);
   }
 
-  state.selectedAuctionId = auctionId;
-  save();
+  // Do not overwrite an already selected active auction. The public loader
+  // may have chosen the auction containing published plants, while the seller
+  // may have unsynced local plants. Switching here hides those cards.
+  const chosen = (state.auctions || []).find(a =>
+    String(a.id) === String(state.selectedAuctionId)
+  );
+  if(!chosen || !["LOADING","SCHEDULING","PREBID","LIVE","UPCOMING"].includes(
+    String(chosen.status || "LOADING").toUpperCase())){
+    state.selectedAuctionId = auctionId;
+    save();
+  }
 
   return true;
 }      
