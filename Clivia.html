@@ -9548,7 +9548,6 @@ function showPage(page){
 
   if(page === "sellerLoad"){
     renderMyAuctionPlants();
-    refreshMyRegisteredCliviaPlants();
   }      
       
       if(page === "register"){
@@ -11504,7 +11503,7 @@ if (
   return;
 }
    
-   const photoPath = "lots/" + Date.now() + "-" + photo1.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+   const photoPath = signedInSeller.id + "/lots/" + Date.now() + "-" + photo1.name.replace(/[^a-zA-Z0-9._-]/g, "_");
 
 
 const compressedPhotoData = await fileToDataURL(photo1);
@@ -11550,7 +11549,7 @@ if (photo2) {
   ).blob();
 
   const plantPhotoPath =
-    "lots/" +
+    signedInSeller.id + "/lots/" +
     Date.now() +
     "-plant-" +
     Math.random().toString(36).slice(2) +
@@ -11742,20 +11741,6 @@ async function fetchMyCliviaPlantsFromSupabase() {
 
   return lots || [];
 }      
-async function refreshMyRegisteredCliviaPlants(){
-  try{
-    const rows=await fetchMyCliviaPlantsFromSupabase();
-    const {data:auth}=await cliviaSupabase.auth.getUser();
-    if(!auth?.user) return;
-    const {data:sellers,error}=await cliviaSupabase.from("sellers")
-      .select("id").eq("auth_user_id",auth.user.id);
-    if(error) throw error;
-    window.__cliviaMySellerIds=(sellers||[]).map(x=>String(x.id));
-    // Public refresh maps database rows into state.lots without replacing local photos.
-    await refreshPublicCliviaLots();
-    renderMyAuctionPlants();
-  }catch(error){console.warn("Seller plant refresh:",error);}
-}
 function renderMyAuctionPlants(){
   const box=document.getElementById("myAuctionPlantsGrid");
   if(!box) return;
@@ -11769,8 +11754,7 @@ function renderMyAuctionPlants(){
   }
 
   const plants=(state.lots||[])
-    .filter(lot=>String(lot.sellerId)===String(sellerId) ||
-      (window.__cliviaMySellerIds||[]).includes(String(lot.sellerId)))
+    .filter(lot=>String(lot.sellerId)===String(sellerId))
     .map(lot=>{
       const auction=(state.auctions||[]).find(
         a=>String(a.id)===String(lot.auctionId)
@@ -15906,6 +15890,15 @@ updateAuctionHalfFullStatus(auction);
 scheduleAuctionAtHalfFull(auction);
   updateAuctionFullStatus(auction);
   save();
+  // Keep the original browser copy until the server confirms the save.
+  try {
+    document.getElementById("lotMsg").textContent="Plant saved locally. Publishing to the shared auction…";
+    await syncOneCliviaLocalLot(newLot);
+  } catch(syncError) {
+    console.error("Clivia plant remains safely saved in this browser:",syncError);
+    document.getElementById("lotMsg").textContent="Saved on this computer only. Publishing failed: "+syncError.message;
+    return;
+  }
 
   ["lotName","lotBreeding","lotBreeder","lotTrophy","lotLeaves","lotOffsets","lotStart"].forEach(id=>{
     document.getElementById(id).value="";
@@ -15917,7 +15910,7 @@ scheduleAuctionAtHalfFull(auction);
   document.getElementById("lotExportEligible").checked=false;
   document.getElementById("lotAuctionTime").value="";
   document.getElementById("lotMsg").textContent=
-  "Lot added. Listing fee: " +
+  "Plant published to shared auction. Listing fee: " +
   (listingCurrency==="ZAR" ? "R"+listingFee : "€"+listingFee);
 
  renderAdminLots();
@@ -20531,71 +20524,58 @@ function cliviaLocalAuctionWithPlants(){
 }
 async function refreshPublicCliviaLots(){
   if(cliviaPublicRefreshRunning) return;
-  cliviaPublicRefreshRunning=true;
-  try{
-    const {data:auctions,error:auctionError}=await cliviaSupabase
+  cliviaPublicRefreshRunning = true;
+  try {
+    const {data: auctions, error: auctionError} = await cliviaSupabase
       .from("auctions")
       .select("id,legacy_auction_id,auction_name,auction_date,start_time,close_time,currency,status")
       .in("status",["LOADING","SCHEDULING","PREBID","LIVE","UPCOMING"])
-      .order("id",{ascending:true}).limit(30);
+      .order("id",{ascending:false}).limit(20);
     if(auctionError) throw auctionError;
     if(!auctions?.length) return;
-    const ids=auctions.map(a=>a.id);
-    const {data:records,error:lotsError}=await cliviaSupabase.from("lots")
-      .select("id,website_lot_id,live_auction_id,seller_id,lot_number,name,description,breeding,breeder,leaves,offsets,category,start_row,flower_image_url,plant_image_url,starting_bid,minimum_increment,export_eligible,status")
-      .in("live_auction_id",ids).order("lot_number",{ascending:true}).limit(500);
-    if(lotsError) throw lotsError;
-    const excluded=new Set(["TEST ONLY","DELETED","WITHDRAWN","CANCELLED"]);
-    const real=(records||[]).filter(r=>!excluded.has(String(r.status||"").toUpperCase()));
-    for(const a of auctions){
-      if(!a.legacy_auction_id) continue;
-      const id=String(a.legacy_auction_id);
-      let local=(state.auctions||[]).find(x=>String(x.id)===id);
-      if(!local){
-        local={id,name:a.auction_name||"Clivia Dreamers Auction",type:"CLIVIA",
-          auctionDate:a.auction_date||"",auctionTime:a.start_time||"",
-          auctionCloseTime:a.close_time||"",currency:a.currency||"ZAR",
-          status:a.status,firstBid:200};
-        state.auctions.push(local);
-      }
+    const localWithPlants = cliviaLocalAuctionWithPlants();
+    const selected = auctions.find(a => String(a.legacy_auction_id) === String(state.selectedAuctionId))
+      || auctions.find(a=>a.legacy_auction_id===localWithPlants?.id) || auctions[auctions.length-1];
+    if(!selected?.legacy_auction_id) return;
+    const legacyId = String(selected.legacy_auction_id);
+    let auction = (state.auctions||[]).find(a => String(a.id) === legacyId);
+    if(!auction){
+      auction={id:legacyId,name:selected.auction_name||"Clivia Dreamers Auction",type:"CLIVIA",
+        auctionDate:selected.auction_date||"",auctionTime:selected.start_time||"",
+        auctionCloseTime:selected.close_time||"",currency:selected.currency||"ZAR",
+        status:selected.status,firstBid:200};
+      state.auctions.push(auction);
     }
-    for(const r of real){
-      const a=auctions.find(x=>String(x.id)===String(r.live_auction_id));
-      if(!a?.legacy_auction_id) continue;
+    // Keep the local auction with plants visible until those lots are safely published.
+    if(!localWithPlants) state.selectedAuctionId = legacyId;
+    else if(String(state.selectedAuctionId) !== String(localWithPlants.id)) {
+      state.selectedAuctionId = localWithPlants.id;
+      save();
+    }
+    const {data: records,error:lotsError}=await cliviaSupabase.from("lots")
+      .select("id,website_lot_id,live_auction_id,seller_id,lot_number,name,description,breeding,breeder,leaves,offsets,category,start_row,flower_image_url,plant_image_url,starting_bid,minimum_increment,export_eligible,status")
+      .eq("live_auction_id",selected.id).order("lot_number",{ascending:true}).limit(500);
+    if(lotsError) throw lotsError;
+    for(const r of records||[]){
+      if(["TEST ONLY","DELETED","WITHDRAWN","CANCELLED"].includes(String(r.status||"").toUpperCase())) continue;
       const id=String(r.website_lot_id||`DB-${r.id}`);
       if(state.lots.some(l=>String(l.id)===id)) continue;
-      state.lots.push({id,auctionId:String(a.legacy_auction_id),
-        lotNumber:r.lot_number,name:r.name||"Clivia plant",
+      state.lots.push({id,auctionId:legacyId,lotNumber:r.lot_number,name:r.name||"Clivia plant",
         description:r.description||"",breeding:r.breeding||"",breeder:r.breeder||"",
-        leaves:r.leaves,offsets:r.offsets,category:r.category||"",
-        startRow:r.start_row||"ROW1",flower:r.flower_image_url||"",
-        plant:r.plant_image_url||"",startBid:Number(r.starting_bid||0),
-        currentBid:Number(r.starting_bid||0),increment:Number(r.minimum_increment||100),
-        exportEligible:r.export_eligible===true,sellerId:r.seller_id,
-        bids:[],supabaseDisplayOnly:true});
-    }
-    const localWithPlants=cliviaLocalAuctionWithPlants();
-    const selected=auctions.find(a=>String(a.legacy_auction_id)===String(state.selectedAuctionId));
-    const selectedHasReal=selected && real.some(r=>String(r.live_auction_id)===String(selected.id));
-    const withReal=auctions.find(a=>a.legacy_auction_id &&
-      real.some(r=>String(r.live_auction_id)===String(a.id)));
-    // Preserve a desktop auction containing unsynced plants. Otherwise prefer a real DB lot.
-    if(!localWithPlants && !selectedHasReal && withReal){
-      state.selectedAuctionId=String(withReal.legacy_auction_id);
-    }else if(!localWithPlants && !selected && auctions[0]?.legacy_auction_id){
-      state.selectedAuctionId=String(auctions[0].legacy_auction_id);
+        leaves:r.leaves,offsets:r.offsets,category:r.category||"",startRow:r.start_row||"ROW1",
+        flower:r.flower_image_url||"",plant:r.plant_image_url||"",
+        startBid:Number(r.starting_bid||0),currentBid:Number(r.starting_bid||0),
+        increment:Number(r.minimum_increment||100),exportEligible:r.export_eligible===true,
+        sellerId:r.seller_id,bids:[],supabaseDisplayOnly:true});
     }
     if(!document.getElementById("pageLive")?.classList.contains("hidden")) renderLots();
-    if(!document.getElementById("pageSellerLoad")?.classList.contains("hidden")){
-      renderMyAuctionPlants();
-    }
-  }catch(error){
-    console.error("Shared Clivia auction loading failed:",error);
+  } catch(error){
+    console.error("Could not fetch shared auction lots. Check public SELECT/RLS policies:",error);
     const box=document.getElementById("lotsGrid");
     if(box && !(state.lots||[]).some(l=>String(l.auctionId)===String(state.selectedAuctionId))){
-      box.insertAdjacentHTML("afterbegin",'<p role="status" style="padding:12px;color:#ffcc80">Unable to load shared auction plants. Please contact the administrator.</p>');
+      box.insertAdjacentHTML("afterbegin",'<p role="status" style="padding:12px;color:#ffcc80">Auction lots could not be loaded from the shared database. Please contact the auction administrator.</p>');
     }
-  }finally{cliviaPublicRefreshRunning=false;}
+  } finally {cliviaPublicRefreshRunning=false;}
 }
 /* AUTOMATIC CLIVIA AUCTION CREATION */
 /* FIND EXISTING CLIVIA AUCTION IN SUPABASE */
@@ -20659,17 +20639,8 @@ async function connectExistingCliviaAuction(){
     state.auctions.push(auction);
   }
 
-  // Do not overwrite an already selected active auction. The public loader
-  // may have chosen the auction containing published plants, while the seller
-  // may have unsynced local plants. Switching here hides those cards.
-  const chosen = (state.auctions || []).find(a =>
-    String(a.id) === String(state.selectedAuctionId)
-  );
-  if(!chosen || !["LOADING","SCHEDULING","PREBID","LIVE","UPCOMING"].includes(
-    String(chosen.status || "LOADING").toUpperCase())){
-    state.selectedAuctionId = auctionId;
-    save();
-  }
+  state.selectedAuctionId = auctionId;
+  save();
 
   return true;
 }      
@@ -22693,5 +22664,70 @@ async function showPublicEventFromLink(auctionId, lotNumber) {
 }
 </script>
         
+<script>
+/* Safe bridge for desktop-only Clivia plants. Never deletes local copies. */
+async function syncOneCliviaLocalLot(lot){
+  if(!lot || lot.supabaseDisplayOnly) return;
+  const {data:{user},error:authError}=await cliviaSupabase.auth.getUser();
+  if(authError || !user?.email_confirmed_at) throw new Error("Confirmed Clivia sign-in required");
+  const {data:sellers,error:sellerError}=await cliviaSupabase.from("sellers")
+    .select("id,auth_user_id").eq("auth_user_id",user.id).limit(2);
+  if(sellerError || !sellers?.length) throw new Error("No verified seller account found");
+  const verifiedSeller=sellers.find(s=>String(s.id)===String(lot.sellerId))||
+    (sellers.length===1?sellers[0]:null);
+  if(!verifiedSeller) throw new Error("Cannot identify this plant's seller safely");
+  const {data:existing,error:existingError}=await cliviaSupabase.from("lots")
+    .select("id,flower_image_url,plant_image_url").eq("website_lot_id",String(lot.id)).maybeSingle();
+  if(existingError) throw existingError;
+  if(existing){lot.sharedPublished=true;lot.sellerId=verifiedSeller.id;save();return;}
+  const uploadPhoto=async(source,kind)=>{
+    if(!source) return "";
+    if(/^https:\/\//i.test(source)) return source;
+    if(!/^data:image\/(jpeg|png|webp);base64,/i.test(source))
+      throw new Error("Unsupported "+kind+" photograph format");
+    const blob=await (await fetch(source)).blob();
+    if(blob.size>5*1024*1024) throw new Error(kind+" photograph exceeds 5 MB");
+    const ext=blob.type==="image/png"?"png":blob.type==="image/webp"?"webp":"jpg";
+    const path=user.id+"/lots/"+String(lot.id).replace(/[^a-zA-Z0-9_-]/g,"_")+"-"+kind+"."+ext;
+    const {error}=await cliviaSupabase.storage.from("lot-photos")
+      .upload(path,blob,{contentType:blob.type,upsert:false});
+    if(error && !/already exists|duplicate/i.test(error.message)) throw new Error(kind+" upload: "+error.message);
+    return cliviaSupabase.storage.from("lot-photos").getPublicUrl(path).data.publicUrl;
+  };
+  const flower=await uploadPhoto(lot.flower,"flower");
+  const plant=await uploadPhoto(lot.plant,"plant");
+  if(!flower) throw new Error("Flower photo required");
+  const serverPlant={...lot,sellerId:verifiedSeller.id,flower,plant};
+  await saveCliviaPlantToSupabase(serverPlant);
+  lot.sellerId=verifiedSeller.id;
+  lot.sharedPublished=true;
+  lot.flower=flower;
+  if(plant) lot.plant=plant;
+  save();
+}
+async function syncMySavedCliviaPlants(){
+  const msg=document.getElementById("cliviaSyncMessage");
+  const {data:{user}}=await cliviaSupabase.auth.getUser();
+  if(!user){msg.textContent="Sign in to your Clivia account first";return;}
+  const candidates=(state.lots||[]).filter(l=>!l.supabaseDisplayOnly&&!l.sharedPublished&&
+    (l.flower||l.plant)&&!String(l.id).startsWith("DB-")&&
+    !/TEST ONLY/i.test(String(l.status||"")));
+  let success=0,fail=[];
+  for(const lot of candidates){
+    try{await syncOneCliviaLocalLot(lot);success++}
+    catch(e){fail.push((lot.name||lot.id)+": "+e.message)}
+  }
+  msg.textContent=success+" plant(s) confirmed in Supabase. "+
+    (fail.length?"Still stored on this computer: "+fail.join("; "):"No failed transfers.");
+}
+window.addEventListener("DOMContentLoaded",()=>{
+  const host=document.getElementById("pageSellerLoad");
+  if(!host || document.getElementById("cliviaSyncSavedButton"))return;
+  const box=document.createElement("div");box.className="panel";
+  box.innerHTML='<button type="button" class="goldBtn" id="cliviaSyncSavedButton">SYNC MY SAVED PLANTS TO AUCTION</button><p id="cliviaSyncMessage" role="status" class="small">Transfers previously saved plants without deleting the originals.</p>';
+  host.appendChild(box);
+  box.querySelector("button").addEventListener("click",syncMySavedCliviaPlants);
+});
+</script>
 </body>
 </html>
