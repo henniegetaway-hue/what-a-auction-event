@@ -1738,34 +1738,12 @@ body:has(#cliviaCarryForwardFooter) {
   .creatorLandingCard button{width:100%;min-height:44px}
   @media(max-width:600px){.creatorLandingCards{grid-template-columns:minmax(0,1fr)}#creatorLandingOverview{padding:12px}}
   
-/* SELLER CARD READABILITY — keep four desktop and two mobile columns */
-#myAuctionPlantsSection { width:calc(100% - 24px) !important; max-width:1500px !important; }
-#myAuctionPlantsGrid { display:grid !important; grid-template-columns:repeat(4,minmax(0,1fr)) !important; justify-content:stretch !important; gap:14px !important; }
-#myAuctionPlantsGrid > .lotCard { box-sizing:border-box !important; min-width:0 !important; width:100% !important; max-width:none !important; padding:12px !important; overflow-wrap:anywhere; }
-#myAuctionPlantsGrid > .lotCard > div { overflow-wrap:anywhere; line-height:1.45 !important; }
-#myAuctionPlantsGrid > .lotCard > div:nth-of-type(2) { font-size:clamp(13px,1.3vw,17px) !important; }
-#myAuctionPlantsGrid > .lotCard > div:nth-of-type(3) { font-size:clamp(12px,1.15vw,15px) !important; }
-#myAuctionPlantsGrid > .lotCard img { width:100% !important; height:auto !important; aspect-ratio:4/3 !important; object-fit:cover !important; }
-#myAuctionPlantsGrid > .lotCard .goldBtn { width:100% !important; min-height:42px; white-space:normal !important; }
-@media(max-width:700px){
- #myAuctionPlantsSection { width:calc(100% - 12px) !important; padding:7px !important; }
- #myAuctionPlantsGrid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:8px !important; }
- #myAuctionPlantsGrid > .lotCard { padding:7px !important; }
- #myAuctionPlantsGrid > .lotCard > div:nth-of-type(2) { font-size:13px !important; }
- #myAuctionPlantsGrid > .lotCard > div:nth-of-type(3) { font-size:12px !important; }
- #myAuctionPlantsGrid > .lotCard .goldBtn { font-size:11px !important; padding:8px 4px !important; }
-}
-/* MY LOADED AUCTION PLANTS: 4 desktop / 2 phone */
-#myAuctionPlantsGrid > .lotCard { min-width:0; width:100%; }
-#myAuctionPlantsGrid > .lotCard img { max-width:100%; }
-@media (max-width:700px) {
-  #myAuctionPlantsSection { width:calc(100% - 16px) !important; padding:8px !important; }
-  #myAuctionPlantsGrid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:8px !important; }
-  #myAuctionPlantsGrid > .lotCard { padding:6px !important; }
-  #myAuctionPlantsGrid > .lotCard > div { overflow-wrap:anywhere; }
-  #myAuctionPlantsGrid > .lotCard img { aspect-ratio:1/1 !important; }
-  #myAuctionPlantsGrid > .lotCard .goldBtn { width:100%; padding:9px 3px; font-size:10px !important; }
-}
+/* CLIVIA MY LOADED PLANTS: READABLE CARDS */
+#myAuctionPlantsSection{max-width:1500px!important;width:calc(100% - 24px)!important}
+#myAuctionPlantsGrid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;justify-content:stretch!important;gap:14px!important}
+#myAuctionPlantsGrid>.lotCard{min-width:0!important;max-width:none!important;overflow-wrap:anywhere!important;font-size:13px!important;line-height:1.4!important}
+#myAuctionPlantsGrid>.lotCard>div{overflow-wrap:anywhere!important}
+@media(max-width:600px){#myAuctionPlantsGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}#myAuctionPlantsGrid>.lotCard{padding:7px!important;font-size:12px!important}#myAuctionPlantsGrid>.lotCard>div{font-size:12px!important;line-height:1.4!important}#myAuctionPlantsGrid .goldBtn{font-size:11px!important;padding:9px 4px!important}}
 </style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>      
  <script>
@@ -3446,8 +3424,52 @@ max-height:110px;
 </div>
         <div id="previewLotsGrid" style="
 display:grid;
-grid-template-columns:repeat(4,minmax(0,1fr));
-justify-content:start;
+
+/* MY LOADED AUCTION PLANTS — 4 ON COMPUTER */
+#myAuctionPlantsSection {
+  width: 100% !important;
+  max-width: 1400px !important;
+}
+
+#myAuctionPlantsGrid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  width: 100% !important;
+}
+
+#myAuctionPlantsGrid .lotCard {
+  min-width: 0 !important;
+  width: 100% !important;
+  padding: 8px !important;
+}
+
+#myAuctionPlantsGrid .lotCard img {
+  width: 100% !important;
+  aspect-ratio: 1 / 1 !important;
+  object-fit: cover !important;
+}
+
+#myAuctionPlantsGrid .lotCard .goldBtn {
+  width: 100% !important;
+  font-size: 11px !important;
+  padding: 8px 4px !important;
+}
+
+/* PHONE — 2 PLANTS PER ROW */
+@media (max-width: 600px) {
+  #myAuctionPlantsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  #myAuctionPlantsGrid .lotCard {
+    padding: 6px !important;
+    font-size: 11px !important;
+    overflow-wrap: anywhere;
+  }
+}
+
 gap:12px;
 margin-top:15px;
   width:100%;
@@ -4337,12 +4359,6 @@ KEEP BUTTONS ALIGNED IN ONE HORIZONTAL ROW.
     </div>
   </div>
 
-  <div id="cliviaLocalSyncPanel" class="panel" style="display:none;margin:8px 0;padding:12px;border-color:#9acd32;">
-    <strong>Plants saved on this computer</strong>
-    <p style="margin:8px 0;">Checking saved plants against the shared auction database.</p>
-    <div style="font-size:12px;">The website will check and safely synchronize these plants when you are signed in.</div>
-    <div id="cliviaLocalSyncMessage" role="status" style="margin-top:8px;white-space:pre-wrap;"></div>
-  </div>
   <div id="lotsGrid" class="lotsGrid" style="flex:1;min-width:0;"></div>
   <div id="oldLotLoadingForm" style="display:none;">    
  <label>Name / Cross</label>
@@ -8325,8 +8341,8 @@ background:linear-gradient(90deg,#a0ff80,#39e52d);
   <div id="myAuctionPlantsGrid"
        style="
          display:grid;
-         grid-template-columns:repeat(4,minmax(0,1fr));
-         justify-content:stretch;
+       grid-template-columns:repeat(4,minmax(0,1fr));
+justify-content:stretch;
          gap:12px;
          margin-top:15px;
        ">
@@ -9539,6 +9555,7 @@ function showPage(page){
 
   if(page === "sellerLoad"){
     renderMyAuctionPlants();
+    recoverLocalCliviaLotsToSupabase().catch(console.error);
   }      
       
       if(page === "register"){
@@ -9731,7 +9748,6 @@ if(page === "sellerLoad"){
 
   if(page==="live") {
     renderLots();
-    updateCliviaLocalSyncPanel();
     // Fetch shared public lots; phone and desktop must not rely only on localStorage.
     refreshPublicCliviaLots().catch(error => console.error("Public Clivia lots:", error));
   }
@@ -11699,6 +11715,94 @@ if(msg){
   msg.innerHTML = "<b>Plant published successfully.</b>";
 }
 }   
+/* SAFE AUTOMATIC RECOVERY OF BROWSER-SAVED CLIVIA LOTS.
+   No existing database records, bids, or auctions are overwritten. */
+let cliviaRecoveryBusy = false;
+async function recoverLocalCliviaLotsToSupabase(){
+  if(cliviaRecoveryBusy) return;
+  cliviaRecoveryBusy=true;
+  const notice=document.getElementById('lotMsg') || document.getElementById('sellerLotMsg');
+  try {
+    const {data:{user},error:authError}=await cliviaSupabase.auth.getUser();
+    if(authError || !user?.email_confirmed_at) return;
+    const {data:sellers,error:sellerError}=await cliviaSupabase.from('sellers')
+      .select('id,auth_user_id').eq('auth_user_id',user.id);
+    if(sellerError) throw sellerError;
+    const ownedIds=new Set((sellers||[]).map(s=>String(s.id)));
+    const localAccounts=(state.bidders||[]).filter(b=>String(b.authUserId)===String(user.id));
+    const localIds=new Set(localAccounts.map(b=>String(b.id)));
+    const localSellerIds=new Set((state.sellers||[]).filter(s=>String(s.authUserId)===String(user.id)).map(s=>String(s.id)));
+    const candidates=(state.lots||[]).filter(l=>
+      !l.supabaseDisplayOnly && l.id && l.name &&
+      (ownedIds.has(String(l.sellerId)) || localIds.has(String(l.sellerId)) || localSellerIds.has(String(l.sellerId))) &&
+      (!Array.isArray(l.bids) || l.bids.length===0)
+    );
+    if(!candidates.length) return;
+    const {data:existing,error:existingError}=await cliviaSupabase.from('lots')
+      .select('website_lot_id,live_auction_id,lot_number,seller_id').in('website_lot_id',candidates.map(l=>String(l.id)));
+    if(existingError) throw existingError;
+    const existingIds=new Set((existing||[]).map(l=>String(l.website_lot_id)));
+    let recovered=0; const failures=[];
+    for(const lot of candidates){
+      if(existingIds.has(String(lot.id))) continue;
+      try {
+        const auction=(state.auctions||[]).find(a=>String(a.id)===String(lot.auctionId));
+        if(!auction) throw new Error('auction not found');
+        const {data:dbAuction,error:auctionError}=await cliviaSupabase.from('auctions')
+          .select('id,status').eq('legacy_auction_id',String(lot.auctionId)).maybeSingle();
+        if(auctionError || !dbAuction) throw new Error('auction not connected to Supabase');
+        if(!['LOADING','PREBID'].includes(dbAuction.status)) throw new Error('auction is not accepting plants');
+        const seller=(sellers||[]).find(s=>String(s.id)===String(lot.sellerId)) ||
+          ((sellers||[]).length===1 ? sellers[0] : null);
+        if(!seller) throw new Error('seller account cannot be matched safely');
+        const {data:used,error:usedError}=await cliviaSupabase.from('lots')
+          .select('lot_number').eq('live_auction_id',dbAuction.id);
+        if(usedError) throw usedError;
+        const usedNumbers=new Set((used||[]).map(x=>Number(x.lot_number)));
+        let number=Number(lot.lotNumber);
+        if(!Number.isInteger(number) || number<1 || usedNumbers.has(number)) {
+          number=1; while(usedNumbers.has(number)) number++;
+        }
+        if(number>48) throw new Error('auction has no available lot number');
+        const uploadPhoto=async (value,kind)=>{
+          if(!value) return null;
+          if(/^https:\/\//i.test(value)) return value;
+          if(!/^data:image\/(jpeg|jpg|png|webp);base64,/i.test(value)) throw new Error(kind+' photo is not in a supported format');
+          const blob=await (await fetch(value)).blob();
+          const ext=blob.type==='image/png'?'png':blob.type==='image/webp'?'webp':'jpg';
+          const path='lots/recovered-'+String(lot.id).replace(/[^a-zA-Z0-9_-]/g,'')+'-'+kind+'-'+crypto.randomUUID()+'.'+ext;
+          const {error}=await cliviaSupabase.storage.from('lot-photos').upload(path,blob,{contentType:blob.type,upsert:false});
+          if(error) throw error;
+          return cliviaSupabase.storage.from('lot-photos').getPublicUrl(path).data.publicUrl;
+        };
+        const flower=await uploadPhoto(lot.flower,'flower');
+        if(!flower) throw new Error('flower photo missing');
+        const plant=await uploadPhoto(lot.plant,'plant');
+        const record={...lot,lotNumber:number,sellerId:seller.id,flower,plant};
+        await saveCliviaPlantToSupabase(record);
+        // Change local photos only AFTER successful database insert; preserve browser backup.
+        lot.flower=flower; lot.plant=plant||'';
+        lot.lotNumber=number; lot.supabasePublished=true;
+        recovered++; existingIds.add(String(lot.id));
+      } catch(error){
+        console.warn('Clivia recovery kept browser copy of',lot.name,error);
+        failures.push(lot.name+': '+(error?.message||'save failed'));
+      }
+    }
+    if(recovered) {
+      save();
+      if(typeof renderLots==='function') renderLots();
+      if(typeof renderMyAuctionPlants==='function') renderMyAuctionPlants();
+    }
+    if(notice && (recovered || failures.length)) notice.textContent=
+      recovered+' plant(s) saved to shared auction database. '+
+      (failures.length ? 'Not yet synchronized: '+failures.join('; ')+'. Browser copies retained.' : '');
+  } catch(error){
+    console.error('Clivia recovery:',error);
+    if(notice) notice.textContent='Plant synchronization could not complete: '+error.message+'. Browser plants retained.';
+  } finally {cliviaRecoveryBusy=false;}
+}
+
 /* LOAD PUBLISHED SELLER PLANTS FROM CLIVIA SUPABASE */
 async function fetchMyCliviaPlantsFromSupabase() {
   const { data: authData, error: authError } =
@@ -15882,8 +15986,7 @@ updateAuctionHalfFullStatus(auction);
 scheduleAuctionAtHalfFull(auction);
   updateAuctionFullStatus(auction);
   save();
-  // Keep the browser copy and attempt verified shared-database publication.
-  scheduleCliviaAutomaticSync();
+  recoverLocalCliviaLotsToSupabase().catch(console.error);
 
   ["lotName","lotBreeding","lotBreeder","lotTrophy","lotLeaves","lotOffsets","lotStart"].forEach(id=>{
     document.getElementById(id).value="";
@@ -15895,7 +15998,7 @@ scheduleAuctionAtHalfFull(auction);
   document.getElementById("lotExportEligible").checked=false;
   document.getElementById("lotAuctionTime").value="";
   document.getElementById("lotMsg").textContent=
-  "Plant saved on this computer. Shared database synchronization will be checked. Listing fee: " +
+  "Lot added. Listing fee: " +
   (listingCurrency==="ZAR" ? "R"+listingFee : "€"+listingFee);
 
  renderAdminLots();
@@ -16733,7 +16836,7 @@ for(let i=0;i<samplesNeeded;i++){
             line-height:1.2;
             white-space:normal;
             padding:8px 2px;">
-  Available plant space
+  Load Your Plant or Plants
 </div>
 
       </div>
@@ -20497,100 +20600,6 @@ if(date && closeTime){
     updateHeader();
   }
 }
-/* Safe, owner-initiated migration of legacy browser-only plants.
-   Never delete local copies. Never migrate sample/test cards or other sellers' lots.
-   The database's authenticated seller and auction rules remain authoritative. */
-function cliviaUnpublishedLocalPlants(){
-  return (state.lots||[]).filter(l => l && !l.supabaseDisplayOnly &&
-    !l.cloudPublished && !l.testOnly && !l.isSample &&
-    String(l.id||"").startsWith("L") && l.name && l.auctionId &&
-    l.flower && Number(l.startBid)>0);
-}
-function updateCliviaLocalSyncPanel(){
-  const panel=document.getElementById("cliviaLocalSyncPanel");
-  if(!panel) return;
-  const count=cliviaUnpublishedLocalPlants().length;
-  panel.style.display=count ? "block" : "none";
-  const button=document.getElementById("cliviaSyncLocalButton");
-  if(button) button.textContent="PUBLISH " + count + " SAVED PLANT"+(count===1?"":"S")+" TO PHONE";
-}
-async function cliviaUploadLegacyPhoto(source,lotId,kind){
-  if(!source) return "";
-  if(/^https:\/\//i.test(source)) return source;
-  if(!/^data:image\/(jpeg|jpg|png|webp);base64,/i.test(source))
-    throw new Error("A plant photo has an unsupported format. Nothing was deleted.");
-  const blob=await (await fetch(source)).blob();
-  const path="lots/migrated-"+String(lotId).replace(/[^a-zA-Z0-9_-]/g,"_")+"-"+kind+".jpg";
-  const {error}=await cliviaSupabase.storage.from("lot-photos")
-    .upload(path,blob,{contentType:blob.type||"image/jpeg",upsert:true});
-  if(error) throw new Error("Photo upload failed: "+error.message);
-  return cliviaSupabase.storage.from("lot-photos").getPublicUrl(path).data.publicUrl;
-}
-let cliviaLocalSyncBusy=false;
-async function syncLocalCliviaPlants(){
-  if(cliviaLocalSyncBusy) return;
-  const msg=document.getElementById("cliviaLocalSyncMessage");
-  const button=document.getElementById("cliviaSyncLocalButton");
-  const candidates=cliviaUnpublishedLocalPlants();
-  if(!candidates.length){updateCliviaLocalSyncPanel();return;}
-  // The site owner requested automatic synchronization. Existing local copies are preserved.
-  cliviaLocalSyncBusy=true;
-  if(button)button.disabled=true;
-  let successes=0;
-  try{
-    const member=await getSharedAuctionMember();
-    const {data:sellers,error:sellerError}=await cliviaSupabase.from("sellers")
-      .select("id,auth_user_id").eq("auth_user_id",member.id);
-    if(sellerError)throw sellerError;
-    if(!sellers?.length)throw new Error("No verified seller record for your signed-in account.");
-    for(const lot of candidates){
-      try{
-        const owner=(state.bidders||[]).find(b=>String(b.id)===String(lot.sellerId));
-        const seller=(state.sellers||[]).find(b=>String(b.id)===String(lot.sellerId));
-        const localAuth=owner?.authUserId||seller?.authUserId||seller?.auth_user_id;
-        if(localAuth && String(localAuth)!==String(member.id)){
-          if(msg)msg.textContent="Skipped "+lot.name+": belongs to a different account.";
-          continue;
-        }
-        // Match database seller by authenticated account; never trust a browser seller ID.
-        const dbSeller=sellers.find(x=>String(x.id)===String(lot.sellerId)) ||
-          (localAuth && String(localAuth)===String(member.id) && sellers.length===1 ? sellers[0] : null);
-        if(!dbSeller)throw new Error("Cannot identify this plant's seller safely.");
-        const {data:existing,error:lookupError}=await cliviaSupabase.from("lots")
-          .select("id,lot_number").eq("website_lot_id",String(lot.id)).maybeSingle();
-        if(lookupError)throw lookupError;
-        if(existing){
-          lot.cloudPublished=true;
-          lot.lotNumber=existing.lot_number||lot.lotNumber;
-          save();successes++;continue;
-        }
-        if(msg)msg.textContent="Uploading "+lot.name+" ("+(successes+1)+"/"+candidates.length+")...";
-        const flower=await cliviaUploadLegacyPhoto(lot.flower,lot.id,"flower");
-        const plant=await cliviaUploadLegacyPhoto(lot.plant,lot.id,"plant");
-        const {data:auction,error:auctionError}=await cliviaSupabase.from("auctions")
-          .select("id,status").eq("legacy_auction_id",String(lot.auctionId)).maybeSingle();
-        if(auctionError||!auction)throw new Error("Auction not found in shared database.");
-        if(!["LOADING","PREBID"].includes(auction.status))throw new Error("Auction is not accepting plants.");
-        const {data:dbLots,error:dbError}=await cliviaSupabase.from("lots")
-          .select("lot_number").eq("live_auction_id",auction.id);
-        if(dbError)throw dbError;
-        const nextNumber=Math.max(0,...(dbLots||[]).map(x=>Number(x.lot_number)||0))+1;
-        const saved=await saveCliviaPlantToSupabase({...lot,sellerId:dbSeller.id,
-          lotNumber:nextNumber,flower,plant,acceptPreBids:true});
-        lot.cloudPublished=true;
-        lot.lotNumber=saved.lot_number||nextNumber;
-        // Preserve local photos and browser records; public devices use uploaded URLs.
-        save();successes++;
-      }catch(err){
-        if(msg)msg.textContent="Published "+successes+". Stopped at "+lot.name+": "+(err?.message||err)+". Your computer copies are safe.";
-        return;
-      }
-    }
-    if(msg)msg.textContent="Published "+successes+" plant(s). They can now load from Supabase on your phone. Refresh the phone website.";
-    await refreshPublicCliviaLots();
-  }catch(err){if(msg)msg.textContent="Not published: "+(err?.message||err)+". No local plants were deleted.";}
-  finally{cliviaLocalSyncBusy=false;if(button)button.disabled=false;updateCliviaLocalSyncPanel();}
-}
 /* Shared Clivia public lots. Preserve local unpublished lots and their auction selection.
    Never publish browser-only records automatically or alter bid/payment records. */
 let cliviaPublicRefreshRunning = false;
@@ -20639,7 +20648,7 @@ async function refreshPublicCliviaLots(){
       if(["TEST ONLY","DELETED","WITHDRAWN","CANCELLED"].includes(String(r.status||"").toUpperCase())) continue;
       const id=String(r.website_lot_id||`DB-${r.id}`);
       if(state.lots.some(l=>String(l.id)===id)) continue;
-      state.lots.push({id,auctionId:legacyId,lotNumber:r.lot_number,cloudPublished:true,name:r.name||"Clivia plant",
+      state.lots.push({id,auctionId:legacyId,lotNumber:r.lot_number,name:r.name||"Clivia plant",
         description:r.description||"",breeding:r.breeding||"",breeder:r.breeder||"",
         leaves:r.leaves,offsets:r.offsets,category:r.category||"",startRow:r.start_row||"ROW1",
         flower:r.flower_image_url||"",plant:r.plant_image_url||"",
@@ -20656,31 +20665,6 @@ async function refreshPublicCliviaLots(){
     }
   } finally {cliviaPublicRefreshRunning=false;}
 }
-/* Shared-device synchronization: run after local state initialization, not during it.
-   The server verifies seller ownership and the auction before accepting any plant.
-   Existing local data and Naudes 777 are never deleted or overwritten. */
-let cliviaAutomaticSyncScheduled = false;
-function scheduleCliviaAutomaticSync(){
-  if(cliviaAutomaticSyncScheduled) return;
-  cliviaAutomaticSyncScheduled = true;
-  setTimeout(async () => {
-    cliviaAutomaticSyncScheduled = false;
-    if(!cliviaUnpublishedLocalPlants().length) return;
-    try {
-      const {data:{user}} = await cliviaSupabase.auth.getUser();
-      if(!user || !user.email_confirmed_at) return;
-      await syncLocalCliviaPlants();
-    } catch(error) {
-      console.error("Automatic plant synchronization:", error);
-    }
-  }, 1500);
-}
-document.addEventListener("DOMContentLoaded", scheduleCliviaAutomaticSync);
-cliviaSupabase.auth.onAuthStateChange((event) => {
-  if(event === "SIGNED_IN" || event === "INITIAL_SESSION") {
-    scheduleCliviaAutomaticSync();
-  }
-});
 /* AUTOMATIC CLIVIA AUCTION CREATION */
 /* FIND EXISTING CLIVIA AUCTION IN SUPABASE */
 async function fetchActiveCliviaAuctionFromSupabase(){
