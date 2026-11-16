@@ -3843,9 +3843,14 @@ KEEP BUTTONS ALIGNED IN ONE HORIZONTAL ROW.
 
   </div>
 
+  <label for="bidderLoginEmail" style="color:#fff;font-weight:bold;">REGISTERED EMAIL ADDRESS</label>
+  <input id="bidderLoginEmail" type="email" inputmode="email" autocomplete="username"
+         autocapitalize="none" spellcheck="false" placeholder="Your registered email address"
+         style="margin-bottom:10px;">
+
   <input id="bidderLoginPassword"
          type="password"
-         autocomplete="new-password"
+         autocomplete="current-password"
          value=""
          placeholder="Your account password">
 
@@ -14323,36 +14328,15 @@ try {
 }
 
 
-let email =
-  data?.user?.email ||
-  localStorage.getItem("cliviaRememberedEmail");
+let email = (document.getElementById("bidderLoginEmail")?.value ||
+  data?.user?.email || localStorage.getItem("cliviaRememberedEmail") || "")
+  .trim().toLowerCase();
 
-if(!email){
-  const enteredEmail = prompt(
-    "FIRST-TIME ACCOUNT RECOGNITION\n\nEnter your existing registered email address:"
-  );
-
-  if(enteredEmail === null) return;
-
-  email = enteredEmail.trim().toLowerCase();
-
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-    if(msg) msg.textContent = "Please enter a valid email address.";
-    return;
-  }
-}
-
-
-if(!email){
-  if(msg){
-    msg.textContent =
-      "This browser does not yet recognise your account. " +
-      "Your registered email must be linked once before " +
-      "password-only sign in can work.";
-  }
+if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+  if(msg) msg.textContent = "Enter your registered email address above, then sign in.";
+  document.getElementById("bidderLoginEmail")?.focus();
   return;
 }
-
 
   const { data: loginData, error: loginError } =
     await cliviaSupabase.auth.signInWithPassword({
@@ -14483,6 +14467,11 @@ async function showRegisteredBidder(){
       behavior: "smooth",
       block: "center"
     });
+  }
+
+  const emailField = document.getElementById("bidderLoginEmail");
+  if(emailField && !emailField.value){
+    emailField.value = localStorage.getItem("cliviaRememberedEmail") || "";
   }
 
   const passwordField =
