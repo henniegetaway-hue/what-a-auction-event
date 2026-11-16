@@ -11826,6 +11826,7 @@ async function fetchMyCliviaPlantsFromSupabase() {
 
   const sellerIds = (sellers || []).map(s => s.id);
 
+  window.__cliviaOwnedSellerIds = sellerIds.map(String);
   if (!sellerIds.length) return [];
 
   const { data: lots, error: lotsError } =
@@ -11851,8 +11852,10 @@ function renderMyAuctionPlants(){
     return;
   }
 
+  const ownedSellerIds = window.__cliviaOwnedSellerIds || [];
   const plants=(state.lots||[])
-    .filter(lot=>String(lot.sellerId)===String(sellerId))
+    .filter(lot=>String(lot.sellerId)===String(sellerId) ||
+      ownedSellerIds.includes(String(lot.sellerId)))
     .map(lot=>{
       const auction=(state.auctions||[]).find(
         a=>String(a.id)===String(lot.auctionId)
@@ -20642,15 +20645,30 @@ async function refreshPublicCliviaLots(){
       state.selectedAuctionId = localWithPlants.id;
       save();
     }
+    // Retrieve all active auctions, not just the newest (which may be empty).
+    const activeIds = auctions.map(a=>a.id);
     const {data: records,error:lotsError}=await cliviaSupabase.from("lots")
       .select("id,website_lot_id,live_auction_id,seller_id,lot_number,name,description,breeding,breeder,leaves,offsets,category,start_row,flower_image_url,plant_image_url,starting_bid,minimum_increment,export_eligible,status")
-      .eq("live_auction_id",selected.id).order("lot_number",{ascending:true}).limit(500);
+      .in("live_auction_id",activeIds).order("lot_number",{ascending:true}).limit(500);
     if(lotsError) throw lotsError;
     for(const r of records||[]){
       if(["TEST ONLY","DELETED","WITHDRAWN","CANCELLED"].includes(String(r.status||"").toUpperCase())) continue;
+      const dbAuction=auctions.find(a=>String(a.id)===String(r.live_auction_id));
+      if(!dbAuction?.legacy_auction_id) continue;
+      const actualAuctionId=String(dbAuction.legacy_auction_id);
+      if(!(state.auctions||[]).some(a=>String(a.id)===actualAuctionId)){
+        state.auctions.push({id:actualAuctionId,name:dbAuction.auction_name||"Clivia Dreamers Auction",
+          type:"CLIVIA",auctionDate:dbAuction.auction_date||"",auctionTime:dbAuction.start_time||"",
+          currency:dbAuction.currency||"ZAR",status:dbAuction.status,firstBid:200});
+      }
       const id=String(r.website_lot_id||`DB-${r.id}`);
-      if(state.lots.some(l=>String(l.id)===id)) continue;
-      state.lots.push({id,auctionId:legacyId,lotNumber:r.lot_number,name:r.name||"Clivia plant",
+      const existing=state.lots.find(l=>String(l.id)===id);
+      if(existing){
+        // Never replace local photos or bids; fill missing shared identity only.
+        if(!existing.sellerId && r.seller_id) existing.sellerId=r.seller_id;
+        continue;
+      }
+      state.lots.push({id,auctionId:actualAuctionId,lotNumber:r.lot_number,name:r.name||"Clivia plant",
         description:r.description||"",breeding:r.breeding||"",breeder:r.breeder||"",
         leaves:r.leaves,offsets:r.offsets,category:r.category||"",startRow:r.start_row||"ROW1",
         flower:r.flower_image_url||"",plant:r.plant_image_url||"",
@@ -20658,6 +20676,12 @@ async function refreshPublicCliviaLots(){
         increment:Number(r.minimum_increment||100),exportEligible:r.export_eligible===true,
         sellerId:r.seller_id,bids:[],supabaseDisplayOnly:true});
     }
+    if(records?.length && !(state.lots||[]).some(l=>String(l.auctionId)===String(state.selectedAuctionId))){
+      const firstWithLots=records.find(r=>!["TEST ONLY","DELETED","WITHDRAWN","CANCELLED"].includes(String(r.status||"").toUpperCase()));
+      const matched=auctions.find(a=>String(a.id)===String(firstWithLots?.live_auction_id));
+      if(matched?.legacy_auction_id && !localWithPlants) state.selectedAuctionId=String(matched.legacy_auction_id);
+    }
+    renderMyAuctionPlants();
     if(!document.getElementById("pageLive")?.classList.contains("hidden")) renderLots();
   } catch(error){
     console.error("Could not fetch shared auction lots. Check public SELECT/RLS policies:",error);
