@@ -3417,8 +3417,52 @@ max-height:110px;
 </div>
         <div id="previewLotsGrid" style="
 display:grid;
-grid-template-columns:repeat(4,minmax(0,1fr));
-justify-content:start;
+
+/* MY LOADED AUCTION PLANTS — 4 ON COMPUTER */
+#myAuctionPlantsSection {
+  width: 100% !important;
+  max-width: 1400px !important;
+}
+
+#myAuctionPlantsGrid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  width: 100% !important;
+}
+
+#myAuctionPlantsGrid .lotCard {
+  min-width: 0 !important;
+  width: 100% !important;
+  padding: 8px !important;
+}
+
+#myAuctionPlantsGrid .lotCard img {
+  width: 100% !important;
+  aspect-ratio: 1 / 1 !important;
+  object-fit: cover !important;
+}
+
+#myAuctionPlantsGrid .lotCard .goldBtn {
+  width: 100% !important;
+  font-size: 11px !important;
+  padding: 8px 4px !important;
+}
+
+/* PHONE — 2 PLANTS PER ROW */
+@media (max-width: 600px) {
+  #myAuctionPlantsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  #myAuctionPlantsGrid .lotCard {
+    padding: 6px !important;
+    font-size: 11px !important;
+    overflow-wrap: anywhere;
+  }
+}
+
 gap:12px;
 margin-top:15px;
   width:100%;
