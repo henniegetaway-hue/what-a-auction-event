@@ -12336,7 +12336,11 @@ async function updateRegistrationAccountButtons(){
 
   newButton.style.display = "none";
   accountButton.style.display = "none";
-  loginBox.style.display = "none";
+  // Do not hide the sign-in form while a LOAD HERE action is waiting.
+  // The old unconditional hide caused an empty registration screen on phones.
+  if (!window.cliviaResumeSellerLoadAfterSignIn) {
+    loginBox.style.display = "none";
+  }
 
   try {
     const { data, error } = await cliviaSupabase.auth.getUser();
@@ -14384,6 +14388,7 @@ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
     await updateRegistrationAccountButtons();
     if(window.cliviaResumeSellerLoadAfterSignIn){
       window.cliviaResumeSellerLoadAfterSignIn=false;
+      document.getElementById("bidderLoginBox")?.removeAttribute("data-seller-login-pending");
       await openSellerSpaces();
     }
     return;
@@ -14447,6 +14452,7 @@ await updateRegistrationAccountButtons();
 
 if(window.cliviaResumeSellerLoadAfterSignIn){
   window.cliviaResumeSellerLoadAfterSignIn=false;
+  document.getElementById("bidderLoginBox")?.removeAttribute("data-seller-login-pending");
   await openSellerSpaces();
   return;
 }
@@ -14493,6 +14499,11 @@ async function showRegisteredBidder(){
 
   if(loginBox){
     loginBox.style.display = "block";
+    // Account-button refreshes may finish asynchronously; keep sign-in visible
+    // while the seller's original LOAD HERE action is pending.
+    if (window.cliviaResumeSellerLoadAfterSignIn) {
+      loginBox.setAttribute("data-seller-login-pending", "true");
+    }
     loginBox.scrollIntoView({
       behavior: "smooth",
       block: "center"
