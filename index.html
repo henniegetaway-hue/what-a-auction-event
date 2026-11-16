@@ -16071,7 +16071,7 @@ function nextBid(lot){
   const auction=(state.auctions||[]).find(a=>a.id===lot.auctionId);
   const increment=auction && auction.currency==="EUR"
     ? 5
-    : Number(lot.increment||state.settings.increment);
+    : 100;
 
   if(!lot.bids || lot.bids.length===0) return lot.startBid;
   return currentBid(lot)+increment;
@@ -17119,7 +17119,7 @@ const confirmed = confirm(
 if (!confirmed) {
   return;
 }
-  const bidStep=auction && auction.currency==="EUR" ? 5 : 50;
+  const bidStep=auction && auction.currency==="EUR" ? 5 : 100;
   const securityFeeAmount=auction && auction.currency==="EUR" ? 15 : 150;
 const securityBracketSize=auction && auction.currency==="EUR" ? 350 : 5000;
 const paidSecurityFees=Number(
@@ -17189,7 +17189,7 @@ if(amount<required){
   // TEMPORARY SAFETY LOCK
   // Keep bidding disabled until server-side
   // capacity, currency and ownership checks are complete.
-  alert("Bidding activation pending final security checks.");
+  alert("Real bidding is not yet active. Your bid has NOT been submitted or charged. Server security checks are still being verified.");
   return;
   lot.bids=lot.bids||[];
   lot.bids.push({
