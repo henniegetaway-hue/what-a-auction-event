@@ -1737,7 +1737,36 @@ body:has(#cliviaCarryForwardFooter) {
   .creatorLandingCard p{line-height:1.5}
   .creatorLandingCard button{width:100%;min-height:44px}
   @media(max-width:600px){.creatorLandingCards{grid-template-columns:minmax(0,1fr)}#creatorLandingOverview{padding:12px}}
-  </style>
+  
+/* SELLER CARD READABILITY — keep four desktop and two mobile columns */
+#myAuctionPlantsSection { width:calc(100% - 24px) !important; max-width:1500px !important; }
+#myAuctionPlantsGrid { display:grid !important; grid-template-columns:repeat(4,minmax(0,1fr)) !important; justify-content:stretch !important; gap:14px !important; }
+#myAuctionPlantsGrid > .lotCard { box-sizing:border-box !important; min-width:0 !important; width:100% !important; max-width:none !important; padding:12px !important; overflow-wrap:anywhere; }
+#myAuctionPlantsGrid > .lotCard > div { overflow-wrap:anywhere; line-height:1.45 !important; }
+#myAuctionPlantsGrid > .lotCard > div:nth-of-type(2) { font-size:clamp(13px,1.3vw,17px) !important; }
+#myAuctionPlantsGrid > .lotCard > div:nth-of-type(3) { font-size:clamp(12px,1.15vw,15px) !important; }
+#myAuctionPlantsGrid > .lotCard img { width:100% !important; height:auto !important; aspect-ratio:4/3 !important; object-fit:cover !important; }
+#myAuctionPlantsGrid > .lotCard .goldBtn { width:100% !important; min-height:42px; white-space:normal !important; }
+@media(max-width:700px){
+ #myAuctionPlantsSection { width:calc(100% - 12px) !important; padding:7px !important; }
+ #myAuctionPlantsGrid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:8px !important; }
+ #myAuctionPlantsGrid > .lotCard { padding:7px !important; }
+ #myAuctionPlantsGrid > .lotCard > div:nth-of-type(2) { font-size:13px !important; }
+ #myAuctionPlantsGrid > .lotCard > div:nth-of-type(3) { font-size:12px !important; }
+ #myAuctionPlantsGrid > .lotCard .goldBtn { font-size:11px !important; padding:8px 4px !important; }
+}
+/* MY LOADED AUCTION PLANTS: 4 desktop / 2 phone */
+#myAuctionPlantsGrid > .lotCard { min-width:0; width:100%; }
+#myAuctionPlantsGrid > .lotCard img { max-width:100%; }
+@media (max-width:700px) {
+  #myAuctionPlantsSection { width:calc(100% - 16px) !important; padding:8px !important; }
+  #myAuctionPlantsGrid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:8px !important; }
+  #myAuctionPlantsGrid > .lotCard { padding:6px !important; }
+  #myAuctionPlantsGrid > .lotCard > div { overflow-wrap:anywhere; }
+  #myAuctionPlantsGrid > .lotCard img { aspect-ratio:1/1 !important; }
+  #myAuctionPlantsGrid > .lotCard .goldBtn { width:100%; padding:9px 3px; font-size:10px !important; }
+}
+</style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>      
  <script>
       /* START AT TOP AFTER PAGE REFRESH */
@@ -4310,8 +4339,8 @@ KEEP BUTTONS ALIGNED IN ONE HORIZONTAL ROW.
 
   <div id="cliviaLocalSyncPanel" class="panel" style="display:none;margin:8px 0;padding:12px;border-color:#9acd32;">
     <strong>Plants saved on this computer</strong>
-    <p style="margin:8px 0;">These plants are not yet visible on other devices. Publish them to the shared auction database.</p>
-    <button type="button" class="goldBtn" id="cliviaSyncLocalButton" onclick="syncLocalCliviaPlants()">PUBLISH MY SAVED PLANTS TO PHONE</button>
+    <p style="margin:8px 0;">Checking saved plants against the shared auction database.</p>
+    <div style="font-size:12px;">The website will check and safely synchronize these plants when you are signed in.</div>
     <div id="cliviaLocalSyncMessage" role="status" style="margin-top:8px;white-space:pre-wrap;"></div>
   </div>
   <div id="lotsGrid" class="lotsGrid" style="flex:1;min-width:0;"></div>
@@ -8279,7 +8308,7 @@ background:linear-gradient(90deg,#a0ff80,#39e52d);
      class="panel"
      style="
        width:calc(100% - 32px);
-       max-width:900px;
+       max-width:1500px;
        margin:20px auto;
        box-sizing:border-box;
        padding:16px;
@@ -8296,8 +8325,8 @@ background:linear-gradient(90deg,#a0ff80,#39e52d);
   <div id="myAuctionPlantsGrid"
        style="
          display:grid;
-        grid-template-columns:minmax(0,360px);
-justify-content:center;
+         grid-template-columns:repeat(4,minmax(0,1fr));
+         justify-content:stretch;
          gap:12px;
          margin-top:15px;
        ">
@@ -15853,6 +15882,8 @@ updateAuctionHalfFullStatus(auction);
 scheduleAuctionAtHalfFull(auction);
   updateAuctionFullStatus(auction);
   save();
+  // Keep the browser copy and attempt verified shared-database publication.
+  scheduleCliviaAutomaticSync();
 
   ["lotName","lotBreeding","lotBreeder","lotTrophy","lotLeaves","lotOffsets","lotStart"].forEach(id=>{
     document.getElementById(id).value="";
@@ -15864,7 +15895,7 @@ scheduleAuctionAtHalfFull(auction);
   document.getElementById("lotExportEligible").checked=false;
   document.getElementById("lotAuctionTime").value="";
   document.getElementById("lotMsg").textContent=
-  "Lot added. Listing fee: " +
+  "Plant saved on this computer. Shared database synchronization will be checked. Listing fee: " +
   (listingCurrency==="ZAR" ? "R"+listingFee : "€"+listingFee);
 
  renderAdminLots();
@@ -20502,7 +20533,7 @@ async function syncLocalCliviaPlants(){
   const button=document.getElementById("cliviaSyncLocalButton");
   const candidates=cliviaUnpublishedLocalPlants();
   if(!candidates.length){updateCliviaLocalSyncPanel();return;}
-  if(!confirm("Publish "+candidates.length+" plant(s) saved on THIS computer to the Clivia Dreamers shared auction? Existing browser copies will be kept."))return;
+  // The site owner requested automatic synchronization. Existing local copies are preserved.
   cliviaLocalSyncBusy=true;
   if(button)button.disabled=true;
   let successes=0;
@@ -20523,7 +20554,7 @@ async function syncLocalCliviaPlants(){
         }
         // Match database seller by authenticated account; never trust a browser seller ID.
         const dbSeller=sellers.find(x=>String(x.id)===String(lot.sellerId)) ||
-          (sellers.length===1?sellers[0]:null);
+          (localAuth && String(localAuth)===String(member.id) && sellers.length===1 ? sellers[0] : null);
         if(!dbSeller)throw new Error("Cannot identify this plant's seller safely.");
         const {data:existing,error:lookupError}=await cliviaSupabase.from("lots")
           .select("id,lot_number").eq("website_lot_id",String(lot.id)).maybeSingle();
@@ -20608,7 +20639,7 @@ async function refreshPublicCliviaLots(){
       if(["TEST ONLY","DELETED","WITHDRAWN","CANCELLED"].includes(String(r.status||"").toUpperCase())) continue;
       const id=String(r.website_lot_id||`DB-${r.id}`);
       if(state.lots.some(l=>String(l.id)===id)) continue;
-      state.lots.push({id,auctionId:legacyId,lotNumber:r.lot_number,name:r.name||"Clivia plant",
+      state.lots.push({id,auctionId:legacyId,lotNumber:r.lot_number,cloudPublished:true,name:r.name||"Clivia plant",
         description:r.description||"",breeding:r.breeding||"",breeder:r.breeder||"",
         leaves:r.leaves,offsets:r.offsets,category:r.category||"",startRow:r.start_row||"ROW1",
         flower:r.flower_image_url||"",plant:r.plant_image_url||"",
@@ -20625,6 +20656,31 @@ async function refreshPublicCliviaLots(){
     }
   } finally {cliviaPublicRefreshRunning=false;}
 }
+/* Shared-device synchronization: run after local state initialization, not during it.
+   The server verifies seller ownership and the auction before accepting any plant.
+   Existing local data and Naudes 777 are never deleted or overwritten. */
+let cliviaAutomaticSyncScheduled = false;
+function scheduleCliviaAutomaticSync(){
+  if(cliviaAutomaticSyncScheduled) return;
+  cliviaAutomaticSyncScheduled = true;
+  setTimeout(async () => {
+    cliviaAutomaticSyncScheduled = false;
+    if(!cliviaUnpublishedLocalPlants().length) return;
+    try {
+      const {data:{user}} = await cliviaSupabase.auth.getUser();
+      if(!user || !user.email_confirmed_at) return;
+      await syncLocalCliviaPlants();
+    } catch(error) {
+      console.error("Automatic plant synchronization:", error);
+    }
+  }, 1500);
+}
+document.addEventListener("DOMContentLoaded", scheduleCliviaAutomaticSync);
+cliviaSupabase.auth.onAuthStateChange((event) => {
+  if(event === "SIGNED_IN" || event === "INITIAL_SESSION") {
+    scheduleCliviaAutomaticSync();
+  }
+});
 /* AUTOMATIC CLIVIA AUCTION CREATION */
 /* FIND EXISTING CLIVIA AUCTION IN SUPABASE */
 async function fetchActiveCliviaAuctionFromSupabase(){
