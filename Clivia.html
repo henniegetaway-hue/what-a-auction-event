@@ -1744,6 +1744,8 @@ body:has(#cliviaCarryForwardFooter) {
 #myAuctionPlantsGrid>.lotCard{min-width:0!important;max-width:none!important;overflow-wrap:anywhere!important;font-size:13px!important;line-height:1.4!important}
 #myAuctionPlantsGrid>.lotCard>div{overflow-wrap:anywhere!important}
 @media(max-width:600px){#myAuctionPlantsGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}#myAuctionPlantsGrid>.lotCard{padding:7px!important;font-size:12px!important}#myAuctionPlantsGrid>.lotCard>div{font-size:12px!important;line-height:1.4!important}#myAuctionPlantsGrid .goldBtn{font-size:11px!important;padding:9px 4px!important}}
+
+.sampleLot .sampleLoadHere {user-select:none !important;-webkit-user-select:none !important;-webkit-touch-callout:none !important;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
 </style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>      
  <script>
@@ -16807,7 +16809,7 @@ for(let i=0;i<samplesNeeded;i++){
              alt="Sample Clivia flower"
              style="width:100%;height:100%;object-fit:cover;opacity:0.35;">
 
-       <div class="sampleLoadHere" onclick="openSellerLoadFromLot(state.selectedAuctionId,'${rowKey}')" style="
+       <button type="button" class="sampleLoadHere" onclick="event.preventDefault();event.stopPropagation();openSellerLoadFromLot(state.selectedAuctionId,'${rowKey}');" style="
           position:absolute;
           inset:0;
           display:flex;
@@ -16819,10 +16821,10 @@ for(let i=0;i<samplesNeeded;i++){
           letter-spacing:2px;
           text-shadow:0 2px 8px #000;
           pointer-events:auto;
-          cursor:pointer;
+          cursor:pointer; border:0; background:transparent; width:100%; height:100%; padding:0; touch-action:manipulation; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none;
         ">
           LOAD HERE
-        </div>
+        </button>
       </div>
 
       <div class="lotBody">
