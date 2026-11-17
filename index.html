@@ -15832,7 +15832,7 @@ if(authError || !user || !user.email_confirmed_at ||
   showPage("register");
   return;
 }     
-   let auction=(state.auctions||[]).find(a=>a.id===state.selectedAuctionId);
+   let auction=(state.auctions||[]).find(a=>String(a.id)===String(state.selectedAuctionId));
   const name=document.getElementById("lotName").value.trim();
    const breeding=document.getElementById("lotBreeding").value.trim();
       const breeder=document.getElementById("lotBreeder").value.trim();
@@ -16310,7 +16310,7 @@ const sellerAuctionChoicesHtml=upcomingSellerAuctions.map(a=>{
 }).join("");            
 
 const auctionLots=state.lots.filter(lot=>{
-  if(lot.auctionId!==state.selectedAuctionId) return false;
+  if(String(lot.auctionId)!==String(state.selectedAuctionId)) return false;
 
   if(viewerBidder && viewerBidder.isInternational){
     return lot.exportEligible===true;
@@ -20752,6 +20752,10 @@ async function refreshPublicCliviaLots(){
       if(existing){
         // Keep original local photos and seller identity, but mark cloud confirmation.
         existing.sharedPublished=true;
+        existing.auctionId=legacyId;
+        existing.startRow=r.start_row||existing.startRow||"ROW1";
+        existing.flower=existing.flower||r.flower_image_url||"";
+        existing.plant=existing.plant||r.plant_image_url||"";
         existing.supabaseLotId=r.id;
         existing.supabaseSellerId=r.seller_id;
         existing.sharedFlowerUrl=r.flower_image_url||"";
@@ -20771,7 +20775,8 @@ async function refreshPublicCliviaLots(){
     // On a new phone, choose an auction that actually has published plants.
     // On desktop, do not replace an auction containing unsynced local plants.
     if(!localCount){
-      const withPlants=auctions.find(a=>a.legacy_auction_id && remoteCount.get(String(a.legacy_auction_id)));
+      const withPlants=[...auctions].filter(a=>a.legacy_auction_id && remoteCount.get(String(a.legacy_auction_id)))
+        .sort((a,b)=>(remoteCount.get(String(b.legacy_auction_id))||0)-(remoteCount.get(String(a.legacy_auction_id))||0))[0];
       if(withPlants) state.selectedAuctionId=String(withPlants.legacy_auction_id);
       else if(!selectedId && auctions[0]?.legacy_auction_id)
         state.selectedAuctionId=String(auctions[0].legacy_auction_id);
