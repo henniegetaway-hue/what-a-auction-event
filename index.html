@@ -372,10 +372,8 @@ button{
   align-items: start !important;
   row-gap: 0 !important;
 }
-#pageRegister #registrationButtonRow,
-#pageRegister #registrationButtonRow button {
-  display:none !important;
-}
+/* Keep account controls available; JavaScript decides which account button
+   is shown for each signed-in or signed-out visitor. */
  /* REMOVE EMPTY TOP REGISTRATION BOX */
 #pageRegister #registrationMainPanel {
   background: transparent !important;
@@ -12005,89 +12003,12 @@ async function fetchMyCliviaPlantsFromSupabase() {
 
   if (lotsError) throw lotsError;
 
-  return lots || [];
+  return {userId:user.id, lots:lots || []};
 }      
 function renderMyAuctionPlants(){
-  const box=document.getElementById("myAuctionPlantsGrid");
-  if(!box) return;
-
-  const sellerId=state.selectedSellerId ||
-    document.getElementById("sellerSelect")?.value;
-
-  if(!sellerId){
-    box.innerHTML="<p>Sign in to view your auction plants.</p>";
-    return;
-  }
-
-  const plants=(state.lots||[])
-    .filter(lot=>String(lot.sellerId)===String(sellerId))
-    .map(lot=>{
-      const auction=(state.auctions||[]).find(
-        a=>String(a.id)===String(lot.auctionId)
-      );
-      return {lot,auction};
-    })
-    .sort((a,b)=>{
-      const dateA=(a.auction?.auctionDate||"9999-12-31")+
-        "T"+(a.auction?.auctionTime||"00:00");
-      const dateB=(b.auction?.auctionDate||"9999-12-31")+
-        "T"+(b.auction?.auctionTime||"00:00");
-      return dateA.localeCompare(dateB);
-    });
-
-  if(!plants.length){
-    box.innerHTML="<p>No published plants yet.</p>";
-    return;
-  }
-
-  box.innerHTML=plants.map(({lot,auction})=>{
-    const symbol=auction?.currency==="EUR"?"€":"R";
-    const date=auction?.auctionDate||"To be announced";
-    const time=auction?.auctionTime||
-      auction?.preferredAuctionTime||"To be announced";
-    const current=typeof currentBid==="function"
-      ? currentBid(lot):lot.startBid;
-
-    return `
-      <div class="lotCard" style="padding:10px;">
-        <div style="font-weight:bold;color:#9acd32;">
-          LOT-${String(lot.lotNumber||0).padStart(3,"0")}
-        </div>
-        ${lot.flower?`
-         <img src="${lot.flower}"
-  alt="Clivia flower"
-  onclick="this.requestFullscreen()"
-  style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;cursor:pointer;">
-        `:""}
-        <div style="font-size:16px;font-weight:bold;margin-top:8px;">
-          ${escapeHtml(lot.name||"Clivia")}
-        </div>
-        <div style="font-size:14px;margin-top:6px;">
-          <b>Auction:</b> ${escapeHtml(date)}<br>
-          <b>Time:</b> ${escapeHtml(time)}<br>
-          <b>Starting Bid:</b> ${symbol}${lot.startBid}<br>
-          <b>Current Bid:</b> ${symbol}${current}<br>
-         <b>Status:</b> ${escapeHtml(auction?.status||"Scheduled")}
-         <br>
-<b>PRE-BIDS:</b> ${
-  lot.acceptPreBids === true
-    ? "✅ YES"
-    : lot.acceptPreBids === false
-      ? "❌ NO"
-      : "NOT RECORDED"
-}
-        </div>
-
-        <button type="button"
-          class="goldBtn"
-          style="margin-top:10px;font-size:12px;"
-          onclick="editSellerPlant('${lot.id}')">
-          ✏️ EDIT PLANT
-        </button>
-
-      </div>
-    `;
-  }).join("");
+  // Always render from the authenticated seller's Supabase records.
+  // Local state may be empty or stale after a phone refresh.
+  return refreshMyPublishedCliviaPlants();
 }
 window.addEventListener("DOMContentLoaded", renderMyAuctionPlants);
 // Read the authenticated seller's actual saved lots rather than relying only
@@ -12098,15 +12019,18 @@ async function refreshMyPublishedCliviaPlants(){
   const box=document.getElementById('myAuctionPlantsGrid');
   if(!box || typeof cliviaSupabase==='undefined') return;
   try {
-    const lots=await fetchMyCliviaPlantsFromSupabase();
+    const result=await fetchMyCliviaPlantsFromSupabase();
     if(requestVersion!==sellerPlantsRequestVersion) return;
-    // A sign-out or account switch must not leave the previous seller's plants visible.
-    const {data:currentAuth}=await cliviaSupabase.auth.getUser();
+    // Check against the account used for the original database request.
+    // Comparing two new sessions here would miss a rapid account switch.
+    const {data:currentAuth,error:currentAuthError}=await cliviaSupabase.auth.getUser();
     if(requestVersion!==sellerPlantsRequestVersion) return;
-    if(!currentAuth?.user?.email_confirmed_at){
+    if(currentAuthError || !currentAuth?.user?.email_confirmed_at ||
+       currentAuth.user.id !== result.userId){
       box.textContent='Sign in with your confirmed account to see your plants.';
       return;
     }
+    const lots=result.lots;
     if(!lots.length){
       box.innerHTML='<p>No published plants yet.</p>';
       return;
@@ -12135,12 +12059,10 @@ async function refreshMyPublishedCliviaPlants(){
   } catch(err) {
     if(requestVersion!==sellerPlantsRequestVersion) return;
     console.warn('Unable to refresh seller plants:',err);
-    box.innerHTML='<p>Unable to load your plants. Please sign in with your confirmed account and try again.</p>';
+    box.innerHTML='<p>Unable to load saved plants. Check your sign-in and database access, then try again.</p>';
   }
 }
-window.addEventListener('DOMContentLoaded',()=>{
-  refreshMyPublishedCliviaPlants();
-});
+
 // Refresh after login, and immediately clear seller data on logout.
 // Defer Supabase calls outside the auth callback to avoid auth-lock contention.
 cliviaSupabase.auth.onAuthStateChange((event)=>{
