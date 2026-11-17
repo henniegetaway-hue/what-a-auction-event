@@ -9752,8 +9752,9 @@ if(page === "sellerLoad"){
 }
 
   if(page==="live") {
+    // Show cached content immediately, then replace with the authoritative
+    // shared auction lots for BOTH phone and desktop, including signed-in users.
     renderLots();
-    // Fetch shared public lots; phone and desktop must not rely only on localStorage.
     refreshPublicCliviaLots().catch(error => console.error("Public Clivia lots:", error));
   }
   
@@ -17087,12 +17088,8 @@ ${auctionRowsHtml}
 
 const sharedLotId=window.location.hash.replace("#lot=","");
 const sharedLotData=state.lots.find(lot=>lot.id===sharedLotId);
-if(sharedLotData && sharedLotData.auctionId!==state.selectedAuctionId){
-  state.selectedAuctionId=sharedLotData.auctionId;
-  save();
-  updateHeader();
-  return renderLots();
-}
+// Shared links must not switch the public display away from Auction 1.
+// A link to a different auction is simply not highlighted here.
 if(window.location.hash.startsWith("#lot=")){
   const sharedLot=document.getElementById("lot-"+sharedLotId);
   if(sharedLot){
@@ -18460,6 +18457,23 @@ showCliviaEvents=function(){
 };
 window.addEventListener("popstate",()=>auctionRouteOpen(new URLSearchParams(location.search).get("page")||"clivia"));
 auctionRouteOpen(new URLSearchParams(location.search).get("page")||"clivia");
+// Landing-page repair: initial route may run before the rest of the page
+// and authenticated member data have finished initialising. Reopen only
+// the Clivia landing route once the document is ready. The CLIVIA AUCTIONS
+// button and the landing page now use the same display-refresh path.
+window.addEventListener("DOMContentLoaded", function(){
+  const route=new URLSearchParams(location.search).get("page")||"clivia";
+  if(route!=="clivia") return;
+  auctionRouteOpen("clivia");
+});
+window.addEventListener("load", function(){
+  const route=new URLSearchParams(location.search).get("page")||"clivia";
+  if(route!=="clivia") return;
+  const live=document.getElementById("pageLive");
+  if(live?.classList.contains("hidden")) auctionRouteOpen("clivia");
+  else if(typeof refreshPublicCliviaLots==="function")
+    refreshPublicCliviaLots().catch(error=>console.error("Landing auction refresh:",error));
+});
 
    setTimeout(()=>{
   const hash = window.location.hash;
@@ -20742,6 +20756,10 @@ async function refreshPublicCliviaLots(){
           auctionCloseTime:a.close_time||"",currency:a.currency||"ZAR",
           status:a.status,firstBid:200});
     }
+    // Supabase is the source of truth for published public lots. A recognised
+    // member may have older localStorage entries with the same lot ID; replace
+    // those stale entries instead of keeping their old auction, photo or row.
+    const remoteLotIds=new Set();
     for(const r of records||[]){
       if(["TEST ONLY","DELETED","WITHDRAWN","CANCELLED"].includes(String(r.status||"").toUpperCase()))continue;
       const dbAuction=byDbId.get(String(r.live_auction_id));
@@ -20749,28 +20767,38 @@ async function refreshPublicCliviaLots(){
       const legacyId=String(dbAuction.legacy_auction_id);
       remoteCount.set(legacyId,(remoteCount.get(legacyId)||0)+1);
       const id=String(r.website_lot_id||`DB-${r.id}`);
-      const existing=state.lots.find(l=>String(l.id)===id);
-      if(existing){
-        // Keep original local photos and seller identity, but mark cloud confirmation.
-        existing.sharedPublished=true;
-        existing.auctionId=legacyId;
-        existing.startRow=r.start_row||existing.startRow||"ROW1";
-        existing.flower=existing.flower||r.flower_image_url||"";
-        existing.plant=existing.plant||r.plant_image_url||"";
-        existing.supabaseLotId=r.id;
-        existing.supabaseSellerId=r.seller_id;
-        existing.sharedFlowerUrl=r.flower_image_url||"";
-        existing.sharedPlantUrl=r.plant_image_url||"";
-        continue;
-      }
-      state.lots.push({id,auctionId:legacyId,lotNumber:r.lot_number,name:r.name||"Clivia plant",
+      remoteLotIds.add(String(r.id));
+      const remoteLot={id,auctionId:legacyId,lotNumber:r.lot_number,name:r.name||"Clivia plant",
         description:r.description||"",breeding:r.breeding||"",breeder:r.breeder||"",
         leaves:r.leaves,offsets:r.offsets,category:r.category||"",startRow:r.start_row||"ROW1",
         flower:r.flower_image_url||"",plant:r.plant_image_url||"",
         startBid:Number(r.starting_bid||0),currentBid:Number(r.starting_bid||0),
         increment:Number(r.minimum_increment||100),exportEligible:r.export_eligible===true,
-        sellerId:r.seller_id,bids:[],supabaseDisplayOnly:true,sharedPublished:true});
+        sellerId:r.seller_id,bids:[],supabaseDisplayOnly:true,sharedPublished:true,
+        supabaseLotId:r.id,supabaseSellerId:r.seller_id,
+        sharedFlowerUrl:r.flower_image_url||"",sharedPlantUrl:r.plant_image_url||"",
+        status:r.status};
+      const oldIndex=state.lots.findIndex(l=>String(l.id)===id ||
+        (l.supabaseLotId!=null && String(l.supabaseLotId)===String(r.id)));
+      if(oldIndex>=0){
+        const old=state.lots[oldIndex];
+        // Preserve local bid history and any valid image fallback.
+        state.lots[oldIndex]={...old,...remoteLot,
+          bids:Array.isArray(old.bids)?old.bids:[],
+          flower:remoteLot.flower||old.flower||"",
+          plant:remoteLot.plant||old.plant||""};
+      } else state.lots.push(remoteLot);
     }
+    // Remove only stale duplicate PUBLIC display entries for the same cloud
+    // lot. Never delete seller drafts, bids, or any database records.
+    const seenCloudIds=new Set();
+    state.lots=state.lots.filter(l=>{
+      if(l.supabaseLotId==null || !remoteLotIds.has(String(l.supabaseLotId)))return true;
+      const key=String(l.supabaseLotId);
+      if(seenCloudIds.has(key))return false;
+      seenCloudIds.add(key);
+      return true;
+    });
     // Only the first current Clivia Dreamers Auction is public at present.
     // Do not let saved login/browser state select a different current auction.
     const firstAuction=auctions.find(a=>Number(a.id)===1);
@@ -20796,6 +20824,13 @@ async function refreshPublicCliviaLots(){
     }
   }finally{cliviaPublicRefreshRunning=false;}
 }
+// Reconcile published lots when returning to the page after authentication.
+// This is deliberately display-only; it does not write to Supabase.
+window.addEventListener("pageshow",()=>{
+  if(!document.getElementById("pageLive")?.classList.contains("hidden")){
+    refreshPublicCliviaLots().catch(console.error);
+  }
+});
 /* AUTOMATIC CLIVIA AUCTION CREATION */
 /* FIND EXISTING CLIVIA AUCTION IN SUPABASE */
 async function fetchActiveCliviaAuctionFromSupabase(){
