@@ -9899,78 +9899,116 @@ function selectCliviaTab(selected){
     selected === "live" ? "#111" : "#fff", "important");
 
 }   
+
+/* GROUP PLANT LOADING — independent of ordinary Clivia lots */
 async function openGroupPlantLoading(auctionNumber, lotPosition){
-
-  const groupId = window.selectedCliviaGroupId;
-
-  if(!groupId){
-    alert("Please select your Clivia Group first.");
-    return;
-  }
-
-  const { data: authData, error: authError } =
-    await cliviaSupabase.auth.getUser();
-
-  if(authError || !authData?.user){
-    alert("Please sign in first.");
-    return;
-  }
-
-  const userId = authData.user.id;
-
-  const { data: group, error: groupError } =
-    await cliviaSupabase
-      .from("clivia_groups")
-      .select("president_user_id")
-      .eq("id", groupId)
-      .maybeSingle();
-
-  if(groupError || !group){
-    alert("Unable to verify Group access.");
-    return;
-  }
-
-  if(group.president_user_id !== userId){
-
-    const { data: membership, error: memberError } =
-      await cliviaSupabase
-        .from("clivia_group_members")
-        .select("status, can_load_plants")
-        .eq("group_id", groupId)
-        .eq("member_user_id", userId)
-        .maybeSingle();
-
-    if(
-      memberError ||
-      !membership ||
-      membership.status !== "APPROVED" ||
-      membership.can_load_plants !== true
-    ){
-      alert("You are not authorised to load plants for this Group.");
-      return;
+  const groupId=Number(window.selectedCliviaGroupId);
+  const number=Number(auctionNumber), position=Number(lotPosition);
+  if(!Number.isInteger(groupId)||groupId<1){alert("Select your Clivia Group first.");return;}
+  if(!Number.isInteger(number)||number<1||number>5||
+     !Number.isInteger(position)||position<1||position>24){alert("Invalid Group Auction plant space.");return;}
+  const {data:auth,error:authError}=await cliviaSupabase.auth.getUser();
+  if(authError||!auth?.user){alert("Please sign in to your Clivia account first.");return;}
+  if(!auth.user.email_confirmed_at){alert("Confirm your email before loading plants.");return;}
+  const {data:group,error:groupError}=await cliviaSupabase.from("clivia_groups")
+    .select("id,group_name,president_user_id").eq("id",groupId).maybeSingle();
+  if(groupError||!group){alert("Unable to verify Group access.");return;}
+  const isPresident=group.president_user_id===auth.user.id;
+  if(!isPresident){
+    const {data:member,error:memberError}=await cliviaSupabase.from("clivia_group_members")
+      .select("status,can_load_plants").eq("group_id",groupId)
+      .eq("member_user_id",auth.user.id).maybeSingle();
+    if(memberError||member?.status!=="APPROVED"||member?.can_load_plants!==true){
+      alert("Group President approval is required before loading plants.");return;
     }
   }
-
-  const number = Number(auctionNumber);
-  const position = Number(lotPosition);
-
-  if(
-    !Number.isInteger(number) || number < 1 || number > 5 ||
-    !Number.isInteger(position) || position < 1 || position > 24
-  ){
-    alert("Invalid Group Auction plant space.");
-    return;
+  const {data:existing,error:loadError}=await cliviaSupabase.from("clivia_group_lots")
+    .select("*").eq("group_id",groupId).eq("auction_number",number)
+    .eq("lot_position",position).maybeSingle();
+  if(loadError){alert("Cannot load this Group plant space: "+loadError.message);return;}
+  if(existing && existing.owner_user_id!==auth.user.id && !isPresident){
+    alert("This plant space is already assigned to another seller.");return;
   }
-
-  window.selectedGroupAuctionNumber = number;
-  window.selectedGroupLotPosition = position;
-
-  alert(
-    "Group Auction " + number +
-    "\nPlant Space " + position +
-    "\n\nGroup plant loading is being prepared."
-  );
-}      
+  if(existing && existing.status!=="LOADING"){
+    alert("This plant is already published or locked and cannot be overwritten.");return;
+  }
+  window.cliviaGroupEditContext={groupId,number,position,existing,userId:auth.user.id,isPresident};
+  let panel=document.getElementById("cliviaGroupPlantEditor");
+  if(!panel){
+    panel=document.createElement("div");
+    panel.id="cliviaGroupPlantEditor";
+    panel.style.cssText="position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,.9);overflow:auto;padding:16px;color:#fff";
+    panel.innerHTML=`<form id="cliviaGroupPlantForm" style="max-width:560px;margin:20px auto;padding:20px;background:#101912;border:2px solid #9cff57;border-radius:14px">
+      <button type="button" onclick="document.getElementById('cliviaGroupPlantEditor').style.display='none'" style="float:right;background:#333;color:white;padding:8px">CLOSE ×</button>
+      <h2 id="cliviaGroupPlantHeading">Group Plant Loading</h2>
+      <label>Plant / Flower Name *</label><input id="groupPlantName" maxlength="120" required>
+      <label>Plant Description</label><textarea id="groupPlantDescription" maxlength="2000" rows="4"></textarea>
+      <label>Starting Bid (R) *</label><input id="groupPlantStartingBid" type="number" min="0" step="100" required>
+      <label>Flower Photo (JPG, PNG, WebP; max 5 MB)</label><input id="groupPlantFlowerPhoto" type="file" accept="image/jpeg,image/png,image/webp">
+      <label>Plant Photo (JPG, PNG, WebP; max 5 MB)</label><input id="groupPlantWholePhoto" type="file" accept="image/jpeg,image/png,image/webp">
+      <p id="groupPlantSaveMessage" role="status"></p>
+      <button class="goldBtn" type="submit" id="groupPlantSaveButton">SAVE GROUP PLANT</button>
+    </form>`;
+    document.body.appendChild(panel);
+    document.getElementById("cliviaGroupPlantForm").addEventListener("submit",saveGroupPlantFromEditor);
+  }
+  panel.style.display="block";
+  document.getElementById("cliviaGroupPlantHeading").textContent=
+    group.group_name+" — Auction "+number+" — Space "+position;
+  document.getElementById("groupPlantName").value=existing?.plant_name||"";
+  document.getElementById("groupPlantDescription").value=existing?.description||"";
+  document.getElementById("groupPlantStartingBid").value=existing?.starting_bid??"";
+  document.getElementById("groupPlantFlowerPhoto").value="";
+  document.getElementById("groupPlantWholePhoto").value="";
+  document.getElementById("groupPlantSaveMessage").textContent="";
+}
+async function saveGroupPlantFromEditor(event){
+  event.preventDefault();
+  const c=window.cliviaGroupEditContext;
+  if(!c)return;
+  const msg=document.getElementById("groupPlantSaveMessage");
+  const btn=document.getElementById("groupPlantSaveButton");
+  const name=document.getElementById("groupPlantName").value.trim();
+  const description=document.getElementById("groupPlantDescription").value.trim();
+  const startingBid=Number(document.getElementById("groupPlantStartingBid").value);
+  if(name.length<2||!Number.isFinite(startingBid)||startingBid<0){msg.textContent="Enter a plant name and valid starting bid.";return;}
+  btn.disabled=true;
+  try{
+    const {data:auth,error:authError}=await cliviaSupabase.auth.getUser();
+    if(authError||auth?.user?.id!==c.userId)throw new Error("Your sign-in has expired. Sign in again.");
+    async function uploadPhoto(inputId,kind,previous){
+      const file=document.getElementById(inputId).files?.[0];
+      if(!file)return previous||null;
+      if(file.size>5*1024*1024||!["image/jpeg","image/png","image/webp"].includes(file.type))
+        throw new Error("Use JPG, PNG or WebP photos of 5 MB or less.");
+      const ext=file.type==="image/png"?"png":file.type==="image/webp"?"webp":"jpg";
+      const path=c.userId+"/groups/"+c.groupId+"/"+c.number+"/"+c.position+"/"+kind+"-"+Date.now()+"."+ext;
+      const {error}=await cliviaSupabase.storage.from("lot-photos").upload(path,file,{contentType:file.type,upsert:false});
+      if(error)throw error;
+      return cliviaSupabase.storage.from("lot-photos").getPublicUrl(path).data.publicUrl;
+    }
+    msg.textContent="Saving plant...";
+    const flower=await uploadPhoto("groupPlantFlowerPhoto","flower",c.existing?.flower_image_url);
+    const plant=await uploadPhoto("groupPlantWholePhoto","plant",c.existing?.plant_image_url);
+    if(!flower && !plant)throw new Error("Please upload at least one plant photograph.");
+    const payload={plant_name:name,description,starting_bid:startingBid,
+      flower_image_url:flower,plant_image_url:plant,updated_at:new Date().toISOString()};
+    let result;
+    if(c.existing){
+      result=await cliviaSupabase.from("clivia_group_lots").update(payload)
+        .eq("id",c.existing.id).eq("status","LOADING").select("id").single();
+    }else{
+      result=await cliviaSupabase.from("clivia_group_lots").insert({
+        ...payload,group_id:c.groupId,auction_number:c.number,
+        lot_position:c.position,owner_user_id:c.userId,status:"LOADING"
+      }).select("id").single();
+    }
+    if(result.error)throw result.error;
+    msg.textContent="Group plant saved successfully.";
+    setTimeout(()=>{const p=document.getElementById("cliviaGroupPlantEditor");if(p)p.style.display="none";},1200);
+  }catch(err){msg.textContent="Could not save: "+(err?.message||String(err));}
+  finally{btn.disabled=false;}
+}
 async function openSellerLoadFromLot(auctionId, rowKey){
 
   await openSellerSpaces();
