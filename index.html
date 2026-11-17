@@ -10054,9 +10054,14 @@ async function refreshGroupAuctionCards(auction,providedGrid){
         const b=document.createElement('button');b.textContent='EDIT / PUBLISH';b.onclick=()=>openGroupPlantLoading(auction,position);card.appendChild(b);
       }else if(lot.status==='PREBID'){
         const highest=document.createElement('p');highest.textContent='Checking highest pre-bid...';card.appendChild(highest);
-        const {data:amount}=await cliviaSupabase.rpc('clivia_group_highest_prebid',{p_lot_id:lot.id});
+        const {data:amount,error:highestError}=await cliviaSupabase.rpc('clivia_group_highest_prebid',{p_lot_id:lot.id});
+        if(highestError){
+          highest.textContent='Unable to check highest pre-bid. Bidding temporarily unavailable.';
+          grid.appendChild(card);
+          continue;
+        }
         highest.textContent='HIGHEST PRE-BID: '+(amount===null?'No bids yet':'R'+Number(amount).toLocaleString('en-ZA'));
-        const input=document.createElement('input');input.type='number';input.min=String(Math.max(Number(lot.starting_bid),Number(amount||0)+(amount===null?0:100)));input.step='100';input.placeholder='Your bid (R)';input.style.cssText='width:100%;box-sizing:border-box;margin:6px 0';card.appendChild(input);
+        const input=document.createElement('input');input.type='number';input.min=String(Math.max(Number(lot.starting_bid),Number(amount||0)+(amount===null?0:50)));input.step='50';input.placeholder='Your bid (R)';input.style.cssText='width:100%;box-sizing:border-box;margin:6px 0';card.appendChild(input);
         const b=document.createElement('button');b.textContent='PLACE PRE-BID';b.onclick=async()=>{
           const value=Number(input.value);if(!Number.isFinite(value)||value<=0){alert('Enter a valid bid amount');return;}
           if(!confirm('Place Group Auction pre-bid of R'+value+'?'))return;
@@ -11513,11 +11518,7 @@ async function saveCliviaPlantToSupabase(plant) {
     throw new Error("Auction or seller is missing.");
   }
 
-  const lotNumber = Number(plant.lotNumber);
-
-  if (!Number.isInteger(lotNumber) || lotNumber < 1) {
-    throw new Error("A valid lot number is required.");
-  }
+  // Supabase clivia_assign_lot_number() assigns this atomically on INSERT.
 
   const { data: seller, error: sellerError } =
     await cliviaSupabase
@@ -11569,7 +11570,6 @@ async function saveCliviaPlantToSupabase(plant) {
       website_lot_id: String(plant.id),
       live_auction_id: auction.id,
       seller_id: seller.id,
-      lot_number: lotNumber,
       name: plant.name,
       description: plant.description || "",
       breeding: plant.breeding || "",
@@ -11796,7 +11796,7 @@ if (
 }
    
    const normalizePlantField = value =>
-     String(value ?? "").trim().replace(/\\s+/g," ").toLocaleLowerCase();
+     String(value ?? "").trim().replace(/\s+/g," ").toLocaleLowerCase();
 
    // An identical file and plant description gets the same stable submission ID.
    // The existing unique database index on website_lot_id then rejects concurrent
@@ -11837,6 +11837,9 @@ if (
        ". Nothing was published again.";
      return;
    }
+
+   // The database BEFORE INSERT trigger atomically assigns lot numbers.
+   // Do not guess a number from a stale browser or a separate SELECT.
 
    const photoPath = signedInSeller.id + "/lots/" + Date.now() + "-" + photo1.name.replace(/[^a-zA-Z0-9._-]/g, "_");
 
@@ -11934,15 +11937,7 @@ const newLot = {
   listingFee: listingFee,
   listingCurrency: listingCurrency,
 
-  lotNumber:
-  Math.max(
-    0,
-    ...(state.lots || [])
-      .filter(l =>
-        String(l.auctionId) === String(selectedAuction.id)
-      )
-      .map(l => Number(l.lotNumber) || 0)
-  ) + 1,
+  lotNumber: null,
 
    name: name,
   breeding: breeding,
@@ -11989,7 +11984,9 @@ newLot.lotNumber = confirmedLotNumber;
     msg.textContent =
       (String(error?.message || "").includes("duplicate key") ||
        String(error?.message || "").includes("23505")
-        ? "This plant may already have been published. Refresh your existing plants before trying again."
+        ? (String(error?.message || "").includes("lots_live_auction_lot_number_unique")
+            ? "Another plant took this lot number. Please retry publishing; no duplicate was created."
+            : "This plant may already have been published. Refresh your existing plants before trying again.")
         : "Plant not published: " + (error?.message || "Database save failed."));
   }
 
@@ -11998,10 +11995,10 @@ newLot.lotNumber = confirmedLotNumber;
 
 // ONLY ADD THE PLANT AFTER SUPABASE CONFIRMS SUCCESS
 state.lots = state.lots || [];
-state.lots.push(newLot);
+if(!state.lots.some(l => String(l.id) === String(newLot.id))) state.lots.push(newLot);
 
 selectedAuction.lots = selectedAuction.lots || [];
-selectedAuction.lots.push(newLot);
+if(!selectedAuction.lots.some(l => String(l.id) === String(newLot.id))) selectedAuction.lots.push(newLot);
 
 updateAuctionHalfFullStatus(selectedAuction);
 scheduleAuctionAtHalfFull(selectedAuction);
