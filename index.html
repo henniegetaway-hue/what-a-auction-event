@@ -16260,6 +16260,10 @@ function nextBid(lot){
   return currentBid(lot)+increment;
 }
       function renderLots(){
+  // Auction 1 is the sole current public Clivia auction. This affects display
+  // selection only; it does not modify the other auction records or bids.
+  const firstPublicAuction=(state.auctions||[]).find(a=>String(a.id)==="AUC-1792928367476");
+  if(firstPublicAuction) state.selectedAuctionId=firstPublicAuction.id;
   const box=document.getElementById("lotsGrid");
   let auction=(state.auctions||[]).find(a=>a.id===state.selectedAuctionId);
 const currencySymbol=auction && auction.currency==="EUR" ? "€" : "R";
@@ -16309,15 +16313,12 @@ const sellerAuctionChoicesHtml=upcomingSellerAuctions.map(a=>{
   `;
 }).join("");            
 
-const auctionLots=state.lots.filter(lot=>{
-  if(String(lot.auctionId)!==String(state.selectedAuctionId)) return false;
-
-  if(viewerBidder && viewerBidder.isInternational){
-    return lot.exportEligible===true;
-  }
-
-  return true;
-});
+// All visitors and recognised members must see the same published plants.
+// International eligibility is checked when placing a bid, not when browsing.
+const auctionLots=state.lots.filter(lot=>
+  String(lot.auctionId)===String(state.selectedAuctionId) &&
+  !["DELETED","WITHDRAWN","CANCELLED","TEST ONLY"].includes(String(lot.status||"").toUpperCase())
+);
  
 
 
@@ -20770,16 +20771,21 @@ async function refreshPublicCliviaLots(){
         increment:Number(r.minimum_increment||100),exportEligible:r.export_eligible===true,
         sellerId:r.seller_id,bids:[],supabaseDisplayOnly:true,sharedPublished:true});
     }
-    const selectedId=String(state.selectedAuctionId||"");
-    const localCount=(state.lots||[]).filter(l=>String(l.auctionId)===selectedId).length;
-    // On a new phone, choose an auction that actually has published plants.
-    // On desktop, do not replace an auction containing unsynced local plants.
-    if(!localCount){
-      const withPlants=[...auctions].filter(a=>a.legacy_auction_id && remoteCount.get(String(a.legacy_auction_id)))
-        .sort((a,b)=>(remoteCount.get(String(b.legacy_auction_id))||0)-(remoteCount.get(String(a.legacy_auction_id))||0))[0];
-      if(withPlants) state.selectedAuctionId=String(withPlants.legacy_auction_id);
-      else if(!selectedId && auctions[0]?.legacy_auction_id)
-        state.selectedAuctionId=String(auctions[0].legacy_auction_id);
+    // Only the first current Clivia Dreamers Auction is public at present.
+    // Do not let saved login/browser state select a different current auction.
+    const firstAuction=auctions.find(a=>Number(a.id)===1);
+    if(firstAuction?.legacy_auction_id){
+      state.selectedAuctionId=String(firstAuction.legacy_auction_id);
+    } else {
+      const selectedId=String(state.selectedAuctionId||"");
+      const localCount=(state.lots||[]).filter(l=>String(l.auctionId)===selectedId).length;
+      if(!localCount){
+        const withPlants=[...auctions].filter(a=>a.legacy_auction_id && remoteCount.get(String(a.legacy_auction_id)))
+          .sort((a,b)=>(remoteCount.get(String(b.legacy_auction_id))||0)-(remoteCount.get(String(a.legacy_auction_id))||0))[0];
+        if(withPlants) state.selectedAuctionId=String(withPlants.legacy_auction_id);
+        else if(!selectedId && auctions[0]?.legacy_auction_id)
+          state.selectedAuctionId=String(auctions[0].legacy_auction_id);
+      }
     }
     if(!document.getElementById("pageLive")?.classList.contains("hidden"))renderLots();
   }catch(error){
