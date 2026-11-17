@@ -1799,6 +1799,104 @@ const cliviaSupabase = supabase.createClient(
   }
 });
  
+// Verify only when both independent sessions exist. Failed attempts are throttled,
+// not permanently cached: a later confirmed sign-in can succeed without a reload.
+let sharedAccountLinkInFlight = false;
+let sharedAccountRecheckPending = false;
+let sharedAccountLastSuccess = "";
+let sharedAccountLastFailedPair = "";
+let sharedAccountLastFailureAt = 0;
+let sharedAccountLinkTimer = null;
+let sharedAccountRetryTimer = null;
+const SHARED_LINK_FAILURE_COOLDOWN_MS = 60000;
+
+function queueSharedAccountRetry() {
+  if (sharedAccountRetryTimer !== null) clearTimeout(sharedAccountRetryTimer);
+  sharedAccountRetryTimer = setTimeout(() => {
+    sharedAccountRetryTimer = null;
+    scheduleSharedAuctionAccountVerification();
+  }, SHARED_LINK_FAILURE_COOLDOWN_MS + 500);
+}
+
+function cancelSharedAccountRetry() {
+  if (sharedAccountRetryTimer !== null) clearTimeout(sharedAccountRetryTimer);
+  sharedAccountRetryTimer = null;
+}
+
+function scheduleSharedAuctionAccountVerification() {
+  if (sharedAccountLinkTimer !== null) clearTimeout(sharedAccountLinkTimer);
+  sharedAccountLinkTimer = setTimeout(async () => {
+    sharedAccountLinkTimer = null;
+    if (sharedAccountLinkInFlight) {
+      sharedAccountRecheckPending = true;
+      return;
+    }
+    sharedAccountLinkInFlight = true;
+    try {
+      const [cliviaResult, eventResult] = await Promise.all([
+        cliviaSupabase.auth.getSession(),
+        auctionSupabase.auth.getSession()
+      ]);
+      const cliviaSession = cliviaResult.data?.session;
+      const eventSession = eventResult.data?.session;
+      if (cliviaResult.error || eventResult.error || !cliviaSession || !eventSession) {
+        sharedAccountLastSuccess = "";
+        sharedAccountLastFailedPair = "";
+        cancelSharedAccountRetry();
+        return;
+      }
+      // Do not repeatedly contact the linking endpoint for mismatched or
+      // unconfirmed accounts. Auth USER_UPDATED/SIGNED_IN will re-check.
+      const cliviaEmail = (cliviaSession.user.email || "").trim().toLowerCase();
+      const eventEmail = (eventSession.user.email || "").trim().toLowerCase();
+      if (!cliviaEmail || !eventEmail || cliviaEmail !== eventEmail ||
+          !cliviaSession.user.email_confirmed_at ||
+          !eventSession.user.email_confirmed_at) {
+        sharedAccountLastSuccess = "";
+        sharedAccountLastFailedPair = "";
+        cancelSharedAccountRetry();
+        return;
+      }
+      const pair = cliviaSession.user.id + ":" + eventSession.user.id;
+      if (pair === sharedAccountLastSuccess) return;
+      if (pair === sharedAccountLastFailedPair &&
+          Date.now() - sharedAccountLastFailureAt < SHARED_LINK_FAILURE_COOLDOWN_MS) return;
+      const verified = await verifySharedAuctionAccount();
+      if (verified) {
+        sharedAccountLastSuccess = pair;
+        sharedAccountLastFailedPair = "";
+        cancelSharedAccountRetry();
+      } else {
+        sharedAccountLastFailedPair = pair;
+        sharedAccountLastFailureAt = Date.now();
+        queueSharedAccountRetry();
+      }
+    } catch (error) {
+      console.error("Shared account verification could not complete.");
+      sharedAccountLastFailureAt = Date.now();
+      queueSharedAccountRetry();
+    } finally {
+      sharedAccountLinkInFlight = false;
+      if (sharedAccountRecheckPending) {
+        sharedAccountRecheckPending = false;
+        scheduleSharedAuctionAccountVerification();
+      }
+    }
+  }, 350);
+}
+
+cliviaSupabase.auth.onAuthStateChange((event) => {
+  if (event === "SIGNED_IN" || event === "INITIAL_SESSION" || event === "SIGNED_OUT" || event === "USER_UPDATED") {
+    scheduleSharedAuctionAccountVerification();
+  }
+});
+auctionSupabase.auth.onAuthStateChange((event) => {
+  if (event === "SIGNED_IN" || event === "INITIAL_SESSION" || event === "SIGNED_OUT" || event === "USER_UPDATED") {
+    scheduleSharedAuctionAccountVerification();
+  }
+});
+scheduleSharedAuctionAccountVerification();
+
 async function verifySharedAuctionAccount() {
   const { data: cliviaData, error: cliviaError } =
     await cliviaSupabase.auth.getSession();
@@ -11991,7 +12089,70 @@ function renderMyAuctionPlants(){
     `;
   }).join("");
 }
-window.addEventListener("DOMContentLoaded", renderMyAuctionPlants);   
+window.addEventListener("DOMContentLoaded", renderMyAuctionPlants);
+// Read the authenticated seller's actual saved lots rather than relying only
+// on the page's temporary state (which can be empty on mobile or after reload).
+let sellerPlantsRequestVersion=0;
+async function refreshMyPublishedCliviaPlants(){
+  const requestVersion=++sellerPlantsRequestVersion;
+  const box=document.getElementById('myAuctionPlantsGrid');
+  if(!box || typeof cliviaSupabase==='undefined') return;
+  try {
+    const lots=await fetchMyCliviaPlantsFromSupabase();
+    if(requestVersion!==sellerPlantsRequestVersion) return;
+    // A sign-out or account switch must not leave the previous seller's plants visible.
+    const {data:currentAuth}=await cliviaSupabase.auth.getUser();
+    if(requestVersion!==sellerPlantsRequestVersion) return;
+    if(!currentAuth?.user?.email_confirmed_at){
+      box.textContent='Sign in with your confirmed account to see your plants.';
+      return;
+    }
+    if(!lots.length){
+      box.innerHTML='<p>No published plants yet.</p>';
+      return;
+    }
+    const safeText=(value)=>escapeHtml(String(value??''));
+    const safeImage=(value)=>{
+      try {
+        const url=new URL(String(value||''),location.href);
+        return url.protocol==='https:' || (url.protocol==='http:' && url.hostname===location.hostname)
+          ? url.href : '';
+      } catch {return '';}
+    };
+    box.innerHTML=lots.map(lot=>{
+      const img=safeImage(lot.flower_image_url||lot.plant_image_url);
+      const price=Number(lot.starting_bid||0);
+      const current=Number(lot.current_bid||0);
+      return `<article class="lotCard" style="padding:10px;min-width:0;overflow-wrap:anywhere">
+        <strong>LOT-${safeText(lot.lot_number??lot.id)}</strong>
+        ${img?`<img src="${safeText(img)}" alt="Clivia plant" loading="lazy" style="width:100%;aspect-ratio:1/1;object-fit:cover">`:''}
+        <div><strong>${safeText(lot.name||'Clivia')}</strong></div>
+        <div>Starting bid: R${Number.isFinite(price)?price.toLocaleString('en-ZA'):'—'}</div>
+        <div>Current bid: ${current>0?'R'+current.toLocaleString('en-ZA'):'No bids yet'}</div>
+        <div>Status: ${safeText(lot.status||'Scheduled')}</div>
+      </article>`;
+    }).join('');
+  } catch(err) {
+    if(requestVersion!==sellerPlantsRequestVersion) return;
+    console.warn('Unable to refresh seller plants:',err);
+    box.innerHTML='<p>Unable to load your plants. Please sign in with your confirmed account and try again.</p>';
+  }
+}
+window.addEventListener('DOMContentLoaded',()=>{
+  refreshMyPublishedCliviaPlants();
+});
+// Refresh after login, and immediately clear seller data on logout.
+// Defer Supabase calls outside the auth callback to avoid auth-lock contention.
+cliviaSupabase.auth.onAuthStateChange((event)=>{
+  if(event==='SIGNED_OUT'){
+    ++sellerPlantsRequestVersion;
+    const box=document.getElementById('myAuctionPlantsGrid');
+    if(box) box.textContent='Sign in to view your auction plants.';
+  } else if(['SIGNED_IN','USER_UPDATED','INITIAL_SESSION'].includes(event)){
+    setTimeout(refreshMyPublishedCliviaPlants,0);
+  }
+});
+   
     function editSellerPlant(lotId){
   const lot = (state.lots || []).find(
     l => String(l.id) === String(lotId)
