@@ -11795,36 +11795,46 @@ if (
   return;
 }
    
-   // Check the actual database BEFORE uploading images or creating another lot.
-   // Use the signed-in seller and selected auction, never a public name alone.
-   const {data:previousLots,error:duplicateCheckError} = await cliviaSupabase
-     .from("lots")
-     .select("id,name,breeding,breeder,starting_bid,status")
-     .eq("seller_id", verifiedSeller.id)
-     .eq("live_auction_id", databaseAuction.id);
+   const normalizePlantField = value =>
+     String(value ?? "").trim().replace(/\\s+/g," ").toLocaleLowerCase();
 
-   if(duplicateCheckError){
-     if(msg) msg.textContent =
-       "Could not check for duplicate plants. Nothing was published. Please retry.";
+   // An identical file and plant description gets the same stable submission ID.
+   // The existing unique database index on website_lot_id then rejects concurrent
+   // duplicate submissions from separate tabs/devices, not just repeated taps.
+   // Different photographs or details may represent genuinely different plants.
+   if(!globalThis.crypto?.subtle){
+     if(msg) msg.textContent = "Secure duplicate verification is unavailable in this browser. Nothing was published.";
      return;
    }
+   const photoBytes = await photo1.arrayBuffer();
+   const photoDigest = await crypto.subtle.digest("SHA-256", photoBytes);
+   const photoHex = Array.from(new Uint8Array(photoDigest), byte =>
+     byte.toString(16).padStart(2,"0")).join("");
+   const duplicateIdentity = [
+     verifiedSeller.id, databaseAuction.id, normalizePlantField(name),
+     normalizePlantField(breeding), normalizePlantField(breeder),
+     String(start), photoHex
+   ].join("|");
+   const identityDigest = await crypto.subtle.digest(
+     "SHA-256", new TextEncoder().encode(duplicateIdentity));
+   const stablePlantId = "LOT-" + Array.from(new Uint8Array(identityDigest), byte =>
+     byte.toString(16).padStart(2,"0")).join("");
 
-   const normalizePlantField = value =>
-     String(value ?? "").trim().replace(/\s+/g," ").toLocaleLowerCase();
-
-   const matchingLot = (previousLots || []).find(lot =>
-     normalizePlantField(lot.name) === normalizePlantField(name) &&
-     normalizePlantField(lot.breeding) === normalizePlantField(breeding) &&
-     normalizePlantField(lot.breeder) === normalizePlantField(breeder) &&
-     Number(lot.starting_bid) === start &&
-     !["DELETED","WITHDRAWN","CANCELLED"].includes(
-       String(lot.status || "").toUpperCase()
-     )
-   );
-   if(matchingLot){
+   // Check the stable photo-and-details identity before uploading photos.
+   const {data:alreadyPublished,error:identityLookupError} = await cliviaSupabase
+     .from("lots")
+     .select("id,lot_number")
+     .eq("website_lot_id", stablePlantId)
+     .maybeSingle();
+   if(identityLookupError){
+     if(msg) msg.textContent = "Duplicate verification failed. Nothing was published.";
+     return;
+   }
+   if(alreadyPublished){
      if(msg) msg.textContent =
-       "Possible duplicate: this seller already loaded a matching plant in this auction (lot ID " +
-       matchingLot.id + "). Nothing was published. Check your existing plants first.";
+       "This exact plant was already published as LOT-" +
+       String(alreadyPublished.lot_number).padStart(3,"0") +
+       ". Nothing was published again.";
      return;
    }
 
@@ -11915,7 +11925,7 @@ const listingFee =
   listingCurrency === "EUR" ? 5 : 50;
 
 const newLot = {
-  id: "L" + Date.now(),
+  id: stablePlantId,
   auctionId: selectedAuction.id,
   sellerId: seller.id,
 
@@ -11977,8 +11987,10 @@ newLot.lotNumber = confirmedLotNumber;
 
   if (msg) {
     msg.textContent =
-      "Plant not published: " +
-      (error?.message || "Database save failed.");
+      (String(error?.message || "").includes("duplicate key") ||
+       String(error?.message || "").includes("23505")
+        ? "This plant may already have been published. Refresh your existing plants before trying again."
+        : "Plant not published: " + (error?.message || "Database save failed."));
   }
 
   return;
