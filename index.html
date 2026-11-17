@@ -893,8 +893,10 @@ th,td{
 }        
 
 @media (max-width:900px){
-  #sellerLoadGrid{
-    grid-template-columns:1fr;
+  #pageSellerLoad #sellerLoadGrid{
+    grid-template-columns:minmax(0,1fr) !important;
+    width:100% !important;
+    min-width:0 !important;
   }
 
   #bestSellersPanel{
@@ -1742,6 +1744,60 @@ body:has(#cliviaCarryForwardFooter) {
   #bidderLoginBox button{min-height:44px!important;}
   #bidderLoginMessage{overflow-wrap:anywhere;white-space:normal;}
 }
+
+/* SELLER PLANT GRID — moved from invalid inline style */
+/* MY LOADED AUCTION PLANTS — 4 ON COMPUTER */
+#myAuctionPlantsSection {
+  width: 100% !important;
+  max-width: 1400px !important;
+}
+
+#myAuctionPlantsGrid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  width: 100% !important;
+}
+
+#myAuctionPlantsGrid .lotCard {
+  min-width: 0 !important;
+  width: 100% !important;
+  padding: 8px !important;
+}
+
+#myAuctionPlantsGrid .lotCard img {
+  width: 100% !important;
+  aspect-ratio: 1 / 1 !important;
+  object-fit: cover !important;
+}
+
+#myAuctionPlantsGrid .lotCard .goldBtn {
+  width: 100% !important;
+  font-size: 11px !important;
+  padding: 8px 4px !important;
+}
+
+/* TABLETS — 2 PLANTS PER ROW WITHOUT HORIZONTAL OVERFLOW */
+@media (min-width:601px) and (max-width:900px) {
+  #myAuctionPlantsGrid {
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  }
+}
+
+/* PHONE — 2 PLANTS PER ROW */
+@media (max-width: 600px) {
+  #myAuctionPlantsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  #myAuctionPlantsGrid .lotCard {
+    padding: 6px !important;
+    font-size: 11px !important;
+    overflow-wrap: anywhere;
+  }
+}
+
 </style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>      
  <script>
@@ -3521,50 +3577,6 @@ max-height:110px;
         <div id="previewLotsGrid" style="
 display:grid;
 
-/* MY LOADED AUCTION PLANTS — 4 ON COMPUTER */
-#myAuctionPlantsSection {
-  width: 100% !important;
-  max-width: 1400px !important;
-}
-
-#myAuctionPlantsGrid {
-  display: grid !important;
-  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-  gap: 12px !important;
-  width: 100% !important;
-}
-
-#myAuctionPlantsGrid .lotCard {
-  min-width: 0 !important;
-  width: 100% !important;
-  padding: 8px !important;
-}
-
-#myAuctionPlantsGrid .lotCard img {
-  width: 100% !important;
-  aspect-ratio: 1 / 1 !important;
-  object-fit: cover !important;
-}
-
-#myAuctionPlantsGrid .lotCard .goldBtn {
-  width: 100% !important;
-  font-size: 11px !important;
-  padding: 8px 4px !important;
-}
-
-/* PHONE — 2 PLANTS PER ROW */
-@media (max-width: 600px) {
-  #myAuctionPlantsGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 8px !important;
-  }
-
-  #myAuctionPlantsGrid .lotCard {
-    padding: 6px !important;
-    font-size: 11px !important;
-    overflow-wrap: anywhere;
-  }
-}
 
 gap:12px;
 margin-top:15px;
@@ -11590,7 +11602,23 @@ auction_appearances: plant.auctionAppearances ?? 1,
 }
 
     
- async function publishSellerLot(){
+// Prevent repeated taps while the plant is uploading and being saved.
+let cliviaPlantPublishInProgress = false;
+async function publishSellerLot(){
+  const msg = document.getElementById("sellerLotMsg");
+  if(cliviaPlantPublishInProgress){
+    if(msg) msg.textContent = "This plant is already being published. Please wait.";
+    return;
+  }
+  cliviaPlantPublishInProgress = true;
+  try {
+    return await publishSellerLotInternal();
+  } finally {
+    cliviaPlantPublishInProgress = false;
+  }
+}
+
+async function publishSellerLotInternal(){
 
   const auction = document.getElementById("sellerLotAuction")?.value || "";
 
@@ -11767,6 +11795,39 @@ if (
   return;
 }
    
+   // Check the actual database BEFORE uploading images or creating another lot.
+   // Use the signed-in seller and selected auction, never a public name alone.
+   const {data:previousLots,error:duplicateCheckError} = await cliviaSupabase
+     .from("lots")
+     .select("id,name,breeding,breeder,starting_bid,status")
+     .eq("seller_id", verifiedSeller.id)
+     .eq("live_auction_id", databaseAuction.id);
+
+   if(duplicateCheckError){
+     if(msg) msg.textContent =
+       "Could not check for duplicate plants. Nothing was published. Please retry.";
+     return;
+   }
+
+   const normalizePlantField = value =>
+     String(value ?? "").trim().replace(/\s+/g," ").toLocaleLowerCase();
+
+   const matchingLot = (previousLots || []).find(lot =>
+     normalizePlantField(lot.name) === normalizePlantField(name) &&
+     normalizePlantField(lot.breeding) === normalizePlantField(breeding) &&
+     normalizePlantField(lot.breeder) === normalizePlantField(breeder) &&
+     Number(lot.starting_bid) === start &&
+     !["DELETED","WITHDRAWN","CANCELLED"].includes(
+       String(lot.status || "").toUpperCase()
+     )
+   );
+   if(matchingLot){
+     if(msg) msg.textContent =
+       "Possible duplicate: this seller already loaded a matching plant in this auction (lot ID " +
+       matchingLot.id + "). Nothing was published. Check your existing plants first.";
+     return;
+   }
+
    const photoPath = signedInSeller.id + "/lots/" + Date.now() + "-" + photo1.name.replace(/[^a-zA-Z0-9._-]/g, "_");
 
 
@@ -11992,7 +12053,7 @@ async function fetchMyCliviaPlantsFromSupabase() {
 
   const sellerIds = (sellers || []).map(s => s.id);
 
-  if (!sellerIds.length) return [];
+  if (!sellerIds.length) return {userId:user.id, lots:[]};
 
   const { data: lots, error: lotsError } =
     await cliviaSupabase
@@ -12030,7 +12091,7 @@ async function refreshMyPublishedCliviaPlants(){
       box.textContent='Sign in with your confirmed account to see your plants.';
       return;
     }
-    const lots=result.lots;
+    const lots=Array.isArray(result.lots)?result.lots:[];
     if(!lots.length){
       box.innerHTML='<p>No published plants yet.</p>';
       return;
@@ -12059,7 +12120,8 @@ async function refreshMyPublishedCliviaPlants(){
   } catch(err) {
     if(requestVersion!==sellerPlantsRequestVersion) return;
     console.warn('Unable to refresh seller plants:',err);
-    box.innerHTML='<p>Unable to load saved plants. Check your sign-in and database access, then try again.</p>';
+    box.innerHTML='<p>Unable to load saved plants. Check your sign-in and database access.</p><button type="button" class="goldBtn" id="retrySellerPlantsBtn">RETRY LOADING PLANTS</button>';
+    box.querySelector('#retrySellerPlantsBtn')?.addEventListener('click',refreshMyPublishedCliviaPlants);
   }
 }
 
