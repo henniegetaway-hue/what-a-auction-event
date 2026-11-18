@@ -17896,13 +17896,27 @@ function testOwnerBid(lotId) {
 
 const cliviaBidRequestsInFlight = new Set();
 async function placeBid(lotId){
+  if(cliviaBidRequestsInFlight.has(String(lotId))){
+    alert("A bid for this plant is already being checked. Please wait.");
+    return;
+  }
   const sharedDisplayLot=(state.lots||[]).find(l=>String(l.id)===String(lotId));
   if(sharedDisplayLot?.supabaseDisplayOnly){
     alert("This lot is visible, but bidding requires the verified server bidding connection. No bid has been placed.");
     return;
   }
-  const auction=(state.auctions||[]).find(a=>a.id===state.selectedAuctionId);
-const currencySymbol=auction && auction.currency==="EUR" ? "€" : "R";
+  const auction=(state.auctions||[]).find(a=>String(a.id)===String(state.selectedAuctionId));
+  // Fail closed if the selected auction is missing: never infer a currency,
+  // opening time or bidding limit from an unrelated auction.
+  if(!auction){
+    alert("Auction information is unavailable. Refresh the page before bidding. No bid was placed.");
+    return;
+  }
+  if(auction.currency!=="ZAR"){
+    alert("This Clivia bidding connection currently supports ZAR auctions only. No bid was placed.");
+    return;
+  }
+  const currencySymbol="R";
   if(!state.settings.open){
     alert("The auction is closed.");
     return;
@@ -18065,7 +18079,8 @@ const currentWinningExposure=(state.lots||[]).reduce((total,otherLot)=>{
 },0);
   const securityFeeNeeded=(currentWinningExposure+amount)>maxBidCapacity;
   const totalExposureAfterBid=currentWinningExposure+amount;
-   // ADMIN ALERT ONLY — DO NOT BLOCK BIDDING
+   // Display-only estimate; server checks are authoritative.
+  // ADMIN ALERT ONLY — DO NOT BLOCK BIDDING
 const adminAlertThreshold = 5000;
 
 const adminBidAlert =
