@@ -2897,6 +2897,11 @@ END OF BIDDING AND INVOICING MASTER RECORD
 #pageOwnEvent .whatGroupLotLoader h4{color:#c5ff5b;margin:0}
 #pageOwnEvent .whatGroupLotLoader button{justify-self:start}
 </style>
+<style>
+#pageOwnEvent .whatGroupPreviewGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0}
+#pageOwnEvent .whatGroupPreviewGrid span{border:1px solid #94b65a;border-radius:8px;background:#15281a;color:#d7ff92;padding:14px 5px;text-align:center;font-size:11px;font-weight:800}
+@media(max-width:650px){#pageOwnEvent .whatGroupPreviewGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
 </head>
 
 <body id="siteBody">
@@ -3335,6 +3340,14 @@ function showEventSampleLanding(){
  <div class="whatGroupColumns">
   <div class="whatGroupBox"><h4>CREATE A GROUP — PRESIDENT</h4><label for="whatGroupName">Group name</label><input id="whatGroupName" maxlength="100" placeholder="Your group name"><button type="button" id="whatGroupCreate" class="whatGroupSmallButton">CREATE GROUP</button></div>
   <div class="whatGroupBox"><h4>JOIN A GROUP — MEMBERS</h4><label for="whatGroupJoinCode">Group invitation code</label><input id="whatGroupJoinCode" maxlength="36" placeholder="Code from the President"><button type="button" id="whatGroupJoin" class="whatGroupSmallButton">REQUEST TO JOIN</button></div>
+ </div>
+ <div class="whatGroupBox" id="whatGroupLoaderPreview" style="margin:14px 0;border-color:#8ebf4c">
+  <h4 style="color:#caff73">GROUP AUCTION ITEM LOADING</h4>
+  <p class="small">This is where the group auction loading form appears. The President can load items immediately after creating a group. Members can load after the President approves them.</p>
+  <div class="whatGroupPreviewGrid" aria-label="Available item types">
+   <span>HORSES &amp; LIVESTOCK</span><span>VEHICLES</span><span>MACHINERY</span><span>GENERAL GOODS</span>
+  </div>
+  <p class="small">Choose <b>CREATE GROUP</b> above, then <b>MANAGE GROUP</b> below to open the loading form. You do not need to join your own group.</p>
  </div>
  <h4>MY GROUPS</h4><div id="whatGroupList">Sign in to view your groups.</div>
  <div id="whatGroupDetails" hidden>
@@ -23783,8 +23796,8 @@ window.openWhatGroupPage=function(){
    area.scrollIntoView({behavior:'smooth',block:'start'});
  }
  async function create(){if(!await signedIn())return;const name=$('whatGroupName').value.trim();if(name.length<3){say('Enter a group name (at least 3 characters).');return;}
-   const {error}=await auctionSupabase.from('event_groups').insert({name,president_id:currentUser.id});
-   if(error)say('Could not create group: '+error.message);else{say('Group created.');$('whatGroupName').value='';await loadGroups();}
+   const {data:newGroup,error}=await auctionSupabase.from('event_groups').insert({name,president_id:currentUser.id}).select('id').single();
+   if(error)say('Could not create group: '+error.message);else{say('Group created. Your loading form is open below.');$('whatGroupName').value='';await loadGroups();if(newGroup?.id)await showGroup(newGroup.id);}
  }
  async function join(){if(!await signedIn())return;const code=$('whatGroupJoinCode').value.trim();if(!code){say('Enter the invitation code.');return;}
    if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(code)){say('Enter a valid invitation code from the President.');return;}
