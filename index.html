@@ -19032,9 +19032,14 @@ function renderCreatorAuctionManagement(events) {
       }
       edit.click();
       const target = destination === "load-lots"
-        ? document.getElementById("previewLotsGrid")
+        ? (document.getElementById("creatorSingleLotLoadingArea") ||
+           document.getElementById("previewLotsGrid"))
         : document.getElementById("ownEventName");
-      target?.scrollIntoView({ behavior: "smooth", block: "start" });
+      // Wait until the editor is visible and the selected auction's lots
+      // have been restored before moving to the loading controls.
+      requestAnimationFrame(() => {
+        target?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
     } catch (error) {
       console.error("Unable to open saved auction", error);
       alert("Could not open this auction. Please try OPEN / EDIT AUCTION from the saved auctions list.");
@@ -19235,25 +19240,8 @@ openButton.onclick = function(){
     updateOwnEventRowsPreview();
   restoreCreatorAuctionLots(event.lots || []);
 
-  alert(
-    "AUCTION LOADED\n\n" +
-    (event.name || "Unnamed Auction") +
-    "\n\nYou can continue editing."
-  );
-
-  // PHONE ONLY — SCROLL TO AUCTION EDITING FORM
-  if(window.innerWidth <= 600){
-
-    const editForm = document.getElementById("ownEventName");
-
-    if(editForm){
-      editForm.scrollIntoView({
-        behavior:"smooth",
-        block:"center"
-      });
-    }
-
-  }
+  // Opening an auction must not stop at a blocking browser alert.
+  // The caller chooses whether to navigate to lot loading or the editor.
 
 };
  
