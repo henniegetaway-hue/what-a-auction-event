@@ -10078,7 +10078,30 @@ async function refreshGroupAuctionCards(auction,providedGrid){
     }else{
       const heading=document.createElement('h3');heading.textContent=lot.plant_name;card.appendChild(heading);
       const photo=lot.flower_image_url||lot.plant_image_url;
-      if(photo){const img=document.createElement('img');img.src=photo;img.alt=lot.plant_name;img.loading='lazy';img.style.cssText='display:block;width:100%;max-width:100%;height:145px;object-fit:contain';card.appendChild(img);}
+      if(photo){
+        const img=document.createElement('img');
+        img.alt=lot.plant_name||'Clivia plant';
+        img.loading='lazy';
+        img.decoding='async';
+        img.style.cssText='display:block;width:100%;max-width:100%;height:145px;object-fit:contain';
+        // A missing flower photograph must not hide an available plant photograph.
+        // Stop after the fallback fails so an invalid URL cannot cause a retry loop.
+        const fallback=lot.plant_image_url && lot.plant_image_url!==photo?lot.plant_image_url:null;
+        img.onerror=()=>{
+          if(fallback && img.dataset.photoFallbackAttempted!=='true'){
+            img.dataset.photoFallbackAttempted='true';
+            img.src=fallback;
+          }else{
+            img.onerror=null;
+            img.remove();
+            const note=document.createElement('p');
+            note.textContent='Plant photograph unavailable.';
+            card.appendChild(note);
+          }
+        };
+        img.src=photo;
+        card.appendChild(img);
+      }
       const price=document.createElement('p');price.textContent='Starting bid R'+Number(lot.starting_bid).toLocaleString('en-ZA');card.appendChild(price);
       const status=document.createElement('p');status.textContent='STATUS: '+lot.status;card.appendChild(status);
       if(lot.status==='LOADING'){
@@ -16331,6 +16354,24 @@ if(unpaidAccountInvoice){
   const flower=await fileToDataURL(flowerFile);
   const plant=plantFile ? await fileToDataURL(plantFile) : "";
 
+  // Reject accidental double loading of exactly the same plant. This checks
+  // the photo contents, not merely the filename. Do not delete any existing lot.
+  const duplicatePlant=(state.lots||[]).find(existing=>
+    String(existing.auctionId)===String(auction.id) &&
+    String(existing.sellerId)===String(sellerId) &&
+    String(existing.name||'').trim().toLowerCase()===String(name).trim().toLowerCase() &&
+    Number(existing.startBid)===Number(start) &&
+    Boolean(existing.flower) && existing.flower===flower &&
+    !['DELETED','WITHDRAWN','CANCELLED'].includes(String(existing.status||'').toUpperCase())
+  );
+  if(duplicatePlant){
+    document.getElementById('lotMsg').textContent=
+      'This plant appears to be loaded already as LOT-'+
+      String(duplicatePlant.lotNumber||'?').padStart(3,'0')+
+      '. Duplicate not saved. Open the existing plant instead.';
+    return;
+  }
+
   state.lots.push({
     id:"L"+Date.now(),
     auctionId:auction.id,
@@ -16612,10 +16653,37 @@ const sellerAuctionChoicesHtml=upcomingSellerAuctions.map(a=>{
 
 // All visitors and recognised members must see the same published plants.
 // International eligibility is checked when placing a bid, not when browsing.
-const auctionLots=state.lots.filter(lot=>
+const visibleAuctionLots=state.lots.filter(lot=>
   String(lot.auctionId)===String(state.selectedAuctionId) &&
   !["DELETED","WITHDRAWN","CANCELLED","TEST ONLY"].includes(String(lot.status||"").toUpperCase())
 );
+// LOT-005 was confirmed by the owner as an accidental duplicate of LOT-004.
+// Suppress it only when both cards have the same seller, photo and starting bid.
+// This changes public display only; it never deletes records, bids or photos.
+const originalLot004=visibleAuctionLots.find(l=>Number(l.lotNumber)===4);
+const auctionLots=visibleAuctionLots.filter(l=>{
+  if(Number(l.lotNumber)!==5 || !originalLot004) return true;
+  const photo=x=>String(x.flower||x.flower_image_url||x.sharedFlowerUrl||x.plant||x.plant_image_url||x.sharedPlantUrl||'').trim();
+  const sameSeller=String(l.sellerId||'')===String(originalLot004.sellerId||'');
+  const samePhoto=Boolean(photo(l)) && photo(l)===photo(originalLot004);
+  const samePrice=Number(l.startBid)===Number(originalLot004.startBid);
+  // Browser-cached copies can contain different photo URLs for the same image.
+  // The owner's confirmed LOT-004/LOT-005 pair also shares breeder, breeding
+  // and plant name. Use these additional fields only for this exact pair.
+  const norm=v=>String(v||'').trim().toLocaleLowerCase();
+  const samePlantDetails=Boolean(norm(l.breeder)) &&
+    norm(l.breeder)===norm(originalLot004.breeder) &&
+    norm(l.breeding)===norm(originalLot004.breeding) &&
+    norm(l.name)===norm(originalLot004.name);
+  // A previously deleted LOT-005 can survive in an older browser's localStorage.
+  // Once LOT-004 has been confirmed from Supabase, do not render a local-only
+  // LOT-005 with the same seller and price. Different photo URL formats must
+  // not make the stale duplicate reappear. Never alter underlying bid records.
+  const confirmedLot004=originalLot004.supabaseLotId!=null && originalLot004.supabaseDisplayOnly===true;
+  const localOnlyLot005=l.supabaseLotId==null;
+  const staleDeletedDuplicate=confirmedLot004 && localOnlyLot005 && sameSeller && samePrice;
+  return !((sameSeller && samePrice && (samePhoto || samePlantDetails)) || staleDeletedDuplicate);
+});
  
 
 
