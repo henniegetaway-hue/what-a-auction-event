@@ -1855,6 +1855,20 @@ body:has(#cliviaCarryForwardFooter) {
 #pageOwnEvent .creatorLandingRight #openCreatorPreviewBtn {display:none!important;}
 #pageOwnEvent .creatorLandingRight .creatorEditWhiteBtn {border-radius:20px!important;}
 @media(max-width:700px){#pageOwnEvent .creatorLandingColumns{grid-template-columns:minmax(0,1fr);gap:6px;}}
+
+/* WHAT A AUCTION EVENT: approved two-column compact creator navigation */
+#pageOwnEvent #creatorLandingOverview {padding:8px 10px!important;margin-bottom:8px!important;}
+#pageOwnEvent #creatorLandingOverview > h2 {display:none!important;}
+#pageOwnEvent .whatEventQuickPanels {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+#pageOwnEvent .whatEventQuickPanel {min-width:0;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#07190c;border:1px solid #b5ff38;border-radius:11px;padding:10px 12px;}
+#pageOwnEvent .whatEventQuickPanel strong {font-size:15px;line-height:1.2;color:#c9ff63;white-space:nowrap;}
+#pageOwnEvent .whatEventGroupText {min-width:0;display:flex;flex-direction:column;gap:4px;}
+#pageOwnEvent .whatEventGroupText small {font-size:10px;line-height:1.2;color:white;}
+#pageOwnEvent .whatEventQuickButton {flex:0 0 180px;width:180px!important;min-width:0!important;min-height:34px!important;height:34px!important;max-width:180px!important;margin:0!important;padding:4px 7px!important;border:1px solid #ddd!important;border-radius:20px!important;background:#fff!important;color:#000!important;box-shadow:none!important;font-size:10px!important;font-weight:700!important;line-height:1.1!important;cursor:pointer;}
+#pageOwnEvent .whatEventLegacyManagement {display:none!important;}
+#pageOwnEvent #myEventGroupsInfo:not([hidden]) {display:block;padding:9px;font-size:12px;}
+@media(max-width:850px){#pageOwnEvent .whatEventQuickPanels {grid-template-columns:1fr;}}
+@media(max-width:450px){#pageOwnEvent .whatEventQuickPanel strong {font-size:12px;}#pageOwnEvent .whatEventQuickButton {flex-basis:142px;width:142px!important;font-size:9px!important;}}
 </style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>      
  <script>
@@ -3243,14 +3257,20 @@ function showEventSampleLanding(){
 <section id="pageOwnEvent" class="page hidden">
 <div id="creatorLandingOverview" class="panel" aria-live="polite" style="margin:0 0 14px;">
   <h2 style="margin-bottom:8px">MY AUCTION LANDING PAGE</h2>
-  <div class="creatorLandingColumns">
-  <div class="creatorLatestColumn"><div id="creatorLandingContent">Checking your auctions...</div></div>
-  <aside class="creatorLandingRight">
-    <div class="creatorGroupNav"><strong>MY GROUP AUCTIONS</strong>
-      <button type="button" class="creatorWhitePill" id="openMyEventGroups" onclick="document.getElementById('myEventGroupsInfo').hidden = !document.getElementById('myEventGroupsInfo').hidden">OPEN</button>
-    </div>
-    <div id="myEventGroupsInfo" hidden role="status">WHAT A AUCTION EVENT group auctions and President management are not connected yet. Your Clivia groups are separate.</div>
-    <div class="panel" id="ownEventManagement">
+  <div class="whatEventQuickPanels">
+    <section class="whatEventQuickPanel">
+      <strong>MY AUCTIONS</strong>
+      <button type="button" class="whatEventQuickButton" id="whatEventOpenMyAuctions">OPEN / EDIT AUCTION</button>
+    </section>
+    <section class="whatEventQuickPanel">
+      <div class="whatEventGroupText"><strong>MY GROUP AUCTIONS</strong><small>Create and manage your Group Auctions.</small></div>
+      <button type="button" class="whatEventQuickButton" id="whatEventOpenGroups">OPEN GROUP AUCTIONS</button>
+    </section>
+  </div>
+  <div id="myEventGroupsInfo" hidden role="status">WHAT A AUCTION EVENT group auctions and President/member management are not connected yet. Your Clivia groups are separate.</div>
+  <div class="whatEventLegacyManagement" aria-hidden="true">
+    <div id="creatorLandingContent"></div>
+<div class="panel" id="ownEventManagement">
 
   
 <h3>MY AUCTIONS LIST</h3>
@@ -3275,9 +3295,7 @@ function showEventSampleLanding(){
 </div>
 
 </div>
-
-  </aside>
-</div>
+  </div>
 </div>
 <div class="grid2 creatorPageLayout" style="grid-template-columns:minmax(280px,0.75fr) minmax(0,1.5fr);align-items:start;">
   <div class="panel">
@@ -23525,6 +23543,30 @@ window.addEventListener("DOMContentLoaded",()=>{
   box.querySelector("#cliviaSyncSavedButton").addEventListener("click",syncMySavedCliviaPlants);
   box.querySelector("#cliviaSyncSignInButton").addEventListener("click",cliviaShowSellerSignIn);
 });
+</script>
+<script>
+/* Quick navigation uses existing auction editor; no changes to saved auction data. */
+(function(){
+ function wire(){
+  const mine=document.getElementById('whatEventOpenMyAuctions');
+  const groups=document.getElementById('whatEventOpenGroups');
+  if(mine) mine.addEventListener('click',async function(){
+   try{
+    if(typeof loadMyAuctions==='function') await loadMyAuctions();
+    const list=document.getElementById('ownEventManagementList');
+    const first=Array.from(list?.children||[]).find(el=>el.dataset.auctionId)?.querySelector('button');
+    if(first){first.click();return;}
+    if(typeof openEventCreatorSetup==='function') openEventCreatorSetup();
+    document.getElementById('ownEventSetup')?.scrollIntoView({behavior:'smooth',block:'start'});
+   }catch(e){console.error('Could not open auction editor',e);alert('Unable to open auctions. Please sign in and try again.');}
+  });
+  if(groups) groups.addEventListener('click',function(){
+   const info=document.getElementById('myEventGroupsInfo');
+   if(info) info.hidden=!info.hidden;
+  });
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',wire);else wire();
+})();
 </script>
 </body>
 </html>
