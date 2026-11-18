@@ -1894,6 +1894,14 @@ body:has(#cliviaCarryForwardFooter) {
 #pageOwnEvent .whatEventShareCaption {font:bold 9px/1.15 Arial,sans-serif;color:#fff;white-space:nowrap;}
 @media(max-width:1100px){#pageOwnEvent .whatEventQuickPanel:has(.whatEventShareCluster){grid-template-columns:minmax(0,1fr) auto;row-gap:8px;}#pageOwnEvent .whatEventQuickPanel:has(.whatEventShareCluster) .whatEventShareCluster{grid-column:1 / -1;grid-row:2;}#pageOwnEvent .whatEventQuickPanel:has(.whatEventShareCluster) #whatEventOpenGroups{grid-column:2;grid-row:1;}}
 @media(max-width:450px){#pageOwnEvent .whatEventShareCaption{font-size:8px;}#pageOwnEvent .whatEventShareCircle{width:28px!important;height:28px!important;min-width:28px!important;min-height:28px!important;}}
+
+/* SEPARATE WHAT A AUCTION EVENT PAGES — no overlapping personal/group panels */
+#pageOwnEvent #whatEventGroupsArea[hidden]{display:none!important}
+#pageOwnEvent.whatGroupPage #whatEventGroupsArea{display:block!important}
+#pageOwnEvent.whatGroupPage #creatorLandingOverview,
+#pageOwnEvent.whatGroupPage > :not(#whatEventGroupsArea){display:none!important}
+#pageOwnEvent .whatEventGroupsArea .whatEventShareCluster{margin:10px auto 14px;text-align:center}
+#pageOwnEvent .whatEventGroupsArea .whatEventShareCaption{display:block;margin-top:5px}
 </style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>      
  <script>
@@ -3280,28 +3288,16 @@ function showEventSampleLanding(){
 </section>
 
 <section id="pageOwnEvent" class="page hidden">
-<div id="creatorLandingOverview" class="panel" aria-live="polite" style="margin:0 0 14px;">
-  <h2 style="margin-bottom:8px">MY AUCTION LANDING PAGE</h2>
-  <div class="whatEventQuickPanels">
-    <section class="whatEventQuickPanel">
-      <strong>MY AUCTIONS</strong>
-      <button type="button" class="whatEventQuickButton" id="whatEventOpenMyAuctions">OPEN / EDIT AUCTION</button>
-    </section>
-    <section class="whatEventQuickPanel">
-      <div class="whatEventGroupText"><strong>MY GROUP AUCTIONS</strong><small>Create and manage your Group Auctions.</small></div>
+  <section id="whatEventGroupsArea" class="whatEventGroupsArea" hidden aria-label="What A Auction Event Group Auctions">
+ <div class="whatGroupTitleRow"><h3>MY GROUP AUCTIONS</h3><button type="button" class="whatGroupSmallButton" id="whatGroupBack">BACK TO MY AUCTIONS</button></div>
       <div class="whatEventShareCluster" aria-label="Invite friends and partners">
         <div class="whatEventShareIcons">
-          <a class="whatEventShareCircle whatShareWhatsApp" id="whatShareWhatsApp" href="https://api.whatsapp.com/send?text=Join%20me%20at%20WHAT%20A%20AUCTION%20EVENT%20https%3A%2F%2Fwhatauction.top%2F%3Fpage%3Dcreate-event" target="_blank" rel="noopener noreferrer" title="Share on WhatsApp" aria-label="Share on WhatsApp">WA</a>
-          <a class="whatEventShareCircle whatShareFacebook" id="whatShareFacebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwhatauction.top%2F%3Fpage%3Dcreate-event" target="_blank" rel="noopener noreferrer" title="Share on Facebook" aria-label="Share on Facebook">f</a>
+          <a class="whatEventShareCircle whatShareWhatsApp" id="whatShareWhatsApp" href="https://api.whatsapp.com/send?text=Join%20me%20at%20WHAT%20A%20AUCTION%20EVENT%20https%3A%2F%2Fwhatauction.top%2F%3Fpage%3Dgroup-page" target="_blank" rel="noopener noreferrer" title="Share on WhatsApp" aria-label="Share on WhatsApp">WA</a>
+          <a class="whatEventShareCircle whatShareFacebook" id="whatShareFacebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwhatauction.top%2F%3Fpage%3Dgroup-page" target="_blank" rel="noopener noreferrer" title="Share on Facebook" aria-label="Share on Facebook">f</a>
           <button class="whatEventShareCircle whatShareWorld" id="whatShareWorld" type="button" title="Share to other apps or copy link" aria-label="Share to other apps or copy link">&#127760;</button>
         </div>
         <span class="whatEventShareCaption">INVITE FRIENDS AND PARTNERS</span>
       </div>
-      <button type="button" class="whatEventQuickButton" id="whatEventOpenGroups">OPEN GROUP AUCTIONS</button>
-    </section>
-  </div>
-  <section id="whatEventGroupsArea" class="whatEventGroupsArea" hidden aria-label="What A Auction Event Group Auctions">
- <div class="whatGroupTitleRow"><h3>MY GROUP AUCTIONS</h3><button type="button" class="whatGroupSmallButton" id="whatGroupBack">BACK TO MY AUCTIONS</button></div>
  <p class="small">The President approves group members and grants permission to load lots. Each group has its own auctions and members.</p>
  <div id="whatGroupStatus" role="status" aria-live="polite" class="small"></div>
  <div class="whatGroupColumns">
@@ -3313,6 +3309,16 @@ function showEventSampleLanding(){
   <h4 id="whatGroupDetailsTitle"></h4><div id="whatGroupDetailsContent"></div>
  </div>
 </section>
+<div id="creatorLandingOverview" class="panel" aria-live="polite" style="margin:0 0 14px;">
+  <h2 style="margin-bottom:8px">MY AUCTION LANDING PAGE</h2>
+  <div class="whatEventQuickPanels">
+    <section class="whatEventQuickPanel">
+      <strong>MY AUCTIONS</strong>
+      <button type="button" class="whatEventQuickButton" id="whatEventOpenMyAuctions">OPEN / EDIT AUCTION</button>
+    </section>
+
+  </div>
+
   <div class="whatEventLegacyManagement" aria-hidden="true">
     <div id="creatorLandingContent"></div>
 <div class="panel" id="ownEventManagement">
@@ -9104,6 +9110,8 @@ setOwnEventHeader();
 }
 
 function openEventCreatorSetup() {
+  document.getElementById("pageOwnEvent")?.classList.remove("whatGroupPage");
+  document.getElementById("whatEventGroupsArea")?.setAttribute("hidden", "");
   showOwnEventPage();
 
   const page = document.getElementById("pageOwnEvent");
@@ -18907,6 +18915,7 @@ const AUCTION_ROUTE_MAP = Object.freeze({
   "create-event": () => showEventSampleLanding(),
   "event-demo": () => showEventSampleLanding(),
   "creator-load": () => openEventCreatorSetup(),
+  "group-page": () => window.openWhatGroupPage(),
   "my-auction": () => showOwnAuctionPage(),
   best10: () => showOwnBest10Page(),
   groups: () => showCliviaEvents(),
@@ -23590,6 +23599,17 @@ window.addEventListener("DOMContentLoaded",()=>{
 });
 </script>
 <script>
+/* Dedicated WHAT A AUCTION EVENT group page, separate from personal creator-load. */
+window.openWhatGroupPage=function(){
+  const page=document.getElementById('pageOwnEvent');
+  if(!page)return;
+  page.classList.add('whatGroupPage');
+  document.getElementById('whatEventGroupsArea').hidden=false;
+  if(typeof showOwnEventPage==='function')void showOwnEventPage();
+  if(typeof auctionRouteUpdate==='function')auctionRouteUpdate('group-page');
+  if(typeof window.whatEventRefreshGroups==='function')void window.whatEventRefreshGroups();
+  window.scrollTo({top:0,behavior:'instant'});
+};
 /* Quick navigation uses existing auction editor; no changes to saved auction data. */
 (function(){
  function wire(){
@@ -23605,13 +23625,7 @@ window.addEventListener("DOMContentLoaded",()=>{
     document.getElementById('ownEventSetup')?.scrollIntoView({behavior:'smooth',block:'start'});
    }catch(e){console.error('Could not open auction editor',e);alert('Unable to open auctions. Please sign in and try again.');}
   });
-  if(groups) groups.addEventListener('click',function(){
-   const area=document.getElementById('whatEventGroupsArea');
-   if(!area)return;
-   area.hidden=false;
-   if(typeof window.whatEventRefreshGroups==='function')void window.whatEventRefreshGroups();
-   area.scrollIntoView({behavior:'smooth',block:'start'});
-  });
+  if(groups) groups.addEventListener('click',function(){window.openWhatGroupPage();});
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',wire);else wire();
 })();
@@ -23697,7 +23711,7 @@ window.addEventListener("DOMContentLoaded",()=>{
  function wire(){
    $('whatGroupCreate')?.addEventListener('click',()=>void create());
    $('whatGroupJoin')?.addEventListener('click',()=>void join());
-   $('whatGroupBack')?.addEventListener('click',()=>{$('whatEventGroupsArea').hidden=true;$('creatorLandingOverview')?.scrollIntoView({behavior:'smooth'});});
+   $('whatGroupBack')?.addEventListener('click',()=>openEventCreatorSetup());
  }
  window.whatEventRefreshGroups=loadGroups;
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',wire);else wire();
@@ -23706,7 +23720,7 @@ window.addEventListener("DOMContentLoaded",()=>{
 
 <script>
 (function(){
-  const shareLink='https://whatauction.top/?page=create-event';
+  const shareLink='https://whatauction.top/?page=group-page';
   const shareText='Join me at WHAT A AUCTION EVENT: '+shareLink;
   document.getElementById('whatShareWorld')?.addEventListener('click',async function(){
     try {
