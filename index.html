@@ -2962,9 +2962,37 @@ END OF BIDDING AND INVOICING MASTER RECORD
 @media(max-width:850px){#whatEventGroupsArea .whatGroupColumns{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:550px){#whatEventGroupsArea .whatGroupAuctionSlots{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}#whatEventGroupsArea .whatGroupAuctionSlot strong{font-size:12px}#whatEventGroupsArea .whatGroupAuctionSlot small{font-size:10px}#whatEventGroupsArea .whatGroupAuctionSlot button{font-size:11px;padding:9px 3px}}
 </style>
-<style id="whatGroupBuilderStageStyles">#whatGroupBuildWorkspace[hidden],#whatGroupOpenBuilder[hidden]{display:none!important}#whatGroupOpenBuilder{margin:12px 0;background:#fff;color:#111;font-weight:800}</style></head>
+<style id="whatGroupBuilderStageStyles">#whatGroupBuildWorkspace[hidden],#whatGroupOpenBuilder[hidden]{display:none!important}#whatGroupOpenBuilder{margin:12px 0;background:#fff;color:#111;font-weight:800}</style><style id="globalSearchStyles">
+#globalSearchLauncher{position:fixed;right:14px;bottom:18px;z-index:2147483000;width:49px;height:49px;border-radius:50%;border:2px solid #fff;background:#164c83;color:white;box-shadow:0 3px 14px #0008;display:grid;place-items:center;cursor:pointer}#globalSearchLauncher svg{width:25px;height:25px}#globalSearchOverlay[hidden]{display:none!important}#globalSearchOverlay{position:fixed;inset:0;z-index:2147483001;background:#000a;display:flex;align-items:flex-start;justify-content:center;padding:clamp(12px,5vh,55px) 12px;overflow:auto}#globalSearchPanel{width:min(720px,100%);background:white;color:#111;border-radius:12px;padding:18px;box-shadow:0 14px 50px #0009}#globalSearchPanel *{box-sizing:border-box}#globalSearchPanel h2{color:#111;font-size:19px;margin:0}#globalSearchPanel input{width:100%;background:white;color:#111;border:1px solid #888;border-radius:7px;padding:13px;font-size:16px}#globalSearchPanel button{cursor:pointer}#globalSearchResults{max-height:55vh;overflow:auto;margin-top:12px}#globalSearchResults button{display:block;width:100%;text-align:left;background:#f4f7fb;color:#111;border:1px solid #d9e2ef;border-radius:7px;padding:12px;margin:7px 0}#globalSearchResults button strong{display:block;color:#174e86}#globalSearchResults button small{display:block;color:#444;font-size:12px;margin-top:3px;overflow-wrap:anywhere}#globalSearchClose{background:white;color:#111;border:1px solid #aaa;border-radius:6px;padding:7px 12px}#globalSearchPanel .searchHeading{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
+</style></head>
 
 <body id="siteBody">
+<button type="button" id="globalSearchLauncher" aria-label="Search items, auctions and groups" title="Search website"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.7"/><path d="m16 16 5 5"/></svg></button>
+<div id="globalSearchOverlay" hidden role="dialog" aria-modal="true" aria-label="Search website"><div id="globalSearchPanel"><div class="searchHeading"><h2>Search website</h2><button type="button" id="globalSearchClose">Close ✕</button></div><input id="globalSearchInput" type="search" autocomplete="off" placeholder="Search items, auctions, groups, members…" aria-label="Search terms"><div id="globalSearchResults" aria-live="polite"><p>Search publicly displayed items, auctions, groups and members.</p></div><p style="font-size:12px;color:#555">Private member details and account information are not included in public search.</p></div></div>
+<script id="globalSearchLogic">(function(){
+"use strict";
+const launcher=document.getElementById('globalSearchLauncher'), overlay=document.getElementById('globalSearchOverlay'), input=document.getElementById('globalSearchInput'), results=document.getElementById('globalSearchResults');
+if(!launcher||!overlay||!input||!results)return;
+const permittedPages=['pageLive','pageOwnAuction','pageOwnBest10','pageEventSampleLanding','pagePublicEvent'];
+const permittedCards=['.lotCard','.lot-card','.auctionCard','.auction-card','.groupCard','.group-card','.eventLotCard','.event-lot-card','.whatGroupAuctionSlot','.plantCard','.plant-card'];
+const excluded='input,textarea,select,script,style,[type=password],[contenteditable=true]';
+function readable(node){const clone=node.cloneNode(true);clone.querySelectorAll(excluded).forEach(el=>el.remove());return (clone.textContent||'').replace(/\s+/g,' ').trim();}
+function publicSearchEntries(){const entries=[];const seen=new Set();
+ const pages=document.querySelectorAll(permittedPages.map(x=>'#'+x).join(','));
+ pages.forEach(page=>{
+  const cards=page.querySelectorAll(permittedCards.join(','));
+  cards.forEach(card=>{if(card.closest('[hidden],.hidden,[aria-hidden=true]'))return;const t=readable(card).slice(0,380);if(!t||seen.has(t))return;seen.add(t);entries.push({text:t,title:t.slice(0,95),page,element:card});});
+  page.querySelectorAll('h1,h2,h3').forEach(h=>{if(h.closest('[hidden],.hidden,[aria-hidden=true]'))return;const t=readable(h).slice(0,160);if(!t||seen.has(t))return;seen.add(t);entries.push({text:t,title:t,page,element:h});});
+ });
+ return entries;
+}
+function run(){const q=input.value.trim().toLocaleLowerCase();results.replaceChildren();if(q.length<2){const p=document.createElement('p');p.textContent='Type at least 2 letters to search.';results.append(p);return;}
+ const found=publicSearchEntries().filter(e=>e.text.toLocaleLowerCase().includes(q)).slice(0,60);
+ if(!found.length){const p=document.createElement('p');p.textContent='No matching publicly displayed results. Member searches only include names that are publicly displayed.';results.append(p);return;}
+ found.forEach(e=>{const b=document.createElement('button');b.type='button';const title=document.createElement('strong'),sub=document.createElement('small');title.textContent=e.title;sub.textContent=e.text.slice(0,220);b.append(title,sub);b.addEventListener('click',()=>{overlay.hidden=true;const page=e.page;const pageKey=page.id.replace(/^page/,'');if(typeof window.showPage==='function' && pageKey==='Live'){window.showPage('live');}else{document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));page.classList.remove('hidden');}requestAnimationFrame(()=>e.element.scrollIntoView({behavior:'smooth',block:'center'}));});results.append(b);});
+}
+launcher.addEventListener('click',()=>{overlay.hidden=false;input.value='';run();input.focus();});document.getElementById('globalSearchClose').addEventListener('click',()=>overlay.hidden=true);overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.hidden=true;});document.addEventListener('keydown',e=>{if(e.key==='Escape')overlay.hidden=true;});input.addEventListener('input',run);
+})();</script>
       
 <script>
 /* RETURN TO TOP WHEN PAGE REFRESHES */
@@ -17831,6 +17859,7 @@ function testOwnerBid(lotId) {
   );
 }
 
+const cliviaBidRequestsInFlight = new Set();
 async function placeBid(lotId){
   const sharedDisplayLot=(state.lots||[]).find(l=>String(l.id)===String(lotId));
   if(sharedDisplayLot?.supabaseDisplayOnly){
@@ -18049,60 +18078,51 @@ if(amount<required){
   alert("Minimum valid bid is "+currencySymbol+required);
   return;
 }
-  // TEMPORARY SAFETY LOCK
-  // Keep bidding disabled until server-side
-  // capacity, currency and ownership checks are complete.
-  alert("Real bidding is not yet active. Your bid has NOT been submitted or charged. The server safety lock remains active.");
-  return;
-  lot.bids=lot.bids||[];
-  lot.bids.push({
-    bidderId:bidder.id,
-    bidderName:bidder.name,
-    amount,
-    time:new Date().toISOString()
-  });
-lot.lastBidTime=new Date().toISOString();
-  const closeTime=new Date(auction.auctionDate+"T"+auction.auctionCloseTime+":00+02:00");
-
-const existingExtension = lot.extendedCloseUntil
-  ? new Date(lot.extendedCloseUntil).getTime()
-  : 0;
-
-if(
-  Date.now() >= closeTime.getTime() - 60000 ||
-  existingExtension > Date.now()
-){
-  const newExtension = Date.now() + 60000;
-
-  lot.extendedCloseUntil = new Date(
-    Math.max(existingExtension, newExtension)
-  ).toISOString();
-}
-
- 
-  // Record high-bid warning after accepting the bid
-  if(adminBidAlert && !bidder.isOwnerTest){
-    state.highBidWarnings = state.highBidWarnings || [];
-
-    const existingWarning = state.highBidWarnings.find(w =>
-      w.auctionId === state.selectedAuctionId &&
-      w.bidderId === bidder.id
-    );
-
-    if(!existingWarning){
-      state.highBidWarnings.push({
-        auctionId: state.selectedAuctionId,
-        bidderId: bidder.id,
-        bidderName: bidder.name,
-        amount: totalExposureAfterBid,
-        createdAt: new Date().toISOString(),
-        status: "NEW"
-      });
-    }
+  // Real bids must be written atomically by the verified Supabase transaction.
+  // The database retains its independent safety lock until security tests pass.
+  if(auction?.currency !== "ZAR"){
+    alert("This auction currency is not supported by the Clivia ZAR bidding transaction. No bid was placed.");
+    return;
   }
-
-  save();
-  renderLots();
+  const serverLotId=Number(lot.id);
+  if(!Number.isSafeInteger(serverLotId) || serverLotId<=0){
+    alert("This plant is not linked to a valid server lot. No bid was placed.");
+    return;
+  }
+  // Guard against double taps and concurrent submissions of the same lot.
+  const bidRequestKey=String(serverLotId);
+  if(cliviaBidRequestsInFlight.has(bidRequestKey)){
+    alert("A bid for this plant is already being checked. Please wait.");
+    return;
+  }
+  cliviaBidRequestsInFlight.add(bidRequestKey);
+  try{
+    const {data:bidId,error:bidError}=await cliviaSupabase.rpc(
+      "place_clivia_bid_transaction",
+      {p_auth_user_id:user.id,p_lot_id:serverLotId,p_amount:amount}
+    );
+    if(bidError){
+      const locked=/Bidding activation pending final security checks/i.test(bidError.message||"");
+      alert(locked
+        ? "Real bidding is not active yet. The secure server is still locked. No bid was placed."
+        : "Bid not accepted by the server: "+(bidError.message||"Unknown error")+". No bid was recorded by this page.");
+      return;
+    }
+    if(bidId==null){
+      alert("The server did not confirm a bid ID. Please refresh and check before trying again.");
+      return;
+    }
+    alert("Your bid was accepted by the server. Bid reference: "+String(bidId));
+    if(typeof loadCliviaLotsFromSupabase==="function"){
+      try{await loadCliviaLotsFromSupabase();}catch(refreshError){console.warn("Bid accepted but refresh failed",refreshError);}
+    }
+    renderLots();
+  }catch(bidError){
+    console.error("Secure bidding request failed",bidError);
+    alert("Unable to confirm the bid. Refresh and check your bids before trying again.");
+  }finally{
+    cliviaBidRequestsInFlight.delete(bidRequestKey);
+  }
 }
    function selectSellerAuction(auctionId){
   const auction=(state.auctions||[]).find(
