@@ -2968,30 +2968,48 @@ END OF BIDDING AND INVOICING MASTER RECORD
 
 <body id="siteBody">
 <button type="button" id="globalSearchLauncher" aria-label="Search items, auctions and groups" title="Search website"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.7"/><path d="m16 16 5 5"/></svg></button>
-<div id="globalSearchOverlay" hidden role="dialog" aria-modal="true" aria-label="Search website"><div id="globalSearchPanel"><div class="searchHeading"><h2>Search website</h2><button type="button" id="globalSearchClose">Close ✕</button></div><input id="globalSearchInput" type="search" autocomplete="off" placeholder="Search items, auctions, groups, members…" aria-label="Search terms"><div id="globalSearchResults" aria-live="polite"><p>Search publicly displayed items, auctions, groups and members.</p></div><p style="font-size:12px;color:#555">Private member details and account information are not included in public search.</p></div></div>
+<div id="globalSearchOverlay" hidden role="dialog" aria-modal="true" aria-label="Search website"><div id="globalSearchPanel"><div class="searchHeading"><h2>Search website</h2><button type="button" id="globalSearchClose">Close ✕</button></div><input id="globalSearchInput" type="search" autocomplete="off" placeholder="Search public auction items…" aria-label="Search terms"><div id="globalSearchResults" aria-live="polite"><p>Search public auction items currently loaded on this device. Group and member directories need secure server search.</p></div><p style="font-size:12px;color:#555">Private member details and account information are not included in public search.</p></div></div>
 <script id="globalSearchLogic">(function(){
 "use strict";
 const launcher=document.getElementById('globalSearchLauncher'), overlay=document.getElementById('globalSearchOverlay'), input=document.getElementById('globalSearchInput'), results=document.getElementById('globalSearchResults');
 if(!launcher||!overlay||!input||!results)return;
-const permittedPages=['pageLive','pageOwnAuction','pageOwnBest10','pageEventSampleLanding','pagePublicEvent'];
-const permittedCards=['.lotCard','.lot-card','.auctionCard','.auction-card','.groupCard','.group-card','.eventLotCard','.event-lot-card','.whatGroupAuctionSlot','.plantCard','.plant-card'];
-const excluded='input,textarea,select,script,style,[type=password],[contenteditable=true]';
+// Search only public auction content already rendered on this device.
+// Private group membership, account and admin records must never be indexed.
+const permittedPages=['pageLive','pagePublicEvent','pageEventSampleLanding'];
+const permittedCards=['.lotCard','.lot-card','.auctionCard','.auction-card','.eventLotCard','.event-lot-card','.plantCard','.plant-card','.eventSampleCard'];
+const excluded='input,textarea,select,script,style,[type=password],[contenteditable=true],button,a';
 function readable(node){const clone=node.cloneNode(true);clone.querySelectorAll(excluded).forEach(el=>el.remove());return (clone.textContent||'').replace(/\s+/g,' ').trim();}
 function publicSearchEntries(){const entries=[];const seen=new Set();
- const pages=document.querySelectorAll(permittedPages.map(x=>'#'+x).join(','));
- pages.forEach(page=>{
-  const cards=page.querySelectorAll(permittedCards.join(','));
-  cards.forEach(card=>{if(card.closest('[hidden],.hidden,[aria-hidden=true]'))return;const t=readable(card).slice(0,380);if(!t||seen.has(t))return;seen.add(t);entries.push({text:t,title:t.slice(0,95),page,element:card});});
-  page.querySelectorAll('h1,h2,h3').forEach(h=>{if(h.closest('[hidden],.hidden,[aria-hidden=true]'))return;const t=readable(h).slice(0,160);if(!t||seen.has(t))return;seen.add(t);entries.push({text:t,title:t,page,element:h});});
- });
- return entries;
+ document.querySelectorAll(permittedPages.map(x=>'#'+x).join(',')).forEach(page=>{
+  page.querySelectorAll(permittedCards.join(',')).forEach(card=>{
+   if(card.closest('[hidden],[aria-hidden=true]')||card.classList.contains('hidden'))return;
+   const t=readable(card).slice(0,380);if(!t||seen.has(t))return;
+   seen.add(t);entries.push({text:t,title:t.slice(0,95),page,element:card});
+  });
+  page.querySelectorAll('h1,h2,h3').forEach(h=>{
+   if(h.closest('[hidden],[aria-hidden=true]')||h.classList.contains('hidden'))return;
+   const t=readable(h).slice(0,160);if(!t||seen.has(t))return;
+   seen.add(t);entries.push({text:t,title:t,page,element:h});
+  });
+ });return entries;
 }
-function run(){const q=input.value.trim().toLocaleLowerCase();results.replaceChildren();if(q.length<2){const p=document.createElement('p');p.textContent='Type at least 2 letters to search.';results.append(p);return;}
+function navigateResult(entry){
+ const id=entry.page.id;
+ if(id==='pageLive' && typeof window.showPage==='function')window.showPage('live');
+ else if(id==='pagePublicEvent' && typeof window.showPage==='function')window.showPage('publicEvent');
+ else if(id==='pageEventSampleLanding' && typeof window.showEventSampleLanding==='function')window.showEventSampleLanding();
+ else return false;
+ overlay.hidden=true;
+ requestAnimationFrame(()=>{if(entry.element.isConnected)entry.element.scrollIntoView({behavior:'smooth',block:'center'});});
+ return true;
+}
+function run(){const q=input.value.trim().toLocaleLowerCase();results.replaceChildren();
+ if(q.length<2){const p=document.createElement('p');p.textContent='Type at least 2 letters to search.';results.append(p);return;}
  const found=publicSearchEntries().filter(e=>e.text.toLocaleLowerCase().includes(q)).slice(0,60);
- if(!found.length){const p=document.createElement('p');p.textContent='No matching publicly displayed results. Member searches only include names that are publicly displayed.';results.append(p);return;}
- found.forEach(e=>{const b=document.createElement('button');b.type='button';const title=document.createElement('strong'),sub=document.createElement('small');title.textContent=e.title;sub.textContent=e.text.slice(0,220);b.append(title,sub);b.addEventListener('click',()=>{overlay.hidden=true;const page=e.page;const pageKey=page.id.replace(/^page/,'');if(typeof window.showPage==='function' && pageKey==='Live'){window.showPage('live');}else{document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));page.classList.remove('hidden');}requestAnimationFrame(()=>e.element.scrollIntoView({behavior:'smooth',block:'center'}));});results.append(b);});
+ if(!found.length){const p=document.createElement('p');p.textContent='No matching public items currently loaded on this device.';results.append(p);return;}
+ found.forEach(e=>{const b=document.createElement('button');b.type='button';const title=document.createElement('strong'),sub=document.createElement('small');title.textContent=e.title;sub.textContent=e.text.slice(0,220);b.append(title,sub);b.addEventListener('click',()=>navigateResult(e));results.append(b);});
 }
-launcher.addEventListener('click',()=>{overlay.hidden=false;input.value='';run();input.focus();});document.getElementById('globalSearchClose').addEventListener('click',()=>overlay.hidden=true);overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.hidden=true;});document.addEventListener('keydown',e=>{if(e.key==='Escape')overlay.hidden=true;});input.addEventListener('input',run);
+launcher.addEventListener('click',()=>{overlay.hidden=false;input.value='';run();input.focus();});document.getElementById('globalSearchClose').addEventListener('click',()=>overlay.hidden=true);overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.hidden=true;});document.addEventListener('keydown',e=>{if(e.key==='Escape')overlay.hidden=true;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();launcher.click();}});input.addEventListener('input',run);
 })();</script>
       
 <script>
@@ -3476,6 +3494,14 @@ function showEventSampleLanding(){
       <strong>MY AUCTIONS</strong>
       <button type="button" class="whatEventQuickButton" id="whatEventOpenMyAuctions">OPEN / EDIT AUCTION</button>
     </section>
+    <div class="whatEventShareCluster" aria-label="Invite friends and partners">
+      <div class="whatEventShareIcons">
+        <a class="whatEventShareCircle whatShareWhatsApp" href="https://api.whatsapp.com/send?text=Join%20me%20at%20WHAT%20A%20AUCTION%20EVENT%3A%20https%3A%2F%2Fwhatauction.top%2F%3Fpage%3Dcreator-load" target="_blank" rel="noopener noreferrer" aria-label="Share on WhatsApp" title="Share on WhatsApp"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v15/icons/whatsapp.svg" alt="" width="18" height="18" style="filter:brightness(0) invert(1)"></a>
+        <a class="whatEventShareCircle whatShareFacebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwhatauction.top%2F%3Fpage%3Dcreator-load" target="_blank" rel="noopener noreferrer" aria-label="Share on Facebook" title="Share on Facebook"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v15/icons/facebook.svg" alt="" width="18" height="18" style="filter:brightness(0) invert(1)"></a>
+        <button class="whatEventShareCircle whatShareWorld" id="whatCreatorShareWorld" type="button" title="Share or copy creator page link" aria-label="Share to other apps or copy link"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10z"/></svg></button>
+      </div>
+      <span class="whatEventShareCaption">INVITE FRIENDS AND PARTNERS</span>
+    </div>
 
     <section class="whatEventQuickPanel">
       <strong>MY GROUP AUCTIONS</strong>
@@ -23962,6 +23988,18 @@ window.openWhatGroupPage=function(){
    alert(action==='lots'?'Lot loading is not connected yet.':'Auction dates can be set when creating or editing a group auction draft.');
   }
  });
+})();
+</script>
+<script id="whatCreatorShareWorldHandler">
+(function(){
+  const link='https://whatauction.top/?page=creator-load';
+  document.getElementById('whatCreatorShareWorld')?.addEventListener('click',async function(){
+    try {
+      if(navigator.share){await navigator.share({title:'WHAT A AUCTION EVENT',text:'Invite friends and partners',url:link});return;}
+      if(navigator.clipboard && window.isSecureContext){await navigator.clipboard.writeText(link);alert('Invitation link copied.');return;}
+      window.prompt('Copy invitation link:',link);
+    } catch(err) {if(err && err.name==='AbortError')return;window.prompt('Copy invitation link:',link);}
+  });
 })();
 </script>
 </body>
