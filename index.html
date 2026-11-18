@@ -17900,6 +17900,8 @@ async function placeBid(lotId){
     alert("A bid for this plant is already being checked. Please wait.");
     return;
   }
+  cliviaBidRequestsInFlight.add(String(lotId));
+  try {
   const sharedDisplayLot=(state.lots||[]).find(l=>String(l.id)===String(lotId));
   if(sharedDisplayLot?.supabaseDisplayOnly){
     alert("This lot is visible, but bidding requires the verified server bidding connection. No bid has been placed.");
@@ -17921,7 +17923,7 @@ async function placeBid(lotId){
     alert("The auction is closed.");
     return;
   }
-  const lot=(state.lots||[]).find(l=>l.id===lotId);
+  const lot=(state.lots||[]).find(l=>String(l.id)===String(lotId));
 if(auction && auction.auctionDate && auction.auctionTime){
   const normalStart=new Date(auction.auctionDate+"T"+auction.auctionTime+":00+02:00").getTime();
 
@@ -18073,7 +18075,7 @@ const maxBidCapacity =
     ? bidder.approvedBidCapacity
     : 2000;
 const currentWinningExposure=(state.lots||[]).reduce((total,otherLot)=>{
-  if(otherLot.id===lotId || otherLot.auctionId!==state.selectedAuctionId) return total;
+  if(String(otherLot.id)===String(lotId) || String(otherLot.auctionId)!==String(state.selectedAuctionId)) return total;
   const highest=(otherLot.bids||[]).slice().sort((a,b)=>Number(b.amount)-Number(a.amount))[0];
   return highest && highest.bidderId===bidder.id ? total+Number(highest.amount||0) : total;
 },0);
@@ -18145,7 +18147,6 @@ if(amount<required){
     alert("A bid for this plant is already being checked. Please wait.");
     return;
   }
-  cliviaBidRequestsInFlight.add(bidRequestKey);
   try{
     const {data:bidId,error:bidError}=await cliviaSupabase.rpc(
       "place_clivia_bid_transaction",
@@ -18170,8 +18171,9 @@ if(amount<required){
   }catch(bidError){
     console.error("Secure bidding request failed",bidError);
     alert("Unable to confirm the bid. Refresh and check your bids before trying again.");
-  }finally{
-    cliviaBidRequestsInFlight.delete(bidRequestKey);
+  }
+  } finally {
+    cliviaBidRequestsInFlight.delete(String(lotId));
   }
 }
    function selectSellerAuction(auctionId){
