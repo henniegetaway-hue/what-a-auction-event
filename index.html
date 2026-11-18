@@ -2941,7 +2941,27 @@ END OF BIDDING AND INVOICING MASTER RECORD
 #bidderLoginBox:not(.cliviaAccountPopupOpen) #cliviaLoginCloseBtn {display:none !important}
 #bidderLoginBox.cliviaAccountPopupOpen #cliviaLoginCloseBtn {display:block !important}
 </style>
-</head>
+<style id="whatGroupRightDashboardStyles">
+#whatEventGroupsArea .whatGroupColumns{display:grid;grid-template-columns:minmax(0,1fr) minmax(330px,470px);gap:12px;align-items:start}
+#whatEventGroupsArea .whatGroupLeftColumn,#whatEventGroupsArea .whatGroupRightColumn{min-width:0}
+#whatEventGroupsArea .whatGroupCreatorDash{background:#101010;border:1px solid #ffd700;border-radius:10px;padding:14px;color:#fff}
+#whatEventGroupsArea .whatGroupCreatorDash h3,#whatEventGroupsArea .whatGroupFourAuctions h3{text-align:center;color:#d4ff70;font-size:16px;margin:4px 0 9px}
+#whatEventGroupsArea .whatGroupCreatorDash p{text-align:center;font-size:11px;margin:0 0 15px}
+#whatEventGroupsArea .whatGroupCreatorActions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 7px}
+#whatEventGroupsArea .whatGroupCreatorActions button{display:flex;align-items:center;gap:7px;min-width:0;padding:5px 0;border:0;background:transparent;color:#fff;font-size:10px;font-weight:700;text-align:left;cursor:pointer}
+#whatEventGroupsArea .whatGroupCreatorActions button span{display:flex;align-items:center;justify-content:center;flex:0 0 32px;width:32px;height:32px;background:#d4ff70;border:2px solid #fff;border-radius:50%;font-size:17px}
+#whatEventGroupsArea .whatGroupCreatorDash>small{display:block;text-align:center;color:#d4ff70;font-size:10px;margin-top:15px}
+#whatEventGroupsArea .whatGroupFourAuctions{background:#07180b;border:1px solid #9acd32;border-radius:10px;margin-top:14px;padding:10px}
+#whatEventGroupsArea .whatGroupAuctionSlots{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+#whatEventGroupsArea .whatGroupAuctionSlot{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0;border:1px solid #ffd700;border-radius:7px;padding:5px 2px;background:#101010;text-align:center;color:white}
+#whatEventGroupsArea .whatGroupAuctionSlot strong{font-size:10px}#whatEventGroupsArea .whatGroupAuctionSlot small{font-size:8px}
+#whatEventGroupsArea .whatGroupSlotGrid{width:100%;height:145px;background-image:linear-gradient(#777 1px,transparent 1px),linear-gradient(90deg,#777 1px,transparent 1px);background-size:12px 12px;opacity:.5}
+#whatEventGroupsArea .whatGroupAuctionSlot button{width:100%;background:#ffd700;color:#111;border:0;border-radius:4px;padding:6px 0;font-size:9px;font-weight:bold}
+#whatEventGroupsArea .whatGroupAuctionSlot button:disabled{opacity:.65;cursor:not-allowed}
+#whatEventGroupsArea .whatGroupSlotNotice{font-size:10px;text-align:center;color:#ddd}
+@media(max-width:850px){#whatEventGroupsArea .whatGroupColumns{grid-template-columns:minmax(0,1fr)}}
+</style>
+<style id="whatGroupBuilderStageStyles">#whatGroupBuildWorkspace[hidden],#whatGroupOpenBuilder[hidden]{display:none!important}#whatGroupOpenBuilder{margin:12px 0;background:#fff;color:#111;font-weight:800}</style></head>
 
 <body id="siteBody">
       
@@ -3381,6 +3401,7 @@ function showEventSampleLanding(){
       <span class="whatEventShareCaption">INVITE FRIENDS AND PARTNERS</span>
     </div><button type="button" class="whatGroupSmallButton" id="whatGroupBack">BACK TO MY AUCTIONS</button></div>
   <p class="small">Group Presidents manage members, auction dates, private or public auctions, international bidding, group branding and auction fees.</p>
+  <div class="whatGroupColumns"><div class="whatGroupLeftColumn">
   <div class="whatGroupBox" id="whatGroupRegistration"><h4>REGISTER YOUR AUCTION GROUP</h4><p class="small">The registered President controls the group. The registered group name cannot be changed.</p>
   <div class="whatGroupFormGrid"><label>Registered Group Name *<input id="whatGroupName" maxlength="100" placeholder="Registered group name" required></label><label>Group Club Logo *<input id="whatGroupLogo" type="file" accept="image/png,image/jpeg,image/webp" required><small>Upload your own logo. No sample pictures.</small></label>
   <label>Group President<input id="whatGroupPresident" readonly placeholder="Sign in to your verified account"></label><label>Auction Access *<select id="whatGroupAccess"><option value="PRIVATE">PRIVATE — Approved Members Only</option><option value="PUBLIC">PUBLIC — Registered Bidders</option></select></label>
@@ -3391,8 +3412,33 @@ function showEventSampleLanding(){
   <div id="whatGroupStatus" role="status" aria-live="polite" class="small"></div>
   <div class="whatGroupBox"><h4>JOIN AN EXISTING GROUP</h4><label>Group invitation code<input id="whatGroupJoinCode" maxlength="36" placeholder="Code from the President"></label><button type="button" id="whatGroupJoin" class="whatGroupSmallButton">REQUEST MEMBERSHIP</button></div>
   <div class="whatGroupBox"><h4>MY REGISTERED GROUPS</h4><div id="whatGroupList">Sign in to view your groups.</div></div>
-  <section id="whatGroupDetails" hidden class="whatGroupBox"><h3 id="whatGroupDetailsTitle"></h3><h4>GROUP PRESIDENT DASHBOARD</h4><div id="whatGroupDashboard" class="whatGroupDashboard"></div><div id="whatGroupDetailsContent"></div></section>
+  <section id="whatGroupDetails" hidden class="whatGroupBox"><h3 id="whatGroupDetailsTitle"></h3><button type="button" id="whatGroupOpenBuilder" class="whatGroupSmallButton" hidden>CONTINUE TO BUILD GROUP AUCTIONS</button><h4>GROUP PRESIDENT DASHBOARD</h4><div id="whatGroupDashboard" class="whatGroupDashboard"></div><div id="whatGroupDetailsContent"></div></section>
   <div class="whatGroupBox"><h4>GROUP AUCTION FEE: R200 PER 30 DAYS</h4><p>R200 is payable when the Group Auction launches and covers 30 days from its launch date. If the auction continues beyond the paid period, another R200 is payable for the next 30 days.</p><p class="small">This is NOT a monthly subscription. No separate activation fee applies. One group can hold multiple auctions; each additional group requires its own payment arrangement.</p></div>
+  </div><aside class="whatGroupRightColumn" id="whatGroupBuildWorkspace" hidden aria-label="Group auction creator dashboard">
+    <div class="whatGroupCreatorDash">
+      <h3>👑 AUCTION CREATOR DASHBOARD</h3>
+      <p>Manage Your WHAT A AUCTION EVENT Group Auctions</p>
+      <div class="whatGroupCreatorActions">
+        <button type="button" data-group-action="groups"><span>📋</span>MY GROUP AUCTIONS</button>
+        <button type="button" data-group-action="new"><span>➕</span>NEW AUCTION</button>
+        <button type="button" data-group-action="edit"><span>✏️</span>EDIT AUCTION</button>
+        <button type="button" data-group-action="lots"><span>📷</span>LOAD LOTS</button>
+        <button type="button" data-group-action="dates"><span>📅</span>AUCTION DATES</button>
+        <button type="button" data-group-action="payments"><span>💳</span>PAYMENTS</button>
+      </div>
+      <small>Only auctions belonging to your registered group may be managed.</small>
+    </div>
+    <div class="whatGroupFourAuctions">
+      <h3>MY 4 GROUP AUCTIONS</h3>
+      <div class="whatGroupAuctionSlots">
+        <div class="whatGroupAuctionSlot"><strong>AUCTION 1</strong><small>NOT CREATED</small><div class="whatGroupSlotGrid" aria-hidden="true"></div><small>Date: To be set</small><button type="button" disabled>LOAD LOTS</button></div>
+        <div class="whatGroupAuctionSlot"><strong>AUCTION 2</strong><small>NOT CREATED</small><div class="whatGroupSlotGrid" aria-hidden="true"></div><small>Date: To be set</small><button type="button" disabled>LOAD LOTS</button></div>
+        <div class="whatGroupAuctionSlot"><strong>AUCTION 3</strong><small>NOT CREATED</small><div class="whatGroupSlotGrid" aria-hidden="true"></div><small>Date: To be set</small><button type="button" disabled>LOAD LOTS</button></div>
+        <div class="whatGroupAuctionSlot"><strong>AUCTION 4</strong><small>NOT CREATED</small><div class="whatGroupSlotGrid" aria-hidden="true"></div><small>Date: To be set</small><button type="button" disabled>LOAD LOTS</button></div>
+      </div>
+      <p class="whatGroupSlotNotice">Register and open a group to create its four auction drafts. Lot loading and live bidding are not enabled yet.</p>
+    </div>
+  </aside></div>
   </section>
 <div id="creatorLandingOverview" class="panel" aria-live="polite" style="margin:0 0 14px;">
   <h2 style="margin-bottom:8px">CHOOSE YOUR AUCTION</h2>
@@ -19313,26 +19359,28 @@ async function renderCreatorLandingOverview(){
   if(error){target.textContent="Could not load your auctions: "+error.message;return;}
   const auctions=(records||[]).filter(r=>{
     const e=r.event_data||{};
-    return String(e.eventStatus||"").toUpperCase()!=="TEST ONLY" && e.testOnly!==true;
-  }).sort((a,b)=>{
-    const dateA=String(a.event_data?.auctionDate||"");
-    const dateB=String(b.event_data?.auctionDate||"");
-    return Number(Boolean(dateB))-Number(Boolean(dateA)) ||
-      dateB.localeCompare(dateA) || Number(b.id)-Number(a.id);
+    return String(e.eventStatus||'').toUpperCase()!=='TEST ONLY' && e.testOnly!==true;
   });
+  const isClosed=e=>['CLOSED','COMPLETED','ENDED','CANCELLED'].includes(String(e.eventStatus||'').toUpperCase());
+  const isPublic=e=>['SCHEDULED','OPEN','LIVE','ACTIVE','PUBLISHED'].includes(String(e.eventStatus||'').toUpperCase());
+  const timeOf=e=>{const v=Date.parse(String(e.auctionDate||'')+'T'+String(e.startTime||e.auctionTime||'00:00'));return Number.isFinite(v)?v:Number.MAX_SAFE_INTEGER;};
+  const eligible=auctions.filter(r=>isPublic(r.event_data||{})&&!isClosed(r.event_data||{}))
+    .sort((a,b)=>timeOf(a.event_data||{})-timeOf(b.event_data||{}));
+  const landing=eligible[0]||null;
+  const ordered=[...(landing?[landing]:[]),...auctions.filter(r=>r!==landing).sort((a,b)=>timeOf(a.event_data||{})-timeOf(b.event_data||{}))];
   target.replaceChildren();
   if(!auctions.length){target.textContent="No auctions created yet. Use Create Your Own Event to start.";return;}
   const heading=document.createElement("p");
-  heading.textContent="Your latest scheduled auction is shown first. Draft auctions are private until activated.";
+  heading.textContent=landing?'NEXT UPCOMING AUCTION — '+(landing.event_data?.name||'Unnamed auction')+'. Draft auctions remain private.':'No scheduled public auction yet. Draft auctions remain private.';
   target.appendChild(heading);
   const grid=document.createElement("div");
   grid.className="creatorLandingCards";
-  auctions.forEach((record,index)=>{
+  ordered.forEach((record,index)=>{
     const e=record.event_data||{};
     const card=document.createElement("article");
     card.className="creatorLandingCard";
     const title=document.createElement("h3");
-    title.textContent=(index===0?"LATEST AUCTION — ":"")+(e.name||"Unnamed auction");
+    title.textContent=(record===landing?"CURRENT LANDING AUCTION — ":"")+(e.name||"Unnamed auction");
     const details=document.createElement("p");
     details.textContent=(e.auctionDate||"Date to be announced")+" • "+
       (e.startTime||"Time to be announced")+" • "+(e.eventStatus||"DRAFT");
@@ -23740,10 +23788,10 @@ window.openWhatGroupPage=function(){
 (function(){
  const $=id=>document.getElementById(id), db=()=>window.auctionSupabase;
  const say=t=>{$('whatGroupStatus').textContent=t;};
- let user=null;
+ let user=null,activeGroup=null;
  const button=(label,fn)=>{const b=document.createElement('button');b.type='button';b.className='whatGroupSmallButton';b.textContent=label;b.addEventListener('click',fn);return b;};
  async function signedIn(){const {data,error}=await db().auth.getUser();user=error?null:data?.user;if(!user){say('Sign in to WHAT A AUCTION EVENT first.');return null;}$('whatGroupPresident').value=user.email||'Verified signed-in member';return user;}
- async function loadGroups(){const list=$('whatGroupList');list.textContent='Loading groups…';$('whatGroupDetails').hidden=true;if(!await signedIn()){list.textContent='Sign in to view groups.';return;}
+ async function loadGroups(){activeGroup=null;$('whatGroupBuildWorkspace').hidden=true;const list=$('whatGroupList');list.textContent='Loading groups…';$('whatGroupDetails').hidden=true;if(!await signedIn()){list.textContent='Sign in to view groups.';return;}
   const {data:owned,error:e}=await db().from('event_groups').select('id,name,president_id,invite_code').eq('president_id',user.id);
   if(e){list.textContent='Unable to load groups: '+e.message;return;}
   const {data:joined,error:je}=await db().from('event_group_members').select('group_id,status,event_groups(id,name,president_id)').eq('user_id',user.id);
@@ -23756,7 +23804,15 @@ window.openWhatGroupPage=function(){
  function panel(host,title,description){const x=document.createElement('section');x.className='whatGroupDashboardTile';const h=document.createElement('strong');h.textContent=title;x.append(h);if(description){const p=document.createElement('p');p.textContent=description;x.append(p);}host.append(x);return x;}
  async function showGroup(id){if(!await signedIn())return;
   const {data:g,error:e}=await db().from('event_groups').select('*').eq('id',id).single();if(e||!g){say('Unable to open group.');return;}
-  const president=g.president_id===user.id,area=$('whatGroupDetails'),dash=$('whatGroupDashboard'),content=$('whatGroupDetailsContent');area.hidden=false;$('whatGroupDetailsTitle').textContent=g.name;dash.replaceChildren();content.replaceChildren();
+  const president=g.president_id===user.id;activeGroup=president?g:null;$('whatGroupBuildWorkspace').hidden=true;$('whatGroupOpenBuilder').hidden=!president;const area=$('whatGroupDetails'),dash=$('whatGroupDashboard'),content=$('whatGroupDetailsContent');area.hidden=false;$('whatGroupDetailsTitle').textContent=g.name;dash.replaceChildren();content.replaceChildren();
+  const landingPanel=document.createElement('section');landingPanel.className='whatGroupDashboardTile';
+  const landingHeading=document.createElement('h4');landingHeading.textContent='GROUP LANDING PAGE — NEXT UPCOMING AUCTION';landingPanel.append(landingHeading);
+  const landingInfo=document.createElement('p');landingInfo.textContent='Checking upcoming auctions…';landingPanel.append(landingInfo);
+  content.append(landingPanel);
+  const {data:nextAuction,error:nextError}=await db().rpc('event_group_next_auction',{p_group_id:id});
+  if(nextError)landingInfo.textContent='Unable to load upcoming auction: '+nextError.message;
+  else if(nextAuction?.length){const next=nextAuction[0];landingInfo.textContent=next.title+' — '+(next.auction_date?new Date(next.auction_date).toLocaleString():'Date to be announced')+' — '+next.status;}
+  else landingInfo.textContent='No upcoming scheduled group auction yet. Register a group auction and schedule it to display here.';
   if(president){
    const invitations=panel(dash,'👥 MEMBERS & INVITATIONS','Invite code: '+g.invite_code);
    const {data:members,error:me}=await db().from('event_group_members').select('user_id,status,can_load_lots').eq('group_id',id);
@@ -23785,10 +23841,66 @@ window.openWhatGroupPage=function(){
   const {error:uploadError}=await db().storage.from('event-group-logos').upload(path,file,{upsert:false,contentType:file.type});
   if(uploadError){say('Group created but logo upload failed: '+uploadError.message+' — contact admin before launching.');await loadGroups();return;}
   const {error:logoError}=await db().from('event_groups').update({logo_path:path}).eq('id',g.id);
-  if(logoError)say('Group created but logo confirmation failed: '+logoError.message);else say('Group registered. President dashboard is ready.');await loadGroups();await showGroup(g.id);
+  if(logoError)say('Group created but logo confirmation failed: '+logoError.message);else say('Group registered. President dashboard is ready.');await loadGroups();await showGroup(g.id);if(!logoError)say('Group registered. Click CONTINUE TO BUILD GROUP AUCTIONS to open the next stage.');
  }
  async function join(){if(!await signedIn())return;const code=$('whatGroupJoinCode').value.trim();if(!/^[a-f0-9-]{36}$/i.test(code))return say('Enter the invitation code from the President.');const {error}=await db().rpc('event_group_request_join',{code});if(error)say(error.message);else{say('Membership request sent.');await loadGroups();}}
- function wire(){$('whatGroupCreate')?.addEventListener('click',create);$('whatGroupJoin')?.addEventListener('click',join);$('whatGroupBack')?.addEventListener('click',()=>openEventCreatorSetup());}
+ async function openBuilder(){
+  if(!activeGroup || !await signedIn() || activeGroup.president_id!==user.id){say('Open your registered group as President first.');return;}
+  $('whatGroupBuildWorkspace').hidden=false;
+  await renderAuctionSlots();
+  $('whatGroupBuildWorkspace').scrollIntoView({behavior:'smooth',block:'start'});
+ }
+ async function renderAuctionSlots(){
+  if(!activeGroup)return;
+  const {data,error}=await db().from('event_group_auctions').select('id,auction_number,title,auction_date,status').eq('group_id',activeGroup.id).order('auction_number');
+  if(error){say('Cannot load group auctions: '+error.message);return;}
+  const slots=document.querySelectorAll('#whatGroupBuildWorkspace .whatGroupAuctionSlot');
+  for(let i=0;i<slots.length;i++){
+   const slot=slots[i],item=(data||[]).find(x=>x.auction_number===i+1);
+   const title=slot.querySelector('strong'),subtitle=slot.querySelector('small'),btn=slot.querySelector('button');
+   title.textContent='AUCTION '+(i+1);
+   subtitle.textContent=item?item.title:'EMPTY SPACE';
+   const dateText=slot.querySelectorAll('small')[1];
+   if(dateText)dateText.textContent=item?.auction_date?'Date: '+new Date(item.auction_date).toLocaleString():'Date: To be set';
+   btn.disabled=item?.status==='CLOSED';btn.textContent=item?.status==='CLOSED'?'AUCTION CLOSED':item?'EDIT AUCTION':'CREATE AUCTION';
+   btn.onclick=()=>editAuction(i+1,item);
+   slot.querySelectorAll('.whatGroupStatusAction').forEach(el=>el.remove());
+   if(item){
+    const state=document.createElement('small');state.className='whatGroupStatusAction';state.textContent='Status: '+item.status;slot.append(state);
+    if(item.status==='DRAFT'&&item.auction_date){const schedule=button('SCHEDULE AUCTION',()=>changeAuctionStatus(item,'SCHEDULED'));schedule.classList.add('whatGroupStatusAction');slot.append(schedule);}
+    if(['SCHEDULED','OPEN'].includes(item.status)){const close=button('MARK AUCTION CLOSED',()=>changeAuctionStatus(item,'CLOSED'));close.classList.add('whatGroupStatusAction');slot.append(close);}
+   }
+  }
+ }
+ async function changeAuctionStatus(item,status){
+  if(!activeGroup||activeGroup.president_id!==user?.id)return;
+  if(!window.confirm(status==='CLOSED'?'Confirm this group auction has finished? Closing it will move the group landing page to the next scheduled auction.':'Schedule this auction? It will become eligible for the group landing page. This does NOT start bidding or collect payment.'))return;
+  const {error}=await db().from('event_group_auctions').update({status}).eq('id',item.id).eq('group_id',activeGroup.id);
+  if(error)return say('Could not change auction status: '+error.message);
+  say('Auction '+item.auction_number+' marked '+status+'.');await renderAuctionSlots();await refreshGroupLanding();
+ }
+ async function refreshGroupLanding(){
+  if(!activeGroup)return;
+  const {data}=await db().rpc('event_group_next_auction',{p_group_id:activeGroup.id});
+  const next=data?.[0];const box=$('whatGroupDetailsContent')?.querySelector('.whatGroupDashboardTile p');
+  if(box)box.textContent=next?next.title+' — '+(next.auction_date?new Date(next.auction_date).toLocaleString():'Date to be announced')+' — '+next.status:'No upcoming scheduled group auction yet.';
+ }
+ async function editAuction(number,existing){
+  if(!activeGroup||activeGroup.president_id!==user?.id)return;
+  if(existing?.status==='CLOSED'){say('Closed auction records cannot be edited here.');return;}
+  const title=window.prompt('Group '+activeGroup.name+' — Auction '+number+' name:',existing?.title||'');
+  if(title===null)return;
+  if(title.trim().length<3||title.trim().length>120){say('Auction name must be 3–120 characters.');return;}
+  const date=window.prompt('Auction date and time (YYYY-MM-DD HH:MM), or leave blank to announce later:',existing?.auction_date?new Date(existing.auction_date).toISOString().slice(0,16).replace('T',' '):'');
+  if(date===null)return;
+  let auction_date=null;
+  if(date.trim()){const parsed=new Date(date.trim().replace(' ','T'));if(!Number.isFinite(parsed.getTime())){say('Enter a valid auction date and time.');return;}auction_date=parsed.toISOString();}
+  const payload={title:title.trim(),auction_date};
+  const result=existing?await db().from('event_group_auctions').update(payload).eq('id',existing.id).eq('group_id',activeGroup.id):await db().from('event_group_auctions').insert({...payload,group_id:activeGroup.id,auction_number:number,status:'DRAFT'});
+  if(result.error){say('Could not save group auction: '+result.error.message);return;}
+  say('Auction '+number+' draft saved for '+activeGroup.name+'.');await renderAuctionSlots();
+ }
+ function wire(){$('whatGroupOpenBuilder')?.addEventListener('click',openBuilder);$('whatGroupCreate')?.addEventListener('click',create);$('whatGroupJoin')?.addEventListener('click',join);$('whatGroupBack')?.addEventListener('click',()=>openEventCreatorSetup());}
  window.whatEventRefreshGroups=loadGroups;
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',wire);else wire();
 })();
@@ -23805,6 +23917,22 @@ window.openWhatGroupPage=function(){
       window.prompt('Copy this link to invite friends and partners:',shareLink);
     }catch(err){if(err && err.name==='AbortError')return;window.prompt('Copy this link to invite friends and partners:',shareLink);}
   });
+})();
+</script>
+<script id="whatGroupCreatorSidebarActions">
+(function(){
+ document.addEventListener('click',function(e){
+  const b=e.target.closest('#whatGroupBuildWorkspace [data-group-action]');
+  if(!b)return;
+  const action=b.dataset.groupAction;
+  if(action==='groups'||action==='new'||action==='edit'){
+   document.querySelector('#whatGroupBuildWorkspace .whatGroupFourAuctions')?.scrollIntoView({behavior:'smooth',block:'start'});
+  }else if(action==='payments'){
+   [...document.querySelectorAll('#whatEventGroupsArea .whatGroupBox')].find(x=>x.textContent.includes('GROUP AUCTION FEE:'))?.scrollIntoView({behavior:'smooth'});
+  }else{
+   alert(action==='lots'?'Lot loading is not connected yet.':'Auction dates can be set when creating or editing a group auction draft.');
+  }
+ });
 })();
 </script>
 </body>
