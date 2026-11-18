@@ -19098,7 +19098,12 @@ async function renderCreatorLandingOverview(){
       else {localStorage.setItem("selectedCreatorAuctionId",String(record.id));
         document.getElementById("ownEventSetup")?.scrollIntoView({behavior:"smooth"});}
     };
-    card.append(title,details,btn);grid.appendChild(card);
+    const titleRow=document.createElement("div");
+    titleRow.style.cssText="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap";
+    title.style.cssText="margin:0;flex:1 1 auto;min-width:0";
+    btn.style.cssText="width:auto!important;min-width:0!important;max-width:max-content!important;flex:0 0 auto;padding:7px 12px!important;font-size:11px!important;line-height:1.2!important;margin:0!important";
+    titleRow.append(title,btn);
+    card.append(titleRow,details);grid.appendChild(card);
   });
   target.appendChild(grid);
 }
