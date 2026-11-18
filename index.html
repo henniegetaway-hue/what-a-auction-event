@@ -18981,52 +18981,50 @@ function renderCreatorAuctionManagement(events) {
       "cursor:pointer;";
 
   async function openSavedAuction(destination) {
-  if (!hasAuction || !record?.id) {
-    if (destination === "create") {
-      await window.openCreatorRoute("create");
-    } else {
-      alert("This auction space is empty. Create and save an auction first.");
+    // The creator route and lot-scrolling helpers previously called here
+    // do not exist. Use the site's real creator page and editor controls.
+    if (!hasAuction || !record?.id) {
+      localStorage.removeItem("selectedCreatorAuctionId");
+      openEventCreatorSetup();
+      document.getElementById("ownEventName")?.scrollIntoView({
+        behavior: "smooth", block: "center"
+      });
+      return;
     }
-    return false;
+
+    localStorage.setItem("selectedCreatorAuctionId", String(record.id));
+    openEventCreatorSetup();
+    // Wait for the async creator page's saved-auction list to render.
+    // Match by database ID via the saved list's original record order,
+    // rather than by a potentially duplicated auction name.
+    try {
+      await loadMyAuctions();
+      const list = document.getElementById("ownEventManagementList");
+      const items = Array.from(list?.children || []);
+      const matching = items.find(item => item.dataset.auctionId === String(record.id));
+      const edit = matching?.querySelector("button");
+      if (!edit) {
+        alert("Auction editor is loading. Please select OPEN / EDIT AUCTION in your saved auctions list.");
+        return;
+      }
+      edit.click();
+      const target = destination === "load-lots"
+        ? document.getElementById("previewLotsGrid")
+        : document.getElementById("ownEventName");
+      target?.scrollIntoView({ behavior: "smooth", block: "start" });
+    } catch (error) {
+      console.error("Unable to open saved auction", error);
+      alert("Could not open this auction. Please try OPEN / EDIT AUCTION from the saved auctions list.");
+    }
   }
 
-  localStorage.setItem(
-    "selectedCreatorAuctionId",
-    String(record.id)
-  );
+  viewButton.onclick = function() {
+    void openSavedAuction("create");
+  };
 
-  await window.openCreatorRoute(destination);
-
-  const managementList =
-    document.getElementById("ownEventManagementList");
-
-  const matchingItem = [
-    ...(managementList?.children || [])
-  ].find(item =>
-    item.querySelector("strong")?.textContent ===
-    (event.name || "Unnamed Auction")
-  );
-
-  const editButton = matchingItem?.querySelector("button");
-
-  if (editButton) {
-    editButton.click();
-  }
-
-  if (destination === "load-lots") {
-    window.scrollToCreatorLots();
-  }
-
-  return true;
-}
-
-viewButton.onclick = function() {
-  openSavedAuction("create");
-};
-
-loadButton.onclick = function() {
-  openSavedAuction(hasAuction ? "load-lots" : "create");
-};
+  loadButton.onclick = function() {
+    void openSavedAuction(hasAuction ? "load-lots" : "create");
+  };
     card.append(heading, name, status, loadButton, viewButton);
     grid.appendChild(card);
   }
@@ -19144,6 +19142,7 @@ if(!events?.length){
 
     const event = record.event_data || {};
     const item = document.createElement("div");
+    item.dataset.auctionId = String(record.id);
 
     item.style.padding = "12px";
     item.style.marginBottom = "10px";
