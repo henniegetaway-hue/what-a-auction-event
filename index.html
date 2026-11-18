@@ -2917,6 +2917,15 @@ END OF BIDDING AND INVOICING MASTER RECORD
 #whatEventGroupsArea a.whatGroupPasswordResetLink {display:inline-block;background:#fff !important;color:#0645ad !important;border:1px solid #d4d4d4;border-radius:5px;padding:5px 9px;font-weight:700;text-decoration:underline;}
 #whatEventGroupsArea a.whatGroupPasswordResetLink:hover,#whatEventGroupsArea a.whatGroupPasswordResetLink:focus {background:#f0f5ff !important;color:#003399 !important;}
 </style>
+<style id="whatGroupSharingCenteredStyle">
+#pageOwnEvent #whatEventGroupsArea .whatGroupTitleWithSharing{display:grid!important;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:12px;min-height:65px}
+#pageOwnEvent #whatEventGroupsArea .whatGroupTitleWithSharing h3{margin:0;justify-self:start}
+#pageOwnEvent #whatEventGroupsArea .whatGroupTitleWithSharing>.whatEventShareCluster{grid-column:2;grid-row:1;justify-self:center;margin:0!important;display:flex;align-items:center;flex-direction:column;gap:4px}
+#pageOwnEvent #whatEventGroupsArea .whatGroupTitleWithSharing>#whatGroupBack{grid-column:3;grid-row:1;justify-self:end}
+#pageOwnEvent #whatEventGroupsArea .whatGroupTitleWithSharing .whatEventShareIcons{display:flex;gap:7px;justify-content:center}
+#pageOwnEvent #whatEventGroupsArea .whatGroupTitleWithSharing .whatEventShareCaption{display:block;font-size:9px;text-align:center;white-space:nowrap}
+@media(max-width:600px){#pageOwnEvent #whatEventGroupsArea .whatGroupTitleWithSharing{grid-template-columns:1fr auto;row-gap:10px}#pageOwnEvent #whatEventGroupsArea .whatGroupTitleWithSharing>.whatEventShareCluster{grid-column:1/-1;grid-row:2}#pageOwnEvent #whatEventGroupsArea .whatGroupTitleWithSharing>#whatGroupBack{grid-column:2;grid-row:1}}
+</style>
 </head>
 
 <body id="siteBody">
@@ -3348,7 +3357,14 @@ function showEventSampleLanding(){
 
 <section id="pageOwnEvent" class="page hidden">
   <section id="whatEventGroupsArea" class="whatEventGroupsArea" hidden aria-label="Group Auctions">
-  <div class="whatGroupTitleRow"><h3>GROUP AUCTIONS</h3><button type="button" class="whatGroupSmallButton" id="whatGroupBack">BACK TO MY AUCTIONS</button></div>
+  <div class="whatGroupTitleRow whatGroupTitleWithSharing"><h3>GROUP AUCTIONS</h3>    <div class="whatEventShareCluster" aria-label="Invite friends and partners">
+      <div class="whatEventShareIcons">
+        <a class="whatEventShareCircle whatShareWhatsApp" id="whatShareWhatsApp" href="https://api.whatsapp.com/send?text=Join%20me%20at%20WHAT%20A%20AUCTION%20EVENT%20https%3A%2F%2Fwhatauction.top%2F%3Fpage%3Dgroup-page" target="_blank" rel="noopener noreferrer" title="Share on WhatsApp" aria-label="Share on WhatsApp"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v15/icons/whatsapp.svg" alt="" width="18" height="18" style="filter:brightness(0) invert(1)"></a>
+        <a class="whatEventShareCircle whatShareFacebook" id="whatShareFacebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwhatauction.top%2F%3Fpage%3Dgroup-page" target="_blank" rel="noopener noreferrer" title="Share on Facebook" aria-label="Share on Facebook"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v15/icons/facebook.svg" alt="" width="18" height="18" style="filter:brightness(0) invert(1)"></a>
+        <button class="whatEventShareCircle whatShareWorld" id="whatShareWorld" type="button" title="Share to other apps or copy link" aria-label="Share to other apps or copy link"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1-4-10z"/></svg></button>
+      </div>
+      <span class="whatEventShareCaption">INVITE FRIENDS AND PARTNERS</span>
+    </div><button type="button" class="whatGroupSmallButton" id="whatGroupBack">BACK TO MY AUCTIONS</button></div>
   <p class="small">Group Presidents manage members, auction dates, private or public auctions, international bidding, group branding and auction fees.</p>
   <div class="whatGroupBox" id="whatGroupRegistration"><h4>REGISTER YOUR AUCTION GROUP</h4><p class="small">The registered President controls the group. The registered group name cannot be changed.</p>
   <div class="whatGroupFormGrid"><label>Registered Group Name *<input id="whatGroupName" maxlength="100" placeholder="Registered group name" required></label><label>Group Club Logo *<input id="whatGroupLogo" type="file" accept="image/png,image/jpeg,image/webp" required><small>Upload your own logo. No sample pictures.</small></label>
@@ -3370,14 +3386,7 @@ function showEventSampleLanding(){
       <strong>MY AUCTIONS</strong>
       <button type="button" class="whatEventQuickButton" id="whatEventOpenMyAuctions">OPEN / EDIT AUCTION</button>
     </section>
-    <div class="whatEventShareCluster" aria-label="Invite friends and partners">
-      <div class="whatEventShareIcons">
-        <a class="whatEventShareCircle whatShareWhatsApp" id="whatShareWhatsApp" href="https://api.whatsapp.com/send?text=Join%20me%20at%20WHAT%20A%20AUCTION%20EVENT%20https%3A%2F%2Fwhatauction.top%2F%3Fpage%3Dgroup-page" target="_blank" rel="noopener noreferrer" title="Share on WhatsApp" aria-label="Share on WhatsApp"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v15/icons/whatsapp.svg" alt="" width="18" height="18" style="filter:brightness(0) invert(1)"></a>
-        <a class="whatEventShareCircle whatShareFacebook" id="whatShareFacebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwhatauction.top%2F%3Fpage%3Dgroup-page" target="_blank" rel="noopener noreferrer" title="Share on Facebook" aria-label="Share on Facebook"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v15/icons/facebook.svg" alt="" width="18" height="18" style="filter:brightness(0) invert(1)"></a>
-        <button class="whatEventShareCircle whatShareWorld" id="whatShareWorld" type="button" title="Share to other apps or copy link" aria-label="Share to other apps or copy link"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1-4-10z"/></svg></button>
-      </div>
-      <span class="whatEventShareCaption">INVITE FRIENDS AND PARTNERS</span>
-    </div>
+
     <section class="whatEventQuickPanel">
       <strong>MY GROUP AUCTIONS</strong>
       <button type="button" class="whatEventQuickButton" id="whatEventOpenGroups">OPEN GROUP AUCTIONS</button>
