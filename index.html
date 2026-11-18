@@ -1900,14 +1900,10 @@ body:has(#cliviaCarryForwardFooter) {
 #pageOwnEvent.whatGroupPage #whatEventGroupsArea{display:block!important}
 #pageOwnEvent.whatGroupPage #creatorLandingOverview,
 #pageOwnEvent.whatGroupPage > :not(#whatEventGroupsArea){display:none!important}
-/* Landing -> loading choice -> one selected auction workspace. */
-#pageOwnEvent.whatCreatorChoice > .creatorPageLayout,
-#pageOwnEvent.whatCreatorChoice > #ownEventSetup,
-#pageOwnEvent.whatCreatorChoice > #ownEventManagement {display:none!important}
-#pageOwnEvent.whatCreatorPersonal #creatorLandingOverview{display:none!important}
-#pageOwnEvent.whatCreatorPersonal > .creatorPageLayout{display:grid!important}
-#pageOwnEvent.whatCreatorChoice #whatEventGroupsArea,
-#pageOwnEvent.whatCreatorPersonal #whatEventGroupsArea{display:none!important}
+/* Keep the two choice buttons at the TOP of the EXISTING loading/editor page. */
+#pageOwnEvent:not(.whatGroupPage) #creatorLandingOverview{display:block!important}
+#pageOwnEvent:not(.whatGroupPage) > .creatorPageLayout{display:grid!important}
+#pageOwnEvent:not(.whatGroupPage) #whatEventGroupsArea{display:none!important}
 #pageOwnEvent .whatEventQuickPanels{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 @media(max-width:600px){#pageOwnEvent .whatEventQuickPanels{grid-template-columns:1fr!important}}
 
@@ -9124,8 +9120,7 @@ setOwnEventHeader();
 }
 
 function openEventCreatorSetup() {
-  document.getElementById("pageOwnEvent")?.classList.remove("whatCreatorPersonal");
-  document.getElementById("pageOwnEvent")?.classList.add("whatCreatorChoice");
+  document.getElementById("pageOwnEvent")?.classList.remove("whatCreatorPersonal", "whatCreatorChoice");
   document.getElementById("pageOwnEvent")?.classList.remove("whatGroupPage");
   document.getElementById("whatEventGroupsArea")?.setAttribute("hidden", "");
   showOwnEventPage();
@@ -23634,12 +23629,11 @@ window.openWhatGroupPage=function(){
   const groups=document.getElementById('whatEventOpenGroups');
   if(mine) mine.addEventListener('click',async function(){
    const page=document.getElementById('pageOwnEvent');
-   page?.classList.remove('whatCreatorChoice','whatGroupPage');
-   page?.classList.add('whatCreatorPersonal');
+   page?.classList.remove('whatCreatorChoice','whatCreatorPersonal','whatGroupPage');
    document.getElementById('whatEventGroupsArea')?.setAttribute('hidden','');
    try { if(typeof loadMyAuctions==='function') await loadMyAuctions(); }
    catch(e){console.error('Unable to load personal auctions',e);}
-   document.getElementById('ownEventSetup')?.scrollIntoView({behavior:'smooth',block:'start'});
+   document.querySelector('#pageOwnEvent .creatorPageLayout')?.scrollIntoView({behavior:'smooth',block:'start'});
   });
   if(groups) groups.addEventListener('click',function(){window.openWhatGroupPage();});
  }
