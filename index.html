@@ -16682,7 +16682,13 @@ const auctionLots=visibleAuctionLots.filter(l=>{
   const confirmedLot004=originalLot004.supabaseLotId!=null && originalLot004.supabaseDisplayOnly===true;
   const localOnlyLot005=l.supabaseLotId==null;
   const staleDeletedDuplicate=confirmedLot004 && localOnlyLot005 && sameSeller && samePrice;
-  return !((sameSeller && samePrice && (samePhoto || samePlantDetails)) || staleDeletedDuplicate);
+  // A verified cloud read confirms LOT-004 exists and LOT-005 does not.
+  // Suppress only the matching local-only public duplicate; never remove drafts
+  // or touch the underlying data, and never hide an actual cloud LOT-005.
+  const verified=window.cliviaVerifiedDeleted005?.get(String(state.selectedAuctionId));
+  const verifiedStale005=Boolean(verified && localOnlyLot005 &&
+    String(l.sellerId||'')===verified.sellerId && Number(l.startBid)===verified.startBid);
+  return !((sameSeller && samePrice && (samePhoto || samePlantDetails)) || staleDeletedDuplicate || verifiedStale005);
 });
  
 
@@ -21110,6 +21116,23 @@ async function refreshPublicCliviaLots(){
       .in("live_auction_id",ids).order("lot_number",{ascending:true}).limit(1000);
     if(lotsError) throw lotsError;
     const byDbId=new Map(auctions.map(a=>[String(a.id),a]));
+    // Confirm absence of LOT-005 only after a successful, complete cloud read.
+    // A failed or truncated response must never be treated as proof of deletion.
+    const verifiedDeleted005=new Map();
+    if((records||[]).length<1000){
+      for(const auction of auctions){
+        if(!auction.legacy_auction_id)continue;
+        const cloudLots=(records||[]).filter(r=>String(r.live_auction_id)===String(auction.id));
+        const retained004=cloudLots.find(r=>Number(r.lot_number)===4 &&
+          !['DELETED','WITHDRAWN','CANCELLED','TEST ONLY'].includes(String(r.status||'').toUpperCase()));
+        const exists005=cloudLots.some(r=>Number(r.lot_number)===5 &&
+          !['DELETED','WITHDRAWN','CANCELLED','TEST ONLY'].includes(String(r.status||'').toUpperCase()));
+        if(retained004 && !exists005)verifiedDeleted005.set(String(auction.legacy_auction_id),{
+          sellerId:String(retained004.seller_id||''),startBid:Number(retained004.starting_bid)
+        });
+      }
+    }
+    window.cliviaVerifiedDeleted005=verifiedDeleted005;
     const remoteCount=new Map();
     for(const a of auctions){
       if(!a.legacy_auction_id) continue;
