@@ -10484,7 +10484,22 @@ async function refreshGroupAuctionCards(auction,providedGrid){
           grid.appendChild(card);
           continue;
         }
-        const input=document.createElement('input');input.type='number';input.min=String(amount===null?(Number(lot.starting_bid)>0?Number(lot.starting_bid):50):Number(amount)+50);input.step='50';input.placeholder='Your bid (R)';input.style.cssText='width:100%;box-sizing:border-box;margin:6px 0';card.appendChild(input);
+        // A missing or invalid starting price must not turn into a R50 opening bid.
+        const startingBid=Number(lot.starting_bid);
+        if(lot.starting_bid===null || lot.starting_bid===undefined || lot.starting_bid==='' ||
+           !Number.isSafeInteger(startingBid) || startingBid<=0){
+          const note=document.createElement('p');
+          note.textContent='Starting bid unavailable. The seller must correct this plant before pre-bidding.';
+          card.appendChild(note);
+          grid.appendChild(card);
+          continue;
+        }
+        const minimum=amount===null?startingBid:Number(amount)+50;
+        if(!Number.isSafeInteger(minimum) || minimum<=0){
+          const note=document.createElement('p');note.textContent='Bid amount unavailable. Please try again later.';
+          card.appendChild(note);grid.appendChild(card);continue;
+        }
+        const input=document.createElement('input');input.type='number';input.min=String(minimum);input.step='50';input.placeholder='Your bid (R) — R50 minimum, higher allowed';input.style.cssText='width:100%;box-sizing:border-box;margin:6px 0';card.appendChild(input);
         const b=document.createElement('button');b.textContent='PLACE PRE-BID';b.onclick=async()=>{
           if(!isCurrent()){alert('Group changed. Please reopen this group auction before bidding.');return;}
           const value=Number(input.value);
@@ -17919,14 +17934,35 @@ async function placeBid(lotId){
     return;
   }
   const currencySymbol="R";
-  if(!state.settings.open){
+  if(!state.settings?.open){
     alert("The auction is closed.");
     return;
   }
   const lot=(state.lots||[]).find(l=>String(l.id)===String(lotId));
+  // Never submit a lot belonging to a different auction, even when its card
+  // remains visible after navigating between auctions.
+  if(!lot || String(lot.auctionId)!==String(auction.id)){
+    alert("This plant does not belong to the selected auction. Refresh before bidding. No bid was placed.");
+    return;
+  }
+  // Live bids must never be offered for a LOADING / unscheduled auction.
+  // Pre-bidding uses its separate flow and is not activated by this check.
+  if(!auction.auctionDate || !auction.auctionTime || !auction.auctionCloseTime){
+    alert("Live bidding has not been scheduled for this auction. No bid was placed.");
+    return;
+  }
+  // Only an explicitly LIVE auction may accept live bids. Unknown, draft,
+  // cancelled, completed and paused statuses must fail closed.
+  if(!["LIVE", "OPEN", "ACTIVE", "IN_PROGRESS"].includes(String(auction.status||"").toUpperCase())){
+    alert("Live bidding is not open for this auction. No bid was placed.");
+    return;
+  }
 if(auction && auction.auctionDate && auction.auctionTime){
   const normalStart=new Date(auction.auctionDate+"T"+auction.auctionTime+":00+02:00").getTime();
-
+  if(!Number.isFinite(normalStart)){
+    alert("The auction start time is invalid. No bid was placed.");
+    return;
+  }
   if(Date.now()<normalStart){
     alert("This auction has not started yet.");
     return;
@@ -17935,15 +17971,20 @@ if(auction && auction.auctionDate && auction.auctionTime){
 if(auction && auction.auctionDate && auction.auctionCloseTime && lot){
   const normalClose=new Date(auction.auctionDate+"T"+auction.auctionCloseTime+":00+02:00").getTime();
   const extendedClose=lot.extendedCloseUntil ? new Date(lot.extendedCloseUntil).getTime() : 0;
+  if(!Number.isFinite(normalClose) || (lot.extendedCloseUntil && !Number.isFinite(extendedClose))){
+    alert("The auction closing time is invalid. No bid was placed.");
+    return;
+  }
   const actualClose=Math.max(normalClose,extendedClose);
 
-  if(Date.now()>actualClose){
+  if(Date.now()>=actualClose){
     alert("Bidding on this plant is closed.");
     return;
   }
 }
-  const bidder=state.bidders.find(b=>b.id===state.selectedBidderId);
+  const bidder=(state.bidders||[]).find(b=>String(b.id)===String(state.selectedBidderId));
    if(!lot){ alert("Plant not found. No bid has been placed."); return; }
+  if(!bidder){ alert("Please sign in or register before bidding."); showPage("register"); return; }
   const ownPlantSeller = (state.sellers || []).find(
   s => String(s.id) === String(lot.sellerId)
 );
@@ -17977,13 +18018,13 @@ if(
   error ||
   !user ||
   !user.email_confirmed_at ||
-  bidder.authUserId !== user.id
+  String(bidder.authUserId||"") !== String(user.id)
 ){
   alert("Please sign in to your registered account before bidding.");
   showPage("register");
   return;
 }
-  if(!bidder.isOwnerTest && bidder.isInternational && !bidder.internationalRegistrationPaid){
+  if(bidder.isInternational && !bidder.internationalRegistrationPaid){
   alert("International bidders must pay the R2,000 registration fee before bidding.");
   return;
 }
@@ -17992,7 +18033,8 @@ if(
   return;
 }
 
-if(!bidder.isOwnerTest){
+{
+  // All real bidders, including owner test accounts, must pass server-backed checks.
   // Display-only precheck. The server must independently enforce
   // the final capacity, bank and identity requirements.
   const { data: bankDetails, error: bankError } =
@@ -18013,13 +18055,21 @@ if(!bidder.isOwnerTest){
   }
   // Higher-capacity bidding requires verified bank documentation.
   // Never treat a browser-side check as approval or a substitute for server checks.
-  if(Number(bidder.approvedBidCapacity || 0) >= 5000 && bankDetails.bank_confirmed !== true){
+  // Check the actual approved tier, not a browser-editable bidder value.
+  // If this cannot be verified, do not let the bank-document check be bypassed.
+  const {data:verifiedTier,error:verifiedTierError}=await cliviaSupabase.rpc("clivia_my_capacity_zar");
+  const approvedTier=Number(verifiedTier);
+  if(verifiedTierError || !Number.isSafeInteger(approvedTier) || approvedTier<2000){
+    alert("Unable to verify your approved bidding tier. No bid was placed.");
+    return;
+  }
+  if(approvedTier >= 5000 && bankDetails.bank_confirmed !== true){
     showBankVerificationPopup();
     return;
   }
 }
 
-  if(!bidder.isOwnerTest && bidder.paymentHold){
+  if(bidder.paymentHold){
   alert("Your account is ON HOLD because a payment came from an unregistered bank account. No further bidding is allowed until the seller confirms the payment or Admin clears the hold.");
   return;
 }
@@ -18036,7 +18086,7 @@ const matchingSeller=(state.sellers||[]).find(s=>
 const unpaidSellerInvoice=matchingSeller
   ? (state.invoices||[]).find(inv=>inv.sellerId===matchingSeller.id && inv.status!=="PAID")
   : null;
-if(!bidder.isOwnerTest && (unpaidInvoice || unpaidSellerInvoice)){
+if(unpaidInvoice || unpaidSellerInvoice){
   alert(unpaidSellerInvoice
     ? "You have an unpaid seller invoice. Please pay it before you can bid again."
     : "You have an unpaid bidder invoice. Please pay it before you can bid again.");
@@ -18070,14 +18120,32 @@ const paidSecurityFees=Number(
     ? bidder.securityFeesPaidEUR||0
     : bidder.securityFeesPaidZAR||0
 );
-const maxBidCapacity =
-  bidder.approvedBidCapacity >= 5000
-    ? bidder.approvedBidCapacity
-    : 2000;
+// Ask the database for the actual approved limit. Browser account values
+// must never be allowed to grant a higher bidding capacity.
+let maxBidCapacity;
+try {
+  const {data:serverCapacity,error:capacityError}=await cliviaSupabase.rpc("clivia_my_capacity_zar");
+  const parsedCapacity=Number(serverCapacity);
+  if(capacityError || !Number.isSafeInteger(parsedCapacity) || parsedCapacity<2000){
+    alert("Unable to verify your approved bidding capacity with the server. No bid was placed.");
+    return;
+  }
+  maxBidCapacity=parsedCapacity;
+}catch(capacityError){
+  console.error("Capacity verification failed",capacityError);
+  alert("Unable to verify your bidding capacity. No bid was placed.");
+  return;
+}
+// Count the bidder's highest bids across ALL active Clivia auctions, not
+// just the currently selected auction. Replace this lot's existing exposure
+// with the proposed bid, rather than counting the same lot twice.
+// Display estimate only: the server must calculate exposure from trusted bids.
 const currentWinningExposure=(state.lots||[]).reduce((total,otherLot)=>{
-  if(String(otherLot.id)===String(lotId) || String(otherLot.auctionId)!==String(state.selectedAuctionId)) return total;
-  const highest=(otherLot.bids||[]).slice().sort((a,b)=>Number(b.amount)-Number(a.amount))[0];
-  return highest && highest.bidderId===bidder.id ? total+Number(highest.amount||0) : total;
+  if(String(otherLot.id)===String(lotId)) return total;
+  const relatedAuction=(state.auctions||[]).find(a=>String(a.id)===String(otherLot.auctionId));
+  if(!relatedAuction || ["CLOSED","CANCELLED","COMPLETED"].includes(String(relatedAuction.status||"").toUpperCase())) return total;
+  const highest=(otherLot.bids||[]).reduce((best,b)=>Number(b.amount)>Number(best?.amount||0)?b:best,null);
+  return highest && String(highest.bidderId)===String(bidder.id) ? total+Number(highest.amount||0) : total;
 },0);
   const securityFeeNeeded=(currentWinningExposure+amount)>maxBidCapacity;
   const totalExposureAfterBid=currentWinningExposure+amount;
@@ -18114,7 +18182,7 @@ if(false && !securityProofPending && totalExposureAfterBid>=secondWarningLevel &
   currencySymbol+maxBidCapacity.toLocaleString()+" bidding limit. Pay the "+
   currencySymbol+securityFeeAmount+" security fee now to avoid bidding being interrupted.");
 }
-if(securityFeeNeeded && !bidder.isOwnerTest){
+if(securityFeeNeeded){
   alert(securityProofPending
   ? "BIDDING PAUSED: Your "+currencySymbol+securityFeeAmount+" payment proof is waiting for verification. Your next "+currencySymbol+securityBracketSize.toLocaleString()+" bidding bracket will unlock after confirmation."
   : "BIDDING PAUSED: Your "+currencySymbol+maxBidCapacity.toLocaleString()+" total bidding capacity has been reached. Pay the "+currencySymbol+securityFeeAmount+" security fee and upload proof of payment to unlock the next "+currencySymbol+securityBracketSize.toLocaleString()+" bidding bracket.");
@@ -18122,8 +18190,12 @@ if(securityFeeNeeded && !bidder.isOwnerTest){
 }
   
 
-if(!Number.isFinite(amount) || amount % bidStep !== 0){
-  alert("Bids must be in multiples of "+currencySymbol+bidStep+".");
+// Validate the bid increase rather than requiring the total bid to be
+// divisible by R100. A valid opening price need not be a multiple of R100.
+const previousHighest=(lot.bids||[]).reduce((max,b)=>Math.max(max,Number(b.amount)||0),0);
+if(!Number.isFinite(amount) || !Number.isSafeInteger(amount) ||
+   (previousHighest>0 && amount-previousHighest<bidStep)){
+  alert("The bid must increase by at least "+currencySymbol+bidStep+".");
   return;
 }
 if(amount<required){
@@ -18141,12 +18213,19 @@ if(amount<required){
     alert("This plant is not linked to a valid server lot. No bid was placed.");
     return;
   }
-  // Guard against double taps and concurrent submissions of the same lot.
-  const bidRequestKey=String(serverLotId);
-  if(cliviaBidRequestsInFlight.has(bidRequestKey)){
-    alert("A bid for this plant is already being checked. Please wait.");
+  // Recheck the authenticated session immediately before submission.
+  // A user may sign out or switch accounts while the confirmation dialog is open.
+  // The database must independently verify auth.uid() and every bidding rule.
+  const {data:latestAuth,error:latestAuthError}=await cliviaSupabase.auth.getUser();
+  if(latestAuthError || !latestAuth?.user ||
+     !latestAuth.user.email_confirmed_at ||
+     String(latestAuth.user.id)!==String(user.id) ||
+     String(latestAuth.user.id)!==String(bidder.authUserId||"")){
+    alert("Your signed-in account changed or expired. Sign in again before bidding. No bid was placed.");
     return;
   }
+  // The per-lot lock was already acquired at the start of placeBid().
+  // Do not check it again here: doing so rejects every valid numeric lot.
   try{
     const {data:bidId,error:bidError}=await cliviaSupabase.rpc(
       "place_clivia_bid_transaction",
