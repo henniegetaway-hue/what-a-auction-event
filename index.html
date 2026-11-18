@@ -3422,9 +3422,9 @@ function showEventSampleLanding(){
         <button type="button" data-group-action="groups"><span>📋</span>MY GROUP AUCTIONS</button>
         <button type="button" data-group-action="new"><span>➕</span>NEW AUCTION</button>
         <button type="button" data-group-action="edit"><span>✏️</span>EDIT AUCTION</button>
-        <button type="button" data-group-action="lots"><span>📷</span>LOAD LOTS</button>
+        <button type="button" data-group-action="lots" disabled title="Lot loading is not connected yet"><span>📷</span>LOAD LOTS — COMING NEXT</button>
         <button type="button" data-group-action="dates"><span>📅</span>AUCTION DATES</button>
-        <button type="button" data-group-action="payments"><span>💳</span>PAYMENTS</button>
+        <button type="button" data-group-action="payments" title="Payment collection is not connected yet"><span>💳</span>PAYMENT INFORMATION</button>
       </div>
       <small>Only auctions belonging to your registered group may be managed.</small>
     </div>
@@ -23807,7 +23807,7 @@ window.openWhatGroupPage=function(){
   const president=g.president_id===user.id;activeGroup=president?g:null;$('whatGroupBuildWorkspace').hidden=true;$('whatGroupOpenBuilder').hidden=!president;const area=$('whatGroupDetails'),dash=$('whatGroupDashboard'),content=$('whatGroupDetailsContent');area.hidden=false;$('whatGroupDetailsTitle').textContent=g.name;dash.replaceChildren();content.replaceChildren();
   const landingPanel=document.createElement('section');landingPanel.className='whatGroupDashboardTile';
   const landingHeading=document.createElement('h4');landingHeading.textContent='GROUP LANDING PAGE — NEXT UPCOMING AUCTION';landingPanel.append(landingHeading);
-  const landingInfo=document.createElement('p');landingInfo.textContent='Checking upcoming auctions…';landingPanel.append(landingInfo);
+  const landingInfo=document.createElement('p');landingInfo.id='whatGroupCurrentLanding';landingInfo.setAttribute('aria-live','polite');landingInfo.textContent='Checking upcoming auctions…';landingPanel.append(landingInfo);
   content.append(landingPanel);
   const {data:nextAuction,error:nextError}=await db().rpc('event_group_next_auction',{p_group_id:id});
   if(nextError)landingInfo.textContent='Unable to load upcoming auction: '+nextError.message;
@@ -23820,7 +23820,7 @@ window.openWhatGroupPage=function(){
    for(const m of members||[]){const line=document.createElement('div');line.className='whatGroupEntry';line.append(document.createTextNode('Member '+m.user_id.slice(0,8)+' — '+m.status+' '));if(m.status==='PENDING')line.append(button('APPROVE',async()=>{const {error:err}=await db().from('event_group_members').update({status:'APPROVED',can_load_lots:true}).eq('group_id',id).eq('user_id',m.user_id);if(err)say(err.message);else await showGroup(id);}));invitations.append(line);}
    panel(dash,'🚫 BLOCK / REMOVE MEMBERS','Member restrictions and removal controls are not yet enabled.');
    panel(dash,'🌍 INTERNATIONAL BIDDING',g.international_bidding?'Enabled':'Disabled — changes require verified group settings.');
-   panel(dash,'📅 AUCTION DATES','Auction scheduling is not yet connected.');
+   panel(dash,'📅 AUCTION DATES','Set dates in CONTINUE TO BUILD GROUP AUCTIONS.');
    panel(dash,'🔒 PRIVATE / PUBLIC AUCTION',g.auction_access||'PRIVATE');
    const share=panel(dash,'📤 SHARE GROUP AUCTION','Invite friends and partners');share.append(button('COPY INVITATION LINK',()=>{const link='https://whatauction.top/?page=group-page';navigator.clipboard?.writeText(link).then(()=>say('Link copied.')).catch(()=>window.prompt('Copy link:',link));}));
    panel(dash,'💳 GROUP AUCTION FEES','R200 per 30 days from launch. Payment collection is not yet connected.');
@@ -23862,7 +23862,7 @@ window.openWhatGroupPage=function(){
    subtitle.textContent=item?item.title:'EMPTY SPACE';
    const dateText=slot.querySelectorAll('small')[1];
    if(dateText)dateText.textContent=item?.auction_date?'Date: '+new Date(item.auction_date).toLocaleString():'Date: To be set';
-   btn.disabled=item?.status==='CLOSED';btn.textContent=item?.status==='CLOSED'?'AUCTION CLOSED':item?'EDIT AUCTION':'CREATE AUCTION';
+   btn.disabled=item?.status==='CLOSED'||item?.status==='OPEN';btn.textContent=item?.status==='CLOSED'?'AUCTION CLOSED':item?.status==='OPEN'?'AUCTION OPEN':item?'EDIT AUCTION':'CREATE AUCTION';
    btn.onclick=()=>editAuction(i+1,item);
    slot.querySelectorAll('.whatGroupStatusAction').forEach(el=>el.remove());
    if(item){
@@ -23874,20 +23874,23 @@ window.openWhatGroupPage=function(){
  }
  async function changeAuctionStatus(item,status){
   if(!activeGroup||activeGroup.president_id!==user?.id)return;
+  if(status==='SCHEDULED'&&(!item.auction_date||item.status!=='DRAFT'))return say('Only dated draft auctions may be scheduled.');
+  if(status==='CLOSED'&&!['SCHEDULED','OPEN'].includes(item.status))return say('Only scheduled or open auctions may be closed.');
   if(!window.confirm(status==='CLOSED'?'Confirm this group auction has finished? Closing it will move the group landing page to the next scheduled auction.':'Schedule this auction? It will become eligible for the group landing page. This does NOT start bidding or collect payment.'))return;
-  const {error}=await db().from('event_group_auctions').update({status}).eq('id',item.id).eq('group_id',activeGroup.id);
+  const {data:changed,error}=await db().from('event_group_auctions').update({status}).eq('id',item.id).eq('group_id',activeGroup.id).eq('status',item.status).select('id');
+  if(!error&&!changed?.length)return say('Auction status changed elsewhere. Refresh and try again.');
   if(error)return say('Could not change auction status: '+error.message);
   say('Auction '+item.auction_number+' marked '+status+'.');await renderAuctionSlots();await refreshGroupLanding();
  }
  async function refreshGroupLanding(){
   if(!activeGroup)return;
   const {data}=await db().rpc('event_group_next_auction',{p_group_id:activeGroup.id});
-  const next=data?.[0];const box=$('whatGroupDetailsContent')?.querySelector('.whatGroupDashboardTile p');
+  const next=data?.[0];const box=$('whatGroupCurrentLanding');
   if(box)box.textContent=next?next.title+' — '+(next.auction_date?new Date(next.auction_date).toLocaleString():'Date to be announced')+' — '+next.status:'No upcoming scheduled group auction yet.';
  }
  async function editAuction(number,existing){
   if(!activeGroup||activeGroup.president_id!==user?.id)return;
-  if(existing?.status==='CLOSED'){say('Closed auction records cannot be edited here.');return;}
+  if(existing?.status==='CLOSED'||existing?.status==='OPEN'){say('Open and closed auctions cannot be edited here.');return;}
   const title=window.prompt('Group '+activeGroup.name+' — Auction '+number+' name:',existing?.title||'');
   if(title===null)return;
   if(title.trim().length<3||title.trim().length>120){say('Auction name must be 3–120 characters.');return;}
@@ -23896,8 +23899,9 @@ window.openWhatGroupPage=function(){
   let auction_date=null;
   if(date.trim()){const parsed=new Date(date.trim().replace(' ','T'));if(!Number.isFinite(parsed.getTime())){say('Enter a valid auction date and time.');return;}auction_date=parsed.toISOString();}
   const payload={title:title.trim(),auction_date};
-  const result=existing?await db().from('event_group_auctions').update(payload).eq('id',existing.id).eq('group_id',activeGroup.id):await db().from('event_group_auctions').insert({...payload,group_id:activeGroup.id,auction_number:number,status:'DRAFT'});
+  const result=existing?await db().from('event_group_auctions').update(payload).eq('id',existing.id).eq('group_id',activeGroup.id).eq('status',existing.status).select('id'):await db().from('event_group_auctions').insert({...payload,group_id:activeGroup.id,auction_number:number,status:'DRAFT'});
   if(result.error){say('Could not save group auction: '+result.error.message);return;}
+  if(existing&&!result.data?.length){say('Auction was changed elsewhere. Reopen the group and try again.');return;}
   say('Auction '+number+' draft saved for '+activeGroup.name+'.');await renderAuctionSlots();
  }
  function wire(){$('whatGroupOpenBuilder')?.addEventListener('click',openBuilder);$('whatGroupCreate')?.addEventListener('click',create);$('whatGroupJoin')?.addEventListener('click',join);$('whatGroupBack')?.addEventListener('click',()=>openEventCreatorSetup());}
