@@ -18939,45 +18939,68 @@ function renderCreatorAuctionManagement(events) {
     const card = document.createElement("div");
     card.style.cssText =
       "background:#101010;border:1px solid #ffd700;" +
-      "border-radius:8px;padding:10px;min-width:125px;" +
+      "border-radius:8px;padding:7px 5px;min-width:0;" +
       "box-sizing:border-box;text-align:center;";
 
     const heading = document.createElement("div");
     heading.style.cssText =
-      "color:#fff;font-size:11px;font-weight:bold;margin-bottom:12px;";
-    heading.textContent = "🌸 AUCTION " + (index + 1);
+      "color:#fff;font-size:11px;font-weight:800;margin-bottom:5px;";
+    heading.textContent = "AUCTION " + (index + 1);
 
     const name = document.createElement("div");
     name.style.cssText =
-      "color:#d4ff70;font-size:12px;font-weight:bold;" +
-      "overflow-wrap:anywhere;min-height:32px;";
+      "color:#d4ff70;font-size:10px;font-weight:700;" +
+      "overflow-wrap:anywhere;min-height:25px;";
     name.textContent = hasAuction
-      ? (event.name || "Unnamed Auction")
-      : "EMPTY SPACE";
+      ? (event.name || "Unnamed Auction") : "EMPTY SPACE";
 
-    const status = document.createElement("div");
-    status.style.cssText =
-      "color:white;font-size:10px;margin:8px 0;";
-    status.textContent = hasAuction
-      ? (event.eventStatus || "DRAFT")
-      : "NOT CREATED";
+    // Visual overview only: 10 rows x 8 positions = 80 lots.
+    // Filled positions reflect saved lots; no fake lots are created.
+    const savedLots = Array.isArray(event.lots) ? event.lots : [];
+    const occupied = new Set(savedLots.filter(lot =>
+      lot && (String(lot.name || "").trim() || Number(lot.startingBid) > 0)
+    ).map(lot => Number(lot.lotNumber)).filter(n =>
+      Number.isInteger(n) && n >= 1 && n <= 80
+    ));
+    const spaces = document.createElement("div");
+    spaces.style.cssText =
+      "display:grid;grid-template-columns:repeat(8,minmax(0,1fr));" +
+      "gap:2px;margin:7px 0;";
+    for (let lotNo = 1; lotNo <= 80; lotNo++) {
+      const square = document.createElement("span");
+      const used = occupied.has(lotNo);
+      square.title = "LOT " + lotNo + (used ? " — LOADED" : " — AVAILABLE");
+      square.setAttribute("aria-label", square.title);
+      square.style.cssText =
+        "display:block;aspect-ratio:1;min-width:0;border:1px solid " +
+        (used ? "#d4ff70" : "#777") + ";border-radius:2px;" +
+        "background:" + (used ? "#8bcf34" : "#222") + ";";
+      spaces.appendChild(square);
+    }
+
+    const date = document.createElement("div");
+    date.style.cssText =
+      "color:#fff;font-size:9px;margin:5px 0 7px;overflow-wrap:anywhere;";
+    date.textContent = "Date: " +
+      (event.auctionDate || "To be set") + " • " +
+      (event.eventStatus || "NOT CREATED");
 
     const loadButton = document.createElement("button");
     loadButton.type = "button";
     loadButton.textContent = "LOAD LOTS";
     loadButton.style.cssText =
       "background:#ffd700;color:#111;border:none;" +
-      "border-radius:5px;padding:10px 4px;" +
-      "width:100%;font-size:11px;font-weight:bold;" +
-      "cursor:pointer;margin-bottom:6px;";
+      "border-radius:5px;padding:8px 3px;" +
+      "width:100%;font-size:10px;font-weight:bold;" +
+      "cursor:pointer;margin-bottom:5px;";
 
     const viewButton = document.createElement("button");
     viewButton.type = "button";
-    viewButton.textContent = "VIEW / EDIT";
+    viewButton.textContent = "VIEW AUCTION";
     viewButton.style.cssText =
       "background:#a3ff50;color:#111;border:none;" +
-      "border-radius:5px;padding:10px 4px;" +
-      "width:100%;font-size:11px;font-weight:bold;" +
+      "border-radius:5px;padding:8px 3px;" +
+      "width:100%;font-size:10px;font-weight:bold;" +
       "cursor:pointer;";
 
   async function openSavedAuction(destination) {
@@ -19025,7 +19048,7 @@ function renderCreatorAuctionManagement(events) {
   loadButton.onclick = function() {
     void openSavedAuction(hasAuction ? "load-lots" : "create");
   };
-    card.append(heading, name, status, loadButton, viewButton);
+    card.append(heading, name, spaces, date, loadButton, viewButton);
     grid.appendChild(card);
   }
 }
