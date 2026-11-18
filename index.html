@@ -2902,7 +2902,18 @@ END OF BIDDING AND INVOICING MASTER RECORD
 #pageOwnEvent .whatGroupPreviewGrid span{border:1px solid #94b65a;border-radius:8px;background:#15281a;color:#d7ff92;padding:14px 5px;text-align:center;font-size:11px;font-weight:800}
 @media(max-width:650px){#pageOwnEvent .whatGroupPreviewGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
-</head>
+<style>
+#pageOwnEvent .whatGroupFormGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0}
+#pageOwnEvent .whatGroupFormGrid label,#pageOwnEvent #whatEventGroupsArea label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700}
+#pageOwnEvent #whatEventGroupsArea input:not([type=checkbox]),#pageOwnEvent #whatEventGroupsArea select,#pageOwnEvent #whatEventGroupsArea textarea{box-sizing:border-box;width:100%;padding:10px;border-radius:8px;border:1px solid #91b86d;background:#fff;color:#111}
+#pageOwnEvent #whatEventGroupsArea input[type=checkbox]{width:auto}
+#pageOwnEvent .whatGroupConfirm{display:flex!important;flex-direction:row!important;align-items:center;margin:10px 0}
+#pageOwnEvent .whatGroupDashboard{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#pageOwnEvent .whatGroupDashboardTile{border:1px solid #6e963e;border-radius:10px;padding:12px;min-width:0;background:#0a1c10}
+#pageOwnEvent .whatGroupDashboardTile strong{color:#d0ff7d}
+#pageOwnEvent .whatGroupDashboardTile p{font-size:12px}
+@media(max-width:700px){#pageOwnEvent .whatGroupFormGrid,#pageOwnEvent .whatGroupDashboard{grid-template-columns:1fr}}
+</style></head>
 
 <body id="siteBody">
       
@@ -3332,28 +3343,22 @@ function showEventSampleLanding(){
 </section>
 
 <section id="pageOwnEvent" class="page hidden">
-  <section id="whatEventGroupsArea" class="whatEventGroupsArea" hidden aria-label="What A Auction Event Group Auctions">
- <div class="whatGroupTitleRow"><h3>MY GROUP AUCTIONS</h3><button type="button" class="whatGroupSmallButton" id="whatGroupBack">BACK TO MY AUCTIONS</button></div>
-
- <p class="small">The President approves group members and grants permission to load lots. Each group has its own auctions and members.</p>
- <div id="whatGroupStatus" role="status" aria-live="polite" class="small"></div>
- <div class="whatGroupColumns">
-  <div class="whatGroupBox"><h4>CREATE A GROUP — PRESIDENT</h4><label for="whatGroupName">Group name</label><input id="whatGroupName" maxlength="100" placeholder="Your group name"><button type="button" id="whatGroupCreate" class="whatGroupSmallButton">CREATE GROUP</button></div>
-  <div class="whatGroupBox"><h4>JOIN A GROUP — MEMBERS</h4><label for="whatGroupJoinCode">Group invitation code</label><input id="whatGroupJoinCode" maxlength="36" placeholder="Code from the President"><button type="button" id="whatGroupJoin" class="whatGroupSmallButton">REQUEST TO JOIN</button></div>
- </div>
- <div class="whatGroupBox" id="whatGroupLoaderPreview" style="margin:14px 0;border-color:#8ebf4c">
-  <h4 style="color:#caff73">GROUP AUCTION ITEM LOADING</h4>
-  <p class="small">This is where the group auction loading form appears. The President can load items immediately after creating a group. Members can load after the President approves them.</p>
-  <div class="whatGroupPreviewGrid" aria-label="Available item types">
-   <span>HORSES &amp; LIVESTOCK</span><span>VEHICLES</span><span>MACHINERY</span><span>GENERAL GOODS</span>
-  </div>
-  <p class="small">Choose <b>CREATE GROUP</b> above, then <b>MANAGE GROUP</b> below to open the loading form. You do not need to join your own group.</p>
- </div>
- <h4>MY GROUPS</h4><div id="whatGroupList">Sign in to view your groups.</div>
- <div id="whatGroupDetails" hidden>
-  <h4 id="whatGroupDetailsTitle"></h4><div id="whatGroupDetailsContent"></div>
- </div>
-</section>
+  <section id="whatEventGroupsArea" class="whatEventGroupsArea" hidden aria-label="Group Auctions">
+  <div class="whatGroupTitleRow"><h3>GROUP AUCTIONS</h3><button type="button" class="whatGroupSmallButton" id="whatGroupBack">BACK TO MY AUCTIONS</button></div>
+  <p class="small">Group Presidents manage members, auction dates, private or public auctions, international bidding, group branding and auction fees.</p>
+  <div class="whatGroupBox"><h4>GROUP AUCTION FEE: R200 PER 30 DAYS</h4><p>R200 is payable when the Group Auction launches and covers 30 days from its launch date. If the auction continues beyond the paid period, another R200 is payable for the next 30 days.</p><p class="small">This is NOT a monthly subscription. No separate activation fee applies. One group can hold multiple auctions; each additional group requires its own payment arrangement.</p></div>
+  <div class="whatGroupBox" id="whatGroupRegistration"><h4>REGISTER YOUR AUCTION GROUP</h4><p class="small">The registered President controls the group. The registered group name cannot be changed.</p>
+  <div class="whatGroupFormGrid"><label>Registered Group Name *<input id="whatGroupName" maxlength="100" placeholder="Registered group name" required></label><label>Group Club Logo *<input id="whatGroupLogo" type="file" accept="image/png,image/jpeg,image/webp" required><small>Upload your own logo. No sample pictures.</small></label>
+  <label>Group President<input id="whatGroupPresident" readonly placeholder="Sign in to your verified account"></label><label>Auction Access *<select id="whatGroupAccess"><option value="PRIVATE">PRIVATE — Approved Members Only</option><option value="PUBLIC">PUBLIC — Registered Bidders</option></select></label>
+  <label>International Members May Bid<select id="whatGroupInternational"><option value="false">NO — International Bidding Disabled</option><option value="true">YES — International Bidding Allowed</option></select></label></div>
+  <label class="whatGroupConfirm"><input type="checkbox" id="whatGroupInternationalAccept"> I accept responsibility for international bids when international bidding is enabled.</label>
+  <p class="small">The President must sign in with an existing verified WHAT A AUCTION EVENT account. <a href="?page=register">FORGOT PASSWORD / RESET PASSWORD</a></p>
+  <button type="button" id="whatGroupCreate" class="whatGroupSmallButton">REGISTER GROUP</button></div>
+  <div id="whatGroupStatus" role="status" aria-live="polite" class="small"></div>
+  <div class="whatGroupBox"><h4>JOIN AN EXISTING GROUP</h4><label>Group invitation code<input id="whatGroupJoinCode" maxlength="36" placeholder="Code from the President"></label><button type="button" id="whatGroupJoin" class="whatGroupSmallButton">REQUEST MEMBERSHIP</button></div>
+  <div class="whatGroupBox"><h4>MY REGISTERED GROUPS</h4><div id="whatGroupList">Sign in to view your groups.</div></div>
+  <section id="whatGroupDetails" hidden class="whatGroupBox"><h3 id="whatGroupDetailsTitle"></h3><h4>GROUP PRESIDENT DASHBOARD</h4><div id="whatGroupDashboard" class="whatGroupDashboard"></div><div id="whatGroupDetailsContent"></div></section>
+  </section>
 <div id="creatorLandingOverview" class="panel" aria-live="polite" style="margin:0 0 14px;">
   <h2 style="margin-bottom:8px">CHOOSE YOUR AUCTION</h2>
   <div class="whatEventQuickPanels">
@@ -23687,128 +23692,59 @@ window.openWhatGroupPage=function(){
 })();
 </script>
 <script>
-/* WHAT A AUCTION EVENT GROUPS. Uses only auctionSupabase (not cliviaSupabase).
-   Backend schema and RLS must be installed in the What A Auction Event project. */
+/* WHAT A AUCTION EVENT group registration and President dashboard. No item-loading UI. */
 (function(){
- const $=id=>document.getElementById(id);
- const say=t=>{if($('whatGroupStatus'))$('whatGroupStatus').textContent=t;};
- const safe=(t)=>String(t==null?'':t);
- let currentUser=null;
- async function signedIn(){
-   const {data,error}=await auctionSupabase.auth.getUser();
-   if(error||!data?.user){say('Sign in to WHAT A AUCTION EVENT to manage groups.');return null;}
-   currentUser=data.user;return currentUser;
+ const $=id=>document.getElementById(id), db=()=>window.auctionSupabase;
+ const say=t=>{$('whatGroupStatus').textContent=t;};
+ let user=null;
+ const button=(label,fn)=>{const b=document.createElement('button');b.type='button';b.className='whatGroupSmallButton';b.textContent=label;b.addEventListener('click',fn);return b;};
+ async function signedIn(){const {data,error}=await db().auth.getUser();user=error?null:data?.user;if(!user){say('Sign in to WHAT A AUCTION EVENT first.');return null;}$('whatGroupPresident').value=user.email||'Verified signed-in member';return user;}
+ async function loadGroups(){const list=$('whatGroupList');list.textContent='Loading groups…';$('whatGroupDetails').hidden=true;if(!await signedIn()){list.textContent='Sign in to view groups.';return;}
+  const {data:owned,error:e}=await db().from('event_groups').select('id,name,president_id,invite_code').eq('president_id',user.id);
+  if(e){list.textContent='Unable to load groups: '+e.message;return;}
+  const {data:joined,error:je}=await db().from('event_group_members').select('group_id,status,event_groups(id,name,president_id)').eq('user_id',user.id);
+  if(je){list.textContent='Unable to load memberships: '+je.message;return;}
+  list.replaceChildren();const seen=new Set();
+  for(const g of owned||[]){seen.add(g.id);const r=document.createElement('div');r.className='whatGroupEntry';r.append(document.createTextNode(g.name+' — PRESIDENT '),button('OPEN PRESIDENT DASHBOARD',()=>showGroup(g.id)));list.append(r);}
+  for(const m of joined||[]){const g=m.event_groups;if(!g||seen.has(g.id))continue;seen.add(g.id);const r=document.createElement('div');r.className='whatGroupEntry';r.append(document.createTextNode(g.name+' — '+m.status+' '),button('OPEN GROUP',()=>showGroup(g.id)));list.append(r);}
+  if(!seen.size)list.textContent='No registered groups yet.';
  }
- function button(label,callback){const b=document.createElement('button');b.type='button';b.className='whatGroupSmallButton';b.textContent=label;b.addEventListener('click',callback);return b;}
- async function loadGroups(){
-   const list=$('whatGroupList');if(!list)return;
-   list.textContent='Loading groups...';$('whatGroupDetails').hidden=true;
-   const user=await signedIn();if(!user){list.textContent='Sign in to view your groups.';return;}
-   const {data:mine,error:e1}=await auctionSupabase.from('event_groups').select('id,name,invite_code,president_id').eq('president_id',user.id);
-   if(e1){list.textContent='Group database setup is required: '+e1.message;return;}
-   const {data:memberships,error:e2}=await auctionSupabase.from('event_group_members').select('group_id,status,can_load_lots,event_groups(id,name,president_id)').eq('user_id',user.id);
-   if(e2){list.textContent='Unable to load memberships: '+e2.message;return;}
-   list.replaceChildren();
-   const seen=new Set();
-   for(const g of mine||[]){seen.add(g.id);const r=document.createElement('div');r.className='whatGroupEntry';const t=document.createElement('span');t.textContent=g.name+' — PRESIDENT';r.append(t,button('MANAGE GROUP',()=>showGroup(g.id)));list.append(r);}
-   for(const m of memberships||[]){const g=m.event_groups;if(!g||seen.has(g.id))continue;seen.add(g.id);const r=document.createElement('div');r.className='whatGroupEntry';const t=document.createElement('span');t.textContent=g.name+' — '+m.status;r.append(t,button('OPEN GROUP',()=>showGroup(g.id)));list.append(r);}
-   if(!seen.size)list.textContent='No groups yet. Create a group or request to join one.';
+ function panel(host,title,description){const x=document.createElement('section');x.className='whatGroupDashboardTile';const h=document.createElement('strong');h.textContent=title;x.append(h);if(description){const p=document.createElement('p');p.textContent=description;x.append(p);}host.append(x);return x;}
+ async function showGroup(id){if(!await signedIn())return;
+  const {data:g,error:e}=await db().from('event_groups').select('*').eq('id',id).single();if(e||!g){say('Unable to open group.');return;}
+  const president=g.president_id===user.id,area=$('whatGroupDetails'),dash=$('whatGroupDashboard'),content=$('whatGroupDetailsContent');area.hidden=false;$('whatGroupDetailsTitle').textContent=g.name;dash.replaceChildren();content.replaceChildren();
+  if(president){
+   const invitations=panel(dash,'👥 MEMBERS & INVITATIONS','Invite code: '+g.invite_code);
+   const {data:members,error:me}=await db().from('event_group_members').select('user_id,status,can_load_lots').eq('group_id',id);
+   if(me)say('Member list: '+me.message);
+   for(const m of members||[]){const line=document.createElement('div');line.className='whatGroupEntry';line.append(document.createTextNode('Member '+m.user_id.slice(0,8)+' — '+m.status+' '));if(m.status==='PENDING')line.append(button('APPROVE',async()=>{const {error:err}=await db().from('event_group_members').update({status:'APPROVED',can_load_lots:true}).eq('group_id',id).eq('user_id',m.user_id);if(err)say(err.message);else await showGroup(id);}));invitations.append(line);}
+   panel(dash,'🚫 BLOCK / REMOVE MEMBERS','Member restrictions and removal controls are not yet enabled.');
+   panel(dash,'🌍 INTERNATIONAL BIDDING',g.international_bidding?'Enabled':'Disabled — changes require verified group settings.');
+   panel(dash,'📅 AUCTION DATES','Auction scheduling is not yet connected.');
+   panel(dash,'🔒 PRIVATE / PUBLIC AUCTION',g.auction_access||'PRIVATE');
+   const share=panel(dash,'📤 SHARE GROUP AUCTION','Invite friends and partners');share.append(button('COPY INVITATION LINK',()=>{const link='https://whatauction.top/?page=group-page';navigator.clipboard?.writeText(link).then(()=>say('Link copied.')).catch(()=>window.prompt('Copy link:',link));}));
+   panel(dash,'💳 GROUP AUCTION FEES','R200 per 30 days from launch. Payment collection is not yet connected.');
+   panel(dash,'✔ APPROVE ITEM LISTINGS','Item approvals will be available when group auction publishing is connected.');
+  }else{const {data:m}=await db().from('event_group_members').select('status').eq('group_id',id).eq('user_id',user.id).maybeSingle();if(m?.status!=='APPROVED'){panel(dash,'MEMBERSHIP PENDING','The President must approve your request.');return;}panel(dash,'GROUP MEMBER','You are an approved member.');}
+  const chat=panel(dash,'💬 GROUP COMMUNICATION','Private messages between the President and approved members.');
+  const thread=document.createElement('div');thread.className='whatGroupMessages';chat.append(thread);
+  const input=document.createElement('textarea');input.rows=3;input.maxLength=2000;input.placeholder='Write a group message';chat.append(input);
+  async function refresh(){const {data,error}=await db().from('event_group_messages').select('sender_id,body,is_announcement,created_at').eq('group_id',id).order('created_at',{ascending:true}).limit(100);thread.replaceChildren();if(error){thread.textContent=error.message;return;}for(const m of data||[]){const line=document.createElement('div');line.className='whatGroupMessage';const head=document.createElement('strong');head.textContent=(m.is_announcement?'PRESIDENT ANNOUNCEMENT — ':'')+(m.sender_id===user.id?'YOU':'MEMBER')+' · '+new Date(m.created_at).toLocaleString();const body=document.createElement('p');body.textContent=m.body;line.append(head,body);thread.append(line);}if(!data?.length)thread.textContent='No messages yet.';}
+  async function send(announcement){const body=input.value.trim();if(!body)return say('Write a message first.');const {error}=await db().from('event_group_messages').insert({group_id:id,sender_id:user.id,body,is_announcement:announcement});if(error)say(error.message);else{input.value='';await refresh();}}
+  chat.append(button('SEND MESSAGE',()=>send(false)));if(president)chat.append(button('POST PRESIDENT ANNOUNCEMENT',()=>send(true)));chat.append(button('REFRESH MESSAGES',refresh));await refresh();area.scrollIntoView({block:'start',behavior:'smooth'});
  }
- async function showGroup(id){
-   if(!await signedIn())return;
-   const {data:g,error}=await auctionSupabase.from('event_groups').select('id,name,president_id,invite_code').eq('id',id).single();
-   if(error||!g){say('Unable to open this group.');return;}
-   const isPresident=g.president_id===currentUser.id;
-   const area=$('whatGroupDetails'), content=$('whatGroupDetailsContent');
-   area.hidden=false;$('whatGroupDetailsTitle').textContent=g.name;content.replaceChildren();
-   if(isPresident){
-     const info=document.createElement('p');info.textContent='Invite code: '+g.invite_code+' — share this code with members.';content.append(info);
-     const {data:members,error:me}=await auctionSupabase.from('event_group_members').select('user_id,status,can_load_lots').eq('group_id',id);
-     if(me){say('Could not load group members: '+me.message);return;}
-     const h=document.createElement('h4');h.textContent='MEMBER APPROVALS';content.append(h);
-     for(const m of members||[]){const r=document.createElement('div');r.className='whatGroupEntry';const t=document.createElement('span');t.textContent='Member '+m.user_id.slice(0,8)+' — '+m.status+(m.can_load_lots?' — CAN LOAD LOTS':'');r.append(t);
-       if(m.status==='PENDING')r.append(button('APPROVE + ALLOW LOADING',async()=>{
-         const {error:e}=await auctionSupabase.from('event_group_members').update({status:'APPROVED',can_load_lots:true}).eq('group_id',id).eq('user_id',m.user_id);
-         if(e)say(e.message);else{say('Member approved.');void showGroup(id);}
-       }));content.append(r);
-     }
-   }
-   const {data:membership}=await auctionSupabase.from('event_group_members').select('status,can_load_lots').eq('group_id',id).eq('user_id',currentUser.id).maybeSingle();
-   if(!isPresident && membership?.status!=='APPROVED'){const p=document.createElement('p');p.textContent='WAITING FOR GROUP APPROVAL. Only approved members can load lots.';content.append(p);return;}
-   const h=document.createElement('h4');h.textContent='GROUP AUCTION LOTS';content.append(h);
-   const {data:lots,error:le}=await auctionSupabase.from('event_group_lots').select('id,title,category,description,starting_bid,status,created_at').eq('group_id',id).order('created_at',{ascending:false});
-   if(le){say('Unable to load group lots: '+le.message);return;}
-   for(const lot of lots||[]){const r=document.createElement('div');r.className='whatGroupEntry';r.textContent=(lot.category||'Other Goods')+' — '+lot.title+' — R'+Number(lot.starting_bid).toFixed(2)+' — '+lot.status;content.append(r);}
-   if(!(lots||[]).length){const p=document.createElement('p');p.textContent='No lots loaded yet.';content.append(p);}
-   if(isPresident||membership?.can_load_lots){
-     const form=document.createElement('div');form.className='whatGroupBox whatGroupLotLoader';
-     const heading=document.createElement('h4');heading.textContent='LOAD YOUR GROUP AUCTION ITEM';form.append(heading);
-     const hint=document.createElement('p');hint.className='small';hint.textContent='Same simple loading layout for horses, vehicles, machinery and general goods. Your draft belongs only to this group.';form.append(hint);
-     function field(label,element){const wrap=document.createElement('label');wrap.className='whatGroupLoadField';const name=document.createElement('span');name.textContent=label;wrap.append(name,element);form.append(wrap);return element;}
-     const category=document.createElement('select');
-     for(const item of ['Horses & Livestock','Vehicles','Machinery & Equipment','Property','Furniture','Collectables','Electronics','Other Goods']){const opt=document.createElement('option');opt.value=item;opt.textContent=item;category.append(opt);}
-     field('ITEM CATEGORY',category);
-     const title=document.createElement('input');title.placeholder='Example: 2018 Toyota Hilux / Arabian horse';title.maxLength=140;field('ITEM NAME / TITLE',title);
-     const desc=document.createElement('textarea');desc.placeholder='Describe the item, specifications, age, history and important details';desc.maxLength=2000;desc.rows=4;field('ITEM DESCRIPTION',desc);
-     const condition=document.createElement('select');
-     for(const item of ['Not specified','New','Excellent','Good','Used','For restoration','Not applicable']){const opt=document.createElement('option');opt.value=item;opt.textContent=item;condition.append(opt);}
-     field('CONDITION',condition);
-     const price=document.createElement('input');price.type='number';price.min='300';price.step='50';price.placeholder='R300 minimum';field('STARTING BID (ZAR)',price);
-     const reserve=document.createElement('input');reserve.type='number';reserve.min='300';reserve.step='50';reserve.placeholder='Optional reserve price';field('RESERVE PRICE (OPTIONAL)',reserve);
-     const add=button('SAVE GROUP LOT DRAFT',async()=>{
-       const amount=Number(price.value), reserveValue=reserve.value.trim()?Number(reserve.value):null;
-       if(!title.value.trim()||!Number.isFinite(amount)||amount<300){say('Enter an item title and a starting bid of at least R300.');return;}
-       if(reserveValue!==null&&(!Number.isFinite(reserveValue)||reserveValue<amount)){say('Reserve price must be at least the starting bid.');return;}
-       add.disabled=true;
-       const {error:e}=await auctionSupabase.from('event_group_lots').insert({group_id:id,seller_id:currentUser.id,category:category.value,title:title.value.trim(),description:desc.value.trim(),item_condition:condition.value,starting_bid:amount,reserve_price:reserveValue,status:'DRAFT'});
-       add.disabled=false;
-       if(e)say('Could not save lot: '+e.message);else{say('Group item draft saved.');void showGroup(id);}
-     });form.append(add);content.append(form);
-     const note=document.createElement('p');note.className='small';note.textContent='Group drafts are saved securely. Photo uploads, auction scheduling, publishing and live bidding are not enabled yet.';content.append(note);
-   }
-   // Group-only communication: President announcements and member conversation.
-   const chat=document.createElement('section');chat.className='whatGroupBox';chat.setAttribute('aria-label','Group communication');
-   const chatHeading=document.createElement('h4');chatHeading.textContent='GROUP COMMUNICATION';chat.append(chatHeading);
-   const help=document.createElement('p');help.className='small';help.textContent='Private to the President and approved group members. President announcements are marked clearly.';chat.append(help);
-   const thread=document.createElement('div');thread.className='whatGroupMessages';thread.setAttribute('aria-live','polite');chat.append(thread);
-   async function refreshMessages(){
-     const {data:msgs,error:err}=await auctionSupabase.from('event_group_messages').select('sender_id,body,is_announcement,created_at').eq('group_id',id).order('created_at',{ascending:true}).limit(100);
-     if(err){thread.textContent='Unable to load group messages: '+err.message;return;}
-     thread.replaceChildren();
-     if(!msgs?.length){thread.textContent='No messages yet. Start the group conversation.';return;}
-     for(const msg of msgs){const line=document.createElement('div');line.className='whatGroupMessage';
-       const meta=document.createElement('strong');meta.textContent=(msg.is_announcement?'PRESIDENT ANNOUNCEMENT — ':'')+(msg.sender_id===currentUser.id?'YOU':'MEMBER '+msg.sender_id.slice(0,8))+' · '+new Date(msg.created_at).toLocaleString();
-       const body=document.createElement('p');body.textContent=msg.body;line.append(meta,body);thread.append(line);}
-     thread.scrollTop=thread.scrollHeight;
-   }
-   const message=document.createElement('textarea');message.maxLength=2000;message.rows=3;message.placeholder='Write a message to your group members';message.setAttribute('aria-label','Group message');chat.append(message);
-   const actions=document.createElement('div');actions.className='whatGroupMessageActions';
-   const send=button('SEND MESSAGE',()=>sendMessage(false));actions.append(send);
-   if(isPresident)actions.append(button('POST PRESIDENT ANNOUNCEMENT',()=>sendMessage(true)));
-   actions.append(button('REFRESH MESSAGES',()=>void refreshMessages()));chat.append(actions);
-   async function sendMessage(announcement){
-     const body=message.value.trim();if(!body){say('Write your message first.');return;}
-     const {error:err}=await auctionSupabase.from('event_group_messages').insert({group_id:id,sender_id:currentUser.id,body,is_announcement:announcement});
-     if(err){say('Could not send message: '+err.message);return;}
-     message.value='';say(announcement?'President announcement posted.':'Message sent.');await refreshMessages();
-   }
-   content.append(chat);await refreshMessages();
-   area.scrollIntoView({behavior:'smooth',block:'start'});
+ async function create(){if(!await signedIn())return;const name=$('whatGroupName').value.trim(),file=$('whatGroupLogo').files?.[0];if(name.length<3)return say('Enter the registered group name.');if(!file)return say('Upload your own group logo before registration.');if(!/^image\/(png|jpeg|webp)$/.test(file.type)||file.size>2*1024*1024)return say('Logo must be JPG, PNG or WebP, up to 2 MB.');if($('whatGroupInternational').value==='true'&&!$('whatGroupInternationalAccept').checked)return say('Accept international bidding responsibility first.');
+  say('Checking group registration…');
+  const {data:g,error}=await db().from('event_groups').insert({name,president_id:user.id,auction_access:$('whatGroupAccess').value,international_bidding:$('whatGroupInternational').value==='true'}).select('id').single();
+  if(error)return say('Could not register group: '+error.message);
+  const path=user.id+'/'+g.id+'/logo.'+(file.type==='image/png'?'png':file.type==='image/webp'?'webp':'jpg');
+  const {error:uploadError}=await db().storage.from('event-group-logos').upload(path,file,{upsert:false,contentType:file.type});
+  if(uploadError){say('Group created but logo upload failed: '+uploadError.message+' — contact admin before launching.');await loadGroups();return;}
+  const {error:logoError}=await db().from('event_groups').update({logo_path:path}).eq('id',g.id);
+  if(logoError)say('Group created but logo confirmation failed: '+logoError.message);else say('Group registered. President dashboard is ready.');await loadGroups();await showGroup(g.id);
  }
- async function create(){if(!await signedIn())return;const name=$('whatGroupName').value.trim();if(name.length<3){say('Enter a group name (at least 3 characters).');return;}
-   const {data:newGroup,error}=await auctionSupabase.from('event_groups').insert({name,president_id:currentUser.id}).select('id').single();
-   if(error)say('Could not create group: '+error.message);else{say('Group created. Your loading form is open below.');$('whatGroupName').value='';await loadGroups();if(newGroup?.id)await showGroup(newGroup.id);}
- }
- async function join(){if(!await signedIn())return;const code=$('whatGroupJoinCode').value.trim();if(!code){say('Enter the invitation code.');return;}
-   if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(code)){say('Enter a valid invitation code from the President.');return;}
-   const {error}=await auctionSupabase.rpc('event_group_request_join',{code});
-   if(error)say('Unable to request membership: '+error.message);else{say('Request sent. WAITING FOR GROUP APPROVAL.');$('whatGroupJoinCode').value='';await loadGroups();}
- }
- function wire(){
-   $('whatGroupCreate')?.addEventListener('click',()=>void create());
-   $('whatGroupJoin')?.addEventListener('click',()=>void join());
-   $('whatGroupBack')?.addEventListener('click',()=>openEventCreatorSetup());
- }
+ async function join(){if(!await signedIn())return;const code=$('whatGroupJoinCode').value.trim();if(!/^[a-f0-9-]{36}$/i.test(code))return say('Enter the invitation code from the President.');const {error}=await db().rpc('event_group_request_join',{code});if(error)say(error.message);else{say('Membership request sent.');await loadGroups();}}
+ function wire(){$('whatGroupCreate')?.addEventListener('click',create);$('whatGroupJoin')?.addEventListener('click',join);$('whatGroupBack')?.addEventListener('click',()=>openEventCreatorSetup());}
  window.whatEventRefreshGroups=loadGroups;
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',wire);else wire();
 })();
