@@ -1924,6 +1924,15 @@ body:has(#cliviaCarryForwardFooter) {
  #pageOwnEvent .whatEventQuickPanel{flex-wrap:wrap;justify-content:center!important;text-align:center;gap:6px!important}
  #pageOwnEvent .whatEventQuickButton{width:100%!important;max-width:100%!important;flex:0 0 auto!important}
 }
+
+/* WHAT A AUCTION EVENT — PRIVATE GROUP COMMUNICATION */
+#pageOwnEvent .whatGroupMessages{max-height:340px;overflow-y:auto;padding:8px;background:#07150c;border:1px solid #3c5b35;border-radius:9px;margin:8px 0 12px}
+#pageOwnEvent .whatGroupMessage{padding:9px 10px;border-bottom:1px solid #28452d;overflow-wrap:anywhere}
+#pageOwnEvent .whatGroupMessage:last-child{border-bottom:0}
+#pageOwnEvent .whatGroupMessage strong{display:block;font-size:11px;color:#baff67}
+#pageOwnEvent .whatGroupMessage p{margin:5px 0 0;white-space:pre-wrap;color:white}
+#pageOwnEvent .whatGroupMessageActions{display:flex;gap:8px;flex-wrap:wrap}
+#pageOwnEvent .whatGroupMessageActions button{min-height:36px}
 </style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>      
  <script>
@@ -23722,6 +23731,33 @@ window.openWhatGroupPage=function(){
      });form.append(title,desc,price,add);content.append(form);
      const note=document.createElement('p');note.className='small';note.textContent='Draft details only. Photo uploads, auction scheduling, publishing and bidding remain disabled until secured backend workflows are implemented.';content.append(note);
    }
+   // Group-only communication: President announcements and member conversation.
+   const chat=document.createElement('section');chat.className='whatGroupBox';chat.setAttribute('aria-label','Group communication');
+   const chatHeading=document.createElement('h4');chatHeading.textContent='GROUP COMMUNICATION';chat.append(chatHeading);
+   const help=document.createElement('p');help.className='small';help.textContent='Private to the President and approved group members. President announcements are marked clearly.';chat.append(help);
+   const thread=document.createElement('div');thread.className='whatGroupMessages';thread.setAttribute('aria-live','polite');chat.append(thread);
+   async function refreshMessages(){
+     const {data:msgs,error:err}=await auctionSupabase.from('event_group_messages').select('sender_id,body,is_announcement,created_at').eq('group_id',id).order('created_at',{ascending:true}).limit(100);
+     if(err){thread.textContent='Unable to load group messages: '+err.message;return;}
+     thread.replaceChildren();
+     if(!msgs?.length){thread.textContent='No messages yet. Start the group conversation.';return;}
+     for(const msg of msgs){const line=document.createElement('div');line.className='whatGroupMessage';
+       const meta=document.createElement('strong');meta.textContent=(msg.is_announcement?'PRESIDENT ANNOUNCEMENT — ':'')+(msg.sender_id===currentUser.id?'YOU':'MEMBER '+msg.sender_id.slice(0,8))+' · '+new Date(msg.created_at).toLocaleString();
+       const body=document.createElement('p');body.textContent=msg.body;line.append(meta,body);thread.append(line);}
+     thread.scrollTop=thread.scrollHeight;
+   }
+   const message=document.createElement('textarea');message.maxLength=2000;message.rows=3;message.placeholder='Write a message to your group members';message.setAttribute('aria-label','Group message');chat.append(message);
+   const actions=document.createElement('div');actions.className='whatGroupMessageActions';
+   const send=button('SEND MESSAGE',()=>sendMessage(false));actions.append(send);
+   if(isPresident)actions.append(button('POST PRESIDENT ANNOUNCEMENT',()=>sendMessage(true)));
+   actions.append(button('REFRESH MESSAGES',()=>void refreshMessages()));chat.append(actions);
+   async function sendMessage(announcement){
+     const body=message.value.trim();if(!body){say('Write your message first.');return;}
+     const {error:err}=await auctionSupabase.from('event_group_messages').insert({group_id:id,sender_id:currentUser.id,body,is_announcement:announcement});
+     if(err){say('Could not send message: '+err.message);return;}
+     message.value='';say(announcement?'President announcement posted.':'Message sent.');await refreshMessages();
+   }
+   content.append(chat);await refreshMessages();
    area.scrollIntoView({behavior:'smooth',block:'start'});
  }
  async function create(){if(!await signedIn())return;const name=$('whatGroupName').value.trim();if(name.length<3){say('Enter a group name (at least 3 characters).');return;}
@@ -23729,9 +23765,8 @@ window.openWhatGroupPage=function(){
    if(error)say('Could not create group: '+error.message);else{say('Group created.');$('whatGroupName').value='';await loadGroups();}
  }
  async function join(){if(!await signedIn())return;const code=$('whatGroupJoinCode').value.trim();if(!code){say('Enter the invitation code.');return;}
-   const {data:g,error:ge}=await auctionSupabase.from('event_groups').select('id').eq('invite_code',code).maybeSingle();
-   if(ge||!g){say('Invitation code not found.');return;}
-   const {error}=await auctionSupabase.from('event_group_members').insert({group_id:g.id,user_id:currentUser.id,status:'PENDING',can_load_lots:false});
+   if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(code)){say('Enter a valid invitation code from the President.');return;}
+   const {error}=await auctionSupabase.rpc('event_group_request_join',{code});
    if(error)say('Unable to request membership: '+error.message);else{say('Request sent. WAITING FOR GROUP APPROVAL.');$('whatGroupJoinCode').value='';await loadGroups();}
  }
  function wire(){
