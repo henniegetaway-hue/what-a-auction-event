@@ -1882,6 +1882,18 @@ body:has(#cliviaCarryForwardFooter) {
 #pageOwnEvent .whatGroupEntry{border:1px solid #537d35;border-radius:8px;padding:10px;margin:7px 0;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 #pageOwnEvent #whatGroupStatus{margin:8px 0;color:#e0ffb2}
 @media(max-width:650px){#pageOwnEvent .whatGroupColumns{grid-template-columns:1fr}}
+
+/* Group invitation controls: centred between group title and existing open button */
+#pageOwnEvent .whatEventQuickPanel:has(.whatEventShareCluster) {display:grid;grid-template-columns:minmax(0,1fr) auto 180px;align-items:center;column-gap:10px;}
+#pageOwnEvent .whatEventShareCluster {display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:0;text-align:center;}
+#pageOwnEvent .whatEventShareIcons {display:flex;justify-content:center;align-items:center;gap:7px;}
+#pageOwnEvent .whatEventShareCircle {box-sizing:border-box!important;width:30px!important;height:30px!important;min-width:30px!important;min-height:30px!important;padding:0!important;margin:0!important;display:inline-flex!important;align-items:center;justify-content:center;border:0!important;border-radius:50%!important;color:white!important;font:bold 14px/1 Arial,sans-serif!important;text-decoration:none!important;cursor:pointer;}
+#pageOwnEvent .whatShareWhatsApp {background:#20bb59!important;font-size:10px!important;}
+#pageOwnEvent .whatShareFacebook {background:#1877f2!important;font-size:20px!important;}
+#pageOwnEvent .whatShareWorld {background:#235b9d!important;font-size:16px!important;}
+#pageOwnEvent .whatEventShareCaption {font:bold 9px/1.15 Arial,sans-serif;color:#fff;white-space:nowrap;}
+@media(max-width:1100px){#pageOwnEvent .whatEventQuickPanel:has(.whatEventShareCluster){grid-template-columns:minmax(0,1fr) auto;row-gap:8px;}#pageOwnEvent .whatEventQuickPanel:has(.whatEventShareCluster) .whatEventShareCluster{grid-column:1 / -1;grid-row:2;}#pageOwnEvent .whatEventQuickPanel:has(.whatEventShareCluster) #whatEventOpenGroups{grid-column:2;grid-row:1;}}
+@media(max-width:450px){#pageOwnEvent .whatEventShareCaption{font-size:8px;}#pageOwnEvent .whatEventShareCircle{width:28px!important;height:28px!important;min-width:28px!important;min-height:28px!important;}}
 </style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>      
  <script>
@@ -3277,6 +3289,14 @@ function showEventSampleLanding(){
     </section>
     <section class="whatEventQuickPanel">
       <div class="whatEventGroupText"><strong>MY GROUP AUCTIONS</strong><small>Create and manage your Group Auctions.</small></div>
+      <div class="whatEventShareCluster" aria-label="Invite friends and partners">
+        <div class="whatEventShareIcons">
+          <a class="whatEventShareCircle whatShareWhatsApp" id="whatShareWhatsApp" href="https://api.whatsapp.com/send?text=Join%20me%20at%20WHAT%20A%20AUCTION%20EVENT%20https%3A%2F%2Fwhatauction.top%2F%3Fpage%3Dcreate-event" target="_blank" rel="noopener noreferrer" title="Share on WhatsApp" aria-label="Share on WhatsApp">WA</a>
+          <a class="whatEventShareCircle whatShareFacebook" id="whatShareFacebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwhatauction.top%2F%3Fpage%3Dcreate-event" target="_blank" rel="noopener noreferrer" title="Share on Facebook" aria-label="Share on Facebook">f</a>
+          <button class="whatEventShareCircle whatShareWorld" id="whatShareWorld" type="button" title="Share to other apps or copy link" aria-label="Share to other apps or copy link">&#127760;</button>
+        </div>
+        <span class="whatEventShareCaption">INVITE FRIENDS AND PARTNERS</span>
+      </div>
       <button type="button" class="whatEventQuickButton" id="whatEventOpenGroups">OPEN GROUP AUCTIONS</button>
     </section>
   </div>
@@ -23681,6 +23701,20 @@ window.addEventListener("DOMContentLoaded",()=>{
  }
  window.whatEventRefreshGroups=loadGroups;
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',wire);else wire();
+})();
+</script>
+
+<script>
+(function(){
+  const shareLink='https://whatauction.top/?page=create-event';
+  const shareText='Join me at WHAT A AUCTION EVENT: '+shareLink;
+  document.getElementById('whatShareWorld')?.addEventListener('click',async function(){
+    try {
+      if(navigator.share){await navigator.share({title:'WHAT A AUCTION EVENT',text:'Join me at WHAT A AUCTION EVENT',url:shareLink});return;}
+      if(navigator.clipboard && window.isSecureContext){await navigator.clipboard.writeText(shareText);alert('Auction link copied. Share it with your friends and partners.');return;}
+      window.prompt('Copy this link to invite friends and partners:',shareLink);
+    }catch(err){if(err && err.name==='AbortError')return;window.prompt('Copy this link to invite friends and partners:',shareLink);}
+  });
 })();
 </script>
 </body>
