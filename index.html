@@ -1837,6 +1837,24 @@ body:has(#cliviaCarryForwardFooter) {
 @media(max-width:380px){
  #pageOwnEvent .creatorEditWhiteBtn {font-size:10px !important;padding:5px 6px !important;}
 }
+
+/* Creator landing: latest auction on left; group and saved auctions on right */
+#pageOwnEvent #creatorLandingOverview {padding:8px 10px!important;margin:0 0 8px!important;}
+#pageOwnEvent #creatorLandingOverview > h2 {font-size:13px!important;margin:0 0 5px!important;}
+#pageOwnEvent .creatorLandingColumns {display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,0.9fr);gap:10px;align-items:start;}
+#pageOwnEvent .creatorLatestColumn,#pageOwnEvent .creatorLandingRight {min-width:0;}
+#pageOwnEvent .creatorLatestColumn > #creatorLandingContent > p {font-size:10px!important;margin:0 0 5px!important;}
+#pageOwnEvent .creatorGroupNav {display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 0 6px;border-bottom:1px solid #476528;}
+#pageOwnEvent .creatorGroupNav strong {font-size:12px;color:#d8ff9b;}
+#pageOwnEvent .creatorWhitePill {width:auto!important;min-height:0!important;padding:5px 12px!important;border:1px solid #ddd!important;border-radius:20px!important;background:white!important;color:black!important;font-size:10px!important;font-weight:700!important;cursor:pointer;}
+#pageOwnEvent #myEventGroupsInfo {font-size:11px;padding:7px 0;line-height:1.4;}
+#pageOwnEvent .creatorLandingRight #ownEventManagement {border:0!important;background:transparent!important;padding:5px 0 0!important;margin:0!important;box-shadow:none!important;}
+#pageOwnEvent .creatorLandingRight #ownEventManagement h3 {font-size:12px!important;margin:0 0 3px!important;}
+#pageOwnEvent .creatorLandingRight #ownEventManagement p.small {font-size:10px!important;margin:2px 0!important;line-height:1.25!important;}
+#pageOwnEvent .creatorLandingRight #ownEventManagementList > div {padding:5px 7px!important;margin:5px 0!important;}
+#pageOwnEvent .creatorLandingRight #openCreatorPreviewBtn {display:none!important;}
+#pageOwnEvent .creatorLandingRight .creatorEditWhiteBtn {border-radius:20px!important;}
+@media(max-width:700px){#pageOwnEvent .creatorLandingColumns{grid-template-columns:minmax(0,1fr);gap:6px;}}
 </style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>      
  <script>
@@ -3225,27 +3243,14 @@ function showEventSampleLanding(){
 <section id="pageOwnEvent" class="page hidden">
 <div id="creatorLandingOverview" class="panel" aria-live="polite" style="margin:0 0 14px;">
   <h2 style="margin-bottom:8px">MY AUCTION LANDING PAGE</h2>
-  <div id="creatorLandingContent">Checking your auctions...</div>
-</div>
-<div class="grid2 creatorPageLayout" style="grid-template-columns:minmax(280px,0.75fr) minmax(0,1.5fr);align-items:start;">
-  <div class="panel">
-    <h2>Create Your Own Event — See How It Works</h2>
-
-    <p>
-      Create your own online auction for your products, using your own
-      event name, logo, banner, categories and rules.
-    </p>
-
-  
-<div id="ownEventSetup" class="panel">
-
- 
-
-
-<h2 id="ownAuctionPageTitle" class="hidden">YOUR AUCTION</h2>
-
-<!-- CREATOR AUCTION MANAGEMENT -->
-<div class="panel" id="ownEventManagement">
+  <div class="creatorLandingColumns">
+  <div class="creatorLatestColumn"><div id="creatorLandingContent">Checking your auctions...</div></div>
+  <aside class="creatorLandingRight">
+    <div class="creatorGroupNav"><strong>MY GROUP AUCTIONS</strong>
+      <button type="button" class="creatorWhitePill" id="openMyEventGroups" onclick="document.getElementById('myEventGroupsInfo').hidden = !document.getElementById('myEventGroupsInfo').hidden">OPEN</button>
+    </div>
+    <div id="myEventGroupsInfo" hidden role="status">WHAT A AUCTION EVENT group auctions and President management are not connected yet. Your Clivia groups are separate.</div>
+    <div class="panel" id="ownEventManagement">
 
   
 <h3>MY AUCTIONS LIST</h3>
@@ -3270,6 +3275,28 @@ function showEventSampleLanding(){
 </div>
 
 </div>
+
+  </aside>
+</div>
+</div>
+<div class="grid2 creatorPageLayout" style="grid-template-columns:minmax(280px,0.75fr) minmax(0,1.5fr);align-items:start;">
+  <div class="panel">
+    <h2>Create Your Own Event — See How It Works</h2>
+
+    <p>
+      Create your own online auction for your products, using your own
+      event name, logo, banner, categories and rules.
+    </p>
+
+  
+<div id="ownEventSetup" class="panel">
+
+ 
+
+
+<h2 id="ownAuctionPageTitle" class="hidden">YOUR AUCTION</h2>
+
+<!-- CREATOR AUCTION MANAGEMENT -->
 
 <h3>CREATE NEW AUCTION</h3>
 <label>Event / Auction Name *</label>
@@ -22108,7 +22135,7 @@ function positionPhoneLoadCards(){
   if(window.innerWidth <= 600){
 
     phonePosition.appendChild(button);
-    auctionsPosition.appendChild(auctionsPanel);
+    /* Keep MY AUCTIONS LIST beside LATEST AUCTION on all screen sizes. */
 
   }else{
 
@@ -22123,7 +22150,7 @@ function positionPhoneLoadCards(){
     }
 
     if(auctionsMarker){
-      auctionsMarker.after(auctionsPanel);
+      /* Keep MY AUCTIONS LIST in the new landing right column. */
     }
   }
 }
