@@ -2889,6 +2889,14 @@ END OF BIDDING AND INVOICING MASTER RECORD
 ============================================================
 -->  
  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>     
+
+<style>
+#pageOwnEvent .whatGroupLotLoader{display:grid;gap:11px;max-width:100%;margin-top:14px}
+#pageOwnEvent .whatGroupLoadField{display:flex;flex-direction:column;gap:5px;color:#d6ff90;font-weight:700;font-size:12px}
+#pageOwnEvent .whatGroupLoadField input,#pageOwnEvent .whatGroupLoadField select,#pageOwnEvent .whatGroupLoadField textarea{width:100%;box-sizing:border-box;border:1px solid #8fa779;border-radius:8px;padding:11px;background:#fff;color:#111;font:inherit}
+#pageOwnEvent .whatGroupLotLoader h4{color:#c5ff5b;margin:0}
+#pageOwnEvent .whatGroupLotLoader button{justify-self:start}
+</style>
 </head>
 
 <body id="siteBody">
@@ -23715,21 +23723,35 @@ window.openWhatGroupPage=function(){
    const {data:membership}=await auctionSupabase.from('event_group_members').select('status,can_load_lots').eq('group_id',id).eq('user_id',currentUser.id).maybeSingle();
    if(!isPresident && membership?.status!=='APPROVED'){const p=document.createElement('p');p.textContent='WAITING FOR GROUP APPROVAL. Only approved members can load lots.';content.append(p);return;}
    const h=document.createElement('h4');h.textContent='GROUP AUCTION LOTS';content.append(h);
-   const {data:lots,error:le}=await auctionSupabase.from('event_group_lots').select('id,title,description,starting_bid,status,created_at').eq('group_id',id).order('created_at',{ascending:false});
+   const {data:lots,error:le}=await auctionSupabase.from('event_group_lots').select('id,title,category,description,starting_bid,status,created_at').eq('group_id',id).order('created_at',{ascending:false});
    if(le){say('Unable to load group lots: '+le.message);return;}
-   for(const lot of lots||[]){const r=document.createElement('div');r.className='whatGroupEntry';r.textContent=lot.title+' — R'+Number(lot.starting_bid).toFixed(2)+' — '+lot.status;content.append(r);}
+   for(const lot of lots||[]){const r=document.createElement('div');r.className='whatGroupEntry';r.textContent=(lot.category||'Other Goods')+' — '+lot.title+' — R'+Number(lot.starting_bid).toFixed(2)+' — '+lot.status;content.append(r);}
    if(!(lots||[]).length){const p=document.createElement('p');p.textContent='No lots loaded yet.';content.append(p);}
    if(isPresident||membership?.can_load_lots){
-     const form=document.createElement('div');form.className='whatGroupBox';
-     const title=document.createElement('input');title.placeholder='Lot title';title.maxLength=140;
-     const desc=document.createElement('input');desc.placeholder='Lot description';desc.maxLength=1000;
-     const price=document.createElement('input');price.type='number';price.min='300';price.step='50';price.placeholder='Starting bid (R300 minimum)';
+     const form=document.createElement('div');form.className='whatGroupBox whatGroupLotLoader';
+     const heading=document.createElement('h4');heading.textContent='LOAD YOUR GROUP AUCTION ITEM';form.append(heading);
+     const hint=document.createElement('p');hint.className='small';hint.textContent='Same simple loading layout for horses, vehicles, machinery and general goods. Your draft belongs only to this group.';form.append(hint);
+     function field(label,element){const wrap=document.createElement('label');wrap.className='whatGroupLoadField';const name=document.createElement('span');name.textContent=label;wrap.append(name,element);form.append(wrap);return element;}
+     const category=document.createElement('select');
+     for(const item of ['Horses & Livestock','Vehicles','Machinery & Equipment','Property','Furniture','Collectables','Electronics','Other Goods']){const opt=document.createElement('option');opt.value=item;opt.textContent=item;category.append(opt);}
+     field('ITEM CATEGORY',category);
+     const title=document.createElement('input');title.placeholder='Example: 2018 Toyota Hilux / Arabian horse';title.maxLength=140;field('ITEM NAME / TITLE',title);
+     const desc=document.createElement('textarea');desc.placeholder='Describe the item, specifications, age, history and important details';desc.maxLength=2000;desc.rows=4;field('ITEM DESCRIPTION',desc);
+     const condition=document.createElement('select');
+     for(const item of ['Not specified','New','Excellent','Good','Used','For restoration','Not applicable']){const opt=document.createElement('option');opt.value=item;opt.textContent=item;condition.append(opt);}
+     field('CONDITION',condition);
+     const price=document.createElement('input');price.type='number';price.min='300';price.step='50';price.placeholder='R300 minimum';field('STARTING BID (ZAR)',price);
+     const reserve=document.createElement('input');reserve.type='number';reserve.min='300';reserve.step='50';reserve.placeholder='Optional reserve price';field('RESERVE PRICE (OPTIONAL)',reserve);
      const add=button('SAVE GROUP LOT DRAFT',async()=>{
-       const amount=Number(price.value);if(!title.value.trim()||!Number.isFinite(amount)||amount<300){say('Enter a lot title and starting bid of at least R300.');return;}
-       const {error:e}=await auctionSupabase.from('event_group_lots').insert({group_id:id,seller_id:currentUser.id,title:title.value.trim(),description:desc.value.trim(),starting_bid:amount,status:'DRAFT'});
-       if(e)say('Could not save lot: '+e.message);else{say('Draft lot saved to this group.');void showGroup(id);}
-     });form.append(title,desc,price,add);content.append(form);
-     const note=document.createElement('p');note.className='small';note.textContent='Draft details only. Photo uploads, auction scheduling, publishing and bidding remain disabled until secured backend workflows are implemented.';content.append(note);
+       const amount=Number(price.value), reserveValue=reserve.value.trim()?Number(reserve.value):null;
+       if(!title.value.trim()||!Number.isFinite(amount)||amount<300){say('Enter an item title and a starting bid of at least R300.');return;}
+       if(reserveValue!==null&&(!Number.isFinite(reserveValue)||reserveValue<amount)){say('Reserve price must be at least the starting bid.');return;}
+       add.disabled=true;
+       const {error:e}=await auctionSupabase.from('event_group_lots').insert({group_id:id,seller_id:currentUser.id,category:category.value,title:title.value.trim(),description:desc.value.trim(),item_condition:condition.value,starting_bid:amount,reserve_price:reserveValue,status:'DRAFT'});
+       add.disabled=false;
+       if(e)say('Could not save lot: '+e.message);else{say('Group item draft saved.');void showGroup(id);}
+     });form.append(add);content.append(form);
+     const note=document.createElement('p');note.className='small';note.textContent='Group drafts are saved securely. Photo uploads, auction scheduling, publishing and live bidding are not enabled yet.';content.append(note);
    }
    // Group-only communication: President announcements and member conversation.
    const chat=document.createElement('section');chat.className='whatGroupBox';chat.setAttribute('aria-label','Group communication');
