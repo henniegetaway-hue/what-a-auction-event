@@ -2903,7 +2903,7 @@ END OF BIDDING AND INVOICING MASTER RECORD
 @media(max-width:650px){#pageOwnEvent .whatGroupPreviewGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 <style>
-#pageOwnEvent .whatGroupFormGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0}
+#pageOwnEvent .whatGroupFormGrid{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;margin:12px 0;max-width:650px}
 #pageOwnEvent .whatGroupFormGrid label,#pageOwnEvent #whatEventGroupsArea label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700}
 #pageOwnEvent #whatEventGroupsArea input:not([type=checkbox]),#pageOwnEvent #whatEventGroupsArea select,#pageOwnEvent #whatEventGroupsArea textarea{box-sizing:border-box;width:100%;padding:10px;border-radius:8px;border:1px solid #91b86d;background:#fff;color:#111}
 #pageOwnEvent #whatEventGroupsArea input[type=checkbox]{width:auto}
@@ -2913,7 +2913,11 @@ END OF BIDDING AND INVOICING MASTER RECORD
 #pageOwnEvent .whatGroupDashboardTile strong{color:#d0ff7d}
 #pageOwnEvent .whatGroupDashboardTile p{font-size:12px}
 @media(max-width:700px){#pageOwnEvent .whatGroupFormGrid,#pageOwnEvent .whatGroupDashboard{grid-template-columns:1fr}}
-</style></head>
+</style><style id="whatGroupPasswordResetStyle">
+#whatEventGroupsArea a.whatGroupPasswordResetLink {display:inline-block;background:#fff !important;color:#0645ad !important;border:1px solid #d4d4d4;border-radius:5px;padding:5px 9px;font-weight:700;text-decoration:underline;}
+#whatEventGroupsArea a.whatGroupPasswordResetLink:hover,#whatEventGroupsArea a.whatGroupPasswordResetLink:focus {background:#f0f5ff !important;color:#003399 !important;}
+</style>
+</head>
 
 <body id="siteBody">
       
@@ -3346,18 +3350,18 @@ function showEventSampleLanding(){
   <section id="whatEventGroupsArea" class="whatEventGroupsArea" hidden aria-label="Group Auctions">
   <div class="whatGroupTitleRow"><h3>GROUP AUCTIONS</h3><button type="button" class="whatGroupSmallButton" id="whatGroupBack">BACK TO MY AUCTIONS</button></div>
   <p class="small">Group Presidents manage members, auction dates, private or public auctions, international bidding, group branding and auction fees.</p>
-  <div class="whatGroupBox"><h4>GROUP AUCTION FEE: R200 PER 30 DAYS</h4><p>R200 is payable when the Group Auction launches and covers 30 days from its launch date. If the auction continues beyond the paid period, another R200 is payable for the next 30 days.</p><p class="small">This is NOT a monthly subscription. No separate activation fee applies. One group can hold multiple auctions; each additional group requires its own payment arrangement.</p></div>
   <div class="whatGroupBox" id="whatGroupRegistration"><h4>REGISTER YOUR AUCTION GROUP</h4><p class="small">The registered President controls the group. The registered group name cannot be changed.</p>
   <div class="whatGroupFormGrid"><label>Registered Group Name *<input id="whatGroupName" maxlength="100" placeholder="Registered group name" required></label><label>Group Club Logo *<input id="whatGroupLogo" type="file" accept="image/png,image/jpeg,image/webp" required><small>Upload your own logo. No sample pictures.</small></label>
   <label>Group President<input id="whatGroupPresident" readonly placeholder="Sign in to your verified account"></label><label>Auction Access *<select id="whatGroupAccess"><option value="PRIVATE">PRIVATE — Approved Members Only</option><option value="PUBLIC">PUBLIC — Registered Bidders</option></select></label>
   <label>International Members May Bid<select id="whatGroupInternational"><option value="false">NO — International Bidding Disabled</option><option value="true">YES — International Bidding Allowed</option></select></label></div>
   <label class="whatGroupConfirm"><input type="checkbox" id="whatGroupInternationalAccept"> I accept responsibility for international bids when international bidding is enabled.</label>
-  <p class="small">The President must sign in with an existing verified WHAT A AUCTION EVENT account. <a href="?page=register">FORGOT PASSWORD / RESET PASSWORD</a></p>
+  <p class="small">The President must sign in with an existing verified WHAT A AUCTION EVENT account. <a class="whatGroupPasswordResetLink" href="?page=register">FORGOT PASSWORD / RESET PASSWORD</a></p>
   <button type="button" id="whatGroupCreate" class="whatGroupSmallButton">REGISTER GROUP</button></div>
   <div id="whatGroupStatus" role="status" aria-live="polite" class="small"></div>
   <div class="whatGroupBox"><h4>JOIN AN EXISTING GROUP</h4><label>Group invitation code<input id="whatGroupJoinCode" maxlength="36" placeholder="Code from the President"></label><button type="button" id="whatGroupJoin" class="whatGroupSmallButton">REQUEST MEMBERSHIP</button></div>
   <div class="whatGroupBox"><h4>MY REGISTERED GROUPS</h4><div id="whatGroupList">Sign in to view your groups.</div></div>
   <section id="whatGroupDetails" hidden class="whatGroupBox"><h3 id="whatGroupDetailsTitle"></h3><h4>GROUP PRESIDENT DASHBOARD</h4><div id="whatGroupDashboard" class="whatGroupDashboard"></div><div id="whatGroupDetailsContent"></div></section>
+  <div class="whatGroupBox"><h4>GROUP AUCTION FEE: R200 PER 30 DAYS</h4><p>R200 is payable when the Group Auction launches and covers 30 days from its launch date. If the auction continues beyond the paid period, another R200 is payable for the next 30 days.</p><p class="small">This is NOT a monthly subscription. No separate activation fee applies. One group can hold multiple auctions; each additional group requires its own payment arrangement.</p></div>
   </section>
 <div id="creatorLandingOverview" class="panel" aria-live="polite" style="margin:0 0 14px;">
   <h2 style="margin-bottom:8px">CHOOSE YOUR AUCTION</h2>
@@ -19040,7 +19044,12 @@ showCliviaEvents=function(){
   return result;
 };
 window.addEventListener("popstate",()=>auctionRouteOpen(new URLSearchParams(location.search).get("page")||"clivia"));
-auctionRouteOpen(new URLSearchParams(location.search).get("page")||"clivia");
+// Restore deep links only after all inline scripts have defined their page handlers.
+// In particular, openWhatGroupPage is defined later in this document.
+window.addEventListener("DOMContentLoaded",()=>{
+  const route=new URLSearchParams(location.search).get("page")||"clivia";
+  auctionRouteOpen(route);
+});
 // Landing-page repair: initial route may run before the rest of the page
 // and authenticated member data have finished initialising. Reopen only
 // the Clivia landing route once the document is ready. The CLIVIA AUCTIONS
@@ -23669,6 +23678,7 @@ window.openWhatGroupPage=function(){
   page.classList.add('whatGroupPage');
   document.getElementById('whatEventGroupsArea').hidden=false;
   if(typeof showOwnEventPage==='function')void showOwnEventPage();
+  // Retain the group-only view when async creator setup finishes.
   if(typeof auctionRouteUpdate==='function')auctionRouteUpdate('group-page');
   if(typeof window.whatEventRefreshGroups==='function')void window.whatEventRefreshGroups();
   window.scrollTo({top:0,behavior:'instant'});
