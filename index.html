@@ -3621,8 +3621,7 @@ color:#fff;
 ">
 
  <div id="ownEventActivationFee">
-  The once-off activation fee is <strong>R2,000.00</strong>, payable only when
-  you are satisfied with your auction and choose to go LIVE.
+  Choose your creator subscription: <strong>R2,000 per year or R200 per month</strong>. You can create and test auctions for free. Payment starts when you choose to launch your first auction. NO VAT.
 </div>
       
   <br><br>
@@ -6118,7 +6117,7 @@ border:1px solid #D99A50;
       <p>11. Only goods and content permitted by the platform and applicable law may be listed. Prohibited listings include people, sexual or pornographic material, cruelty, firearms, ammunition, explosives and illegal goods.</p>
       <p>12. Sellers must have the right to offer the goods and to use uploaded photographs, logos and descriptions.</p>
       <p>13. Event Creators must state collection, shipping, delivery, export, tax and other relevant terms before bidding closes.</p>
-      <p>14. Creating and testing an event is free. The applicable one-time activation fee is payable before the first LIVE event; returning Event Creators who have already paid it are not charged again.</p>
+      <p>14. Creating and testing an event is free. For South African creators, choose R2,000 per year or R200 per month, starting with your first LIVE auction. Other currencies are shown in the creator setup.</p>
       <p>15. The Event Creator is responsible for checking auction dates, closing times, banking details and lot information before making an event LIVE.</p>
       <p>16. Test-mode bids and invoices are demonstrations only, not genuine sales or payment obligations.</p>
       <h3>Payments, Privacy and Responsibility</h3>
@@ -19992,9 +19991,9 @@ const selectedActivationFee =
 
 if(activationFeeDisplay && selectedActivationFee){
   activationFeeDisplay.innerHTML =
-    'The once-off activation fee is <strong>' +
-    selectedActivationFee.text +
-    '</strong>, payable only when you are satisfied with your auction and choose to go LIVE.';
+    selectedCurrency === 'ZAR'
+      ? 'Choose your creator subscription: <strong>R2,000 per year or R200 per month</strong>. Create and test auctions for free; payment starts when you launch your first auction. <strong>NO VAT</strong>.'
+      : 'The creator activation fee is <strong>' + selectedActivationFee.text + '</strong>, payable before your first LIVE auction.';
 }    
       
   if(display){
