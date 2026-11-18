@@ -2926,6 +2926,21 @@ END OF BIDDING AND INVOICING MASTER RECORD
 #pageOwnEvent #whatEventGroupsArea .whatGroupTitleWithSharing .whatEventShareCaption{display:block;font-size:9px;text-align:center;white-space:nowrap}
 @media(max-width:600px){#pageOwnEvent #whatEventGroupsArea .whatGroupTitleWithSharing{grid-template-columns:1fr auto;row-gap:10px}#pageOwnEvent #whatEventGroupsArea .whatGroupTitleWithSharing>.whatEventShareCluster{grid-column:1/-1;grid-row:2}#pageOwnEvent #whatEventGroupsArea .whatGroupTitleWithSharing>#whatGroupBack{grid-column:2;grid-row:1}}
 </style>
+
+<style id="cliviaAccountLoginPopupFix">
+#bidderLoginBox.cliviaAccountPopupOpen {
+  position:fixed !important;left:50% !important;top:50% !important;
+  transform:translate(-50%,-50%) !important;
+  display:block !important;z-index:100010 !important;
+  width:min(420px,calc(100vw - 24px)) !important;max-width:420px !important;
+  max-height:calc(100dvh - 30px) !important;overflow-y:auto !important;
+  background:#102016 !important;color:#fff !important;
+  border:2px solid #ff9800 !important;
+  box-shadow:0 0 0 100vmax rgba(0,0,0,.72),0 18px 45px rgba(0,0,0,.6) !important;
+}
+#bidderLoginBox:not(.cliviaAccountPopupOpen) #cliviaLoginCloseBtn {display:none !important}
+#bidderLoginBox.cliviaAccountPopupOpen #cliviaLoginCloseBtn {display:block !important}
+</style>
 </head>
 
 <body id="siteBody">
@@ -4151,6 +4166,8 @@ KEEP BUTTONS ALIGNED IN ONE HORIZONTAL ROW.
 <!-- LOGIN BOX BELOW BUTTONS -->
 <div id="bidderLoginBox"
      style="display:block;border:2px solid #ff9800;border-radius:12px;padding:15px;margin:15px auto;max-width:330px;">
+ <button type="button" id="cliviaLoginCloseBtn" aria-label="Close sign-in popup"
+   onclick="closeCliviaLoginPopup()" style="float:right;background:white;color:#111;border:0;border-radius:8px;padding:5px 11px;cursor:pointer;font-weight:bold;">✕</button>
 
  <h3 style="
   color:#000000 !important;
@@ -13031,7 +13048,7 @@ async function updateRegistrationAccountButtons(){
   accountButton.style.display = "none";
   // Do not hide the sign-in form while a LOAD HERE action is waiting.
   // The old unconditional hide caused an empty registration screen on phones.
-  if (!window.cliviaResumeSellerLoadAfterSignIn) {
+  if (!window.cliviaResumeSellerLoadAfterSignIn && !loginBox.classList.contains("cliviaAccountPopupOpen")) {
     loginBox.style.display = "none";
   }
 
@@ -15077,6 +15094,7 @@ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
     if(msg) msg.textContent = "Signed in. Bidder profile not linked; seller loading can still be checked.";
     try { localStorage.setItem("cliviaRememberedEmail", loginData.user.email.toLowerCase()); } catch(e) {}
     unlockBidderAccount();
+    document.getElementById("bidderLoginBox").classList.remove("cliviaAccountPopupOpen");
     document.getElementById("bidderLoginBox").style.display = "none";
     await updateRegistrationAccountButtons();
     if(window.cliviaResumeSellerLoadAfterSignIn){
@@ -15164,6 +15182,12 @@ if(msg) msg.textContent = "Signed in successfully to Clivia Dreamers.";
   }
 }
 
+function closeCliviaLoginPopup(){
+  const box=document.getElementById("bidderLoginBox");
+  if(box){box.classList.remove("cliviaAccountPopupOpen");box.style.display="none";}
+  const password=document.getElementById("bidderLoginPassword");
+  if(password) password.value="";
+}
 async function showRegisteredBidder(){
 
   const loginBox =
@@ -15191,6 +15215,7 @@ async function showRegisteredBidder(){
   }
 
   if(loginBox){
+    loginBox.classList.add("cliviaAccountPopupOpen");
     loginBox.style.display = "block";
     // Account-button refreshes may finish asynchronously; keep sign-in visible
     // while the seller's original LOAD HERE action is pending.
