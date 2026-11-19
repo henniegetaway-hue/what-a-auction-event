@@ -3464,7 +3464,7 @@ function showEventSampleLanding(){
   <label>Group President<input id="whatGroupPresident" readonly placeholder="Sign in to your verified account"></label><label>Auction Access *<select id="whatGroupAccess"><option value="PRIVATE">PRIVATE — Approved Members Only</option><option value="PUBLIC">PUBLIC — Registered Bidders</option></select></label>
   <label>International Members May Bid<select id="whatGroupInternational"><option value="false">NO — International Bidding Disabled</option><option value="true">YES — International Bidding Allowed</option></select></label></div>
   <label class="whatGroupConfirm"><input type="checkbox" id="whatGroupInternationalAccept"> I accept responsibility for international bids when international bidding is enabled.</label>
-  <p class="small">The President must sign in with an existing verified WHAT A AUCTION EVENT account. <a class="whatGroupPasswordResetLink" href="?page=register">FORGOT PASSWORD / RESET PASSWORD</a></p>
+  <p class="small">The President must sign in with an existing verified WHAT A AUCTION EVENT account.</p><button type="button" id="whatGroupSignInOpen" class="whatGroupSmallButton">SIGN IN / FORGOT PASSWORD</button>
   <button type="button" id="whatGroupCreate" class="whatGroupSmallButton">REGISTER GROUP</button></div>
   <div id="whatGroupStatus" role="status" aria-live="polite" class="small"></div>
   <div class="whatGroupBox"><h4>JOIN AN EXISTING GROUP</h4><label>Group invitation code<input id="whatGroupJoinCode" maxlength="36" placeholder="Code from the President"></label><button type="button" id="whatGroupJoin" class="whatGroupSmallButton">REQUEST MEMBERSHIP</button></div>
@@ -7134,6 +7134,16 @@ document.getElementById('cliviaCarryForwardFooter').style.display='block';
       ">
       🌸 Sell your Plant or Plants - Clivia Auctions
     </button>
+
+    <!-- Share icons between the two Clivia auction choices -->
+    <div class="cliviaTopShare" aria-label="Invite friends and partners">
+      <div class="cliviaTopShareIcons">
+        <a id="cliviaTopShareWhatsApp" class="cliviaTopShareCircle cliviaTopWhatsApp" href="https://api.whatsapp.com/send?text=https%3A%2F%2Fwhatauction.top%2F" target="_blank" rel="noopener noreferrer" title="Share Clivia Auctions on WhatsApp" aria-label="Share on WhatsApp"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v15/icons/whatsapp.svg" alt="" width="18" height="18" style="filter:brightness(0) invert(1)"></a>
+        <a id="cliviaTopShareFacebook" class="cliviaTopShareCircle cliviaTopFacebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwhatauction.top%2F" target="_blank" rel="noopener noreferrer" title="Share Clivia Auctions on Facebook" aria-label="Share on Facebook"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v15/icons/facebook.svg" alt="" width="18" height="18" style="filter:brightness(0) invert(1)"></a>
+        <button type="button" id="cliviaTopShareMore" class="cliviaTopShareCircle cliviaTopWorld" title="Share to other apps or copy link" aria-label="Share to other apps or copy link"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1 -4 10 15.3 15.3 0 0 1 -4 -10z"/></svg></button>
+      </div>
+      <span class="cliviaTopShareCaption">INVITE FRIENDS AND PARTNERS</span>
+    </div>
 
     <button type="button"
       id="groupCliviaLoadBtn"
@@ -23936,6 +23946,58 @@ window.openWhatGroupPage=function(){
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',wire);else wire();
 })();
 </script>
+<style id="whatGroupAuthPopupStyles">
+#whatGroupAuthPopup[hidden]{display:none!important}
+#whatGroupAuthPopup{position:fixed;inset:0;z-index:100200;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.76);padding:12px}
+#whatGroupAuthDialog{position:relative;width:min(420px,100%);max-height:calc(100dvh - 24px);overflow:auto;background:#102016;color:#fff;border:2px solid #ff9800;border-radius:12px;padding:20px;box-shadow:0 18px 45px #0009}
+#whatGroupAuthDialog label{display:block;margin:12px 0;color:#fff;font-weight:600}
+#whatGroupAuthDialog input{display:block;width:100%;box-sizing:border-box;min-height:43px;margin-top:5px;background:#fff;color:#111}
+#whatGroupAuthDialog button{margin:5px 5px 5px 0;min-height:40px}
+#whatGroupAuthClose{position:absolute;right:10px;top:8px;background:#fff;color:#111;border:0;border-radius:6px}
+</style>
+<div id="whatGroupAuthPopup" hidden role="presentation">
+  <div id="whatGroupAuthDialog" role="dialog" aria-modal="true" aria-labelledby="whatGroupAuthHeading">
+    <button type="button" id="whatGroupAuthClose" aria-label="Close sign-in popup">✕</button>
+    <h3 id="whatGroupAuthHeading">WHAT A AUCTION EVENT — SIGN IN</h3>
+    <label>REGISTERED EMAIL ADDRESS<input id="whatGroupAuthEmail" type="email" autocomplete="username" inputmode="email"></label>
+    <label>PASSWORD<input id="whatGroupAuthPassword" type="password" autocomplete="current-password"></label>
+    <button type="button" id="whatGroupAuthSubmit" class="whatGroupSmallButton">SIGN IN</button>
+    <button type="button" id="whatGroupAuthReset" class="whatGroupSmallButton">FORGOT PASSWORD?</button>
+    <p id="whatGroupAuthMessage" role="status" aria-live="polite"></p>
+  </div>
+</div>
+<script>
+(function(){
+ const $=id=>document.getElementById(id);
+ const modal=$('whatGroupAuthPopup');
+ if(!modal)return;
+ let previousFocus=null;
+ function open(){previousFocus=document.activeElement;modal.hidden=false;$('whatGroupAuthMessage').textContent='';$('whatGroupAuthEmail').focus();}
+ function close(){modal.hidden=true;$('whatGroupAuthPassword').value='';previousFocus?.focus?.();}
+ $('whatGroupSignInOpen')?.addEventListener('click',open);
+ $('whatGroupAuthClose').addEventListener('click',close);
+ modal.addEventListener('click',e=>{if(e.target===modal)close();});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal.hidden)close();});
+ $('whatGroupAuthSubmit').addEventListener('click',async()=>{
+   const email=$('whatGroupAuthEmail').value.trim(),password=$('whatGroupAuthPassword').value;
+   const msg=$('whatGroupAuthMessage');msg.textContent='Signing in…';
+   if(!email||!password){msg.textContent='Enter your registered email and password.';return;}
+   if(!window.auctionSupabase){msg.textContent='Auction sign-in is temporarily unavailable.';return;}
+   const {data,error}=await window.auctionSupabase.auth.signInWithPassword({email,password});
+   if(error){msg.textContent=error.message;return;}
+   if(!data?.user?.email_confirmed_at){msg.textContent='Confirm your email address before registering a group.';await window.auctionSupabase.auth.signOut();return;}
+   close();
+   if(typeof window.whatEventRefreshGroups==='function')await window.whatEventRefreshGroups();
+ });
+ $('whatGroupAuthReset').addEventListener('click',async()=>{
+   const email=$('whatGroupAuthEmail').value.trim(),msg=$('whatGroupAuthMessage');
+   if(!email){msg.textContent='Enter your registered email address first.';return;}
+   if(!window.auctionSupabase){msg.textContent='Password reset is temporarily unavailable.';return;}
+   const {error}=await window.auctionSupabase.auth.resetPasswordForEmail(email,{redirectTo:location.origin+'/?page=register'});
+   msg.textContent=error?error.message:'If this email is registered, a password reset message will be sent.';
+ });
+})();
+</script>
 <script>
 /* WHAT A AUCTION EVENT group registration and President dashboard. No item-loading UI. */
 (function(){
@@ -24106,6 +24168,29 @@ window.openWhatGroupPage=function(){
     } catch(err) {if(err && err.name==='AbortError')return;window.prompt('Copy invitation link:',link);}
   });
 })();
+</script>
+<style id="cliviaTopShareStyles">
+#pageSellerLoad .cliviaTopShare{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:150px;align-self:center;text-align:center}
+#pageSellerLoad .cliviaTopShareIcons{display:flex;align-items:center;justify-content:center;gap:7px}
+#pageSellerLoad .cliviaTopShareCircle{box-sizing:border-box;width:30px;height:30px;min-width:30px;min-height:30px;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:50%;padding:0;cursor:pointer;text-decoration:none}
+#pageSellerLoad .cliviaTopWhatsApp{background:#16bd62}#pageSellerLoad .cliviaTopFacebook{background:#1877f2}#pageSellerLoad .cliviaTopWorld{background:#ffcc80}
+#pageSellerLoad .cliviaTopShareCaption{color:#fff;font:700 9px/1.2 Arial,sans-serif;white-space:nowrap}
+@media(max-width:620px){#pageSellerLoad .cliviaTopShare{flex-basis:100%;order:0}}
+</style>
+<script id="cliviaTopShareHandler">
+document.addEventListener('DOMContentLoaded',function(){
+  const link='https://whatauction.top/';
+  const wa=document.getElementById('cliviaTopShareWhatsApp');
+  const fb=document.getElementById('cliviaTopShareFacebook');
+  if(wa)wa.href='https://api.whatsapp.com/send?text='+encodeURIComponent('Join me at Clivia Auctions: '+link);
+  if(fb)fb.href='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(link);
+  document.getElementById('cliviaTopShareMore')?.addEventListener('click',async function(){
+    try{if(navigator.share){await navigator.share({title:'Clivia Auctions',url:link});return;}}
+    catch(e){if(e && e.name==='AbortError')return;}
+    try{await navigator.clipboard.writeText(link);alert('Clivia Auctions link copied.');}
+    catch(e){window.prompt('Copy Clivia Auctions link:',link);}
+  });
+});
 </script>
 </body>
 </html>
