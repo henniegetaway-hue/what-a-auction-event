@@ -3485,6 +3485,22 @@ document.getElementById('event80ShareWorld')?.addEventListener('click',async fun
   </div>
 </section>
 
+<style id="whatTemuSidebarStyles">
+#whatEventGroupsArea .whatTemuSidebar{min-width:0;grid-column:2;grid-row:1;align-self:start}
+#whatEventGroupsArea .whatTemuAd{box-sizing:border-box;background:#fff;color:#18231c;border:2px solid #ff6a00;border-radius:14px;padding:22px;max-width:100%;box-shadow:0 5px 18px #0002}
+#whatEventGroupsArea .whatTemuSponsored{font-size:11px;letter-spacing:.1em;color:#5d655f;font-weight:700}
+#whatEventGroupsArea .whatTemuBrand{color:#f05a00;font-size:clamp(30px,3.2vw,48px);font-weight:950;letter-spacing:.03em;margin:12px 0 0}
+#whatEventGroupsArea .whatTemuAd h3{color:#16281c;font-size:22px;margin:6px 0 12px}
+#whatEventGroupsArea .whatTemuAd p{font-size:14px;line-height:1.55;color:#27332b}
+#whatEventGroupsArea .whatTemuKeywords{padding:12px;background:#fff2e8;border-radius:9px}
+#whatEventGroupsArea .whatTemuShop{display:block;text-align:center;background:#f05a00;color:#fff!important;font-size:16px;font-weight:800;text-decoration:none;border-radius:9px;padding:13px 15px;margin:18px 0}
+#whatEventGroupsArea .whatTemuShop:focus-visible{outline:3px solid #142e66;outline-offset:3px}
+#whatEventGroupsArea .whatTemuAd .whatTemuDisclosure{font-size:11px;color:#525e55}
+#whatEventGroupsArea .whatTemuAbout{border-top:1px solid #d8ded8;margin-top:20px;padding-top:16px}
+#whatEventGroupsArea .whatTemuAbout strong{font-size:15px}
+#whatEventGroupsArea #whatGroupBuildWorkspace:not([hidden]){grid-column:1/-1;grid-row:auto}
+@media(max-width:850px){#whatEventGroupsArea .whatTemuSidebar{grid-column:1;grid-row:auto}}
+</style>
 <section id="pageOwnEvent" class="page hidden">
   <section id="whatEventGroupsArea" class="whatEventGroupsArea" hidden aria-label="Group Auctions">
   <div class="whatGroupTitleRow whatGroupTitleWithSharing"><h3>GROUP AUCTIONS</h3>    <div class="whatEventShareCluster" aria-label="Invite friends and partners">
@@ -3509,7 +3525,20 @@ document.getElementById('event80ShareWorld')?.addEventListener('click',async fun
   <div class="whatGroupBox"><h4>MY REGISTERED GROUPS</h4><div id="whatGroupList">Sign in to view your groups.</div></div>
   <section id="whatGroupDetails" hidden class="whatGroupBox"><h3 id="whatGroupDetailsTitle"></h3><button type="button" id="whatGroupOpenBuilder" class="whatGroupSmallButton" hidden>CONTINUE TO BUILD GROUP AUCTIONS</button><h4>GROUP PRESIDENT DASHBOARD</h4><div id="whatGroupDashboard" class="whatGroupDashboard"></div><div id="whatGroupDetailsContent"></div></section>
   <div class="whatGroupBox"><h4>GROUP AUCTION FEE: R200 PER 30 DAYS</h4><p>R200 is payable when the Group Auction launches and covers 30 days from its launch date. If the auction continues beyond the paid period, another R200 is payable for the next 30 days.</p><p class="small">This is NOT a monthly subscription. No separate activation fee applies. One group can hold multiple auctions; each additional group requires its own payment arrangement.</p></div>
-  </div><aside class="whatGroupRightColumn" id="whatGroupBuildWorkspace" hidden aria-label="Group auction creator dashboard">
+  </div>
+  <aside class="whatTemuSidebar" aria-label="Temu sponsored shopping information">
+    <div class="whatTemuAd">
+      <div class="whatTemuSponsored">ADVERTISEMENT · TEMU</div>
+      <div class="whatTemuBrand">TEMU</div>
+      <h3>Discover more for less</h3>
+      <p>Explore a wide selection of everyday products on Temu, including gardening accessories, plant pots, home essentials, tools, clothing and gift ideas.</p>
+      <p class="whatTemuKeywords"><strong>Popular searches:</strong> Garden supplies · Plant pots · Gardening tools · Home &amp; living · Fashion · Accessories · Gifts</p>
+      <a class="whatTemuShop" href="https://www.temu.com/" target="_blank" rel="noopener noreferrer sponsored" aria-label="Visit Temu website">EXPLORE TEMU</a>
+      <p class="whatTemuDisclosure">Sponsored shopping information. This is a general Temu link, not an affiliate tracking link. No commission is earned from this link unless it is replaced with your approved Temu affiliate URL.</p>
+      <div class="whatTemuAbout"><strong>ABOUT TEMU</strong><p>Temu is an online marketplace offering products across many categories. Browse products, compare prices, and check delivery costs, taxes, seller details and return conditions before ordering. Purchases are made on Temu, not on this auction website.</p></div>
+    </div>
+  </aside>
+  <aside class="whatGroupRightColumn" id="whatGroupBuildWorkspace" hidden aria-label="Group auction creator dashboard">
     <div class="whatGroupCreatorDash">
       <h3>👑 AUCTION CREATOR DASHBOARD</h3>
       <p>Manage Your WHAT A AUCTION EVENT Group Auctions</p>
@@ -10585,6 +10614,40 @@ async function refreshGroupAuctionCards(auction,providedGrid){
           if(!isCurrent()){alert('Group changed. Pre-bid not submitted.');return;}
           b.disabled=true;
           try{
+            // Another member may have raised the group pre-bid while the
+            // confirmation was open. Check the latest price and lot status;
+            // never raise or resubmit the member's confirmed amount silently.
+            const [latestHighestResult,latestGroupLotResult]=await Promise.all([
+              cliviaSupabase.rpc('clivia_group_highest_prebid',{p_lot_id:lot.id}),
+              cliviaSupabase.from('clivia_group_lots')
+                .select('id,status,starting_bid,group_id,auction_number')
+                .eq('id',lot.id).maybeSingle()
+            ]);
+            if(!isCurrent())return;
+            if(latestHighestResult.error || latestGroupLotResult.error || !latestGroupLotResult.data){
+              alert('Unable to check the current Group Auction price. No pre-bid was submitted.');
+              return;
+            }
+            const latestLot=latestGroupLotResult.data;
+            if(latestLot.status!=='PREBID' || Number(latestLot.group_id)!==groupId ||
+               Number(latestLot.auction_number)!==Number(auction)){
+              alert('This Group Auction plant is no longer available for pre-bidding. No bid was submitted.');
+              await refreshGroupAuctionCards(auction,grid);
+              return;
+            }
+            const latestHighest=latestHighestResult.data;
+            const latestStart=Number(latestLot.starting_bid);
+            const latestMinimum=latestHighest==null?latestStart:Number(latestHighest)+50;
+            if(!Number.isSafeInteger(latestMinimum) || latestMinimum<=0 ||
+               value<latestMinimum || (value-latestMinimum)%50!==0){
+              alert('The Group Auction minimum has changed to R'+
+                (Number.isSafeInteger(latestMinimum)?latestMinimum.toLocaleString('en-ZA'):'an unavailable amount')+
+                '. Your previous bid was not submitted. Please review and bid again.');
+              await refreshGroupAuctionCards(auction,grid);
+              return;
+            }
+            // The RPC independently validates eligibility, increments and
+            // concurrent bids. This UI recheck is advisory, not a security lock.
             const {error}=await cliviaSupabase.rpc('clivia_group_place_prebid',{p_lot_id:lot.id,p_amount:value});
             if(error){alert('Bid not accepted: '+error.message);await refreshGroupAuctionCards(auction,grid);return;}
             alert('Pre-bid accepted.');await refreshGroupAuctionCards(auction,grid);
@@ -17069,7 +17132,15 @@ function nextBid(lot){
   // Auction 1 is the sole current public Clivia auction. This affects display
   // selection only; it does not modify the other auction records or bids.
   const firstPublicAuction=(state.auctions||[]).find(a=>String(a.id)==="AUC-1792928367476");
-  if(firstPublicAuction) state.selectedAuctionId=firstPublicAuction.id;
+  // Select the public auction by default only when no valid auction is
+  // already selected. Do not override a member's Group Auction selection
+  // every time a lot, price or bid is refreshed.
+  const selectedAuctionStillExists=(state.auctions||[]).some(
+    a=>String(a.id)===String(state.selectedAuctionId)
+  );
+  if(!selectedAuctionStillExists && firstPublicAuction){
+    state.selectedAuctionId=firstPublicAuction.id;
+  }
   const box=document.getElementById("lotsGrid");
   let auction=(state.auctions||[]).find(a=>a.id===state.selectedAuctionId);
 const currencySymbol=auction && auction.currency==="EUR" ? "€" : "R";
@@ -18304,10 +18375,31 @@ if(amount<required){
       {p_auth_user_id:user.id,p_lot_id:serverLotId,p_amount:amount}
     );
     if(bidError){
-      const locked=/Bidding activation pending final security checks/i.test(bidError.message||"");
+      const serverMessage=String(bidError.message||"Unknown error");
+      const locked=/Bidding activation pending final security checks/i.test(serverMessage);
+      // A competing bid can arrive between the final browser refresh and the
+      // server's row lock. Refresh the authoritative price, never resubmit or
+      // silently increase the amount the member confirmed.
+      if(/Invalid bid amount/i.test(serverMessage) && lot.supabaseDisplayOnly){
+        try{
+          const {data:changedLot,error:changedError}=await cliviaSupabase
+            .from("lots")
+            .select("starting_bid,current_bid,current_bidder_id,status")
+            .eq("id",serverLotId).maybeSingle();
+          if(!changedError && changedLot){
+            lot.startBid=Number(changedLot.starting_bid);
+            lot.currentBid=Number(changedLot.current_bid??changedLot.starting_bid);
+            lot.currentBidderId=changedLot.current_bidder_id;
+            lot.status=changedLot.status;
+            renderLots();
+            alert("The bid price changed before the server could accept your bid. The plant price has been refreshed. Please review the new minimum and bid again. No bid was placed.");
+            return;
+          }
+        }catch(refreshError){console.warn("Unable to refresh rejected bid",refreshError);}
+      }
       alert(locked
         ? "Real bidding is not active yet. The secure server is still locked. No bid was placed."
-        : "Bid not accepted by the server: "+(bidError.message||"Unknown error")+". No bid was recorded by this page.");
+        : "Bid not accepted by the server: "+serverMessage+". No bid was recorded by this page.");
       return;
     }
     if(bidId==null){
@@ -21696,11 +21788,21 @@ async function refreshPublicCliviaLots(){
     for(const a of auctions){
       if(!a.legacy_auction_id) continue;
       const legacyId=String(a.legacy_auction_id);
-      if(!state.auctions.some(x=>String(x.id)===legacyId))
+      const existingAuction=state.auctions.find(x=>String(x.id)===legacyId);
+      if(existingAuction){
+        // Refresh cached auction state from the authoritative cloud record.
+        existingAuction.status=a.status;
+        existingAuction.currency=a.currency||"ZAR";
+        existingAuction.auctionDate=a.auction_date||"";
+        existingAuction.auctionTime=a.start_time||"";
+        existingAuction.auctionCloseTime=a.close_time||"";
+        existingAuction.name=a.auction_name||existingAuction.name||"Clivia Dreamers Auction";
+      }else{
         state.auctions.push({id:legacyId,name:a.auction_name||"Clivia Dreamers Auction",
           type:"CLIVIA",auctionDate:a.auction_date||"",auctionTime:a.start_time||"",
           auctionCloseTime:a.close_time||"",currency:a.currency||"ZAR",
           status:a.status,firstBid:200});
+      }
     }
     // Supabase is the source of truth for published public lots. A recognised
     // member may have older localStorage entries with the same lot ID; replace
