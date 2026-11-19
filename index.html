@@ -1943,6 +1943,16 @@ body:has(#cliviaCarryForwardFooter) {
 #pageOwnEvent .whatGroupMessage p{margin:5px 0 0;white-space:pre-wrap;color:white}
 #pageOwnEvent .whatGroupMessageActions{display:flex;gap:8px;flex-wrap:wrap}
 #pageOwnEvent .whatGroupMessageActions button{min-height:36px}
+
+/* V9: align existing plant sharing controls to the right on all screen sizes. */
+#pageSellerLoad .plantShareRow,
+#pageLive .shareRow,
+#pageLive .plantShareRow,
+#previewLotsGrid .plantShareRow {
+  justify-content:flex-end !important;
+  margin-left:auto !important;
+  margin-right:0 !important;
+}
 </style>
  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>      
  <script>
@@ -17027,16 +17037,31 @@ const seller=(state.sellers||[]).find(s=>s.id===lot.sellerId);
   }
 }
   function currentBid(lot){
+  // Published Supabase lots have authoritative current_bid, even when their
+  // browser-side bid history is empty or stale. Never display a cached bid
+  // as the current price of a published plant.
+  if(lot?.supabaseDisplayOnly){
+    const serverBid=Number(lot.currentBid);
+    const opening=Number(lot.startBid);
+    if(Number.isFinite(serverBid) && serverBid>=0) return Math.max(serverBid,opening||0);
+    return Number.isFinite(opening) ? opening : 0;
+  }
   if(!lot.bids || lot.bids.length===0) return lot.startBid;
   return Math.max(...lot.bids.map(b=>Number(b.amount)));
 }
 
 function nextBid(lot){
   const auction=(state.auctions||[]).find(a=>a.id===lot.auctionId);
-  const increment=auction && auction.currency==="EUR"
-    ? 5
-    : 100;
-
+  const increment=auction && auction.currency==="EUR" ? 5 : 100;
+  // For published cloud lots, use the authoritative current_bid fetched from
+  // Supabase; browser-stored bid arrays may be missing or out of date.
+  if(lot.supabaseDisplayOnly){
+    const start=Number(lot.startBid);
+    const highest=Number(lot.currentBid);
+    if(!Number.isSafeInteger(start) || start<=0 ||
+       !Number.isSafeInteger(highest) || highest<0) return NaN;
+    return lot.currentBidderId != null ? Math.max(start,highest+increment) : start;
+  }
   if(!lot.bids || lot.bids.length===0) return lot.startBid;
   return currentBid(lot)+increment;
 }
@@ -17985,8 +18010,12 @@ async function placeBid(lotId){
   cliviaBidRequestsInFlight.add(String(lotId));
   try {
   const sharedDisplayLot=(state.lots||[]).find(l=>String(l.id)===String(lotId));
-  if(sharedDisplayLot?.supabaseDisplayOnly){
-    alert("This lot is visible, but bidding requires the verified server bidding connection. No bid has been placed.");
+  // Published cloud lots retain their legacy website ID for display, but bids
+  // must always use the verified numeric Supabase lots.id. Never guess an ID.
+  if(sharedDisplayLot?.supabaseDisplayOnly &&
+     (!Number.isSafeInteger(Number(sharedDisplayLot.supabaseLotId)) ||
+      Number(sharedDisplayLot.supabaseLotId)<=0)){
+    alert("This plant has no verified Supabase lot ID. No bid was placed.");
     return;
   }
   const auction=(state.auctions||[]).find(a=>String(a.id)===String(state.selectedAuctionId));
@@ -18022,29 +18051,8 @@ async function placeBid(lotId){
   const bidder=(state.bidders||[]).find(b=>String(b.id)===String(state.selectedBidderId));
    if(!lot){ alert("Plant not found. No bid has been placed."); return; }
   if(!bidder){ alert("Please sign in or register before bidding."); showPage("register"); return; }
-  const ownPlantSeller = (state.sellers || []).find(
-  s => String(s.id) === String(lot.sellerId)
-);
-
-if (
-  ownPlantSeller &&
-  (
-    (ownPlantSeller.authUserId &&
-     ownPlantSeller.authUserId === bidder?.authUserId) ||
-    (ownPlantSeller.email &&
-     bidder?.email &&
-     ownPlantSeller.email.trim().toLowerCase() ===
-       bidder.email.trim().toLowerCase())
-  )
-) {
-  alert("You cannot bid on your own plants.");
-  return;
-}
-  if(!bidder){
-  alert("Please register or open your account first.");
-  showPage("register");
-  return;
-}
+  // Do not decide ownership using cached seller names or email addresses.
+  // The server verifies the authenticated user's ownership of the actual lot.
  // Verify the bidder's existing Supabase login
 const { data, error } =
   await cliviaSupabase.auth.getUser();
@@ -18061,14 +18069,9 @@ if(
   showPage("register");
   return;
 }
-  if(bidder.isInternational && !bidder.internationalRegistrationPaid){
-  alert("International bidders must pay the R2,000 registration fee before bidding.");
-  return;
-}
-  if(bidder.isInternational && !lot.exportEligible){
-  alert("International bidders may only bid on export-eligible plants.");
-  return;
-}
+  // International eligibility and payment are checked against current
+  // database records by the secure bidding transaction. Cached browser
+  // flags may be outdated after an administrator approves a bidder.
 
 {
   // All real bidders, including owner test accounts, must pass server-backed checks.
@@ -18121,6 +18124,39 @@ if(
     return;
   }
 
+  // Refresh the live price immediately before asking for a bid. A card may
+  // have been rendered before another member placed a higher bid.
+  if(lot.supabaseDisplayOnly){
+    const liveLotId=Number(lot.supabaseLotId);
+    if(!Number.isSafeInteger(liveLotId) || liveLotId<=0){
+      alert("This plant has no valid server lot ID. No bid was placed.");
+      return;
+    }
+    const {data:freshLot,error:freshLotError}=await cliviaSupabase
+      .from("lots")
+      .select("id,starting_bid,current_bid,current_bidder_id,minimum_increment,status")
+      .eq("id",liveLotId).maybeSingle();
+    if(freshLotError || !freshLot){
+      alert("Unable to refresh this plant's live price. No bid was placed.");
+      return;
+    }
+    if(String(freshLot.status||"").toUpperCase()!=="OPEN"){
+      alert("This plant is not open for live bidding. No bid was placed.");
+      return;
+    }
+    // The live Clivia auction requires R100 steps. Never show a R100
+    // confirmation while the server would validate a different increment.
+    if(Number(freshLot.minimum_increment)!==100){
+      alert("This plant's server bidding increment is not R100. The auction administrator must correct it before live bidding. No bid was placed.");
+      return;
+    }
+    // Keep the browser lot in sync with the verified server row. Without
+    // updating status, an old card status can reject an otherwise OPEN lot.
+    lot.status=freshLot.status;
+    lot.startBid=Number(freshLot.starting_bid);
+    lot.currentBid=Number(freshLot.current_bid??freshLot.starting_bid);
+    lot.currentBidderId=freshLot.current_bidder_id;
+  }
   const required = nextBid(lot);
   if (!Number.isSafeInteger(required) || required <= 0) {
     alert("Unable to calculate the next bid.");
@@ -18177,7 +18213,11 @@ if (!confirmed) {
 
 // Validate the bid increase rather than requiring the total bid to be
 // divisible by R100. A valid opening price need not be a multiple of R100.
-const previousHighest=(lot.bids||[]).reduce((max,b)=>Math.max(max,Number(b.amount)||0),0);
+// An opening price is not an existing bid. Requiring an extra R100
+// on an unbid lot incorrectly prevents the first valid opening bid.
+const previousHighest=lot.supabaseDisplayOnly
+  ? (lot.currentBidderId != null ? Math.max(0,Number(lot.currentBid)||0) : 0)
+  : (lot.bids||[]).reduce((max,b)=>Math.max(max,Number(b.amount)||0),0);
 if(!Number.isFinite(amount) || !Number.isSafeInteger(amount) ||
    (previousHighest>0 && amount-previousHighest<bidStep)){
   alert("The bid must increase by at least "+currencySymbol+bidStep+".");
@@ -18193,10 +18233,57 @@ if(amount<required){
     alert("This auction currency is not supported by the Clivia ZAR bidding transaction. No bid was placed.");
     return;
   }
-  const serverLotId=Number(lot.id);
+  const serverLotId=Number(lot.supabaseLotId);
+  // Browser-only lot IDs are not authoritative database identifiers.
+  // A published lot must have a real server ID and be OPEN for live bids.
+  // The database independently rechecks these values within its transaction.
+  if(lot.supabaseDisplayOnly && String(lot.status||"").toUpperCase()!=="OPEN"){
+    alert("This plant is not open for live bidding. No bid was placed.");
+    return;
+  }
   if(!Number.isSafeInteger(serverLotId) || serverLotId<=0){
     alert("This plant is not linked to a valid server lot. No bid was placed.");
     return;
+  }
+  // A second bidder may have raised the price while this member was
+  // entering and confirming a bid. Recheck the server lot immediately before
+  // submitting, and never silently increase the amount the member approved.
+  if(lot.supabaseDisplayOnly){
+    const {data:latestLot,error:latestLotError}=await cliviaSupabase
+      .from("lots")
+      .select("id,starting_bid,current_bid,current_bidder_id,minimum_increment,status")
+      .eq("id",serverLotId).maybeSingle();
+    if(latestLotError || !latestLot){
+      alert("Unable to confirm the latest plant price. No bid was placed.");
+      return;
+    }
+    if(String(latestLot.status||"").toUpperCase()!=="OPEN"){
+      alert("This plant has closed for bidding. No bid was placed.");
+      return;
+    }
+    if(Number(latestLot.minimum_increment)!==100){
+      alert("The server bidding increment changed or is not R100. No bid was submitted.");
+      return;
+    }
+    const latestStart=Number(latestLot.starting_bid);
+    const latestHighest=Number(latestLot.current_bid);
+    if(!Number.isSafeInteger(latestStart) || latestStart<=0 ||
+       !Number.isSafeInteger(latestHighest) || latestHighest<0){
+      alert("The current bidding price is invalid. No bid was placed.");
+      return;
+    }
+    const latestRequired=latestLot.current_bidder_id == null
+      ? latestStart : Math.max(latestStart,latestHighest+100);
+    if(amount<latestRequired || (amount-latestRequired)%100!==0){
+      lot.startBid=latestStart;
+      lot.currentBid=latestHighest;
+      lot.currentBidderId=latestLot.current_bidder_id;
+      alert("Another bid changed the minimum to R"+
+        latestRequired.toLocaleString("en-ZA")+
+        ". Your earlier amount was not submitted. Please bid again.");
+      renderLots();
+      return;
+    }
   }
   // Recheck the authenticated session immediately before submission.
   // A user may sign out or switch accounts while the confirmation dialog is open.
@@ -21584,7 +21671,7 @@ async function refreshPublicCliviaLots(){
     const ids=auctions.map(a=>a.id);
     // Read lots for ALL active auctions, not just whichever auction this browser selected.
     const {data:records,error:lotsError}=await cliviaSupabase.from("lots")
-      .select("id,website_lot_id,live_auction_id,seller_id,lot_number,name,description,breeding,breeder,leaves,offsets,category,start_row,flower_image_url,plant_image_url,starting_bid,minimum_increment,export_eligible,status")
+      .select("id,website_lot_id,live_auction_id,seller_id,lot_number,name,description,breeding,breeder,leaves,offsets,category,start_row,flower_image_url,plant_image_url,starting_bid,current_bid,current_bidder_id,minimum_increment,export_eligible,status")
       .in("live_auction_id",ids).order("lot_number",{ascending:true}).limit(1000);
     if(lotsError) throw lotsError;
     const byDbId=new Map(auctions.map(a=>[String(a.id),a]));
@@ -21631,7 +21718,8 @@ async function refreshPublicCliviaLots(){
         description:r.description||"",breeding:r.breeding||"",breeder:r.breeder||"",
         leaves:r.leaves,offsets:r.offsets,category:r.category||"",startRow:r.start_row||"ROW1",
         flower:r.flower_image_url||"",plant:r.plant_image_url||"",
-        startBid:Number(r.starting_bid||0),currentBid:Number(r.starting_bid||0),
+        startBid:Number(r.starting_bid||0),currentBid:Number(r.current_bid??r.starting_bid??0),
+        currentBidderId:r.current_bidder_id,
         increment:Number(r.minimum_increment||50),exportEligible:r.export_eligible===true,
         sellerId:r.seller_id,bids:[],supabaseDisplayOnly:true,sharedPublished:true,
         supabaseLotId:r.id,supabaseSellerId:r.seller_id,
