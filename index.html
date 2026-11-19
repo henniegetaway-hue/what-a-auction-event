@@ -15918,10 +15918,7 @@ function selectedBidderNotice(){
 
    const capacity = isEUR
     ? bracket + (paidSteps * bracket)
-    : Math.max(
-        2000,
-        Number(bidder.approvedBidCapacity || 0)
-      );
+    : Number(bidder.approvedBidCapacity || 0);
 
   if(capacityControl){
     capacityControl.style.display="block";
@@ -15931,7 +15928,7 @@ function selectedBidderNotice(){
     capacityNotice.textContent=
       "Current bidding capacity: "+
       (isEUR ? "€" : "R")+
-      capacity.toLocaleString();
+      (capacity > 0 ? capacity.toLocaleString() : "unavailable — refresh your account");
 
     if(
       bidder.securityProofStatus==="PENDING_AI" &&
@@ -16066,10 +16063,17 @@ const user = session?.user || null;
     );
   }
 
-  const approvedBidCapacity =
-    !capacityError &&
-    capacityRecord?.approval_status === "APPROVED"
-      ? Number(capacityRecord.approved_capacity || 0)
+  // The approved-capacity record is not the member's effective limit:
+  // verified members without a paid tier still receive the R2,000 default.
+  // Read the same server calculation used by the bidding transaction.
+  const {data:effectiveCapacity,error:effectiveCapacityError} =
+    await cliviaSupabase.rpc("clivia_my_capacity_zar");
+  if(effectiveCapacityError){
+    console.error("Unable to load effective bidding capacity:",effectiveCapacityError.message);
+  }
+  const approvedBidCapacity = !effectiveCapacityError &&
+    Number.isFinite(Number(effectiveCapacity)) && Number(effectiveCapacity)>=2000
+      ? Number(effectiveCapacity)
       : 0;
 
   const bidder = {
@@ -18136,26 +18140,16 @@ if(
   alert("Your account is ON HOLD because a payment came from an unregistered bank account. No further bidding is allowed until the seller confirms the payment or Admin clears the hold.");
   return;
 }
-  const unpaidInvoice=(state.invoices||[]).find(inv=>
-  inv.bidderId===bidder.id &&
-  inv.status!=="PAID"
-);
-const matchingSeller=(state.sellers||[]).find(s=>
-  s.name===bidder.name &&
-  s.phone===bidder.phone &&
-  s.accountNumber===bidder.accountNumber
-);
-
-const unpaidSellerInvoice=matchingSeller
-  ? (state.invoices||[]).find(inv=>inv.sellerId===matchingSeller.id && inv.status!=="PAID")
-  : null;
-if(unpaidInvoice || unpaidSellerInvoice){
-  alert(unpaidSellerInvoice
-    ? "You have an unpaid seller invoice. Please pay it before you can bid again."
-    : "You have an unpaid bidder invoice. Please pay it before you can bid again.");
-  return;
-}
-   
+  // Invoice arrays in the browser may be stale or incomplete. Use the
+  // authenticated database's invoice check, which includes seller fees.
+  const {data:hasUnpaidFees,error:unpaidFeesError} =
+    await cliviaSupabase.rpc("clivia_my_unpaid_fees");
+  if(unpaidFeesError || hasUnpaidFees !== false){
+    alert(unpaidFeesError
+      ? "Unable to verify outstanding fees. No bid was placed."
+      : "Outstanding fees must be settled before bidding. No bid was placed.");
+    return;
+  }
 
   const required = nextBid(lot);
   if (!Number.isSafeInteger(required) || required <= 0) {
@@ -18228,48 +18222,14 @@ const currentWinningExposure=(state.lots||[]).reduce((total,otherLot)=>{
   const highest=(otherLot.bids||[]).reduce((best,b)=>Number(b.amount)>Number(best?.amount||0)?b:best,null);
   return highest && String(highest.bidderId)===String(bidder.id) ? total+Number(highest.amount||0) : total;
 },0);
-  const securityFeeNeeded=(currentWinningExposure+amount)>maxBidCapacity;
+  // Browser estimates cannot safely account for Group Auction pre-bids,
+  // auto-bid limits, or concurrent bids. Never block a bid on this estimate.
+  // The authenticated Supabase transaction is the final authority for
+  // combined capacity, warnings, and payment eligibility.
   const totalExposureAfterBid=currentWinningExposure+amount;
-   // Display-only estimate; server checks are authoritative.
-  // ADMIN ALERT ONLY — DO NOT BLOCK BIDDING
-const adminAlertThreshold = 5000;
-
-const adminBidAlert =
-  auction?.currency === "ZAR" &&
-  totalExposureAfterBid >= adminAlertThreshold;
-
-if(adminBidAlert){
-  console.log(
-    "ADMIN RED ALERT: Highest bids total R" +
-    totalExposureAfterBid.toLocaleString()
-  );
-}   
- const firstWarningLevel =
-  auction.currency === "ZAR"
-    ? (maxBidCapacity === 5000 ? 4400 : maxBidCapacity * 0.90)
-    : maxBidCapacity * 0.90;
-const secondWarningLevel=maxBidCapacity-(auction.currency==="EUR" ? 60 : 1000);
-  const securityProofPending=
-  bidder.securityProofStatus==="PENDING_AI" &&
-  bidder.securityProofCurrency===(auction && auction.currency==="EUR" ? "EUR" : "ZAR");
- if(!securityProofPending && totalExposureAfterBid>=firstWarningLevel && totalExposureAfterBid<maxBidCapacity){
-  alert("SECURITY WARNING: You are approaching your "+currencySymbol+
-  maxBidCapacity.toLocaleString()+" bidding limit. Pay the next "+
-  currencySymbol+securityFeeAmount+" security fee to unlock the next "+
-  currencySymbol+securityBracketSize.toLocaleString()+" bidding bracket.");
-    }
-if(false && !securityProofPending && totalExposureAfterBid>=secondWarningLevel && totalExposureAfterBid<=maxBidCapacity){
-  alert("URGENT SECURITY WARNING: You are very close to your "+
-  currencySymbol+maxBidCapacity.toLocaleString()+" bidding limit. Pay the "+
-  currencySymbol+securityFeeAmount+" security fee now to avoid bidding being interrupted.");
-}
-if(securityFeeNeeded){
-  alert(securityProofPending
-  ? "BIDDING PAUSED: Your "+currencySymbol+securityFeeAmount+" payment proof is waiting for verification. Your next "+currencySymbol+securityBracketSize.toLocaleString()+" bidding bracket will unlock after confirmation."
-  : "BIDDING PAUSED: Your "+currencySymbol+maxBidCapacity.toLocaleString()+" total bidding capacity has been reached. Pay the "+currencySymbol+securityFeeAmount+" security fee and upload proof of payment to unlock the next "+currencySymbol+securityBracketSize.toLocaleString()+" bidding bracket.");
- return;
-}
-  
+  if(totalExposureAfterBid >= maxBidCapacity * 0.9){
+    console.info("Bidding capacity may be nearly reached; server will verify the exact exposure.");
+  }
 
 // Validate the bid increase rather than requiring the total bid to be
 // divisible by R100. A valid opening price need not be a multiple of R100.
