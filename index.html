@@ -9779,29 +9779,24 @@ try{
   lots = [];
 }
 
-const best10 = lots
-  .filter(lot =>
-    lot.name ||
-    lot.startingBid ||
-    lot.description
-  )
-  .slice(0, 10); 
-  if(best10.length === 0){
+// Only completed, sold results belong in BEST 10. Never fill empty
+// positions with duplicate photos or pretend unsold lots are completed.
+const completed = lots.filter(lot => {
+  const status = String(lot.status || lot.auctionStatus || "").toUpperCase();
+  const sold = lot.sold === true || ["SOLD","COMPLETED","CLOSED_SOLD"].includes(status);
+  const price = Number(lot.finalPrice ?? lot.soldPrice ?? 0);
+  return sold && Number.isFinite(price) && price > 0;
+}).sort((a,b) => Number(b.finalPrice ?? b.soldPrice ?? 0) -
+                  Number(a.finalPrice ?? a.soldPrice ?? 0));
+const best10 = completed.slice(0,10);
+if(best10.length === 0){
   best10.push(
-    {
-      lotNumber: 1,
-      name: "SAMPLE AUCTION ITEM",
-      description: "Your first completed BEST auction item will appear here.",
-      finalPrice: "0"
-    },
-    {
-      lotNumber: 2,
-      name: "SAMPLE AUCTION ITEM",
-      description: "Your second completed BEST auction item will appear here.",
-      finalPrice: "0"
-    }
+    {lotNumber:1,name:"SAMPLE AUCTION ITEM",description:"Waiting for a completed sale.",finalPrice:"0"},
+    {lotNumber:2,name:"SAMPLE AUCTION ITEM",description:"Waiting for a completed sale.",finalPrice:"0"}
   );
-}     
+} else if(best10.length === 1) {
+  best10.push({lotNumber:2,name:"SAMPLE AUCTION ITEM",description:"Waiting for another completed sale.",finalPrice:"0"});
+}
  const leftBest = best10.filter((lot, index) => index % 2 === 0);
 const rightBest = best10.filter((lot, index) => index % 2 === 1); 
      function makeBestCard(lot, position){
@@ -9839,8 +9834,7 @@ const rightBest = best10.filter((lot, index) => index % 2 === 1);
   };
 
   const symbol = symbols[currency] || "";  
-     const isSample = best10.length === 2 &&
-    best10[0].name === "SAMPLE AUCTION ITEM";
+     const isSample = lot.name === "SAMPLE AUCTION ITEM";
 
   return `
     <div class="ownBest10Card"
@@ -18164,12 +18158,30 @@ if(unpaidInvoice || unpaidSellerInvoice){
    
 
   const required = nextBid(lot);
-const amount = required;
-
-if (!Number.isFinite(amount) || amount <= 0) {
-  alert("Unable to calculate the next bid.");
-  return;
-}
+  if (!Number.isSafeInteger(required) || required <= 0) {
+    alert("Unable to calculate the next bid.");
+    return;
+  }
+  // Members may offer more than the minimum. The server remains authoritative.
+  const increment = auction.currency === "EUR" ? 5 : 100;
+  const enteredBid = prompt(
+    "MINIMUM BID: R" + required.toLocaleString("en-ZA") +
+    "\nEnter your bid amount (R" + increment + " steps):",
+    String(required)
+  );
+  if (enteredBid === null) return;
+  const cleanedBid = enteredBid.trim().replace(/^R\s*/i,"").replace(/\s/g,"");
+  if (!/^\d+$/.test(cleanedBid)) {
+    alert("Enter a whole-rand bid amount.");
+    return;
+  }
+  const amount = Number(cleanedBid);
+  if (!Number.isSafeInteger(amount) || amount < required ||
+      (amount - required) % increment !== 0) {
+    alert("Bid at least R" + required.toLocaleString("en-ZA") +
+          " in R" + increment + " increments.");
+    return;
+  }
 
 const confirmed = confirm(
   "CONFIRM YOUR BID\n\n" +
