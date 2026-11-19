@@ -18001,10 +18001,8 @@ async function placeBid(lotId){
     return;
   }
   const currencySymbol="R";
-  if(!state.settings?.open){
-    alert("The auction is closed.");
-    return;
-  }
+  // Do not trust the browser's cached open/closed flag for real bidding.
+  // Supabase independently checks the auction's LIVE status and closing time.
   const lot=(state.lots||[]).find(l=>String(l.id)===String(lotId));
   // Never submit a lot belonging to a different auction, even when its card
   // remains visible after navigating between auctions.
@@ -18012,43 +18010,15 @@ async function placeBid(lotId){
     alert("This plant does not belong to the selected auction. Refresh before bidding. No bid was placed.");
     return;
   }
-  // Live bids must never be offered for a LOADING / unscheduled auction.
-  // Pre-bidding uses its separate flow and is not activated by this check.
-  if(!auction.auctionDate || !auction.auctionTime || !auction.auctionCloseTime){
-    alert("Live bidding has not been scheduled for this auction. No bid was placed.");
-    return;
-  }
-  // Only an explicitly LIVE auction may accept live bids. Unknown, draft,
-  // cancelled, completed and paused statuses must fail closed.
-  if(!["LIVE", "OPEN", "ACTIVE", "IN_PROGRESS"].includes(String(auction.status||"").toUpperCase())){
+  // The local auction schedule may be stale or differ from the server's
+  // timestamp and per-lot extension. Never decide the live closing time
+  // using browser fields. The authenticated Supabase transaction verifies
+  // LIVE status, lot OPEN status, and the effective close time atomically.
+  // A local LOADING / unscheduled auction is not eligible for live bids.
+  if(String(auction.status||"").toUpperCase()!=="LIVE"){
     alert("Live bidding is not open for this auction. No bid was placed.");
     return;
   }
-if(auction && auction.auctionDate && auction.auctionTime){
-  const normalStart=new Date(auction.auctionDate+"T"+auction.auctionTime+":00+02:00").getTime();
-  if(!Number.isFinite(normalStart)){
-    alert("The auction start time is invalid. No bid was placed.");
-    return;
-  }
-  if(Date.now()<normalStart){
-    alert("This auction has not started yet.");
-    return;
-  }
-}
-if(auction && auction.auctionDate && auction.auctionCloseTime && lot){
-  const normalClose=new Date(auction.auctionDate+"T"+auction.auctionCloseTime+":00+02:00").getTime();
-  const extendedClose=lot.extendedCloseUntil ? new Date(lot.extendedCloseUntil).getTime() : 0;
-  if(!Number.isFinite(normalClose) || (lot.extendedCloseUntil && !Number.isFinite(extendedClose))){
-    alert("The auction closing time is invalid. No bid was placed.");
-    return;
-  }
-  const actualClose=Math.max(normalClose,extendedClose);
-
-  if(Date.now()>=actualClose){
-    alert("Bidding on this plant is closed.");
-    return;
-  }
-}
   const bidder=(state.bidders||[]).find(b=>String(b.id)===String(state.selectedBidderId));
    if(!lot){ alert("Plant not found. No bid has been placed."); return; }
   if(!bidder){ alert("Please sign in or register before bidding."); showPage("register"); return; }
@@ -18136,10 +18106,10 @@ if(
   }
 }
 
-  if(bidder.paymentHold){
-  alert("Your account is ON HOLD because a payment came from an unregistered bank account. No further bidding is allowed until the seller confirms the payment or Admin clears the hold.");
-  return;
-}
+  // The locally cached paymentHold flag may remain set after Admin clears a hold.
+  // Do not reject a bid using stale browser data. The authenticated bid
+  // transaction checks the authoritative payment-hold record on the server
+  // and must refuse bids while the hold remains active.
   // Invoice arrays in the browser may be stale or incomplete. Use the
   // authenticated database's invoice check, which includes seller fees.
   const {data:hasUnpaidFees,error:unpaidFeesError} =
@@ -18187,48 +18157,22 @@ const confirmed = confirm(
 if (!confirmed) {
   return;
 }
-  const bidStep=auction && auction.currency==="EUR" ? 5 : 100;
-  const securityFeeAmount=auction && auction.currency==="EUR" ? 15 : 150;
-const securityBracketSize=auction && auction.currency==="EUR" ? 350 : 5000;
-const paidSecurityFees=Number(
-  auction && auction.currency==="EUR"
-    ? bidder.securityFeesPaidEUR||0
-    : bidder.securityFeesPaidZAR||0
-);
-// Ask the database for the actual approved limit. Browser account values
-// must never be allowed to grant a higher bidding capacity.
-let maxBidCapacity;
-try {
-  const {data:serverCapacity,error:capacityError}=await cliviaSupabase.rpc("clivia_my_capacity_zar");
-  const parsedCapacity=Number(serverCapacity);
-  if(capacityError || !Number.isSafeInteger(parsedCapacity) || parsedCapacity<2000){
-    alert("Unable to verify your approved bidding capacity with the server. No bid was placed.");
+  const bidStep=100;
+  // Capacity and exposure must come from the authenticated database, not
+  // cached lots or browser-editable bidder records. The server transaction
+  // remains the final authority and may reject the bid after this preview.
+  const {data:remainingCapacity,error:remainingError} =
+    await cliviaSupabase.rpc("clivia_my_remaining_capacity_zar");
+  const remaining=Number(remainingCapacity);
+  if(remainingError || remainingCapacity == null || !Number.isFinite(remaining) || remaining < 0){
+    alert("Unable to verify your remaining bidding capacity. No bid was placed.");
     return;
   }
-  maxBidCapacity=parsedCapacity;
-}catch(capacityError){
-  console.error("Capacity verification failed",capacityError);
-  alert("Unable to verify your bidding capacity. No bid was placed.");
-  return;
-}
-// Count the bidder's highest bids across ALL active Clivia auctions, not
-// just the currently selected auction. Replace this lot's existing exposure
-// with the proposed bid, rather than counting the same lot twice.
-// Display estimate only: the server must calculate exposure from trusted bids.
-const currentWinningExposure=(state.lots||[]).reduce((total,otherLot)=>{
-  if(String(otherLot.id)===String(lotId)) return total;
-  const relatedAuction=(state.auctions||[]).find(a=>String(a.id)===String(otherLot.auctionId));
-  if(!relatedAuction || ["CLOSED","CANCELLED","COMPLETED"].includes(String(relatedAuction.status||"").toUpperCase())) return total;
-  const highest=(otherLot.bids||[]).reduce((best,b)=>Number(b.amount)>Number(best?.amount||0)?b:best,null);
-  return highest && String(highest.bidderId)===String(bidder.id) ? total+Number(highest.amount||0) : total;
-},0);
-  // Browser estimates cannot safely account for Group Auction pre-bids,
-  // auto-bid limits, or concurrent bids. Never block a bid on this estimate.
-  // The authenticated Supabase transaction is the final authority for
-  // combined capacity, warnings, and payment eligibility.
-  const totalExposureAfterBid=currentWinningExposure+amount;
-  if(totalExposureAfterBid >= maxBidCapacity * 0.9){
-    console.info("Bidding capacity may be nearly reached; server will verify the exact exposure.");
+  // Do not reject here based on remaining capacity: a bidder raising their
+  // own winning bid replaces the existing commitment rather than adding it.
+  // The transaction computes that replacement safely with row locks.
+  if(remaining <= 200){
+    console.info("Bidding capacity is nearly exhausted; the server will check this bid.");
   }
 
 // Validate the bid increase rather than requiring the total bid to be
